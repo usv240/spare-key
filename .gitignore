@@ -15,3 +15,5 @@ tools/out/
 tools/scratch/
 .taste-skill/
 .impeccable/review/
+mcp/node_modules/
+mcp/lib/

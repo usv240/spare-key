@@ -1,0 +1,14 @@
+{
+  "name": "spare-key-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for Spare Key's verified steps library: current steps with the warnings attached, and a safety-first plan built from finding codes. It never takes personal data.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": { "spare-key-mcp": "server.mjs" },
+  "files": ["server.mjs", "lib/"],
+  "scripts": { "start": "node server.mjs", "test": "node test.mjs" },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "zod": "3.25.76"
+  }
+}

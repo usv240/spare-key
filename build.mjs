@@ -56,6 +56,15 @@ for (const [file, html] of Object.entries(PAGES)) {
 }
 await writeFile('web/dist/practice/practice.css', PRACTICE_CSS);
 
+// The static Steps API (api/build.mjs).
+const { buildApi } = await import('./api/build.mjs');
+await buildApi('web/dist/api/v1');
+
+// The MCP server's copy of the shared plan code and the library (mcp/lib, generated; see mcp/server.mjs).
+await mkdir('mcp/lib/plan', { recursive: true });
+for (const f of ['findings.js', 'plan/engine.js', 'plan/invariants.js']) await cp(`shared/${f}`, `mcp/lib/${f}`);
+await cp('data/steps.json', 'mcp/lib/steps.json');
+
 // A published bundle must never carry the debug token.
 if (debugToken) {
   const leaks = [];
