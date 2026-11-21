@@ -51,7 +51,7 @@ test('no "safe", "secure", "all clear", "abuser" or "victim" in the product', ()
 });
 
 test('no em dash anywhere in the repo text files', () => {
-  const skip = /^(node_modules|\.git|extension\/build|web\/dist|private|tools\/out|\.taste-skill)(\/|$)/;
+  const skip = /(^|\/)node_modules(\/|$)|^(\.git|extension\/build|web\/dist|private|tools\/out|\.taste-skill|mcp\/lib)(\/|$)/;
   const bad = [];
   const walk = dir => {
     for (const name of readdirSync(dir)) {
