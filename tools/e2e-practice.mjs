@@ -137,7 +137,7 @@ try {
         asking: !document.querySelector('#ask-user').hidden,
       }));
       if (state.asking) { asked++; await panel.click('#ask-user .answer button:nth-child(3)'); continue; }
-      if (state.lead && !/^Asking/.test(state.note)) break;
+      if (state.lead && !/^(Asking|Checking the order)/.test(state.note)) break;
       await new Promise(r => setTimeout(r, 1000));
     }
     const plan = await panel.evaluate(() => chrome.storage.session.get('plan').then(r => r.plan));
@@ -146,7 +146,8 @@ try {
     step('the plan starts with screenshots, then an advocate', actions[0]?.action === 'document' && actions[1]?.action === 'talk_to_advocate', actions.slice(0, 3).map(a => a.action));
     step('nothing is changed now when now is not a good time', !actions.some(a => a.action === 'change_now'), actions.filter(a => a.action === 'change_now').length);
     step('every open finding has a step', scan.findings.filter(f => f.ownership !== 'mine').every(f => actions.some(a => ['change_now', 'wait'].includes(a.action) && a.refs.includes(f.ref))));
-    report.plan = { source: plan?.source, model: plan?.model, fired: plan?.result?.fired, actions: actions.map(a => ({ action: a.action, code: a.code, why: a.why })), summary: plan?.result?.plan?.summary };
+    report.plan = { source: plan?.source, model: plan?.model, fired: plan?.result?.fired, draftFired: plan?.draftFired, voices: plan?.voices, actions: actions.map(a => ({ action: a.action, code: a.code, refs: a.refs.length, why: a.why })), summary: plan?.result?.plan?.summary };
+    step('the two-voice check ran and settled the plan', !!plan?.voices?.stay_hidden, plan?.voices ? 'voices present' : 'no voices');
 
     // What left this computer: every request, searched for every made-up name, address and number on the practice pages.
     const sent = await panel.evaluate(() => chrome.storage.session.get('sentLog').then(r => r.sentLog || []));

@@ -1,0 +1,1716 @@
+{
+ "written": "2026-11-21",
+ "seed": 20261121,
+ "scenarios": [
+  {
+   "id": "s01",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "photos.partner_sharing",
+     "ownership": "mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "gmail.filter.hides",
+     "ownership": "unsure",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.family.member",
+     "ownership": "mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "gmail.forwarding.external",
+     "ownership": "mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f5",
+     "code": "maps.sharing.link",
+     "ownership": "mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f6",
+     "code": "chrome.sync.other_account",
+     "ownership": "not_mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "together",
+    "safe_to_change_now": "yes",
+    "children_shared": "yes",
+    "has_advocate": "yes"
+   },
+   "notChecked": [
+    "amazon.household",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s02",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "gmail.filter.forwards",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.apps.full_access",
+     "ownership": "not_mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "maps.sharing.link",
+     "ownership": "mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "amazon.household.adult",
+     "ownership": "unsure",
+     "recency": "now",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "apart",
+    "safe_to_change_now": "no",
+    "children_shared": "no",
+    "has_advocate": "no"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s03",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "google.apps.full_access",
+     "ownership": "unsure",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "gmail.filter.hides",
+     "ownership": "not_mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "gmail.delegate",
+     "ownership": "unsure",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "google.recovery.email_other",
+     "ownership": "not_mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f5",
+     "code": "chrome.extension.broad_access",
+     "ownership": "unsure",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f6",
+     "code": "google.2sv.other_device",
+     "ownership": "mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "prefer_not_to_say",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "amazon.household",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s04",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "google.family.manager_other",
+     "ownership": "unsure",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "amazon.household.teen",
+     "ownership": "mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.recovery.email_other",
+     "ownership": "not_mine",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "amazon.device.other",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "together",
+    "safe_to_change_now": "yes",
+    "children_shared": "yes",
+    "has_advocate": "yes"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s05",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "maps.sharing.person",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "maps.sharing.person",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "gmail.delegate",
+     "ownership": "mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "apart",
+    "safe_to_change_now": "no",
+    "children_shared": "no",
+    "has_advocate": "no"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s06",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "gmail.filter.forwards",
+     "ownership": "not_mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.family.member",
+     "ownership": "not_mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.apps.read_mail",
+     "ownership": "not_mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "prefer_not_to_say",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "ring",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s07",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "amazon.household.teen",
+     "ownership": "not_mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "amazon.device.other",
+     "ownership": "unsure",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "amazon.household.adult",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "yes",
+    "children_shared": "no",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "google.family",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s08",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "google.apps.location",
+     "ownership": "mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "photos.partner_sharing",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.2sv.other_device",
+     "ownership": "not_mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "chrome.sync.other_account",
+     "ownership": "mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f5",
+     "code": "google.apps.location",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f6",
+     "code": "google.family.manager_other",
+     "ownership": "unsure",
+     "recency": "unknown",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "together",
+    "safe_to_change_now": "no",
+    "children_shared": "prefer_not_to_say",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s09",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "google.recovery.phone_unconfirmed",
+     "ownership": "unsure",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.apps.read_mail",
+     "ownership": "not_mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.recovery.phone_unconfirmed",
+     "ownership": "not_mine",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "google.devices.other",
+     "ownership": "unsure",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f5",
+     "code": "chrome.extension.broad_access",
+     "ownership": "not_mine",
+     "recency": "now",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "apart",
+    "safe_to_change_now": "yes",
+    "children_shared": "no",
+    "has_advocate": "yes"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s10",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "gmail.forwarding.external",
+     "ownership": "not_mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.devices.other",
+     "ownership": "not_mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.apps.read_mail",
+     "ownership": "not_mine",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "google.apps.read_mail",
+     "ownership": "unsure",
+     "recency": "now",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "together",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "no",
+    "has_advocate": "yes"
+   },
+   "notChecked": [
+    "life360",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s11",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "google.apps.read_mail",
+     "ownership": "not_mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.apps.read_mail",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.devices.other",
+     "ownership": "unsure",
+     "recency": "today",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "prefer_not_to_say",
+    "has_advocate": "no"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s12",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "google.apps.full_access",
+     "ownership": "mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "amazon.household.adult",
+     "ownership": "unsure",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "amazon.household.adult",
+     "ownership": "unsure",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "gmail.forwarding.external",
+     "ownership": "unsure",
+     "recency": "today",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "no",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "amazon.household",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s13",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "chrome.sync.other_account",
+     "ownership": "mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "gmail.delegate",
+     "ownership": "not_mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.family.manager_other",
+     "ownership": "unsure",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "amazon.household.adult",
+     "ownership": "mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "prefer_not_to_say",
+    "has_advocate": "yes"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s14",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "google.recovery.email_other",
+     "ownership": "unsure",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "amazon.device.other",
+     "ownership": "unsure",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "amazon.household.teen",
+     "ownership": "unsure",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "maps.sharing.link",
+     "ownership": "unsure",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f5",
+     "code": "google.recovery.phone_unconfirmed",
+     "ownership": "not_mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f6",
+     "code": "amazon.household.adult",
+     "ownership": "not_mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "prefer_not_to_say",
+    "has_advocate": "yes"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s15",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "photos.partner_sharing",
+     "ownership": "unsure",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "chrome.extension.broad_access",
+     "ownership": "mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.family.member",
+     "ownership": "mine",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "gmail.filter.hides",
+     "ownership": "not_mine",
+     "recency": "now",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "together",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "prefer_not_to_say",
+    "has_advocate": "no"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s16",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "photos.partner_sharing",
+     "ownership": "not_mine",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "amazon.device.other",
+     "ownership": "not_mine",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.apps.read_mail",
+     "ownership": "unsure",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "gmail.delegate",
+     "ownership": "unsure",
+     "recency": "unknown",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "prefer_not_to_say",
+    "has_advocate": "yes"
+   },
+   "notChecked": [
+    "life360",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s17",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "google.family.member",
+     "ownership": "unsure",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "gmail.filter.hides",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.family.member",
+     "ownership": "mine",
+     "recency": "now",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "together",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "yes",
+    "has_advocate": "no"
+   },
+   "notChecked": [
+    "ring",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s18",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "gmail.forwarding.external",
+     "ownership": "mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.apps.location",
+     "ownership": "not_mine",
+     "recency": "today",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "together",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "yes",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s19",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "amazon.household.adult",
+     "ownership": "mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "photos.partner_sharing",
+     "ownership": "unsure",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.family.manager_other",
+     "ownership": "unsure",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "gmail.filter.forwards",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "together",
+    "safe_to_change_now": "no",
+    "children_shared": "no",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s20",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "photos.partner_sharing",
+     "ownership": "not_mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "gmail.delegate",
+     "ownership": "not_mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "amazon.household.teen",
+     "ownership": "mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "google.apps.full_access",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "apart",
+    "safe_to_change_now": "no",
+    "children_shared": "yes",
+    "has_advocate": "no"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s21",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "google.apps.location",
+     "ownership": "not_mine",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "maps.sharing.person",
+     "ownership": "unsure",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.apps.read_mail",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "google.apps.read_mail",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f5",
+     "code": "google.apps.read_mail",
+     "ownership": "unsure",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f6",
+     "code": "amazon.device.other",
+     "ownership": "unsure",
+     "recency": "older",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "together",
+    "safe_to_change_now": "no",
+    "children_shared": "no",
+    "has_advocate": "no"
+   },
+   "notChecked": [
+    "ring",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s22",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "google.devices.other",
+     "ownership": "unsure",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "maps.sharing.person",
+     "ownership": "mine",
+     "recency": "now",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "apart",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "yes",
+    "has_advocate": "no"
+   },
+   "notChecked": [
+    "amazon.household",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s23",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "amazon.device.other",
+     "ownership": "unsure",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.recovery.email_other",
+     "ownership": "not_mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "gmail.delegate",
+     "ownership": "not_mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "apart",
+    "safe_to_change_now": "no",
+    "children_shared": "no",
+    "has_advocate": "no"
+   },
+   "notChecked": [
+    "ring",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s24",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "google.apps.read_mail",
+     "ownership": "mine",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "maps.sharing.link",
+     "ownership": "not_mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "gmail.delegate",
+     "ownership": "not_mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "gmail.filter.hides",
+     "ownership": "mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f5",
+     "code": "maps.sharing.person",
+     "ownership": "unsure",
+     "recency": "older",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "apart",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "prefer_not_to_say",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s25",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "google.apps.read_mail",
+     "ownership": "unsure",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "chrome.extension.broad_access",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.devices.other",
+     "ownership": "not_mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "no",
+    "has_advocate": "no"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s26",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "gmail.delegate",
+     "ownership": "unsure",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.devices.other",
+     "ownership": "not_mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "chrome.sync.other_account",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "photos.partner_sharing",
+     "ownership": "unsure",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f5",
+     "code": "chrome.sync.other_account",
+     "ownership": "not_mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "together",
+    "safe_to_change_now": "no",
+    "children_shared": "yes",
+    "has_advocate": "yes"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s27",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "gmail.filter.hides",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "maps.sharing.link",
+     "ownership": "mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.2sv.other_device",
+     "ownership": "not_mine",
+     "recency": "now",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "yes",
+    "children_shared": "prefer_not_to_say",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s28",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "chrome.extension.broad_access",
+     "ownership": "not_mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.recovery.phone_unconfirmed",
+     "ownership": "not_mine",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "photos.partner_sharing",
+     "ownership": "not_mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "google.devices.other",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f5",
+     "code": "google.apps.full_access",
+     "ownership": "not_mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f6",
+     "code": "gmail.filter.forwards",
+     "ownership": "not_mine",
+     "recency": "today",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "yes",
+    "children_shared": "prefer_not_to_say",
+    "has_advocate": "yes"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s29",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "gmail.delegate",
+     "ownership": "not_mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.family.member",
+     "ownership": "mine",
+     "recency": "today",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "apart",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "no",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "google.family",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s30",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "chrome.extension.broad_access",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.recovery.phone_unconfirmed",
+     "ownership": "mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.apps.read_mail",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "google.family.member",
+     "ownership": "not_mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f5",
+     "code": "photos.partner_sharing",
+     "ownership": "mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "together",
+    "safe_to_change_now": "yes",
+    "children_shared": "yes",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s31",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "photos.partner_sharing",
+     "ownership": "mine",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.recovery.email_other",
+     "ownership": "unsure",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "gmail.filter.forwards",
+     "ownership": "not_mine",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "gmail.forwarding.external",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f5",
+     "code": "google.apps.location",
+     "ownership": "not_mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f6",
+     "code": "google.apps.location",
+     "ownership": "not_mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "apart",
+    "safe_to_change_now": "yes",
+    "children_shared": "prefer_not_to_say",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "gmail.filters",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s32",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "google.devices.other",
+     "ownership": "not_mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.apps.read_mail",
+     "ownership": "unsure",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.family.manager_other",
+     "ownership": "mine",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "google.family.manager_other",
+     "ownership": "unsure",
+     "recency": "unknown",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "together",
+    "safe_to_change_now": "yes",
+    "children_shared": "yes",
+    "has_advocate": "yes"
+   },
+   "notChecked": [
+    "gmail.filters",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s33",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "maps.sharing.person",
+     "ownership": "unsure",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "gmail.delegate",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "apart",
+    "safe_to_change_now": "no",
+    "children_shared": "yes",
+    "has_advocate": "yes"
+   },
+   "notChecked": [
+    "ring",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s34",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "gmail.filter.forwards",
+     "ownership": "mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.family.manager_other",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.family.member",
+     "ownership": "unsure",
+     "recency": "unknown",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "google.devices.other",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f5",
+     "code": "amazon.household.adult",
+     "ownership": "not_mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "yes",
+    "children_shared": "yes",
+    "has_advocate": "yes"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s35",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "gmail.delegate",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.apps.full_access",
+     "ownership": "unsure",
+     "recency": "older",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "together",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "no",
+    "has_advocate": "yes"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s36",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "photos.partner_sharing",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.2sv.other_device",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "gmail.forwarding.external",
+     "ownership": "not_mine",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "gmail.filter.hides",
+     "ownership": "unsure",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f5",
+     "code": "gmail.filter.forwards",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f6",
+     "code": "chrome.extension.broad_access",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "apart",
+    "safe_to_change_now": "no",
+    "children_shared": "prefer_not_to_say",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s37",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "google.family.member",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "maps.sharing.link",
+     "ownership": "unsure",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.devices.other",
+     "ownership": "unsure",
+     "recency": "today",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "yes",
+    "children_shared": "no",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "ring",
+    "other_services"
+   ]
+  },
+  {
+   "id": "s38",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "chrome.extension.broad_access",
+     "ownership": "unsure",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "google.apps.full_access",
+     "ownership": "not_mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "gmail.forwarding.external",
+     "ownership": "mine",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "google.devices.other",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "prefer_not_to_say",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s39",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "google.devices.other",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "photos.partner_sharing",
+     "ownership": "mine",
+     "recency": "now",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f3",
+     "code": "google.recovery.phone_unconfirmed",
+     "ownership": "mine",
+     "recency": "this_week",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f4",
+     "code": "google.family.member",
+     "ownership": "mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f5",
+     "code": "google.apps.full_access",
+     "ownership": "not_mine",
+     "recency": "older",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f6",
+     "code": "google.family.manager_other",
+     "ownership": "not_mine",
+     "recency": "unknown",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "no",
+    "has_advocate": "yes"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  },
+  {
+   "id": "s40",
+   "findings": [
+    {
+     "ref": "f1",
+     "code": "chrome.extension.broad_access",
+     "ownership": "not_mine",
+     "recency": "today",
+     "how_found": "reader"
+    },
+    {
+     "ref": "f2",
+     "code": "gmail.forwarding.external",
+     "ownership": "unsure",
+     "recency": "this_week",
+     "how_found": "reader"
+    }
+   ],
+   "situation": {
+    "living": "prefer_not_to_say",
+    "safe_to_change_now": "not_sure",
+    "children_shared": "prefer_not_to_say",
+    "has_advocate": "prefer_not_to_say"
+   },
+   "notChecked": [
+    "other_services"
+   ]
+  }
+ ]
+}

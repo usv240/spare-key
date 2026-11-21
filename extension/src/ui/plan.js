@@ -55,8 +55,8 @@ export function renderQuestions(root, { values, share, cloudOn, onChange, onMake
  * The plan. `plan` uses local refs. `byRef` maps a local ref to its finding; `library` maps code to entry.
  * `source` is 'code' or 'cloud'; `fired` lists the safety rules that changed it; `onOpen(url)` opens a setting.
  */
-export function renderPlan(root, { plan, byRef, library, source, model, fired = [], cloudNote = '', onOpen, onOverride }) {
-  const steps = plan.actions.map((a, i) => stepCard(a, i, { byRef, library, onOpen, onOverride }));
+export function renderPlan(root, { plan, byRef, library, source, model, fired = [], cloudNote = '', voices = null, freshDays = 45, freshness = {}, onCheckFresh = null, onOpen, onOverride }) {
+  const steps = plan.actions.map((a, i) => stepCard(a, i, { byRef, library, onOpen, onOverride, freshDays, freshness, onCheckFresh }));
   registerInfo('why-order', {
     title: 'Why this order',
     what: 'Screenshot first, because the record is gone once a setting changes. Talk to an advocate before changing anything that may be noticed. Quiet ways into your account come before the rest when now is a good time.',
@@ -73,6 +73,19 @@ export function renderPlan(root, { plan, byRef, library, source, model, fired = 
       infoButton('why-order', 'About why this order')),
     cloudNote ? h('p', { class: 'notice', text: cloudNote }) : null,
     plan.summary ? h('p', { class: 'plan-summary', text: plan.summary }) : null,
+    voices ? h('details', { class: 'voices' },
+      h('summary', { text: 'Why this order: two voices' }),
+      h('p', { class: 'muted', text: 'Before you saw this plan, two AI voices argued over it, and a third settled it. Spare Key’s own rules then made sure every warning is there.' }),
+      h('h3', { text: 'Close the doors' }),
+      h('p', { text: voices.close_the_doors || voices.arguments?.close_the_doors || '' }),
+      h('h3', { text: 'Stay hidden' }),
+      h('p', { text: voices.stay_hidden || voices.arguments?.stay_hidden || '' }),
+      h('h3', { text: 'How they settled it' }),
+      h('p', { text: plan.summary || 'The steps below are the settled order.' }),
+      voices.arguments ? h('details', { class: 'later' },
+        h('summary', { text: 'Read both arguments in full' }),
+        h('p', {}, h('strong', { text: 'Close the doors: ' }), voices.arguments.close_the_doors || ''),
+        h('p', {}, h('strong', { text: 'Stay hidden: ' }), voices.arguments.stay_hidden || '')) : null) : null,
     h('ol', { class: 'plan' }, steps),
     added.length ? h('details', { class: 'checked-list' },
       h('summary', { text: `Spare Key's safety rules changed this plan (${added.length})` }),
@@ -92,7 +105,28 @@ function ruleWords(f) {
   }[f.rule] || 'Spare Key adjusted this plan.';
 }
 
-function stepCard(a, i, { byRef, library, onOpen, onOverride }) {
+const longDate = iso => new Date(`${iso}T12:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+const ageDays = iso => Math.floor((Date.now() - new Date(`${iso}T12:00:00`).getTime()) / 86400000);
+
+// When the steps were checked, and, once they are older than fresh_days, a check that they still match the help page.
+function freshnessBlock(code, e, { freshDays, freshness, onCheckFresh }) {
+  if (!e?.verified_at) return null;
+  const r = freshness[code];
+  const stale = ageDays(e.verified_at) > freshDays;
+  const lines = [h('p', { class: 'source muted', text: `Steps checked against the official help page on ${longDate(e.verified_at)}.` })];
+  if (r?.pending) lines.push(h('p', { class: 'muted', role: 'status', text: 'Checking the help page now.' }));
+  else if (r) {
+    const title = e.sources?.[0]?.title || 'the help page';
+    lines.push(h('p', { class: 'fresh-result', role: 'status', text: r.still_matches === 'yes' ? `Still matches ${title} today.`
+      : r.still_matches === 'no' ? `The help page may have changed. Here is what it says today: ${r.what_changed || 'the steps there are different.'} Follow the help page if the steps below do not work.`
+      : 'Spare Key could not compare these steps with the help page today. Open the help page to check.' }));
+  } else if (stale && onCheckFresh) {
+    lines.push(h('button', { type: 'button', class: 'link-button', onclick: () => onCheckFresh(code) }, 'Check these steps are still current'));
+  }
+  return lines;
+}
+
+function stepCard(a, i, { byRef, library, onOpen, onOverride, freshDays, freshness, onCheckFresh }) {
   const kind = h('p', { class: `step-kind kind-${a.action}`, text: LABELS[a.action] || a.action });
   const body = [];
   if (a.action === 'document') {
@@ -125,6 +159,8 @@ function stepCard(a, i, { byRef, library, onOpen, onOverride }) {
     }
     if (f?.openUrl) body.push(h('div', { class: 'finding-actions' }, h('button', { type: 'button', class: 'link-button', onclick: () => onOpen(f.openUrl) }, 'Open this setting')));
     if (e.sources?.length) body.push(h('p', { class: 'source muted' }, 'Source: ', ...e.sources.flatMap((s, k) => [k ? '; ' : '', h('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer', text: s.title })])));
+    const fresh = freshnessBlock(a.code || f?.code, e, { freshDays, freshness, onCheckFresh });
+    if (fresh) body.push(...fresh);
   } else if (a.action === 'check_manually') {
     body.push(h('p', { text: a.why }));
     body.push(h('ul', { class: 'guides' }, UNCHECKED.guides.map(g => h('li', {}, h('a', { href: g.url, target: '_blank', rel: 'noopener noreferrer', text: g.title })))));

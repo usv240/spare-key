@@ -3,6 +3,8 @@
 import { deviceStatus, deviceJson, cloudJson, liveSettings, resetCloudBudget, TEXT_ONLY, TEXT_AND_IMAGE } from './ai.js';
 import { classifyEntries, readWholePage } from './classify.js';
 import { cloudPlan } from './cloud/plan.js';
+import { twoVoices } from './cloud/voices.js';
+import { checkFreshness, fetchHelpPage } from './cloud/freshness.js';
 
 // Every cloud request is written to "What left this computer" (kept by the service worker) before it is sent.
 const onSend = entry => chrome.runtime.sendMessage({ type: 'sk:sent', entry });
@@ -82,6 +84,27 @@ const NANO = {
     try {
       const { answer, model } = await cloudPlan({ body, library, privateStrings, ask, onSend });
       return { answer, model };
+    } catch (e) {
+      return { error: String(e && e.message || e).slice(0, 300), kind: e?.name || 'Error' };
+    }
+  },
+  // Steps freshness for one library entry, when Remote Config's freshness_on is true.
+  'sk:freshness': async ({ code, library, privateStrings = [] }) => {
+    const settings = await liveSettings();
+    if (!settings.freshnessOn || !settings.cloudOn) return { off: true };
+    try {
+      return await checkFreshness({ code, entry: library[code], library, privateStrings, fetchPage: fetchHelpPage, onSend });
+    } catch (e) {
+      return { error: String(e && e.message || e).slice(0, 300) };
+    }
+  },
+  'sk:fresh-days': async () => ({ freshDays: (await liveSettings()).freshDays }),
+  // The two-voice check on a cloud draft, when Remote Config's two_voice_on is true.
+  'sk:two-voices': async ({ body, draft, privateStrings, library }) => {
+    const settings = await liveSettings();
+    if (!settings.twoVoiceOn) return { off: true };
+    try {
+      return await twoVoices({ scan: body, draft, privateStrings, library, onSend });
     } catch (e) {
       return { error: String(e && e.message || e).slice(0, 300), kind: e?.name || 'Error' };
     }

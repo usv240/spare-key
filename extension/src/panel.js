@@ -9,7 +9,7 @@ import { renderQuestions, renderPlan } from './ui/plan.js';
 import { privateStringsFrom } from './scan/private.js';
 import { toCloud } from '../../shared/cloud-safe.js';
 import { buildPlan } from '../../shared/plan/engine.js';
-import { applyInvariants } from '../../shared/plan/invariants.js';
+import { applyInvariants, cleanText } from '../../shared/plan/invariants.js';
 import { libraryMap } from '../../shared/steps-schema.js';
 import { CODES, CODE_TEXT, SITUATION, SITUATION_DEFAULTS, OWNERSHIP, RECENCY, HOW_FOUND } from '../../shared/findings.js';
 import STEPS from '../../data/steps.json';
@@ -357,7 +357,11 @@ async function makePlan() {
   const codeResult = applyInvariants(buildPlan(ctx), ctx);
   $('plan-questions').hidden = true;
   $('plan-actions').hidden = false;
-  const draw = (result, source, extra = {}) => renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, onOpen: url => chrome.tabs.create({ url }), ...extra });
+  const freshDays = (await offscreen('sk:fresh-days').catch(() => ({})))?.freshDays ?? 45;
+  const draw = (result, source, extra = {}) => {
+    lastDraw = { result, source, extra, byRef, freshDays };
+    return renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, freshDays, freshness, onCheckFresh, onOpen: url => chrome.tabs.create({ url }), ...extra });
+  };
   draw(codeResult, 'code', { cloudNote: cloudOn ? 'Asking Gemini in the cloud to order this for your situation. It sees finding types only.' : '' });
   $('plan-title')?.focus({ preventScroll: true });
   await chrome.storage.session.set({ plan: { source: 'code', result: codeResult } });
@@ -389,8 +393,52 @@ async function makePlan() {
     why: a.why,
   }));
   const cloudResult = applyInvariants({ actions, summary: r.answer.summary }, ctx);
-  draw(cloudResult, 'cloud', { model: r.model });
+  draw(cloudResult, 'cloud', { model: r.model, cloudNote: 'Checking the order with two voices: one for closing doors soon, one for staying hidden.' });
   await chrome.storage.session.set({ plan: { source: 'cloud', model: r.model, result: cloudResult } });
+
+  // 3. The two-voice check, then the safety rules again on the settled plan.
+  const v = await offscreen('sk:two-voices', { body, draft: r.answer, privateStrings, library: LIBRARY }).catch(e => ({ error: String(e) }));
+  if (!v || v.off || v.error || !v.answer) {
+    draw(cloudResult, 'cloud', { model: r.model });
+    return;
+  }
+  const settledActions = (v.answer.actions || []).map(a => ({
+    action: a.action,
+    refs: (Array.isArray(a.refs) ? a.refs : []).map(ref => refs[ref]).filter(Boolean),
+    why: a.why,
+  }));
+  const settled = applyInvariants({ actions: settledActions, summary: v.answer.summary }, ctx);
+  const voices = {
+    close_the_doors: cleanText(v.lines?.close_the_doors || '').text,
+    stay_hidden: cleanText(v.lines?.stay_hidden || '').text,
+    arguments: { close_the_doors: cleanText(v.arguments?.close_the_doors || '').text, stay_hidden: cleanText(v.arguments?.stay_hidden || '').text },
+  };
+  draw(settled, 'cloud', { model: v.model, voices });
+  await chrome.storage.session.set({ plan: { source: 'cloud', model: v.model, result: settled, voices, draftFired: cloudResult.fired } });
+}
+
+// Steps freshness: the help page's host is asked for inside the click, then the cloud compares the library's steps with it.
+let lastDraw = null;
+const freshness = {};
+function redrawPlan() {
+  if (!lastDraw) return;
+  const { result, source, extra, byRef, freshDays } = lastDraw;
+  renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, freshDays, freshness, onCheckFresh, onOpen: url => chrome.tabs.create({ url }), ...extra });
+}
+function onCheckFresh(code) {
+  const url = LIBRARY[code]?.sources?.[0]?.url;
+  if (!url) return;
+  const origin = `${new URL(url).origin}/*`;
+  chrome.permissions.request({ origins: [origin] }).catch(() => false).then(async () => {
+    freshness[code] = { pending: true };
+    redrawPlan();
+    const { scan } = await chrome.storage.session.get('scan');
+    const vocabulary = JSON.stringify([STEPS, Object.keys(CODES), SITUATION, OWNERSHIP, RECENCY, HOW_FOUND, CODE_TEXT]);
+    const privateStrings = scan ? privateStringsFrom({ findings: scan.findings, account: scan.account, vocabulary }) : [];
+    const r = await offscreen('sk:freshness', { code, library: LIBRARY, privateStrings }).catch(e => ({ error: String(e) }));
+    freshness[code] = r && !r.error && !r.off ? r : { still_matches: 'not_sure' };
+    redrawPlan();
+  });
 }
 
 // Questions from the cloud, answered here: yes, no or unknown from the findings (ask_device), or by the person (ask_user).
@@ -552,7 +600,7 @@ async function loadOverrides() {
     practice = scan.mode === 'practice';
     $('plan-questions').hidden = true;
     $('plan-actions').hidden = false;
-    renderPlan($('plan'), { plan: plan.result.plan, fired: plan.result.fired, byRef: new Map(scan.findings.map(f => [f.ref, f])), library: LIBRARY, source: plan.source, model: plan.model, onOpen: url => chrome.tabs.create({ url }) });
+    renderPlan($('plan'), { plan: plan.result.plan, fired: plan.result.fired, byRef: new Map(scan.findings.map(f => [f.ref, f])), library: LIBRARY, source: plan.source, model: plan.model, voices: plan.voices, onOpen: url => chrome.tabs.create({ url }) });
     show('plan');
   } else if (scan) { practice = scan.mode === 'practice'; showResults(scan); }
   else show('choose');

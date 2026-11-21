@@ -276,14 +276,19 @@ export function cloudJson({ purpose, body, system, schema, privateStrings = [], 
           await logSend({ kind: 'request', body: JSON.parse(text) });
           let r = tools && onCall
             ? await askWithTool(cloudModel({ system, schema, model, tools }), text, onCall, guard, logSend, spend)
-            : await cloudModel({ system, schema, model }).generateContent(text);
+            : await cloudModel({ system, schema, model, tools }).generateContent(text);
           // A model that keeps calling functions after being told to answer leaves no JSON: ask once more without tools.
-          if (tools && schema && !/^\s*\{/.test(r.response.text() || '')) {
+          if (tools && onCall && schema && !/^\s*\{/.test(r.response.text() || '')) {
             spend();
             await logSend({ kind: 'request', body: JSON.parse(text), note: 'asked again without functions' });
             r = await cloudModel({ system, schema, model }).generateContent(text);
           }
-          return { answer: schema ? JSON.parse(r.response.text()) : r.response.text(), model };
+          return {
+            answer: schema ? JSON.parse(r.response.text()) : r.response.text(),
+            model,
+            // Which pages the URL context tool read, when it was used.
+            urlContext: r.response.candidates?.[0]?.urlContextMetadata || null,
+          };
         } catch (e) {
           if (e instanceof CloudSafetyError || e instanceof CloudBudgetError) throw e;
           last = e;

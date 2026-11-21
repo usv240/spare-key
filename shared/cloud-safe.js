@@ -121,12 +121,16 @@ export const OUTGOING = {
     checkModelText(b.draft.summary ?? '', 240);
     if (b.draft.arguments) for (const s of Object.values(b.draft.arguments)) checkModelText(s, 900);
   },
-  // Steps freshness: a finding code and the public help page the steps library cites for it.
+  // Steps freshness: a finding code, the public help page the steps library cites for it, and the library's own steps.
   freshness: (b, ctx) => {
-    onlyKeys(b, ['code', 'help_title', 'help_url'], 'body');
+    onlyKeys(b, ['code', 'help_title', 'help_url', 'steps', 'page_text'], 'body');
+    // page_text: the cited public help page's text, fetched on this computer. Still checked against private strings.
+    if (b.page_text !== undefined && (typeof b.page_text !== 'string' || b.page_text.length > 8000)) fail('page_text must be short text');
     assertCode(b.code);
-    const cited = ctx?.library?.[b.code]?.sources || [];
+    const entry = ctx?.library?.[b.code];
+    const cited = entry?.sources || [];
     if (!cited.some(s => s.url === b.help_url && s.title === b.help_title)) fail('help page is not one the library cites');
+    if (b.steps !== undefined && JSON.stringify(b.steps) !== JSON.stringify(entry?.steps)) fail('steps must be the library entry\'s own steps');
   },
 };
 

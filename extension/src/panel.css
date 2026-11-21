@@ -336,3 +336,9 @@ kbd {
   *, *::before, *::after { transition: none !important; animation: none !important; }
   .btn:active { transform: none; }
 }
+
+/* ---------- Two voices ---------- */
+.voices { margin-top: 16px; padding: 4px 14px 8px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); }
+.voices > summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 700; }
+.voices h3 { margin: 14px 0 4px; font-size: 16px; }
+.voices p { margin: 0 0 8px; }
