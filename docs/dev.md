@@ -15,6 +15,9 @@ Commands run from the `spare-key` folder. Node 20 or later, Chrome, and (for the
 | Publish Remote Config defaults | `node tools/remote-config.mjs --publish` (uses your gcloud login) |
 | Deploy the site | `RELEASE=1 node build.mjs`, then `npx -y firebase-tools@latest deploy --only hosting --project spare-key-app` |
 | Record the test accounts' settings pages | `node tools/record-pages.mjs --login` once, then `node tools/record-pages.mjs` |
+| Readers and rules on the practice pages, code only, no extension | `node tools/reader-test.mjs` |
+| Practice check end to end, code only | `node tools/e2e-practice.mjs` (needs the practice pages deployed; no cloud calls) |
+| Practice check end to end with Gemini Nano | `node tools/e2e-practice.mjs --nano` (add `--screens` for screenshots) |
 
 Load the extension by hand: `chrome://extensions`, turn on Developer mode, Load unpacked, pick `extension/`. Its id is
 always `opmpimgddnahhbmhioookicpekibjahl` (fixed by the `key` in `manifest.json`).

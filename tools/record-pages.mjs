@@ -18,6 +18,7 @@ import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { CHROME } from './chrome-args.mjs';
 import { catalogue, pageUrl } from '../extension/src/scan/catalogue.js';
+import { readPage } from '../extension/src/readers/read-page.js';
 
 const PROFILE = process.env.SK_ACCOUNTS_PROFILE || 'E:/spare-key-test/accounts-profile';
 const OUT = path.resolve('private/pages');
@@ -52,7 +53,7 @@ function mask(text) {
 async function record() {
   const only = arg('only') ? arg('only').split(',') : null;
   const u = Number(arg('u') || 0);
-  const checks = catalogue({}).filter(c => c.url && (!only || only.includes(c.id)));
+  const checks = catalogue({}).filter(c => c.pages.length && (!only || only.includes(c.id)));
   const browser = await puppeteer.launch({
     executablePath: CHROME, headless: false, pipe: true, userDataDir: PROFILE, defaultViewport: null,
     // Fewer automation signs; the tool still only reads.
@@ -63,9 +64,9 @@ async function record() {
   try {
     const page = (await browser.pages())[0] || await browser.newPage();
     for (const check of checks) {
-      for (const [n, raw] of [check.url, ...(check.extraUrls || [])].entries()) {
+      for (const [n, pageDef] of check.pages.entries()) {
         const id = n ? `${check.id}.${n}` : check.id;
-        const url = pageUrl(raw, u);
+        const url = pageUrl(pageDef.url, u);
         log('open', id, url);
         try {
           await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
@@ -89,12 +90,14 @@ async function record() {
             return { title: document.title, text: (main.innerText || '').slice(0, 30000), outline: outline.join('\n') };
           });
           const signedOut = new RegExp(check.signedOutPattern).test(finalUrl);
-          const reauth = /verify it.s you|confirm it.s you|enter your password|to continue, first verify/i.test(snap.text);
-          const rawRecord = { id, check: check.id, url, finalUrl, signedOut, reauth, ...snap, recordedAt: new Date().toISOString() };
+          const reauth = new RegExp(check.reauthPattern).test(finalUrl) || /verify it.s you|confirm it.s you|enter your password|to continue, first verify/i.test(snap.text);
+          // What the current reader settings find on the real page, for tuning them.
+          const reader = signedOut || reauth ? null : await page.evaluate(readPage, pageDef.reader).catch(e => ({ error: String(e).slice(0, 200) }));
+          const rawRecord = { id, check: check.id, url, finalUrl, signedOut, reauth, reader: reader && { ...reader, mainText: undefined }, ...snap, recordedAt: new Date().toISOString() };
           writeFileSync(path.join(OUT, `${id}.raw.json`), JSON.stringify(rawRecord, null, 2));
-          writeFileSync(path.join(OUT, `${id}.masked.json`), JSON.stringify({ ...rawRecord, finalUrl: mask(finalUrl), title: mask(snap.title), text: mask(snap.text), outline: mask(snap.outline) }, null, 2));
+          writeFileSync(path.join(OUT, `${id}.masked.json`), JSON.stringify({ ...rawRecord, finalUrl: mask(finalUrl), title: mask(snap.title), text: mask(snap.text), outline: mask(snap.outline), reader: reader && { ...reader, mainText: undefined, account: reader.account && { email: mask(reader.account.email), name: mask(reader.account.name) }, entries: (reader.entries || []).map(e => ({ ...e, text: mask(e.text), href: mask(e.href), state: (e.state || []).map(mask) })) } }, null, 2));
           await page.screenshot({ path: path.join(OUT, `${id}.png`), fullPage: true }).catch(() => {});
-          summary.push({ id, finalUrl: mask(finalUrl), signedOut, reauth, textChars: snap.text.length });
+          summary.push({ id, finalUrl: mask(finalUrl), signedOut, reauth, textChars: snap.text.length, readerVia: reader?.via, readerEntries: reader?.entries?.length ?? null, readerReady: reader?.ready ?? null });
           log(signedOut ? 'SIGNED OUT' : reauth ? 'ASKS TO VERIFY' : 'ok', id, `${snap.text.length} chars`);
         } catch (e) {
           summary.push({ id, error: String(e).slice(0, 200) });

@@ -1,6 +1,7 @@
 // Offscreen page: a hidden extension page that hosts Gemini Nano sessions and every Firebase call.
 // It talks to the side panel and the service worker by runtime messages addressed { target: 'offscreen' }.
 import { deviceStatus, deviceJson, cloudJson, liveSettings, resetCloudBudget, TEXT_ONLY, TEXT_AND_IMAGE } from './ai.js';
+import { classifyEntries, readWholePage } from './classify.js';
 
 // Every cloud request is written to "What left this computer" (kept by the service worker) before it is sent.
 const onSend = entry => chrome.runtime.sendMessage({ type: 'sk:sent', entry });
@@ -61,14 +62,37 @@ async function setupCheck({ cloud = true } = {}) {
   return out;
 }
 
-chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
+// Gemini Nano work for the scan. Only the extension's own pages may ask (the sender check below).
+// Loading Gemini Nano takes long the first time (104 s on the builder's PC before the first check, November 21, 2026;
+// 4 to 12 s per check after). The panel asks for one tiny prompt as it opens, so the model is loaded before a scan.
+let warm = null;
+const NANO = {
+  'sk:nano-warm': () => (warm ||= deviceJson({
+    schema: { type: 'object', properties: { ok: { type: 'boolean' } }, required: ['ok'] },
+    text: 'Reply with {"ok": true}.',
+  }).then(() => ({ ok: true }), e => { warm = null; return { error: String(e).slice(0, 200) }; })),
+  'sk:nano-status': async () => ({ status: await deviceStatus(TEXT_ONLY) }),
+  'sk:classify': async o => ({ items: await classifyEntries(o) }),
+  'sk:read-page': async o => ({ entries: await readWholePage(o) }),
+};
+
+chrome.runtime.onMessage.addListener((msg, sender, reply) => {
   if (!msg || msg.target !== 'offscreen') return false;
+  if (sender.id !== chrome.runtime.id) return false;
+  if (NANO[msg.type]) {
+    NANO[msg.type](msg.options || {}).then(reply, e => reply({ error: String(e && e.message || e).slice(0, 300) }));
+    return true;
+  }
   if (msg.type === 'sk:setup-check') {
     setupCheck(msg.options || {}).then(reply, e => reply({ error: String(e) }));
     return true;
   }
   if (msg.type === 'sk:settings') {
     liveSettings().then(s => reply(s), e => reply({ error: String(e) }));
+    return true;
+  }
+  if (msg.type === 'sk:catalogue-overrides') {
+    liveSettings().then(s => reply({ catalogue: s.catalogue || {}, from: s.from }), () => reply({ catalogue: {}, from: 'defaults' }));
     return true;
   }
   return false;

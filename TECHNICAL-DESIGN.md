@@ -146,6 +146,16 @@ No persistent content scripts on real sites. Readers are injected only into the 
 
 ## 5. The scan engine
 
+**Built on day 2 (November 21, 2026), with three changes.** (1) The scan runs in the side panel page
+(`extension/src/scan/engine.js`), not the service worker: Chrome can stop an idle service worker after 30 seconds and
+one Gemini Nano call can take longer, while the panel stays alive as long as it is open (and closing it, as Quick exit
+does, ends the scan). (2) One reader function (`extension/src/readers/read-page.js`) serves every check; each page's
+reader settings (wait condition, item selector, text patterns, an optional heading to read under) live in the
+catalogue, so every reader is remotely configurable, not only its selectors. (3) A check can read several pages
+(`pages: [...]`); the recovery check reads two. A Remote Config override may only point a check at its own
+service's site.
+
+
 ```
 startScan(selectedChecks, mode = 'real' | 'practice'):
   open one scan tab (active, so single-page apps render fully; the side panel stays visible beside it)
@@ -279,6 +289,14 @@ from memory after reading. Without Nano the button says "Needs Gemini Nano on th
 show names" and stays off.
 
 ### 6.4 How code and Nano combine
+
+**Measured on day 2** (practice pages, Gemini Nano on the builder's PC): Nano called an "Active now" phone "this
+computer", gave a "Sign in with Google" app full account access, and dated a device the page gave no date for. So
+where the page's own words decide, code wins: only the page's words can make an entry this computer, code's "no
+access" for sign-in-only apps stands, and Nano's recency counts only when the entry has a time word. With these rules
+the practice scan finds 24 of 24 planted paths with no false alarms, code only and with Nano. Loading Nano took
+104 to 133 s the first time on that PC (low free memory), so the panel loads it while the first screens show.
+
 
 - Reader entries are trusted as existing; Nano adds the classification.
 - Nano-only entries (6.2) are shown with lower confidence and an instruction to check the setting itself.

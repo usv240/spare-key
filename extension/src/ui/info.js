@@ -7,7 +7,13 @@ const $ = id => document.getElementById(id);
 let openButton = null;
 let closeTimer = 0;
 
+// Text built at run time, for one finding's "i" (what it is, how it was found, what removing it does).
+const dynamic = new Map();
+export function registerInfo(id, content) { dynamic.set(id, content); }
+export function clearDynamicInfo() { dynamic.clear(); }
+
 export function infoText(id) {
+  if (dynamic.has(id)) return dynamic.get(id);
   const entry = INFO[id];
   if (!entry) console.error(`Spare Key: no "i" text for ${id}`);
   return entry || { title: 'About this', what: '', why: '' };
@@ -39,10 +45,12 @@ export function isInfoOpen() { return !!openButton; }
 export function openInfo(button) {
   if (openButton) openButton.setAttribute('aria-expanded', 'false');
   clearTimeout(closeTimer);
-  const { title, what, why, tech } = infoText(button.dataset.info);
+  const { title, what, why, tech, whatLabel, whyLabel } = infoText(button.dataset.info);
   $('sheet-title').textContent = title;
   $('sheet-what').textContent = what;
   $('sheet-why').textContent = why;
+  $('sheet-what-label').textContent = whatLabel || 'What this is';
+  $('sheet-why-label').textContent = whyLabel || 'Why it matters';
   $('sheet-tech').textContent = tech || '';
   $('sheet-tech-wrap').hidden = !tech;
   $('sheet-tech-wrap').open = false;

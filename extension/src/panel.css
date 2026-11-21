@@ -201,8 +201,47 @@ kbd {
 .switch[aria-checked="true"] .track { background: var(--accent); }
 .switch[aria-checked="true"] .thumb { transform: translateX(16px); }
 
-.notice { margin: 16px 0 0; padding: 12px 14px; border-radius: var(--radius-card); background: var(--surface); border: 1px solid var(--line); }
+.notice { margin: 16px 0; padding: 12px 14px; border-radius: var(--radius-card); background: var(--surface); border: 1px solid var(--line); }
 .notice.caution { background: var(--caution-bg); border-color: color-mix(in srgb, var(--caution) 35%, transparent); color: var(--ink); }
+
+/* ---------- Scanning ---------- */
+.progress-block { margin-top: 20px; padding: 14px 16px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); }
+.progress-line { margin: 0 0 10px; font-weight: 600; }
+.progress { height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.progress span { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform 300ms var(--ease-out); }
+.progress-block .num { margin: 8px 0 0; font-size: 14px; }
+.plain-list { margin: 12px 0 0; padding: 0; list-style: none; }
+.plain-list > li { display: grid; gap: 2px; padding: 10px 0; border-top: 1px solid var(--line); }
+.plain-list > li:first-child { border-top: 0; }
+.scan-done li { grid-template-columns: 1fr auto; align-items: baseline; gap: 12px; font-size: 15px; }
+.scan-done .muted { font-size: 14px; text-align: right; }
+
+/* ---------- Results ---------- */
+.count { color: var(--ink-2); font-weight: 500; }
+.findings { display: grid; gap: 10px; margin: 8px 0 0; padding: 0; list-style: none; }
+.finding { padding: 14px 14px 10px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); }
+.finding-head { display: flex; gap: 8px; align-items: flex-start; }
+.finding-text { flex: 1; min-width: 0; }
+.finding-title { margin: 0; font-weight: 700; line-height: 1.35; }
+.finding-label { margin: 4px 0 0; overflow-wrap: anywhere; }
+.finding-meta { margin: 2px 0 0; color: var(--ink-2); font-size: 14px; }
+.finding-note { margin: 8px 0 0; color: var(--ink-2); font-size: 14px; }
+.caution-line { display: flex; align-items: center; gap: 8px; margin: 10px 0 0; padding: 8px 10px; border-radius: 8px; background: var(--caution-bg); color: var(--caution); font-size: 15px; font-weight: 600; }
+.caution-line svg { width: 16px; height: 16px; flex: none; }
+.answer { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 12px; border: 1px solid var(--control); border-radius: var(--radius-control); overflow: hidden; }
+.answer button { min-height: 44px; padding: 0 6px; border: 0; border-left: 1px solid var(--control); background: var(--surface); color: var(--ink); font: 500 15px/1.1 var(--font); cursor: pointer; transition: background-color 160ms ease; }
+.answer button:first-child { border-left: 0; }
+.answer button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); font-weight: 700; }
+.finding-actions { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 6px; }
+.link-button { min-height: 44px; padding: 0; background: none; border: 0; color: var(--accent); font: 600 15px/1 var(--font); text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 1px; cursor: pointer; }
+.checked-list { margin-top: 28px; }
+.checked-list summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 700; }
+.checked-list ul { margin: 0; padding: 0; list-style: none; }
+.checked-list li { display: grid; gap: 2px; padding: 10px 0; border-top: 1px solid var(--line); }
+.checked-list .muted { font-size: 14px; }
+.not-checked .plain-list li span { color: var(--ink-2); }
+.guides { margin: 6px 0 0; padding-left: 18px; }
+.guides li { margin: 6px 0; }
 
 /* ---------- Under the hood ---------- */
 .kv { margin: 8px 0 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); }
@@ -247,6 +286,10 @@ kbd {
 }
 .sheet details[open] summary::before { transform: rotate(45deg); }
 .sheet .close { position: absolute; top: 8px; right: 8px; }
+
+@media (hover: hover) and (pointer: fine) {
+  .answer button:not([aria-pressed="true"]):hover { background: var(--accent-tint); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }

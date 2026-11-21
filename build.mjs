@@ -47,6 +47,15 @@ await build({ ...common, define: { ...common.define, __APPCHECK_DEBUG_TOKEN__: '
 for (const f of await readdir('web')) if (f.endsWith('.html')) await cp(`web/${f}`, `web/dist/${f}`);
 if (existsSync('web/public')) await cp('web/public', 'web/dist', { recursive: true });
 
+// The practice check's made-up settings pages (web/practice/pages.mjs).
+const { PAGES, PRACTICE_CSS } = await import('./web/practice/pages.mjs');
+for (const [file, html] of Object.entries(PAGES)) {
+  const out = `web/dist/practice/${file}`;
+  await mkdir(out.slice(0, out.lastIndexOf('/')), { recursive: true });
+  await writeFile(out, html);
+}
+await writeFile('web/dist/practice/practice.css', PRACTICE_CSS);
+
 // A published bundle must never carry the debug token.
 if (debugToken) {
   const leaks = [];
