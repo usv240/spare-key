@@ -62,6 +62,12 @@ same way. That shows each page exists. What each page looks like when signed in 
 
 | Item | When |
 |---|---|
-| Every settings page's signed-in structure (needs the test accounts) | Day 2 |
+| Every settings page's signed-in structure (needs the test accounts; `tools/record-pages.mjs`) | Day 2 |
+| Whether Google asks to "verify it's you" before showing the recovery and 2-Step Verification pages | Day 2, recorded as `reauth` by `tools/record-pages.mjs` |
 | The Cornell CETA and NNEDV order of steps | Day 4 |
-| The extension's App Check bridge path in a release build (needs the site deployed) | Day 1, after deploy |
+
+## The release path
+
+With the site deployed (only `appcheck-bridge.html` so far), a release build (`RELEASE=1`, no debug token) got its App
+Check token from the bridge page and the cloud probe answered in 3.1 s. The bridge page is served with
+`Content-Security-Policy: frame-ancestors chrome-extension://opmpimgddnahhbmhioookicpekibjahl`.

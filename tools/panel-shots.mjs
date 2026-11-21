@@ -55,6 +55,7 @@ try {
   console.log(JSON.stringify(fonts));
 } finally {
   await browser.close();
-  rmSync(profile, { recursive: true, force: true, maxRetries: 3 });
+  // Windows can hold the profile a moment after Chrome exits; a leftover temp folder is harmless.
+  try { rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 }); } catch { /* left in %TEMP% */ }
 }
 console.log(shots.map(f => path.relative(process.cwd(), f)).join('\n'));

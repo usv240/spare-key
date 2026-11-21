@@ -212,7 +212,13 @@ async function refreshHood() {
   try {
     const s = await offscreen('sk:settings');
     $('where-plan').textContent = s.cloudOn ? 'Gemini in the cloud' : 'This computer only';
-    $('where-plan-sub').textContent = s.cloudOn ? `Finding types only. Models: ${s.models.join(', ')}` : 'The cloud is switched off for every copy of Spare Key.';
+    const sub = $('where-plan-sub');
+    if (s.cloudOn) {
+      // Each model name on one line: they break badly at their hyphens.
+      sub.replaceChildren('Finding types only. Models: ', ...s.models.flatMap((m, i) => [
+        ...(i ? [', '] : []), Object.assign(document.createElement('span'), { textContent: m, style: 'white-space:nowrap' }),
+      ]));
+    } else sub.textContent = 'The cloud is switched off for every copy of Spare Key.';
     $('where-rc-sub').textContent = { remote: 'Fetched from Firebase Remote Config.', cached: 'From the last fetch of Firebase Remote Config.', defaults: 'Built-in defaults. Remote Config was not reached.' }[s.from] || '';
   } catch {
     $('where-rc-sub').textContent = 'Built-in defaults. Remote Config was not reached.';

@@ -139,7 +139,7 @@ try {
   // A kept profile belongs to another project: leave it as it was.
   if (keptProfile && id) await browser.uninstallExtension(id).catch(() => {});
   await browser.close().catch(() => {});
-  if (!keptProfile) rmSync(profile, { recursive: true, force: true, maxRetries: 3 });
+  if (!keptProfile) try { rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 }); } catch { /* left in %TEMP% */ }
 }
 const failed = report.steps.filter(s => !s.ok).length;
 writeFileSync(path.join(out, `day1-report${nano ? '-nano' : ''}.json`), JSON.stringify(report, null, 2));
