@@ -351,4 +351,18 @@ export function hybridJson({ purpose, body, system, schema, onSend = async () =>
   });
 }
 
+// ---------------------------------------------------------------------------------------------------------------
+// The steps library in Cloud Firestore (public, read-only; App Check enforced). Firestore Lite keeps the bundle small.
+
+/** The library from Firestore when its version is newer than `haveVersion`; otherwise null. */
+export async function remoteLibrary(haveVersion) {
+  const { getFirestore, doc, getDoc, collection, getDocs } = await import('firebase/firestore/lite');
+  const db = getFirestore(app);
+  const meta = await getDoc(doc(db, 'meta', 'library'));
+  const m = meta.exists() ? meta.data() : null;
+  if (!m || !(Number(m.version) > Number(haveVersion))) return null;
+  const snap = await getDocs(collection(db, 'steps'));
+  return { version: Number(m.version), updated_at: String(m.updated_at || ''), entries: snap.docs.map(d => d.data()) };
+}
+
 export { InferenceMode };

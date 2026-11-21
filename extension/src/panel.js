@@ -15,7 +15,19 @@ import { CODES, CODE_TEXT, SITUATION, SITUATION_DEFAULTS, OWNERSHIP, RECENCY, HO
 import STEPS from '../../data/steps.json';
 import { lock, unlock } from '../../shared/lockedfile.js';
 
-const LIBRARY = libraryMap(STEPS);
+// The steps library: the bundled copy, replaced for this session by a newer one from Firestore if there is one.
+let LIBRARY = libraryMap(STEPS);
+let libraryInfo = { version: STEPS.version, updated_at: STEPS.updated_at, from: 'bundled' };
+async function refreshLibrary() {
+  const { library: cached } = await chrome.storage.session.get('library');
+  if (cached?.entries) { LIBRARY = libraryMap(cached); libraryInfo = { version: cached.version, updated_at: cached.updated_at, from: 'firestore' }; return; }
+  const r = await offscreen('sk:library', { version: STEPS.version }).catch(() => null);
+  if (r?.library) {
+    LIBRARY = libraryMap(r.library);
+    libraryInfo = { version: r.library.version, updated_at: r.library.updated_at, from: 'firestore' };
+    await chrome.storage.session.set({ library: r.library });
+  } else if (r?.same) libraryInfo = { ...libraryInfo, from: 'bundled, same as Firestore' };
+}
 
 const $ = id => document.getElementById(id);
 
@@ -595,6 +607,10 @@ async function refreshHood() {
       ]));
     } else sub.textContent = 'The cloud is switched off for every copy of Spare Key.';
     $('where-rc-sub').textContent = { remote: 'Fetched from Firebase Remote Config.', cached: 'From the last fetch of Firebase Remote Config.', defaults: 'Built-in defaults. Remote Config was not reached.' }[s.from] || '';
+    const updated = libraryInfo.updated_at ? new Date(`${libraryInfo.updated_at}T12:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
+    $('where-lib-sub').textContent = libraryInfo.from === 'firestore'
+      ? `Version ${libraryInfo.version}, updated ${updated}, from Cloud Firestore.`
+      : `Version ${libraryInfo.version}, updated ${updated}. ${libraryInfo.from === 'bundled' ? 'Firestore was not reached; this is the copy inside the extension.' : 'The copy inside the extension matches Firestore.'}`;
   } catch {
     $('where-rc-sub').textContent = 'Built-in defaults. Remote Config was not reached.';
   }
@@ -678,6 +694,7 @@ async function loadOverrides() {
   const { theme } = await chrome.storage.local.get('theme');
   applyTheme(theme);
   await loadOverrides();
+  await refreshLibrary().catch(() => {});
   await Promise.all([renderChecks(), showNano(), showCloud(), showExitShortcut()]);
   // Load Gemini Nano in the background while the person reads the first screens.
   if (nanoStatus === 'available') offscreen('sk:nano-warm').catch(() => {});

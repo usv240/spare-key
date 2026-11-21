@@ -110,6 +110,9 @@ try {
   report.setup = setup;
   log('setup check took', Date.now() - t0, 'ms');
   step('Remote Config answers', setup.settings?.from === 'remote', setup.settings);
+  // Firestore: the steps library check reads meta/library through App Check (a version of 0 forces a full read).
+  const lib = await panel.evaluate(() => chrome.runtime.sendMessage({ target: 'offscreen', type: 'sk:library', options: { version: 0 } }));
+  step('Firestore steps library answers through App Check', !!lib?.library?.entries?.length, lib?.library ? `version ${lib.library.version}, ${lib.library.entries.length} entries` : lib);
   if (nano) step('device-only prompt answers (Gemini Nano, ONLY_ON_DEVICE)', setup.nano?.answer?.status === 'ready', setup.nano);
   else log('INFO Gemini Nano in this profile:', JSON.stringify(setup.nano));
   if (cloud) step('cloud prompt answers (ONLY_IN_CLOUD, GoogleAIBackend)', setup.cloud?.answer?.status === 'ready', setup.cloud);

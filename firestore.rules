@@ -1,0 +1,80 @@
+rules_version = '2';
+
+// ===============================================================
+// Assumed Data Model (TECHNICAL-DESIGN.md section 11)
+// ===============================================================
+//
+// Collection: steps
+// Document ID: a finding code, like gmail.forwarding.external
+// Fields: the steps library entry (data/steps.json): title, what_it_means, who_can_notice, notice_why,
+//   evidence_first, steps, if_not_safe_yet, also_check, sources, verified_at, verified_how, steps_followed, version.
+// Public text with no personal data. Read by anyone (survivors never sign in, by design); written only by the
+// builder's admin script (tools/firestore-sync.mjs), which uses server credentials and bypasses these rules.
+//
+// Collection: meta
+// Document ID: library
+// Fields: version: number, updated_at: string (YYYY-MM-DD). Public; admin-written.
+//
+// Collection: layout_reports
+// Document ID: auto
+// Fields (all required, nothing else allowed):
+//   - check: string (a check id, under 40 characters, like google.devices)
+//   - reader_version: string (under 20 characters)
+//   - reason: string, one of no_entries | timeout | unexpected_layout
+//   - ext_version: string (under 20 characters)
+//   - day: string (YYYY-MM-DD; no time finer than a day)
+// Opt-in and anonymous: no page text, no URL, no account. Create only; nobody can read, change or delete them
+// from a client.
+//
+// App Check is enforced on Firestore, so only Spare Key's site and extension can reach it.
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Helper functions
+    // ===============================================================
+
+    function isShortString(v, max) {
+      return v is string && v.size() > 0 && v.size() < max;
+    }
+
+    function isValidLayoutReport(d) {
+      return d.keys().hasAll(['check', 'reader_version', 'reason', 'ext_version', 'day'])
+        && d.keys().hasOnly(['check', 'reader_version', 'reason', 'ext_version', 'day'])
+        && isShortString(d.check, 40)
+        && d.check.matches('^[a-z0-9]+\\.[a-z0-9_]+$')
+        && isShortString(d.reader_version, 20)
+        && d.reason in ['no_entries', 'timeout', 'unexpected_layout']
+        && isShortString(d.ext_version, 20)
+        && d.day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    // The public steps library: readable by anyone, written only by the admin script.
+    match /steps/{code} {
+      allow get, list: if true;
+      allow write: if false;
+    }
+
+    match /meta/{doc} {
+      allow get, list: if true;
+      allow write: if false;
+    }
+
+    // Opt-in anonymous layout reports: create only, validated.
+    match /layout_reports/{id} {
+      allow create: if isValidLayoutReport(request.resource.data);
+      allow read, update, delete: if false;
+    }
+
+    // Everything else: denied.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

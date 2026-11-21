@@ -1,6 +1,7 @@
 // Offscreen page: a hidden extension page that hosts Gemini Nano sessions and every Firebase call.
 // It talks to the side panel and the service worker by runtime messages addressed { target: 'offscreen' }.
-import { deviceStatus, deviceJson, cloudJson, liveSettings, resetCloudBudget, TEXT_ONLY, TEXT_AND_IMAGE } from './ai.js';
+import { deviceStatus, deviceJson, cloudJson, liveSettings, resetCloudBudget, remoteLibrary, TEXT_ONLY, TEXT_AND_IMAGE } from './ai.js';
+import { validateLibrary } from '../../shared/steps-schema.js';
 import { classifyEntries, readWholePage } from './classify.js';
 import { cloudPlan } from './cloud/plan.js';
 import { twoVoices } from './cloud/voices.js';
@@ -99,6 +100,17 @@ const NANO = {
     }
   },
   'sk:fresh-days': async () => ({ freshDays: (await liveSettings()).freshDays }),
+  // A newer steps library from Firestore, checked before use. Public text; nothing is sent but the read itself.
+  'sk:library': async ({ version }) => {
+    try {
+      const lib = await remoteLibrary(version);
+      if (!lib) return { same: true };
+      const problems = validateLibrary(lib);
+      return problems.length ? { invalid: problems.slice(0, 5) } : { library: lib };
+    } catch (e) {
+      return { error: String(e && e.message || e).slice(0, 200) };
+    }
+  },
   // The two-voice check on a cloud draft, when Remote Config's two_voice_on is true.
   'sk:two-voices': async ({ body, draft, privateStrings, library }) => {
     const settings = await liveSettings();
