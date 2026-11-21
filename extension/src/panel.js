@@ -13,6 +13,7 @@ import { applyInvariants, cleanText } from '../../shared/plan/invariants.js';
 import { libraryMap } from '../../shared/steps-schema.js';
 import { CODES, CODE_TEXT, SITUATION, SITUATION_DEFAULTS, OWNERSHIP, RECENCY, HOW_FOUND } from '../../shared/findings.js';
 import STEPS from '../../data/steps.json';
+import { lock, unlock } from '../../shared/lockedfile.js';
 
 const LIBRARY = libraryMap(STEPS);
 
@@ -48,6 +49,7 @@ document.addEventListener('keydown', e => {
   if (now - lastEscape < 1000) { quickExit(); return; }
   lastEscape = now;
   if (isInfoOpen()) closeInfo();
+  else closeLockSheet();
 });
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -440,6 +442,90 @@ function onCheckFresh(code) {
     redrawPlan();
   });
 }
+
+// ---------------------------------------------------------------------------------------------------------------
+// The locked copy: saved and opened on this computer only. The file name does not mention Spare Key.
+
+let lockMode = 'save';
+let lockReturn = null;
+function openLockSheet(mode, from) {
+  lockMode = mode;
+  lockReturn = from;
+  const save = mode === 'save';
+  $('lock-title').textContent = save ? 'Save a locked copy' : 'Open a locked copy';
+  $('lock-intro').textContent = save
+    ? 'This saves what Spare Key found and your plan in a file that only this password opens. The file name does not mention Spare Key.'
+    : 'Choose the locked file, then type its password. It opens here, on this computer.';
+  $('lock-file-field').hidden = save;
+  $('lock-confirm-field').hidden = !save;
+  $('lock-confirm').required = save;
+  $('lock-submit').textContent = save ? 'Save the locked copy' : 'Open it';
+  $('lock-password').autocomplete = save ? 'new-password' : 'current-password';
+  $('lock-form').reset();
+  $('lock-error').hidden = true;
+  const sheet = $('lock-sheet');
+  sheet.hidden = false;
+  $('scrim').hidden = false;
+  sheet.dataset.state = 'closed';
+  void sheet.offsetHeight;
+  sheet.dataset.state = 'open';
+  (save ? $('lock-password') : $('lock-file')).focus();
+}
+function closeLockSheet() {
+  const sheet = $('lock-sheet');
+  if (sheet.hidden) return;
+  sheet.dataset.state = 'closed';
+  $('scrim').hidden = true;
+  $('lock-form').reset();
+  setTimeout(() => { sheet.hidden = true; }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 170);
+  lockReturn?.focus({ preventScroll: true });
+}
+function lockError(text) { $('lock-error').textContent = text; $('lock-error').hidden = false; }
+$('save-locked').addEventListener('click', e => openLockSheet('save', e.currentTarget));
+$('open-locked').addEventListener('click', e => openLockSheet('open', e.currentTarget));
+$('lock-close').addEventListener('click', closeLockSheet);
+$('scrim').addEventListener('click', closeLockSheet);
+$('lock-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const password = $('lock-password').value;
+  if (password.length < 8) return lockError('Use a password of at least 8 characters.');
+  $('lock-submit').disabled = true;
+  try {
+    if (lockMode === 'save') {
+      if (password !== $('lock-confirm').value) return lockError('The two passwords are not the same.');
+      const { scan, plan } = await chrome.storage.session.get(['scan', 'plan']);
+      if (!scan) return lockError('There is nothing to save yet.');
+      const text = await lock({ scan, plan: plan || null, savedAt: new Date().toISOString() }, password);
+      const url = URL.createObjectURL(new Blob([text], { type: 'application/octet-stream' }));
+      const a = h('a', { href: url, download: `notes-${new Date().toISOString().slice(0, 10)}.locked` });
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      closeLockSheet();
+      announce('The locked copy was saved to your downloads.');
+    } else {
+      const file = $('lock-file').files[0];
+      if (!file) return lockError('Choose the locked file first.');
+      const value = await unlock(await file.text(), password);
+      if (!value?.scan?.findings) return lockError('This file does not hold a Spare Key check.');
+      await chrome.storage.session.set({ scan: value.scan, plan: value.plan || null, safetySeen: true });
+      closeLockSheet();
+      practice = value.scan.mode === 'practice';
+      if (value.plan) {
+        $('plan-questions').hidden = true;
+        $('plan-actions').hidden = false;
+        renderPlan($('plan'), { plan: value.plan.result.plan, fired: value.plan.result.fired, byRef: new Map(value.scan.findings.map(f => [f.ref, f])), library: LIBRARY, source: value.plan.source, model: value.plan.model, voices: value.plan.voices, onOpen: url => chrome.tabs.create({ url }) });
+      }
+      showResults(value.scan);
+      announce('The locked copy is open.');
+    }
+  } catch (err) {
+    lockError(err?.name === 'WrongPassword' ? err.message : String(err?.message || 'That did not work.'));
+  } finally {
+    $('lock-submit').disabled = false;
+  }
+});
 
 // Questions from the cloud, answered here: yes, no or unknown from the findings (ask_device), or by the person (ask_user).
 let pendingAsk = null;

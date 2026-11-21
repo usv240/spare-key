@@ -6,7 +6,7 @@
 //   node tools/e2e-practice.mjs --nano                       the Gemini Nano test profile (code plus Nano)
 //   --screens   also save screenshots of the scan and the results to tools/out/e2e/
 import puppeteer from 'puppeteer-core';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, readdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { CHROME, NANO_PROFILE, builtInModelArgs, freshServiceWorkers } from './chrome-args.mjs';
@@ -158,6 +158,44 @@ try {
     const leaks = CANARIES.filter(c => text.toLowerCase().includes(c.toLowerCase()) || text.includes(encodeURIComponent(c)) || text.includes(b64(c)));
     step('what left this computer holds no name, address, number or device', sent.length > 0 && !leaks.length, leaks.length ? leaks : `${sent.length} entries checked`);
     if (screens) await panel.screenshot({ path: path.join(out, `plan${nano ? '-nano' : ''}.png`), fullPage: true });
+
+    // The locked copy: save it, clear everything, open it with a wrong password, then the right one.
+    const downloads = path.join(profile, 'downloads');
+    mkdirSync(downloads, { recursive: true });
+    const bcdp = await browser.target().createCDPSession();
+    await bcdp.send('Browser.setDownloadBehavior', { behavior: 'allow', downloadPath: downloads, eventsEnabled: true });
+    const PASSWORD = 'practice password 7';
+    await panel.evaluate(() => document.getElementById('save-locked').click());
+    await panel.waitForSelector('#lock-sheet[data-state="open"]');
+    await panel.type('#lock-password', PASSWORD);
+    await panel.type('#lock-confirm', PASSWORD);
+    await panel.click('#lock-submit');
+    let file = '';
+    for (let i = 0; i < 40 && !file; i++) {
+      await new Promise(r => setTimeout(r, 500));
+      file = readdirSync(downloads).find(f => f.endsWith('.locked')) || '';
+    }
+    const saved = file ? readFileSync(path.join(downloads, file), 'utf8') : '';
+    step('a locked copy is saved, with a name that does not mention Spare Key', !!file && !/spare/i.test(file), file);
+    step('the locked copy holds nothing readable', !!saved && !/example\.net|Jordan|Sam Porter|google\.devices/i.test(saved), `${saved.length} characters`);
+    await panel.evaluate(() => document.getElementById('clear-all-2').click());
+    await panel.waitForSelector('#screen-choose:not([hidden])');
+    await panel.evaluate(() => document.getElementById('open-locked').click());
+    await panel.waitForSelector('#lock-sheet[data-state="open"]');
+    const input = await panel.$('#lock-file');
+    await input.uploadFile(path.join(downloads, file));
+    await panel.type('#lock-password', 'not the password');
+    await panel.click('#lock-submit');
+    await panel.waitForSelector('#lock-error:not([hidden])', { timeout: 30000 });
+    const wrong = await panel.$eval('#lock-error', el => el.textContent);
+    step('a wrong password says so plainly', /no way to recover/.test(wrong), wrong);
+    await panel.evaluate(() => { document.getElementById('lock-password').value = ''; });
+    await panel.type('#lock-password', PASSWORD);
+    await panel.click('#lock-submit');
+    await panel.waitForSelector('#screen-results:not([hidden])', { timeout: 30000 });
+    const reopened = await panel.evaluate(() => chrome.storage.session.get('scan').then(r => r.scan.findings.length));
+    step('the locked copy opens with the right password', reopened === scan.findings.length, `${reopened} findings`);
+    await bcdp.detach();
   }
 } catch (e) {
   step('run', false, String(e && e.stack || e).slice(0, 600));

@@ -121,10 +121,11 @@ test('function answers are enums only, or a steps library entry', () => {
   const library = { 'gmail.delegate': { code: 'gmail.delegate', title: 'Someone else can open your Gmail' } };
   assert.doesNotThrow(() => checkAnswer('ask_device', { answer: 'yes' }));
   assert.doesNotThrow(() => checkAnswer('ask_user', { answer: 'skipped' }));
-  assert.doesNotThrow(() => checkAnswer('get_steps', library['gmail.delegate'], { library }));
+  assert.doesNotThrow(() => checkAnswer('get_steps', { entries: { 'gmail.delegate': library['gmail.delegate'] } }, { library }));
   assert.throws(() => checkAnswer('ask_device', { answer: 'yes', name: CANARIES[0] }), CloudSafetyError);
   assert.throws(() => checkAnswer('ask_user', { answer: CANARIES[0] }), CloudSafetyError);
-  assert.throws(() => checkAnswer('get_steps', { code: 'gmail.delegate', title: CANARIES[0] }, { library }), CloudSafetyError);
+  assert.throws(() => checkAnswer('get_steps', { entries: { 'gmail.delegate': { code: 'gmail.delegate', title: CANARIES[0] } } }, { library }), CloudSafetyError);
+  assert.throws(() => checkAnswer('get_steps', { entries: {} }, { library }), CloudSafetyError);
   assert.throws(() => checkAnswer('read_page', { text: 'x' }), CloudSafetyError);
 });
 

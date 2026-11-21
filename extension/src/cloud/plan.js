@@ -16,8 +16,8 @@ export const PLAN_TOOLS = [{
   functionDeclarations: [
     {
       name: 'get_steps',
-      description: 'Read the verified steps library entry for one finding code: what it means, whether a change may be noticed, what to screenshot, the steps, and what to do if now is not a good time.',
-      parameters: { type: 'object', properties: { code: enumOf(Object.keys(CODES), 'A finding code from the request.') }, required: ['code'] },
+      description: 'Read the verified steps library entries for finding codes: what each means, whether a change may be noticed, what to screenshot, the steps, and what to do if now is not a good time. Ask for all the codes you need in one call.',
+      parameters: { type: 'object', properties: { codes: { type: 'array', items: enumOf(Object.keys(CODES), 'A finding code from the request.') } }, required: ['codes'] },
     },
     {
       name: 'ask_device',
@@ -36,7 +36,7 @@ const PLAN_SYSTEM = `You help a person decide the order in which to deal with ac
 You see only finding codes and the person's chosen answers, never names or details. A finding with ownership "not_mine" or "unsure" gives someone else access; "mine" belongs to the person.
 Rules you must follow: document before changing anything; warn whenever a change may be noticed;
 when it may not be a good time to change things (safe_to_change_now is not "yes", or not given), say to wait and to talk to an advocate; never call anything safe or secure, and never say there is nothing to worry about.
-Use get_steps to read the verified steps for a code. Use ask_device to learn a yes/no fact about a finding.
+Use get_steps once, with every code you need, to read the verified steps. Use ask_device to learn a yes/no fact about a finding.
 Use ask_user only when the answer would change the order, at most two times.
 Return the plan as JSON that follows the schema, in this shape:
 1. One "document" step whose refs are every finding that is not "mine".
@@ -72,8 +72,8 @@ export const PLAN_SCHEMA = {
 export function cloudPlan({ body, library, privateStrings, ask, onSend }) {
   const onCall = async (name, args) => {
     if (name === 'get_steps') {
-      const entry = library[args.code];
-      return entry || { note: 'Unknown function.' };
+      const codes = [...new Set([...(Array.isArray(args.codes) ? args.codes : []), ...(args.code ? [args.code] : [])])].filter(c => library[c]).slice(0, 30);
+      return codes.length ? { entries: Object.fromEntries(codes.map(c => [c, library[c]])) } : { note: 'Unknown function.' };
     }
     if (name === 'ask_device' && DEVICE_QUESTIONS.includes(args.question) && /^f\d{1,3}$/.test(args.ref || '')) {
       return { answer: await ask('device', args) };

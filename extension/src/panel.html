@@ -86,6 +86,7 @@
         <button class="info" type="button" data-info="start" aria-label="About starting the check" style="margin-top:8px"><svg aria-hidden="true"><use href="#i-info"/></svg></button>
       </div>
       <p class="muted" id="start-status" role="status" hidden></p>
+      <button class="btn btn-secondary btn-block" type="button" id="open-locked">Open a locked copy</button>
     </div>
   </section>
 
@@ -121,6 +122,7 @@
     <div id="ask-user" class="ask" hidden></div>
     <div class="actions" id="plan-actions" hidden>
       <button class="btn btn-secondary btn-block" type="button" id="print-plan">Print</button>
+      <button class="btn btn-secondary btn-block" type="button" id="save-locked">Save a locked copy</button>
       <button class="btn btn-secondary btn-block" type="button" id="back-results">Back to what we found</button>
       <button class="btn btn-secondary btn-block" type="button" id="clear-all-2">Clear everything</button>
     </div>
@@ -165,6 +167,29 @@
   <p><span class="label" id="sheet-what-label">What this is</span><span id="sheet-what"></span></p>
   <p><span class="label" id="sheet-why-label">Why it matters</span><span id="sheet-why"></span></p>
   <details id="sheet-tech-wrap"><summary>Technical detail</summary><p id="sheet-tech"></p></details>
+</section>
+
+<section class="sheet lock-sheet" id="lock-sheet" role="dialog" aria-modal="false" aria-labelledby="lock-title" data-state="closed" hidden>
+  <button class="info close" type="button" id="lock-close" aria-label="Close"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+  <h2 id="lock-title">Save a locked copy</h2>
+  <p id="lock-intro" class="muted"></p>
+  <form id="lock-form" autocomplete="off">
+    <div class="field" id="lock-file-field" hidden>
+      <label for="lock-file">The locked file</label>
+      <input type="file" id="lock-file">
+    </div>
+    <div class="field">
+      <label for="lock-password">Password</label>
+      <input type="password" id="lock-password" minlength="8" autocomplete="new-password" required>
+    </div>
+    <div class="field" id="lock-confirm-field">
+      <label for="lock-confirm">The same password again</label>
+      <input type="password" id="lock-confirm" minlength="8" autocomplete="new-password">
+    </div>
+    <p class="muted" id="lock-note">There is no way to recover a forgotten password.</p>
+    <p class="lock-error" id="lock-error" role="alert" hidden></p>
+    <button class="btn btn-primary btn-block" type="submit" id="lock-submit">Save the locked copy</button>
+  </form>
 </section>
 
 <div class="visually-hidden" aria-live="polite" id="announce"></div>

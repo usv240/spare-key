@@ -337,6 +337,15 @@ kbd {
   .btn:active { transform: none; }
 }
 
+/* ---------- Locked copy ---------- */
+.lock-sheet form { display: grid; gap: 14px; }
+.field { display: grid; gap: 8px; }
+.field label { font-weight: 600; }
+.field input[type="password"] { min-height: 44px; padding: 0 12px; border: 1px solid var(--control); border-radius: var(--radius-control); background: var(--surface); color: var(--ink); font: 400 16px/1.2 var(--font); }
+.field input[type="file"] { font: 400 15px/1.3 var(--font); color: var(--ink); }
+.lock-sheet .muted { margin: 0; }
+.lock-error { margin: 0; padding: 10px 12px; border-radius: 8px; background: var(--caution-bg); color: var(--caution); font-weight: 600; }
+
 /* ---------- Two voices ---------- */
 .voices { margin-top: 16px; padding: 4px 14px 8px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); }
 .voices > summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 700; }

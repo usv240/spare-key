@@ -139,8 +139,13 @@ export const FUNCTION_ANSWERS = {
   ask_device: a => { onlyKeys(a, ['answer'], 'answer'); assertEnum(a.answer, ['yes', 'no', 'unknown'], 'answer'); },
   ask_user: a => { onlyKeys(a, ['answer'], 'answer'); assertEnum(a.answer, ['yes', 'no', 'not_sure', 'skipped'], 'answer'); },
   get_steps: (a, ctx) => {
-    const entry = a && ctx?.library?.[a.code];
-    if (!entry || JSON.stringify(a) !== JSON.stringify(entry)) fail('get_steps may return only a steps library entry');
+    onlyKeys(a, ['entries'], 'answer');
+    const entries = Object.entries(a.entries || {});
+    if (!entries.length) fail('get_steps returned nothing');
+    for (const [code, entry] of entries) {
+      const lib = ctx?.library?.[code];
+      if (!lib || JSON.stringify(entry) !== JSON.stringify(lib)) fail('get_steps may return only steps library entries');
+    }
   },
   note: a => { onlyKeys(a, ['note'], 'answer'); assertEnum(a.note, ['No more lookups. Answer now.', 'Unknown function.'], 'note'); },
 };

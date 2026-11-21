@@ -13,7 +13,7 @@ import { firebaseConfig, recaptchaSiteKey, appCheckBridgeUrl } from './firebase-
 import { CLOUD_MODELS, REMOTE_DEFAULTS, remoteDefaultConfig } from '../../shared/config.js';
 import { checkOutgoing, checkAnswer, CloudSafetyError } from '../../shared/cloud-safe.js';
 
-const CLOUD_TIMEOUT_MS = 40000;
+const CLOUD_TIMEOUT_MS = 30000;
 
 const app = initializeApp(firebaseConfig);
 
@@ -206,7 +206,15 @@ const retryDelay = (e, attempt) => {
   return Math.min(30000, m ? Math.ceil(parseFloat(m[1]) * 1000) + 250 : 4000 * 2 ** attempt);
 };
 
-// One cloud call at a time: the free tier answered only about 3 concurrent calls when Still Recalled measured it.
+// One cloud call at a time: the free tier answered only about 3 concurrent calls when Still Recalled measured it, and
+// seven calls in six seconds drew a refusal on November 21, 2026. Each request also waits at least GAP_MS after the last.
+const GAP_MS = 1200;
+let lastCallAt = 0;
+async function paced() {
+  const wait = lastCallAt + GAP_MS - Date.now();
+  if (wait > 0) await sleep(wait);
+  lastCallAt = Date.now();
+}
 let tail = Promise.resolve();
 let callsThisScan = 0;
 function oneAtATime(fn) {
@@ -240,7 +248,7 @@ async function askWithTool(model, text, onCall, guard, logSend, spend) {
       answers.push({ functionResponse: { name: c.name, response } });
     }
     // Every round is another request: it counts against the scan's cloud budget and is logged before it is sent.
-    spend();
+    await spend();
     await logSend({ kind: 'function_answers', body: answers.map(a => ({ name: a.functionResponse.name, response: a.functionResponse.response })) });
     r = await chat.sendMessage(answers);
   }
@@ -267,10 +275,11 @@ export function cloudJson({ purpose, body, system, schema, privateStrings = [], 
     const spend = () => {
       if (callsThisScan >= settings.maxCloudCalls) throw new CloudBudgetError();
       callsThisScan++;
+      return paced();
     };
     for (let attempt = 0; attempt <= retries; attempt++) {
       for (const model of settings.models) {
-        spend();
+        await spend();
         const logSend = entry => onSend({ time: new Date().toISOString(), purpose, model, ...entry });
         try {
           await logSend({ kind: 'request', body: JSON.parse(text) });
@@ -279,7 +288,7 @@ export function cloudJson({ purpose, body, system, schema, privateStrings = [], 
             : await cloudModel({ system, schema, model, tools }).generateContent(text);
           // A model that keeps calling functions after being told to answer leaves no JSON: ask once more without tools.
           if (tools && onCall && schema && !/^\s*\{/.test(r.response.text() || '')) {
-            spend();
+            await spend();
             await logSend({ kind: 'request', body: JSON.parse(text), note: 'asked again without functions' });
             r = await cloudModel({ system, schema, model }).generateContent(text);
           }
