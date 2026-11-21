@@ -226,19 +226,21 @@ export class CloudBudgetError extends Error {
  * One function-calling exchange. `onCall(name, args)` runs on this device; its answer passes checkAnswer() and is
  * logged before it goes back. At most three rounds, then the model is told to answer.
  */
-async function askWithTool(model, text, onCall, guard, logSend) {
+async function askWithTool(model, text, onCall, guard, logSend, spend) {
   const chat = model.startChat();
   let r = await chat.sendMessage(text);
   for (let round = 0; round < 3; round++) {
     const calls = (r.response.functionCalls && r.response.functionCalls()) || [];
     if (!calls.length) break;
     const answers = [];
-    for (const c of calls.slice(0, 3)) {
+    for (const c of calls.slice(0, 4)) {
       let response = round < 2 ? await onCall(c.name, c.args || {}) : { note: 'No more lookups. Answer now.' };
       const name = response && response.note ? 'note' : c.name;
       response = checkAnswer(name, response, guard);
       answers.push({ functionResponse: { name: c.name, response } });
     }
+    // Every round is another request: it counts against the scan's cloud budget and is logged before it is sent.
+    spend();
     await logSend({ kind: 'function_answers', body: answers.map(a => ({ name: a.functionResponse.name, response: a.functionResponse.response })) });
     r = await chat.sendMessage(answers);
   }
@@ -262,19 +264,28 @@ export function cloudJson({ purpose, body, system, schema, privateStrings = [], 
     const settings = await liveSettings();
     if (!settings.cloudOn) throw new Error('cloud_off');
     let last;
+    const spend = () => {
+      if (callsThisScan >= settings.maxCloudCalls) throw new CloudBudgetError();
+      callsThisScan++;
+    };
     for (let attempt = 0; attempt <= retries; attempt++) {
       for (const model of settings.models) {
-        if (callsThisScan >= settings.maxCloudCalls) throw new CloudBudgetError();
-        callsThisScan++;
+        spend();
         const logSend = entry => onSend({ time: new Date().toISOString(), purpose, model, ...entry });
         try {
           await logSend({ kind: 'request', body: JSON.parse(text) });
           let r = tools && onCall
-            ? await askWithTool(cloudModel({ system, schema, model, tools }), text, onCall, guard, logSend)
+            ? await askWithTool(cloudModel({ system, schema, model, tools }), text, onCall, guard, logSend, spend)
             : await cloudModel({ system, schema, model }).generateContent(text);
+          // A model that keeps calling functions after being told to answer leaves no JSON: ask once more without tools.
+          if (tools && schema && !/^\s*\{/.test(r.response.text() || '')) {
+            spend();
+            await logSend({ kind: 'request', body: JSON.parse(text), note: 'asked again without functions' });
+            r = await cloudModel({ system, schema, model }).generateContent(text);
+          }
           return { answer: schema ? JSON.parse(r.response.text()) : r.response.text(), model };
         } catch (e) {
-          if (e instanceof CloudSafetyError) throw e;
+          if (e instanceof CloudSafetyError || e instanceof CloudBudgetError) throw e;
           last = e;
           if (!RETRYABLE.test(String(e))) throw e;
         }

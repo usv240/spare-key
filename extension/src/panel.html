@@ -108,12 +108,25 @@
   <section class="screen" data-screen="results" id="screen-results" role="tabpanel" aria-labelledby="tab-check" hidden>
     <div id="results"></div>
     <div class="actions">
+      <button class="btn btn-primary btn-block" type="button" id="to-plan">Make my plan</button>
       <button class="btn btn-secondary btn-block" type="button" id="check-again">Check again</button>
       <button class="btn btn-secondary btn-block" type="button" id="clear-all">Clear everything</button>
     </div>
   </section>
 
-  <!-- 5. Under the hood. -->
+  <!-- 5. The plan. -->
+  <section class="screen" data-screen="plan" id="screen-plan" role="tabpanel" aria-labelledby="tab-check" hidden>
+    <div id="plan-questions"></div>
+    <div id="plan" aria-live="polite"></div>
+    <div id="ask-user" class="ask" hidden></div>
+    <div class="actions" id="plan-actions" hidden>
+      <button class="btn btn-secondary btn-block" type="button" id="print-plan">Print</button>
+      <button class="btn btn-secondary btn-block" type="button" id="back-results">Back to what we found</button>
+      <button class="btn btn-secondary btn-block" type="button" id="clear-all-2">Clear everything</button>
+    </div>
+  </section>
+
+  <!-- 6. Under the hood. -->
   <section class="screen" data-screen="hood" id="screen-hood" role="tabpanel" aria-labelledby="tab-hood" hidden>
     <h1>Under the hood</h1>
     <p class="muted">Where each step runs, and everything Spare Key sent to the cloud. You never need this page to use Spare Key.</p>

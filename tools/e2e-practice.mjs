@@ -47,7 +47,7 @@ try {
   const panel = await (await browser.waitForTarget(t => t.url() === `chrome-extension://${id}/src/panel.html`, { timeout: 15000 })).asPage();
   panel.on('console', m => { if (/error|warn/i.test(m.type())) log('panel console:', m.type(), m.text().slice(0, 300)); });
   panel.on('pageerror', e => log('panel error:', String(e).slice(0, 300)));
-  await panel.waitForSelector('#practice', { visible: true });
+  await panel.waitForSelector('body[data-ready="1"] #practice', { visible: true, timeout: 60000 });
 
   if (nano) {
     const t0 = Date.now();
@@ -74,6 +74,9 @@ try {
   await panel.evaluate(() => { for (const b of document.querySelectorAll('input[name="check"]')) b.checked = true; });
   const t0 = Date.now();
   await panel.click('#start');
+  await new Promise(r => setTimeout(r, 500));
+  const status = await panel.evaluate(() => ({ status: document.querySelector('#start-status')?.textContent, hidden: document.querySelector('#start-status')?.hidden, screen: [...document.querySelectorAll('section.screen')].filter(s => !s.hidden).map(s => s.id) }));
+  log('after Start:', JSON.stringify(status));
   await panel.waitForSelector('#screen-scanning:not([hidden]), #screen-results:not([hidden])', { timeout: 30000 });
   step('scan starts and shows progress', true);
   if (screens) { await new Promise(r => setTimeout(r, 2500)); await panel.screenshot({ path: path.join(out, `scanning${nano ? '-nano' : ''}.png`), fullPage: true }); }
@@ -113,6 +116,48 @@ try {
   const local = await panel.evaluate(() => chrome.storage.local.get(null));
   step('nothing from the scan is in local storage', !JSON.stringify(local).includes('example.net'), Object.keys(local));
   if (screens) await panel.screenshot({ path: path.join(out, `results${nano ? '-nano' : ''}.png`), fullPage: true });
+
+  if (args.includes('--plan')) {
+    // The plan, with the cloud on and the situation shared: now is not a good time, no advocate.
+    await panel.evaluate(() => document.getElementById('to-plan').click());
+    await new Promise(r => setTimeout(r, 800));
+    log('after Make my plan:', JSON.stringify(await panel.evaluate(() => ({ screens: [...document.querySelectorAll('section.screen')].filter(s => !s.hidden).map(s => s.id), q: document.querySelector('#plan-questions')?.innerHTML.length, qHidden: document.querySelector('#plan-questions')?.hidden }))));
+    await panel.waitForSelector('#make-plan', { visible: true });
+    await panel.click('input[name="q-safe_to_change_now"][value="no"]');
+    await panel.click('input[name="q-has_advocate"][value="no"]');
+    await panel.click('#share-situation');
+    await panel.click('#make-plan');
+    // Answer any question the cloud asks the person with "Not sure".
+    const t1 = Date.now();
+    let asked = 0;
+    while (Date.now() - t1 < 180000) {
+      const state = await panel.evaluate(() => ({
+        lead: document.querySelector('#plan .lead')?.textContent || '',
+        note: document.querySelector('#plan .notice')?.textContent || '',
+        asking: !document.querySelector('#ask-user').hidden,
+      }));
+      if (state.asking) { asked++; await panel.click('#ask-user .answer button:nth-child(3)'); continue; }
+      if (state.lead && !/^Asking/.test(state.note)) break;
+      await new Promise(r => setTimeout(r, 1000));
+    }
+    const plan = await panel.evaluate(() => chrome.storage.session.get('plan').then(r => r.plan));
+    const actions = plan?.result?.plan?.actions || [];
+    step('a plan is shown', actions.length > 0, `${plan?.source} ${plan?.model || ''}, ${actions.length} steps, ${asked} questions to the person, ${((Date.now() - t1) / 1000).toFixed(1)} s`);
+    step('the plan starts with screenshots, then an advocate', actions[0]?.action === 'document' && actions[1]?.action === 'talk_to_advocate', actions.slice(0, 3).map(a => a.action));
+    step('nothing is changed now when now is not a good time', !actions.some(a => a.action === 'change_now'), actions.filter(a => a.action === 'change_now').length);
+    step('every open finding has a step', scan.findings.filter(f => f.ownership !== 'mine').every(f => actions.some(a => ['change_now', 'wait'].includes(a.action) && a.refs.includes(f.ref))));
+    report.plan = { source: plan?.source, model: plan?.model, fired: plan?.result?.fired, actions: actions.map(a => ({ action: a.action, code: a.code, why: a.why })), summary: plan?.result?.plan?.summary };
+
+    // What left this computer: every request, searched for every made-up name, address and number on the practice pages.
+    const sent = await panel.evaluate(() => chrome.storage.session.get('sentLog').then(r => r.sentLog || []));
+    report.sentLog = sent;
+    const CANARIES = ['Jordan', 'jordan.lee', 'Sam Porter', 'sam.porter', 'example.net', 'example.com', '555-01', '555 01', 'Pixel 8', 'iPhone 15', 'InboxPilot', 'TrailMate', 'Riley', 'Echo Dot', 'Columbus', 'Dayton', 'examplebank', 'appointment'];
+    const text = JSON.stringify(sent);
+    const b64 = s => Buffer.from(s).toString('base64');
+    const leaks = CANARIES.filter(c => text.toLowerCase().includes(c.toLowerCase()) || text.includes(encodeURIComponent(c)) || text.includes(b64(c)));
+    step('what left this computer holds no name, address, number or device', sent.length > 0 && !leaks.length, leaks.length ? leaks : `${sent.length} entries checked`);
+    if (screens) await panel.screenshot({ path: path.join(out, `plan${nano ? '-nano' : ''}.png`), fullPage: true });
+  }
 } catch (e) {
   step('run', false, String(e && e.stack || e).slice(0, 600));
 } finally {

@@ -5,6 +5,16 @@ import { SERVICES, catalogue } from './scan/catalogue.js';
 import { setRemoteOverrides } from './scan/overrides.js';
 import { runScan, ScanStopped } from './scan/engine.js';
 import { renderResults, h } from './ui/results.js';
+import { renderQuestions, renderPlan } from './ui/plan.js';
+import { privateStringsFrom } from './scan/private.js';
+import { toCloud } from '../../shared/cloud-safe.js';
+import { buildPlan } from '../../shared/plan/engine.js';
+import { applyInvariants } from '../../shared/plan/invariants.js';
+import { libraryMap } from '../../shared/steps-schema.js';
+import { CODES, CODE_TEXT, SITUATION, SITUATION_DEFAULTS, OWNERSHIP, RECENCY, HOW_FOUND } from '../../shared/findings.js';
+import STEPS from '../../data/steps.json';
+
+const LIBRARY = libraryMap(STEPS);
 
 const $ = id => document.getElementById(id);
 
@@ -43,10 +53,10 @@ document.addEventListener('keydown', e => {
 // ---------------------------------------------------------------------------------------------------------------
 // Screens and tabs. "Your check" shows whichever of choose, scanning or results is current.
 
-const screens = ['safety', 'choose', 'scanning', 'results', 'hood'];
+const screens = ['safety', 'choose', 'scanning', 'results', 'plan', 'hood'];
 let checkScreen = 'choose';
 function show(name, { focus = null } = {}) {
-  if (['choose', 'scanning', 'results'].includes(name)) checkScreen = name;
+  if (['choose', 'scanning', 'results', 'plan'].includes(name)) checkScreen = name;
   for (const s of screens) $(`screen-${s}`).hidden = s !== name;
   $('tabs').hidden = name === 'safety';
   const onHood = name === 'hood';
@@ -266,7 +276,8 @@ async function cleanHistory(urls) {
 // Results.
 
 const reveal = new Set();
-function showResults(record) {
+// switchTo: false re-draws the results in place (after an answer) without taking the person away from another screen.
+function showResults(record, { switchTo = true } = {}) {
   renderResults($('results'), {
     scan: record,
     catalogue: catalogue(),
@@ -277,26 +288,159 @@ function showResults(record) {
       if (!f) return;
       f.ownership = ownership;
       await chrome.storage.session.set({ scan });
-      showResults(scan);
+      showResults(scan, { switchTo: false });
       document.querySelector(`[data-ref="${ref}"] [data-answer="${ownership || 'mine'}"]`)?.focus({ preventScroll: true });
     },
     onOpen: url => chrome.tabs.create({ url }),
     onToggleReveal: async ref => {
       if (reveal.has(ref)) reveal.delete(ref); else reveal.add(ref);
       const { scan } = await chrome.storage.session.get('scan');
-      if (scan) showResults(scan);
+      if (scan) showResults(scan, { switchTo: false });
       document.querySelector(`[data-ref="${ref}"] .finding-actions button:last-child`)?.focus({ preventScroll: true });
     },
   });
-  if (checkScreen !== 'results' || $('screen-results').hidden) show('results', { focus: 'results-title' });
+  if (switchTo && (checkScreen !== 'results' || $('screen-results').hidden)) show('results', { focus: 'results-title' });
 }
 
 $('check-again').addEventListener('click', () => show('choose', { focus: 'choose-title' }));
-$('clear-all').addEventListener('click', async () => {
+async function clearAll() {
   reveal.clear();
-  await chrome.storage.session.remove(['scan', 'sentLog']);
+  await chrome.storage.session.remove(['scan', 'sentLog', 'situation', 'plan']);
   announce('Everything from this check was cleared from this computer.');
   show('choose', { focus: 'choose-title' });
+}
+$('clear-all').addEventListener('click', clearAll);
+$('clear-all-2').addEventListener('click', clearAll);
+
+// ---------------------------------------------------------------------------------------------------------------
+// The plan: built by code at once, then, when plan help is on, ordered by the cloud from codes only. Either way it
+// passes the safety rules before it is shown.
+
+const notCheckedIds = scan => [...scan.outcomes.filter(o => o.status !== 'checked').map(o => o.id), 'other_services'];
+
+async function showQuestions() {
+  const { situation = { values: {}, share: false } } = await chrome.storage.session.get('situation');
+  const { cloudOn = true } = await chrome.storage.local.get('cloudOn');
+  const draw = (values, share) => renderQuestions($('plan-questions'), {
+    values, share, cloudOn,
+    onChange: async (v, s) => { await chrome.storage.session.set({ situation: { values: v, share: s } }); draw(v, s); },
+    onMake: () => makePlan(),
+  });
+  draw(situation.values, situation.share);
+  $('plan').replaceChildren();
+  $('plan-actions').hidden = true;
+  $('plan-questions').hidden = false;
+}
+
+$('to-plan').addEventListener('click', async () => {
+  await showQuestions();
+  show('plan');
+  $('plan-questions').querySelector('h2')?.focus?.();
+});
+$('back-results').addEventListener('click', async () => {
+  const { scan } = await chrome.storage.session.get('scan');
+  if (scan) showResults(scan);
+});
+$('print-plan').addEventListener('click', () => print());
+
+async function makePlan() {
+  const { scan } = await chrome.storage.session.get('scan');
+  if (!scan) return;
+  const { situation = { values: {}, share: false } } = await chrome.storage.session.get('situation');
+  const { cloudOn = true } = await chrome.storage.local.get('cloudOn');
+  const values = { ...SITUATION_DEFAULTS, ...situation.values };
+  const findings = scan.findings;
+  const byRef = new Map(findings.map(f => [f.ref, f]));
+  const ctx = { findings: findings.map(f => ({ ref: f.ref, code: f.code, ownership: f.ownership })), situation: values, notChecked: notCheckedIds(scan), library: LIBRARY };
+
+  // 1. The plan built by code, shown at once.
+  const codeResult = applyInvariants(buildPlan(ctx), ctx);
+  $('plan-questions').hidden = true;
+  $('plan-actions').hidden = false;
+  const draw = (result, source, extra = {}) => renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, onOpen: url => chrome.tabs.create({ url }), ...extra });
+  draw(codeResult, 'code', { cloudNote: cloudOn ? 'Asking Gemini in the cloud to order this for your situation. It sees finding types only.' : '' });
+  $('plan-title')?.focus({ preventScroll: true });
+  await chrome.storage.session.set({ plan: { source: 'code', result: codeResult } });
+  if (!cloudOn || !findings.some(f => f.ownership !== 'mine')) {
+    if (cloudOn) draw(codeResult, 'code');
+    return;
+  }
+
+  // 2. The cloud plan, from codes and the answers the person chose to share.
+  const shared = situation.share ? Object.fromEntries(Object.keys(SITUATION).map(k => [k, !!situation.values[k]])) : {};
+  const { body, refs } = toCloud(findings, { situation: situation.values, shared, notChecked: notCheckedIds(scan) });
+  const vocabulary = JSON.stringify([STEPS, Object.keys(CODES), SITUATION, OWNERSHIP, RECENCY, HOW_FOUND, CODE_TEXT]);
+  const privateStrings = privateStringsFrom({ findings, account: scan.account, vocabulary });
+  pendingAsk = { scan, refs };
+  const r = await offscreen('sk:cloud-plan', { body, privateStrings, library: LIBRARY, newScan: true }).catch(e => ({ error: String(e) }));
+  pendingAsk = null;
+  hideAsk();
+  if (r?.error || !r?.answer) {
+    const busy = /429|RESOURCE_EXHAUSTED|quota|503|UNAVAILABLE|overloaded/i.test(r?.error || '');
+    draw(codeResult, 'code', { cloudNote: busy
+      ? 'Your plan was made on this computer from Spare Key\'s steps library. The cloud was busy. You can try again in a minute.'
+      : 'Your plan was made on this computer from Spare Key\'s steps library.' });
+    return;
+  }
+  // Map the cloud's refs back to this computer's findings, then apply the safety rules.
+  const actions = (r.answer.actions || []).map(a => ({
+    action: a.action,
+    refs: (Array.isArray(a.refs) ? a.refs : a.ref ? [a.ref] : []).map(ref => refs[ref]).filter(Boolean),
+    why: a.why,
+  }));
+  const cloudResult = applyInvariants({ actions, summary: r.answer.summary }, ctx);
+  draw(cloudResult, 'cloud', { model: r.model });
+  await chrome.storage.session.set({ plan: { source: 'cloud', model: r.model, result: cloudResult } });
+}
+
+// Questions from the cloud, answered here: yes, no or unknown from the findings (ask_device), or by the person (ask_user).
+let pendingAsk = null;
+const USER_QUESTION_WORDS = {
+  recognise_this: 'Do you recognise this?',
+  set_up_by_you: 'Did you set this up yourself?',
+  still_need_this: 'Do you still need this?',
+  they_know_you_use_this: 'Does the other person know you use this?',
+};
+
+function answerDevice(f, question, scan) {
+  if (!f) return 'unknown';
+  const t = `${f.detail || ''}`.toLowerCase();
+  switch (question) {
+    case 'filter_also_deletes': return f.check !== 'gmail.filters' ? 'unknown' : /\bdelete it\b/.test(t) ? 'yes' : 'no';
+    case 'forwarding_is_only_copy': return f.check !== 'gmail.forwarding' ? 'unknown' : /(delete|archive) gmail.s copy/.test(t) ? 'yes' : /keep gmail.s copy/.test(t) ? 'no' : 'unknown';
+    case 'device_active_this_week': return ['now', 'today', 'this_week'].includes(f.recency) ? 'yes' : f.recency === 'unknown' ? 'unknown' : 'no';
+    case 'app_can_read_mail': return f.check !== 'google.apps' ? 'unknown' : f.access?.includes('mail') ? 'yes' : 'no';
+    case 'app_can_see_location': return f.check !== 'google.apps' ? 'unknown' : f.access?.includes('location') ? 'yes' : 'no';
+    case 'more_items_hidden': return scan.outcomes.find(o => o.id === f.check)?.partly ? 'yes' : 'no';
+    case 'shared_with_link': return f.check !== 'maps.sharing' ? 'unknown' : f.code === 'maps.sharing.link' ? 'yes' : 'no';
+    default: return 'unknown';
+  }
+}
+
+function askPerson(f, question) {
+  return new Promise(resolve => {
+    const box = $('ask-user');
+    const done = answer => { clearTimeout(timer); hideAsk(); resolve(answer); };
+    const timer = setTimeout(() => done('skipped'), 180000);
+    const title = f ? (CODE_TEXT[f.code] || [f.code])[0] : '';
+    box.replaceChildren(
+      h('p', { text: USER_QUESTION_WORDS[question] || 'Can you tell Spare Key more about this?' }),
+      f ? h('p', { class: 'muted' }, h('span', { text: `${title}: ${f.label}` })) : null,
+      h('div', { class: 'answer', role: 'group', 'aria-label': USER_QUESTION_WORDS[question] },
+        [['yes', 'Yes'], ['no', 'No'], ['not_sure', 'Not sure'], ['skipped', 'Skip']].map(([v, w]) => h('button', { type: 'button', onclick: () => done(v) }, w))),
+      h('p', { class: 'muted', text: 'Only your answer (yes, no or not sure) is sent, never what this is.' }));
+    box.hidden = false;
+    box.querySelector('button')?.focus({ preventScroll: false });
+  });
+}
+function hideAsk() { $('ask-user').hidden = true; $('ask-user').replaceChildren(); }
+
+chrome.runtime.onMessage.addListener((msg, sender, reply) => {
+  if (msg?.type !== 'sk:ask' || sender.id !== chrome.runtime.id || !pendingAsk) return false;
+  const f = pendingAsk.scan.findings.find(x => x.ref === pendingAsk.refs[msg.ref]);
+  if (msg.kind === 'device') { reply({ answer: answerDevice(f, msg.question, pendingAsk.scan) }); return false; }
+  askPerson(f, msg.question).then(answer => reply({ answer }));
+  return true;
 });
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -402,8 +546,16 @@ async function loadOverrides() {
   if (nanoStatus === 'available') offscreen('sk:nano-warm').catch(() => {});
   // The safety screen shows first in every new browser session. After "I understand", this session goes straight on,
   // to the results if a check already ran.
-  const { safetySeen, scan } = await chrome.storage.session.get(['safetySeen', 'scan']);
+  const { safetySeen, scan, plan } = await chrome.storage.session.get(['safetySeen', 'scan', 'plan']);
   if (!safetySeen) show('safety');
-  else if (scan) { practice = scan.mode === 'practice'; showResults(scan); }
+  else if (scan && plan) {
+    practice = scan.mode === 'practice';
+    $('plan-questions').hidden = true;
+    $('plan-actions').hidden = false;
+    renderPlan($('plan'), { plan: plan.result.plan, fired: plan.result.fired, byRef: new Map(scan.findings.map(f => [f.ref, f])), library: LIBRARY, source: plan.source, model: plan.model, onOpen: url => chrome.tabs.create({ url }) });
+    show('plan');
+  } else if (scan) { practice = scan.mode === 'practice'; showResults(scan); }
   else show('choose');
+  // Start-up is done; the end-to-end tests wait for this before they click.
+  document.body.dataset.ready = '1';
 })();

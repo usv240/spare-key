@@ -2,6 +2,7 @@
 // It talks to the side panel and the service worker by runtime messages addressed { target: 'offscreen' }.
 import { deviceStatus, deviceJson, cloudJson, liveSettings, resetCloudBudget, TEXT_ONLY, TEXT_AND_IMAGE } from './ai.js';
 import { classifyEntries, readWholePage } from './classify.js';
+import { cloudPlan } from './cloud/plan.js';
 
 // Every cloud request is written to "What left this computer" (kept by the service worker) before it is sent.
 const onSend = entry => chrome.runtime.sendMessage({ type: 'sk:sent', entry });
@@ -72,6 +73,19 @@ const NANO = {
     text: 'Reply with {"ok": true}.',
   }).then(() => ({ ok: true }), e => { warm = null; return { error: String(e).slice(0, 200) }; })),
   'sk:nano-status': async () => ({ status: await deviceStatus(TEXT_ONLY) }),
+  // The cloud plan. The panel sends the toCloud() body, this session's private strings (to refuse any request that
+  // holds one) and the public steps library; questions from the cloud go back to the panel, which holds the findings.
+  'sk:cloud-plan': async ({ body, privateStrings, library, newScan }) => {
+    if (newScan) resetCloudBudget();
+    const ask = (kind, args) => chrome.runtime.sendMessage({ type: 'sk:ask', kind, ref: args.ref, question: args.question })
+      .then(r => r?.answer, () => (kind === 'user' ? 'skipped' : 'unknown'));
+    try {
+      const { answer, model } = await cloudPlan({ body, library, privateStrings, ask, onSend });
+      return { answer, model };
+    } catch (e) {
+      return { error: String(e && e.message || e).slice(0, 300), kind: e?.name || 'Error' };
+    }
+  },
   'sk:classify': async o => ({ items: await classifyEntries(o) }),
   'sk:read-page': async o => ({ entries: await readWholePage(o) }),
 };

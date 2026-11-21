@@ -113,8 +113,8 @@ export const OUTGOING = {
     assertEnum(b.voice, ['close_the_doors', 'stay_hidden', 'settle'], 'voice');
     onlyKeys(b.draft, ['actions', 'summary', 'arguments'], 'draft');
     for (const a of b.draft.actions || []) {
-      onlyKeys(a, ['ref', 'action', 'why'], 'action');
-      if (a.ref !== null && !REF.test(a.ref)) fail('action ref must look like f1');
+      onlyKeys(a, ['refs', 'action', 'why'], 'action');
+      if (!Array.isArray(a.refs) || a.refs.length > 200 || !a.refs.every(r => REF.test(r))) fail('action refs must look like f1');
       assertEnum(a.action, ['document', 'talk_to_advocate', 'change_now', 'wait', 'check_manually'], 'action');
       checkModelText(a.why, 160);
     }

@@ -25,7 +25,8 @@ function scriptStrings(file) {
 }
 const uiStrings = () => [
   ...UI_FILES.map(f => ({ where: f, text: htmlText(f) })),
-  ...scriptStrings('extension/src/panel.js').map(t => ({ where: 'extension/src/panel.js', text: t })),
+  ...['extension/src/panel.js', 'extension/src/ui/results.js', 'extension/src/ui/plan.js', 'extension/src/ui/info.js']
+    .flatMap(f => scriptStrings(f).map(t => ({ where: f, text: t }))),
   ...CHECKS.flatMap(c => [c.label, c.progress].map(t => ({ where: `catalogue ${c.id}`, text: t }))),
   ...Object.entries(INFO).flatMap(([id, e]) => Object.values(e).map(t => ({ where: `info.json ${id}`, text: t }))),
 ];

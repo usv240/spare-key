@@ -102,7 +102,7 @@ test('checkOutgoing refuses unknown purposes, extra keys and private strings', (
 
 test('the two-voice body refuses model text that holds an address, a number or a link', () => {
   const scan = toCloud([{ ref: 'a', code: 'gmail.forwarding.external', howFound: 'reader' }]).body;
-  const ok = { scan, voice: 'stay_hidden', draft: { actions: [{ ref: 'f1', action: 'wait', why: 'They may notice their copies stop.' }], summary: 'Screenshot first.' } };
+  const ok = { scan, voice: 'stay_hidden', draft: { actions: [{ refs: ['f1'], action: 'wait', why: 'They may notice their copies stop.' }], summary: 'Screenshot first.' } };
   assert.doesNotThrow(() => checkOutgoing('voices', ok));
   for (const bad of ['Mail goes to ' + CANARIES[1], 'Call (312) 555-0188', 'See https://example.com/x']) {
     const body = structuredClone(ok);

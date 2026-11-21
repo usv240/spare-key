@@ -49,7 +49,8 @@ export const CHECK_IDS = [
   'maps.sharing', 'chrome.extensions', 'chrome.sync',
   'amazon.household', 'amazon.devices', 'google.family', 'photos.sharing', 'screenshot',
 ];
-export const UNCHECKED_SERVICES = ['ring', 'life360', 'phone_carrier', 'apple', 'facebook', 'snapchat', 'your_phone'];
+// other_services stands for every service Spare Key does not cover, as one "check it yourself" step.
+export const UNCHECKED_SERVICES = ['ring', 'life360', 'phone_carrier', 'apple', 'facebook', 'snapchat', 'your_phone', 'other_services'];
 
 // Enums shared by the finding schema, the cloud projection and the plan.
 export const OWNERSHIP = ['mine', 'not_mine', 'unsure'];
