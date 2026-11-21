@@ -1,0 +1,67 @@
+{
+  "parameters": {
+    "catalogue": {
+      "defaultValue": {
+        "value": "{}"
+      },
+      "description": "Per-check overrides (URL, wait condition, selectors, on or off), keyed by check id. Empty means the bundled catalogue. This is how a broken page reader is fixed without a store update.",
+      "valueType": "JSON"
+    },
+    "cloud_models": {
+      "defaultValue": {
+        "value": "gemini-3.5-flash-lite,gemini-3.8-flash"
+      },
+      "description": "Cloud models in the order to try them.",
+      "valueType": "STRING"
+    },
+    "cloud_on": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "description": "Turns every cloud step off for all installs. The product still works from the on-device steps library.",
+      "valueType": "BOOLEAN"
+    },
+    "two_voice_on": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "description": "The two-voice check on the plan.",
+      "valueType": "BOOLEAN"
+    },
+    "freshness_on": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "description": "The steps freshness check (reads the official help page with the URL context tool).",
+      "valueType": "BOOLEAN"
+    },
+    "max_cloud_calls": {
+      "defaultValue": {
+        "value": "12"
+      },
+      "description": "Most cloud calls one scan may make.",
+      "valueType": "NUMBER"
+    },
+    "fresh_days": {
+      "defaultValue": {
+        "value": "45"
+      },
+      "description": "Days after which a steps library entry counts as stale.",
+      "valueType": "NUMBER"
+    },
+    "quick_exit_url": {
+      "defaultValue": {
+        "value": "https://www.google.com/search?q=weather"
+      },
+      "description": "Where Quick exit goes.",
+      "valueType": "STRING"
+    },
+    "hotline": {
+      "defaultValue": {
+        "value": "{\"call\":\"1-800-799-7233\",\"text\":\"Text START to 88788\",\"web\":\"https://www.thehotline.org\"}"
+      },
+      "description": "The hotline shown on every screen.",
+      "valueType": "JSON"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+node_modules/
+extension/build/
+web/dist/
+.firebase/
+# Secrets and local-only files: never commit these.
+.env
+.env.*
+*.local
+*.local.js
+*.local.json
+*.pem
+# Test accounts, real page snapshots and anything else that could name a real person.
+private/
+tools/out/
+tools/scratch/
+.taste-skill/
+.impeccable/review/

@@ -1,0 +1,20 @@
+{
+  "name": "spare-key",
+  "version": "0.1.0",
+  "description": "Finds out who still has a key to your accounts. A read-only Chrome extension and website with Firebase AI Logic hybrid inference. Names never leave your computer.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check:day1": "node tools/day1-check.mjs"
+  },
+  "dependencies": {
+    "esbuild": "0.28.2",
+    "firebase": "13.3.0"
+  },
+  "devDependencies": {
+    "puppeteer-core": "24.43.1"
+  }
+}

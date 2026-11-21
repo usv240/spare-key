@@ -1,0 +1,75 @@
+// Offscreen page: a hidden extension page that hosts Gemini Nano sessions and every Firebase call.
+// It talks to the side panel and the service worker by runtime messages addressed { target: 'offscreen' }.
+import { deviceStatus, deviceJson, cloudJson, liveSettings, resetCloudBudget, TEXT_ONLY, TEXT_AND_IMAGE } from './ai.js';
+
+// Every cloud request is written to "What left this computer" (kept by the service worker) before it is sent.
+const onSend = entry => chrome.runtime.sendMessage({ type: 'sk:sent', entry });
+
+/**
+ * The setup check behind "Check this computer" in the panel's Under the hood tab, and the day-1 test
+ * (tools/day1-check.mjs). It sends nothing personal: the cloud probe is one fixed sentence.
+ */
+async function setupCheck({ cloud = true } = {}) {
+  const out = { settings: null, nano: {}, cloud: {} };
+  const settings = await liveSettings();
+  out.settings = { from: settings.from, models: settings.models, cloudOn: settings.cloudOn, maxCloudCalls: settings.maxCloudCalls };
+
+  // Gemini Nano: availability, its input limits, and one structured prompt.
+  out.nano.text = await deviceStatus(TEXT_ONLY);
+  out.nano.image = await deviceStatus(TEXT_AND_IMAGE);
+  if ('LanguageModel' in self) {
+    try { out.nano.params = await self.LanguageModel.params?.(); } catch (e) { out.nano.paramsError = String(e).slice(0, 120); }
+  }
+  if (out.nano.text === 'available') {
+    try {
+      // How many tokens 3,500 characters of settings-page-like text use, against the session's input limit.
+      const session = await self.LanguageModel.create(TEXT_ONLY);
+      const sample = 'Signed in on Windows, Chrome. Last active 2 days ago. '.repeat(65).slice(0, 3500);
+      out.nano.inputQuota = session.inputQuota ?? session.contextWindow ?? null;
+      const measure = session.measureInputUsage || session.measureContextUsage;
+      out.nano.tokensFor3500Chars = measure ? await measure.call(session, sample) : null;
+      session.destroy();
+    } catch (e) { out.nano.quotaError = String(e).slice(0, 160); }
+    try {
+      const t0 = performance.now();
+      out.nano.answer = await deviceJson({
+        system: 'You check that you are working. Answer in JSON.',
+        schema: { type: 'object', properties: { status: { enum: ['ready'] } }, required: ['status'] },
+        text: 'Reply with status "ready".',
+      });
+      out.nano.ms = Math.round(performance.now() - t0);
+    } catch (e) { out.nano.error = String(e).slice(0, 200); }
+  }
+
+  // The cloud: one fixed probe through the same checked, logged, one-at-a-time path as every cloud call.
+  if (cloud) {
+    resetCloudBudget();
+    try {
+      const t0 = performance.now();
+      const { answer, model } = await cloudJson({
+        purpose: 'check',
+        body: { probe: 'ready' },
+        system: 'You check that you are working. The user sends {"probe":"ready"}. Answer in JSON.',
+        schema: { type: 'object', properties: { status: { type: 'string', enum: ['ready'] } }, required: ['status'] },
+        onSend,
+      });
+      out.cloud = { answer, model, ms: Math.round(performance.now() - t0) };
+    } catch (e) {
+      out.cloud = { error: String(e).slice(0, 300) };
+    }
+  }
+  return out;
+}
+
+chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
+  if (!msg || msg.target !== 'offscreen') return false;
+  if (msg.type === 'sk:setup-check') {
+    setupCheck(msg.options || {}).then(reply, e => reply({ error: String(e) }));
+    return true;
+  }
+  if (msg.type === 'sk:settings') {
+    liveSettings().then(s => reply(s), e => reply({ error: String(e) }));
+    return true;
+  }
+  return false;
+});

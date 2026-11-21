@@ -1,0 +1,57 @@
+{
+  "manifest_version": 3,
+  "name": "Spare Key",
+  "version": "0.1.0",
+  "description": "Find out who still has a key to your accounts. Read-only. Names never leave your computer.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvYZqHVIDECxFddL3D1J5TsFHZ/vJDOtDIeRwRrNEk1HN74v6P5ppZO52eAC8MAZNUYRQoFKzF4HKCPXy7wpKCHNWXEy3lfR4hzq5adQ5/v8vbrldWIupxypyqUA2zdPoqznyzxisswnJGgiPhS7Xx1x/qs3mGQeoFquPW3FUoiUHHvCoL619ktIZlMYOz1hjRJXOImDVqbDApL5yboykvgNN7rITwyb9SakLzNZacfFSDlBxbvVotjKyHH7VAwk+4f413EERoPoYYgpDYchtO55IddMmdwTJhCZG+Z9lAiLcubFqxWgbCxvdz14hOZKhlVY4/fMpOBGYPdo8n7KxZQIDAQAB",
+  "minimum_chrome_version": "139",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "Spare Key",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  },
+  "side_panel": {
+    "default_path": "src/panel.html"
+  },
+  "background": {
+    "service_worker": "build/background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "scripting",
+    "offscreen"
+  ],
+  "optional_permissions": [
+    "management",
+    "identity",
+    "identity.email",
+    "history"
+  ],
+  "optional_host_permissions": [
+    "https://myaccount.google.com/*",
+    "https://mail.google.com/*",
+    "https://photos.google.com/*",
+    "https://www.amazon.com/*"
+  ],
+  "host_permissions": [
+    "https://spare-key-app.web.app/practice/*"
+  ],
+  "commands": {
+    "quick-exit": {
+      "suggested_key": {
+        "default": "Alt+Shift+X"
+      },
+      "description": "Quick exit"
+    }
+  }
+}
