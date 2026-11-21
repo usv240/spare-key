@@ -621,13 +621,16 @@ $('run-setup').addEventListener('click', async () => {
   }
 });
 
+// The logged text exactly as sent, indented for reading. JSON.parse keeps the key order, so nothing is reordered.
+const prettyText = e => { try { return JSON.stringify(JSON.parse(e.text ?? JSON.stringify(e.body)), null, 2); } catch { return String(e.text || ''); } };
+
 async function renderSentLog() {
   const { sentLog = [] } = await chrome.storage.session.get('sentLog');
   $('sent-log').replaceChildren(...sentLog.slice().reverse().map(e => {
     const when = h('time', { datetime: e.time, text: new Date(e.time).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' }) });
     return h('li', {},
       h('div', { class: 'meta' }, h('span', { text: `${e.kind === 'function_answers' ? 'Answers to the cloud' : 'Request'}: ${e.purpose}, ${e.model}` }), when),
-      h('pre', { text: JSON.stringify(e.body, null, 2) }));
+      h('pre', { text: prettyText(e) }));
   }));
   $('sent-empty').hidden = sentLog.length > 0;
 }

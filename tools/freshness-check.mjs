@@ -36,7 +36,7 @@ try {
     if (!r || r.error || r.off) failed++;
   }
   const sent = await page.evaluate(() => chrome.storage.session.get('sentLog').then(r => r.sentLog || []));
-  console.log('sent log:', sent.map(e => `${e.purpose} ${e.model} ${JSON.stringify(e.body).slice(0, 160)}`).join('\n'));
+  console.log('sent log:', sent.map(e => `${e.purpose} ${e.model} ${String(e.text).slice(0, 160)}`).join('\n'));
 } finally {
   await browser.close();
   try { rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 }); } catch { /* temp */ }

@@ -249,7 +249,8 @@ async function askWithTool(model, text, onCall, guard, logSend, spend) {
     }
     // Every round is another request: it counts against the scan's cloud budget and is logged before it is sent.
     await spend();
-    await logSend({ kind: 'function_answers', body: answers.map(a => ({ name: a.functionResponse.name, response: a.functionResponse.response })) });
+    // The exact text is logged: Chrome's storage re-sorts object keys, so a stored object would not be word for word.
+    await logSend({ kind: 'function_answers', text: JSON.stringify(answers.map(a => ({ name: a.functionResponse.name, response: a.functionResponse.response }))) });
     r = await chat.sendMessage(answers);
   }
   return r;
@@ -282,14 +283,14 @@ export function cloudJson({ purpose, body, system, schema, privateStrings = [], 
         await spend();
         const logSend = entry => onSend({ time: new Date().toISOString(), purpose, model, ...entry });
         try {
-          await logSend({ kind: 'request', body: JSON.parse(text) });
+          await logSend({ kind: 'request', text });
           let r = tools && onCall
             ? await askWithTool(cloudModel({ system, schema, model, tools }), text, onCall, guard, logSend, spend)
             : await cloudModel({ system, schema, model, tools }).generateContent(text);
           // A model that keeps calling functions after being told to answer leaves no JSON: ask once more without tools.
           if (tools && onCall && schema && !/^\s*\{/.test(r.response.text() || '')) {
             await spend();
-            await logSend({ kind: 'request', body: JSON.parse(text), note: 'asked again without functions' });
+            await logSend({ kind: 'request', text, note: 'asked again without functions' });
             r = await cloudModel({ system, schema, model }).generateContent(text);
           }
           return {
@@ -337,7 +338,7 @@ export function hybridJson({ purpose, body, system, schema, onSend = async () =>
           },
         }, { timeout: CLOUD_TIMEOUT_MS });
         const onDevice = (await deviceStatus()) === 'available';
-        if (!onDevice) await onSend({ time: new Date().toISOString(), purpose, model, kind: 'request', body: JSON.parse(text) });
+        if (!onDevice) await onSend({ time: new Date().toISOString(), purpose, model, kind: 'request', text });
         const r = await m.generateContent(text);
         const source = r.response.inferenceSource || (onDevice ? 'on_device' : 'in_cloud');
         return { answer: schema ? JSON.parse(r.response.text()) : r.response.text(), source, model: source === 'on_device' ? 'Gemini Nano' : model };

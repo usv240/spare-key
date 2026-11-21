@@ -117,7 +117,7 @@ try {
   // "What left this computer" holds exactly the probe, word for word.
   const sent = await panel.evaluate(() => chrome.storage.session.get('sentLog').then(r => r.sentLog || []));
   report.sentLog = sent;
-  if (cloud) step('every cloud request is in the sent log', sent.length >= 1 && sent.every(e => JSON.stringify(e.body) === '{"probe":"ready"}'), sent.map(e => `${e.purpose} ${e.model} ${JSON.stringify(e.body)}`));
+  if (cloud) step('every cloud request is in the sent log', sent.length >= 1 && sent.every(e => e.text === '{"probe":"ready"}'), sent.map(e => `${e.purpose} ${e.model} ${e.text}`));
 
   // Quick exit with Escape twice in the panel.
   await panel.evaluate(() => chrome.storage.session.set({ marker: 'present' }));
