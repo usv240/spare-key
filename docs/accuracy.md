@@ -16,7 +16,7 @@ labels mail, Jordan's own household profile).
 | Mode | Found | False alarms | Time | Test |
 |---|---|---|---|---|
 | Code only | 24 of 24 | 0 | 13 s for 12 checks | `tools/reader-test.mjs`, `tools/e2e-practice.mjs` |
-| Code and Gemini Nano | 24 of 24 | 0 | 101 s for 12 checks, after loading Gemini Nano (133 s, once) | `tools/e2e-practice.mjs --nano` |
+| Code and Gemini Nano | 24 of 24 | 0 | 112.5 s for 12 checks (November 22, with the rule that Nano cannot hide an entry) | `tools/drift-test.mjs --nano`, the unchanged copy (`docs/evidence/drift-nano.json`) |
 
 "0 false alarms" rests on only 4 entries that belong to Jordan. On a real account, the person's own phone, recovery
 number, authenticator app and Kindle are listed too, by design, for the person to mark "Mine": Spare Key cannot tell
@@ -64,7 +64,9 @@ the dangerous kind, because "nothing found" reads as "nobody has access".
 - A page that lists nothing counts as empty only when it says so (each check's `emptyText`, provisional until the real
   pages are recorded) or the setting's own section is there. Otherwise the check is "Not checked: the page looked
   different".
-- A page that never showed the words the reader waits for is "checked in part", and Gemini Nano also reads it.
+- A page that never showed the words the reader waits for is "checked in part" when the reader still found something on
+  it. When it found nothing, Gemini Nano reads the page instead; Nano does not read a page the reader found some entries
+  on.
 - If Nano had to read a page and the code rules make nothing of any entry, that is "looked different" too.
 - Lists and tables built from plain boxes with ARIA roles count as lists; masked phone numbers count; an app whose
   access the page does not say, and a household member the page does not place, are listed rather than dropped.
@@ -91,6 +93,13 @@ copy, 9 on the all-four copy), mostly one device or person split into two entrie
 "Mine" or "Not mine". This went up from 3 when Nano lost the power to call an entry the person's own (above): an extra
 entry costs a tap, a hidden one can cost the person's safety. These Nano numbers are from the run with that rule, on
 November 22.
+
+**When a real page looks different.** A check that could not read a page offers, in the results, "Tell Spare Key
+(anonymous)": one document per page to Cloud Firestore with five fields (the check's name, the reason, the readers'
+version, Spare Key's version and the day), which the Firestore rules make create-only. Nothing is sent unless the person
+presses it, and the request is shown under "What left this computer". Checked November 22 with
+`tools/layout-report-check.mjs`: one report written (marked "selftest"), and a report carrying a page address refused
+before sending. The builder then publishes a reader fix through Remote Config.
 
 Limits: the builder wrote both the pages and the changes, so this measures how Spare Key fails, not how often real sites
 change. The Remote Config fixes (`web/practice/drift-fixes.mjs`) were written after seeing what broke, so that column

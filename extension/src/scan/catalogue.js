@@ -20,6 +20,11 @@ const GOOGLE_ACCOUNT = ['[aria-label^="Google Account:"]', 'a[aria-label*="Googl
 
 export const PRACTICE_ORIGIN = 'https://spare-key-app.web.app';
 
+// The page readers' version, sent in an opt-in layout report so the builder knows which readers a page broke.
+// A Remote Config catalogue override sets its own ("rc-" and a date) in its "version" field.
+export const READER_VERSION = '2026-11-22';
+export const readerVersion = (overrides = remoteOverrides()) => (typeof overrides?.version === 'string' && /^[\w.-]{1,19}$/.test(overrides.version) ? overrides.version : READER_VERSION);
+
 export const SERVICES = [
   { id: 'google', label: 'Google account', origins: ['https://myaccount.google.com/*'] },
   { id: 'gmail', label: 'Gmail', origins: ['https://mail.google.com/*'] },

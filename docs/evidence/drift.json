@@ -14,7 +14,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 3.5,
+   "seconds": 0.5,
    "rows": [
     {
      "id": "google.devices",
@@ -223,7 +223,7 @@
    "notChecked": 2,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.9,
+   "seconds": 0.9,
    "rows": [
     {
      "id": "google.devices",
@@ -439,7 +439,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.7,
+   "seconds": 0.5,
    "rows": [
     {
      "id": "google.devices",
@@ -648,7 +648,7 @@
    "notChecked": 4,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 14,
+   "seconds": 13.4,
    "rows": [
     {
      "id": "google.devices",
@@ -878,7 +878,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 3.8,
+   "seconds": 2.1,
    "rows": [
     {
      "id": "google.devices",
@@ -1087,7 +1087,7 @@
    "notChecked": 2,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 2.6,
+   "seconds": 0.5,
    "rows": [
     {
      "id": "google.devices",
@@ -1303,7 +1303,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 2.2,
+   "seconds": 0.4,
    "rows": [
     {
      "id": "google.devices",
@@ -1512,7 +1512,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.9,
+   "seconds": 0.5,
    "rows": [
     {
      "id": "google.devices",
@@ -1721,7 +1721,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 2.5,
+   "seconds": 0.6,
    "rows": [
     {
      "id": "google.devices",
@@ -1930,7 +1930,7 @@
    "notChecked": 7,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 14.1,
+   "seconds": 13.2,
    "rows": [
     {
      "id": "google.devices",
@@ -2163,7 +2163,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 3.5,
+   "seconds": 2.1,
    "rows": [
     {
      "id": "google.devices",

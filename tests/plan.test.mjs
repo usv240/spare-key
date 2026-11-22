@@ -132,3 +132,12 @@ test('R9: with mail copied elsewhere, the mail copying comes first and account c
   assert.ok(after.every(a => a.action === 'wait'));
   assert.equal(planPasses(plan, ctx).linked_order, true);
 });
+
+test('model text is tidied: a phrase said twice in a row is said once', async () => {
+  const { cleanText } = await import('../shared/plan/invariants.js');
+  assert.equal(cleanText('Stop them from being able to see where you where you are.').text, 'Stop them from being able to see where you are.');
+  assert.equal(cleanText('Wait wait until later.').text, 'Wait until later.');
+  // Ordinary text is left alone.
+  assert.equal(cleanText('Screenshot it first, then talk to an advocate.').text, 'Screenshot it first, then talk to an advocate.');
+  assert.equal(cleanText('It had had access.').text, 'It had access.');
+});

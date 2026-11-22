@@ -23,7 +23,7 @@ export default function index({ numbers, drift = null }) {
   <div class="wrap">
     <div>
       <h1 id="hero-title">Who still has a key to your accounts?</h1>
-      <p class="lead">Spare Key checks your Google, Gmail, location sharing, Amazon and Chrome settings in a few minutes. It shows every person, device and app that can still see your location, your mail or your account. Read-only. Names never leave your computer.</p>
+      <p class="lead">Spare Key checks your Google, Gmail, location sharing, Amazon and Chrome settings in a few minutes. It shows the people, devices and apps on those pages that can still see your location, your mail or your account, and says plainly which pages it could not read. Read-only. Names never leave your computer.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="/install.html">Get the Chrome extension</a>
         <a class="btn btn-secondary" href="/try.html">Try the practice check</a>
@@ -47,7 +47,7 @@ export default function index({ numbers, drift = null }) {
     <ul class="facts">
       <li class="fact rise"><span class="fact-n">60%</span><p>When researchers asked AI chatbots 193 real questions from survivors, 60% of the answers left out critical safety warnings, often the warning that changing a setting can alert an abuser.</p><cite><a href="https://engineering.nyu.edu/news/ai-chatbots-often-give-unsafe-or-incomplete-advice-survivors-tech-enabled-abuse-study-finds">NYU Tandon, USENIX Security 2026</a> (October 20, 2026)</cite></li>
       <li class="fact rise"><span class="fact-n">3</span><p>There are only three dedicated tech-abuse clinics in the US, to the researchers’ knowledge.</p><cite><a href="https://engineering.nyu.edu/news/ai-chatbots-often-give-unsafe-or-incomplete-advice-survivors-tech-enabled-abuse-study-finds">Same study</a></cite></li>
-      <li class="fact rise"><span class="fact-n">86.9%</span><p>Nearly 2,400 women were killed by men in 2024. 86.9% knew their killer.</p><cite><a href="https://vpc.org/press/nearly-nine-out-of-10-women-murdered-by-men-are-killed-by-someone-they-know-and-almost-two-thirds-die-by-gunfire-new-violence-policy-center-study-finds/">Violence Policy Center</a> (September 16, 2026)</cite></li>
+      <li class="fact rise"><span class="fact-n">57.6%</span><p>Nearly 2,400 women were killed by men in 2024. Of those who knew their killer, 57.6% were his wife or intimate partner.</p><cite><a href="https://vpc.org/press/nearly-nine-out-of-10-women-murdered-by-men-are-killed-by-someone-they-know-and-almost-two-thirds-die-by-gunfire-new-violence-policy-center-study-finds/">Violence Policy Center</a> (September 16, 2026)</cite></li>
     </ul>
   </div>
 </section>

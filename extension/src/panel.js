@@ -2,7 +2,10 @@
 // Quick exit is wired first, so it works even if anything below fails.
 import { initInfo, closeInfo, isInfoOpen, prepare, registerInfo } from './ui/info.js';
 import { compareChecks } from './scan/compare.js';
-import { SERVICES, catalogue, pageUrl, PRACTICE_ORIGIN } from './scan/catalogue.js';
+import { SERVICES, catalogue, pageUrl, PRACTICE_ORIGIN, readerVersion } from './scan/catalogue.js';
+
+// Whether the person sent the anonymous layout report for a scan (by scan time), for this panel's life only.
+const reportStates = {};
 import { setRemoteOverrides } from './scan/overrides.js';
 import { runScan, ScanStopped } from './scan/engine.js';
 import { codeClassify, toFinding } from './scan/rules.js';
@@ -94,6 +97,7 @@ let practice = false;
 async function leaveSafety(asPractice) {
   practice = asPractice;
   $('practice-note').hidden = !practice;
+  $('account-choice').hidden = practice;
   $('start').textContent = practice ? 'Start the practice check' : 'Start the check';
   await chrome.storage.session.set({ safetySeen: true });
   show('choose', { focus: 'choose-title' });
@@ -241,7 +245,7 @@ async function startScan(checks) {
   let scan;
   try {
     scan = await runScan({
-      checks, mode: practice ? 'practice' : 'real', u: 0, windowId: win.id, nano, offscreen, signal: scanAbort.signal,
+      checks, mode: practice ? 'practice' : 'real', u: practice ? 0 : Math.max(0, Math.min(3, Number($('account-u').value) || 0)), windowId: win.id, nano, offscreen, signal: scanAbort.signal,
       onProgress: ({ index, total, check, state, outcome }) => {
         if (state === 'done') {
           setProgress(index, total, check.progress);
@@ -260,7 +264,7 @@ async function startScan(checks) {
   // Checks not reached (Stop, or an error) are listed as not checked.
   const reached = new Set(scan.outcomes.map(o => o.id));
   for (const c of checks) if (!reached.has(c.id)) scan.outcomes.push({ id: c.id, service: c.service, status: 'not_checked', why: 'stopped', findings: 0, entries: 0 });
-  const record = { mode: practice ? 'practice' : 'real', at: new Date().toISOString(), findings: scan.findings, outcomes: scan.outcomes, account: scan.account || null, visited: scan.visited || [], nano };
+  const record = { mode: practice ? 'practice' : 'real', at: new Date().toISOString(), findings: scan.findings, outcomes: scan.outcomes, account: scan.account || null, visited: scan.visited || [], pages: scan.pages || [], nano };
   await chrome.storage.session.set({ scan: record });
   if (extras['history-cleanup'] && !practice) await cleanHistory(record.visited);
   scanAbort = null;
@@ -311,6 +315,19 @@ function showResults(record, { switchTo = true } = {}) {
       document.querySelector(`[data-ref="${ref}"] [data-answer="${ownership || 'mine'}"]`)?.focus({ preventScroll: true });
     },
     onOpen: url => chrome.tabs.create({ url }),
+    reportState: reportStates[record.at] || '',
+    onReport: async broken => {
+      const manifest = chrome.runtime.getManifest();
+      const day = new Date().toISOString().slice(0, 10);
+      const reason = o => (o.why === 'did_not_load' ? 'timeout' : 'unexpected_layout');
+      const results = [];
+      for (const o of broken) {
+        const r = await offscreen('sk:layout-report', { body: { check: o.id, reader_version: readerVersion(), reason: reason(o), ext_version: manifest.version, day } }).catch(e => ({ error: String(e) }));
+        results.push(!r?.error);
+      }
+      reportStates[record.at] = results.every(Boolean) ? 'sent' : 'failed';
+      showResults(record, { switchTo: false });
+    },
     onToggleReveal: async ref => {
       if (reveal.has(ref)) reveal.delete(ref); else reveal.add(ref);
       const { scan } = await chrome.storage.session.get('scan');
@@ -486,6 +503,16 @@ async function makePlan() {
 
 // Steps freshness: the help page's host is asked for inside the click, then the cloud compares the library's steps with it.
 let lastDraw = null;
+
+// A saved plan drawn again (the panel reopened, or a locked copy opened), with everything a new plan has: the check
+// names and "Open it" links, "Say it more simply", and the steps freshness check.
+async function restorePlan(scan, plan) {
+  const byRef = new Map(scan.findings.map(f => [f.ref, f]));
+  const freshDays = (await offscreen('sk:fresh-days').catch(() => ({})))?.freshDays ?? 45;
+  const extra = { model: plan.model, calls: plan.calls, voices: plan.voices };
+  lastDraw = { result: plan.result, source: plan.source, extra, byRef, freshDays, scan };
+  redrawPlan();
+}
 const freshness = {};
 function redrawPlan(openCode = null) {
   if (!lastDraw) return;
@@ -622,7 +649,7 @@ $('lock-form').addEventListener('submit', async e => {
       if (value.plan) {
         $('plan-questions').hidden = true;
         $('plan-actions').hidden = false;
-        renderPlan($('plan'), { plan: value.plan.result.plan, fired: value.plan.result.fired, byRef: new Map(value.scan.findings.map(f => [f.ref, f])), library: LIBRARY, source: value.plan.source, model: value.plan.model, calls: value.plan.calls, voices: value.plan.voices, onOpen: url => chrome.tabs.create({ url }) });
+        await restorePlan(value.scan, value.plan);
       }
       showResults(value.scan);
       announce('The locked copy is open.');
@@ -823,7 +850,7 @@ async function loadOverrides() {
     practice = scan.mode === 'practice';
     $('plan-questions').hidden = true;
     $('plan-actions').hidden = false;
-    renderPlan($('plan'), { plan: plan.result.plan, fired: plan.result.fired, byRef: new Map(scan.findings.map(f => [f.ref, f])), library: LIBRARY, source: plan.source, model: plan.model, calls: plan.calls, voices: plan.voices, onOpen: url => chrome.tabs.create({ url }) });
+    await restorePlan(scan, plan);
     show('plan');
   } else if (scan) { practice = scan.mode === 'practice'; showResults(scan); }
   else show('choose');

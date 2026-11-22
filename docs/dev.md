@@ -24,6 +24,7 @@ Commands run from the `spare-key` folder. Node 20 or later, Chrome, and (for the
 | Phone screenshot reading with Gemini Nano | `node tools/screenshot-check.mjs` (a made-up sharing screen; no cloud calls) |
 | Plan screen screenshots | `node tools/plan-shots.mjs` |
 | Privacy test | `node tools/privacy-test.mjs` (about 9 cloud calls) |
+| The opt-in layout report, end to end | `node tools/layout-report-check.mjs` (one Firestore write, marked selftest; no model calls) |
 | Copy the saved runs into `docs/evidence/` | `node tools/save-evidence.mjs` (refuses a file holding the debug token) |
 | "Break the pages first" and the phone screenshot on the live site | `node tools/try-break.mjs` (about 12 cloud calls; automated browsers are refused by App Check) |
 

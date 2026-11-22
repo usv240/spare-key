@@ -144,6 +144,7 @@ function screenshotSection(docs, { byRef }) {
     ...fs.map(f => h('span', { class: 'muted', text: f.label })))));
   return section('document', `Screenshot these first (${items.length})`,
     h('p', { text: 'A record of what is set up now helps you and an advocate, and it is gone once a setting changes. Keep the screenshots where the other person cannot see them, like an email to an account only you use.' }),
+    h('p', { class: 'muted', text: 'Spare Key also kept the words on each page it read, with the date and time. They are under "What we found", and in a locked copy if you save one. Screenshots are still the stronger record.' }),
     // A short list stays open; a long one folds, so the plan's next steps stay in view.
     byCode.size > 4 ? h('details', { class: 'later shot-list' }, h('summary', { text: `See all ${items.length}, in ${byCode.size} kinds` }), list) : list);
 }

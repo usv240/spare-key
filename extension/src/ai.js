@@ -432,6 +432,18 @@ export function hybridImageJson({ image, prompt, system, schema, allowed = [], o
 // ---------------------------------------------------------------------------------------------------------------
 // The steps library in Cloud Firestore (public, read-only; App Check enforced). Firestore Lite keeps the bundle small.
 
+/**
+ * An opt-in, anonymous "this page looked different" report: five fixed fields to Cloud Firestore's layout_reports, which
+ * its rules make create-only. Checked by the outgoing gate and written to "What left this computer" before it is sent.
+ */
+export async function sendLayoutReport(body, { onSend = async () => {} } = {}) {
+  const text = checkOutgoing('layout', body);
+  await onSend({ time: new Date().toISOString(), purpose: 'layout', model: 'Cloud Firestore', kind: 'request', text });
+  const { getFirestore, collection, addDoc } = await import('firebase/firestore/lite');
+  await addDoc(collection(getFirestore(app), 'layout_reports'), JSON.parse(text));
+  return { sent: true };
+}
+
 /** The library from Firestore when its version is newer than `haveVersion`; otherwise null. */
 export async function remoteLibrary(haveVersion) {
   const { getFirestore, doc, getDoc, collection, getDocs } = await import('firebase/firestore/lite');

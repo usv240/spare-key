@@ -2,7 +2,7 @@
 // step, and "Not checked" always shown. The words "safe", "secure" and "all clear" never appear, and an empty result
 // never reads as an all-clear.
 import { GROUPS, GROUP_LABELS, CODE_TEXT } from '../../../shared/findings.js';
-import { RECENCY_WORDS } from '../../../shared/text.js';
+import { RECENCY_WORDS, maskEmail } from '../../../shared/text.js';
 import { sortFindings } from '../scan/rules.js';
 import { registerInfo, clearDynamicInfo, prepare } from './info.js';
 import { SERVICES } from '../scan/catalogue.js';
@@ -68,7 +68,7 @@ export const UNCHECKED = {
  *   catalogue  the checks, for labels
  *   onAnswer(ref, ownership), onOpen(url): actions, handled by the panel
  */
-export function renderResults(root, { scan, catalogue, library = {}, reveal = new Set(), onAnswer, onOpen, onToggleReveal }) {
+export function renderResults(root, { scan, catalogue, library = {}, reveal = new Set(), onAnswer, onOpen, onToggleReveal, onReport = null, reportState = '' }) {
   clearDynamicInfo();
   const label = id => catalogue.find(c => c.id === id)?.label || id;
   const checked = scan.outcomes.filter(o => o.status === 'checked');
@@ -92,12 +92,16 @@ export function renderResults(root, { scan, catalogue, library = {}, reveal = ne
     h('h1', { id: 'results-title', tabindex: '-1', text: scan.mode === 'practice' ? 'What we found for Jordan' : 'What we found' }),
     scan.mode === 'practice' ? h('p', { class: 'notice', text: 'Practice check. These are made-up pages for a person called Jordan.' }) : null,
     h('div', { class: 'with-info' }, h('p', { class: 'lead', text: summary }), infoButton('results-summary', 'About these results')),
+    // Which account the pages belonged to, masked, so a check of the wrong account is easy to spot.
+    scan.account?.email ? h('p', { class: 'muted account-line', text: `Account checked: ${scan.mode === 'practice' ? scan.account.email : maskEmail(scan.account.email)}. If that is not yours, choose another account and check again.` }) : null,
     ...groups.map(({ g, items }) => h('section', { class: 'group', 'aria-labelledby': `g-${g}` },
       h('h2', { id: `g-${g}` }, `${GROUP_LABELS[g]} `, h('span', { class: 'count', text: `(${items.length})` })),
       h('ul', { class: 'findings' }, items.map(f => findingCard(f, { reveal: reveal.has(f.ref), library, onAnswer, onOpen, onToggleReveal }))),
     )),
     checkedList(scan.outcomes, label),
     notChecked(skipped, label, checked.filter(o => o.partly && o.id !== 'screenshot')),
+    pageRecord(scan.pages, label),
+    scan.mode !== 'practice' && onReport ? reportBox(skipped.filter(o => ['looked_different', 'did_not_load'].includes(o.why)), label, { onReport, reportState }) : null,
   );
 }
 
@@ -163,6 +167,37 @@ function checkedList(outcomes, label) {
       h('span', { class: 'muted', text: o.findings
         ? `${o.findings} found${o.partly ? ', more may be hidden: open the setting to see the full list' : ''}`
         : o.how === 'reader' && o.entries === 0 ? 'Checked by code only: nothing listed' : o.partly ? 'Nothing listed in what was shown. More may be hidden.' : 'Nothing listed' })))));
+}
+
+// The words on each page Spare Key read, with the date and time: a record for the person and an advocate. It is kept
+// only in this browser session and in a locked copy the person saves. Folded, because it shows names in full.
+function pageRecord(pages, label) {
+  if (!pages?.length) return null;
+  const when = iso => new Date(iso).toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+  return h('details', { class: 'checked-list page-record' },
+    h('summary', { text: `The words on each page, as read (${pages.length})` }),
+    h('p', { class: 'muted', text: 'A dated record of what each settings page said when Spare Key read it. It shows names in full. Save a locked copy to keep it; screenshots are still the stronger record, because they show the page itself.' }),
+    ...pages.map(p => h('details', { class: 'later' },
+      h('summary', { text: `${label(p.check)}, ${when(p.at)}` }),
+      h('pre', { class: 'page-text', text: [p.url, p.title, '', p.text, p.cut ? '\n(The page had more text than Spare Key keeps.)' : ''].join('\n') }))));
+}
+
+// Opt-in: tell the builder, anonymously, that some pages looked different, so the readers can be fixed for everyone
+// through Remote Config. Nothing is sent unless the person presses the button, and the box says exactly what goes.
+function reportBox(broken, label, { onReport, reportState }) {
+  if (!broken.length) return null;
+  registerInfo('layout-report', {
+    title: 'Telling Spare Key a page looked different',
+    what: 'Sites change their pages. When a page looks different, Spare Key can be fixed for everyone without an update, once the builder knows which page.',
+    why: 'Only the check’s name, the reason, Spare Key’s version and today’s date are sent. No page text, no address, no account. Nothing is sent unless you press the button.',
+    tech: 'One document per page in Cloud Firestore’s layout_reports, which its rules make create-only: no one can read them from a browser. It is shown under What left this computer.',
+  });
+  return h('section', { class: 'report-box', 'aria-labelledby': 'report-title' },
+    h('div', { class: 'with-info' }, h('h2', { id: 'report-title', text: 'Help fix these pages' }), infoButton('layout-report', 'About telling Spare Key')),
+    h('p', { text: `${broken.length === 1 ? 'One page' : `${broken.length} pages`} looked different: ${broken.map(o => label(o.id)).join(', ')}. You can tell Spare Key, anonymously, so it can be fixed for everyone.` }),
+    reportState === 'sent' ? h('p', { class: 'muted', role: 'status', text: 'Sent. Thank you.' })
+      : reportState === 'failed' ? h('p', { class: 'muted', role: 'status', text: 'It could not be sent just now. Nothing was sent.' })
+        : h('button', { type: 'button', class: 'btn btn-secondary btn-block', onclick: () => onReport(broken) }, 'Tell Spare Key (anonymous)'));
 }
 
 function notChecked(skipped, label, partial = []) {

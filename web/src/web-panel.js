@@ -412,8 +412,14 @@ async function makePlan() {
       draw(cloud, 'cloud', { model: r.model });
     }
   } catch (e) {
-    const busy = /429|RESOURCE_EXHAUSTED|quota|503/i.test(String(e));
-    draw(codeResult, 'code', { cloudNote: busy ? 'The cloud was busy, so this plan was made in this browser from Spare Key’s steps library. You can try again in a minute.' : 'This plan was made in this browser from Spare Key’s steps library.' });
+    // The lead line already says the plan was made from the steps library; this says why the cloud did not order it.
+    const why = String(e && e.message || e);
+    const note = /app ?check|app-check|40[13]|throttle|attestation/i.test(why)
+      ? 'Gemini in the cloud was not asked: Google’s check that this is a real browser (App Check) refused it. This happens in automated or very private browsers.'
+      : /429|RESOURCE_EXHAUSTED|quota|503|500|overloaded|timed? ?out|abort/i.test(why)
+        ? 'Gemini in the cloud was busy just now. You can try again in a minute.'
+        : 'Gemini in the cloud did not answer.';
+    draw(codeResult, 'code', { cloudNote: note });
   }
 }
 

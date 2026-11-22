@@ -75,6 +75,20 @@
 
     <div id="checks"></div>
 
+    <div class="group" id="account-choice">
+      <div class="with-info">
+        <h2 id="account-title">Which Google account?</h2>
+        <button class="info" type="button" data-info="which-account" aria-label="About which Google account"><svg aria-hidden="true"><use href="#i-info"/></svg></button>
+      </div>
+      <p class="muted">If you are signed in to more than one Google account in Chrome, choose which one to check. The results say which account was checked.</p>
+      <select id="account-u" aria-labelledby="account-title">
+        <option value="0">The first account you signed in to (most people)</option>
+        <option value="1">The second account</option>
+        <option value="2">The third account</option>
+        <option value="3">The fourth account</option>
+      </select>
+    </div>
+
     <div class="group">
       <h2 id="extras-title">Extras, off unless you turn them on</h2>
       <div class="rows" role="group" aria-labelledby="extras-title" id="extras"></div>

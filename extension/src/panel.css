@@ -414,3 +414,11 @@ kbd {
 .simpler p { margin: 4px 0; }
 .simpler-button { margin-top: 6px; }
 .linked-line { margin-top: 6px; }
+
+/* ---------- Help fix these pages (opt-in layout report) ---------- */
+.report-box { margin: 16px 0 0; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; }
+.report-box h2 { margin: 0; font-size: 17px; }
+.report-box p { margin: 8px 0; }
+
+/* ---------- The words on each page (a dated record) ---------- */
+.page-record .page-text { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; max-height: 320px; overflow: auto; padding: 8px; border: 1px solid var(--line); border-radius: 6px; }

@@ -132,6 +132,15 @@ export const OUTGOING = {
     if (!cited.some(s => s.url === b.help_url && s.title === b.help_title)) fail('help page is not one the library cites');
     if (b.steps !== undefined && JSON.stringify(b.steps) !== JSON.stringify(entry?.steps)) fail('steps must be the library entry\'s own steps');
   },
+  // An opt-in, anonymous "this page looked different" report to Cloud Firestore: five fixed fields, the same the Firestore
+  // rules accept (firestore.rules isValidLayoutReport). No page text, no address, no account, no time finer than a day.
+  layout: b => {
+    onlyKeys(b, ['check', 'reader_version', 'reason', 'ext_version', 'day'], 'body');
+    assertEnum(b.check, CHECK_IDS, 'check');
+    assertEnum(b.reason, ['no_entries', 'timeout', 'unexpected_layout'], 'reason');
+    for (const k of ['reader_version', 'ext_version']) if (typeof b[k] !== 'string' || !/^[\w.-]{1,19}$/.test(b[k])) fail(`${k} must be a short version`);
+    if (typeof b.day !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(b.day)) fail('day must be a date');
+  },
   // "Say it more simply": one library entry's own public steps, to be put in simpler words (Gemini Nano when this
   // computer has it, else the cloud). Nothing about the person: a code and the library's text for it.
   simpler: (b, ctx) => {

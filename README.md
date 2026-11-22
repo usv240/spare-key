@@ -1,8 +1,8 @@
 # Spare Key
 
 **Find out who still has a key to your accounts.** A free, read-only Chrome extension for people leaving an abusive
-partner. It reads your own settings pages (Google, Gmail, location sharing, Amazon, Chrome) and lists every person,
-device and app that can still see your location, your mail or your account. Then it gives a plan in a safety-first
+partner. It reads your own settings pages (Google, Gmail, location sharing, Amazon, Chrome) and lists the people,
+devices and apps on them that can still see your location, your mail or your account. Then it gives a plan in a safety-first
 order: screenshot first, talk to an advocate, and leave changes the other person may notice for a better time. It
 changes nothing on its own, and nothing that names a person ever leaves your computer.
 
@@ -21,7 +21,8 @@ If you need help now: National Domestic Violence Hotline, call 1-800-799-7233 or
    page it cannot read listed under "Not checked" instead of shown as empty. Then tick **Apply the fix sent through
    Remote Config** and run it again: the code readers read every page again. After either run, **Read Jordan's
    screenshot** reads a made-up phone sharing screen. (Checked in Chrome with Gemini Nano on November 22: code read 5 of
-   12 checks, Gemini Nano read 6 more, 1 was listed as "looked different", and the screenshot added 2 people. Automated
+   12 checks, Gemini Nano read 6 more, 1 was listed as "looked different", and the screenshot added both made-up people
+   on it, Sam Porter and Riley, leaving out "Me"; recorded in [docs/evidence/try-html-live-chrome.md](docs/evidence/try-html-live-chrome.md). Automated
    browsers are refused by App Check's reCAPTCHA, so there Gemini is not asked and the page says so.)
 3. **See what left the computer.** Make the plan, then open **What left this computer**: a ledger of every request
    by destination, and every request to Gemini word for word with the fixed instructions sent with it. In the
@@ -49,17 +50,19 @@ go to whichever tier the person chooses and the measurements favour; public text
 
 ### What code decides, and what Gemini adds
 
-Code decides everything that keeps a person out of danger. The readers and rules find the ways in on pages they know,
-and the plan made by code, with no model, passes every safety measure on its own (30 of 30 on all seven measures). The
-safety rules (R1 to R9) then check any plan a model writes, so a model can never make the plan less careful.
+Code decides everything that keeps a person out of danger. The readers and rules find the ways in on pages they know.
+The plan made by code follows the field's advice by construction (screenshot first, an advocate before any change,
+wait when now may not be a good time), and the safety rules (R1 to R9) hold any plan a model writes to the same
+advice, so a model can never make the plan less careful. The seven measures below check that advice; they are not an
+independent test of whether the advice is right, which only advocates can judge.
 
 Gemini adds what code cannot do, measured:
 
 | What | Without Gemini | With Gemini |
 |---|---|---|
 | Read settings pages a site has changed (all four kinds of change at once) | 8 of 24 ways in shown | 18 of 24 with Gemini Nano on the computer |
-| Read a phone app's sharing screen from a screenshot | nothing (code cannot read a picture) | 3 of 3 made-up people, with "Me" left out |
-| Order the plan for this person's situation and say why each step comes where it does, in plain words | one fixed order and stock sentences | per-situation order and wording; Gemini asks the computer yes/no questions it needs |
+| Read a phone app's sharing screen from a screenshot | nothing (code cannot read a picture) | all made-up people, with "Me" left out, in 1 of 3 runs of the test screen and in the run on the website; the other two runs split lines or could not start Nano ([details](docs/accuracy.md)) |
+| Order the plan and say why each step comes where it does, in plain words | one fixed order and stock sentences | an order and wording for the answers the person chose to share (none by default); Gemini asks the computer yes/no questions it needs |
 
 The plan's ordering is where models still fall short, so the rules stay in charge: before the rules ran, the cloud's
 plans needed 43 fixes on 30 situations (18 after the two voices), Gemini Nano's 103 on 35. So the cloud orders the plan
@@ -105,7 +108,7 @@ Spare Key is not in the Chrome Web Store yet.
 1. Download [spare-key-extension.zip](https://spare-key-app.web.app/downloads/spare-key-extension.zip) and unzip it
    (or build it, below). It holds a folder called `spare-key`.
 2. In Chrome, open `chrome://extensions`, turn on Developer mode, select **Load unpacked**, and choose `spare-key`.
-3. Click the key in Chrome's toolbar to open the side panel.
+3. Click the puzzle piece in Chrome's toolbar, then the key, to open the side panel.
 
 ## Build and test
 

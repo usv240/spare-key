@@ -180,3 +180,13 @@ test('"Say it more simply" sends only one library entry\'s own steps', async () 
   assert.throws(() => checkOutgoing('simpler', { code, steps: library[code].steps, note: 'x' }, { library }), CloudSafetyError);
   assert.throws(() => checkOutgoing('simpler', { code: 'not.a.code', steps: [] }, { library }), CloudSafetyError);
 });
+
+test('the layout report holds exactly the five fields the Firestore rules accept, and nothing personal', () => {
+  const ok = { check: 'google.devices', reader_version: '2026-11-22', reason: 'unexpected_layout', ext_version: '0.1.0', day: '2026-11-22' };
+  assert.doesNotThrow(() => checkOutgoing('layout', ok));
+  assert.throws(() => checkOutgoing('layout', { ...ok, url: 'https://myaccount.google.com/device-activity' }), CloudSafetyError);
+  assert.throws(() => checkOutgoing('layout', { ...ok, reason: CANARIES[0] }), CloudSafetyError);
+  assert.throws(() => checkOutgoing('layout', { ...ok, check: 'nothing.here' }), CloudSafetyError);
+  assert.throws(() => checkOutgoing('layout', { ...ok, day: '2026-11-22T10:00:00Z' }), CloudSafetyError);
+  assert.throws(() => checkOutgoing('layout', { ...ok, ext_version: CANARIES[1] }), CloudSafetyError);
+});

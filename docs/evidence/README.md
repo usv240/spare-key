@@ -17,6 +17,9 @@ same tools to make your own.
 | [screenshot-check.json](screenshot-check.json) | Gemini Nano reading a made-up phone sharing screen (tools/screenshot-check.mjs). |
 | [screenshot-check.png](screenshot-check.png) | The made-up screen it read. |
 | [e2e-e2e-practice.json](e2e-e2e-practice.json) | The practice check through the real extension, code only (tools/e2e-practice.mjs). |
-| [e2e-e2e-practice-nano.json](e2e-e2e-practice-nano.json) | The same with Gemini Nano (tools/e2e-practice.mjs --nano). |
 | [try-live.json](try-live.json) | The live practice check page in an automated browser (tools/try-live.mjs). |
 | [try-break-report.json](try-break-report.json) | "Break the pages first" in an automated browser (tools/try-break.mjs). App Check refuses automated browsers, so Gemini was not asked there. |
+| [try-html-live-chrome.md](try-html-live-chrome.md) | try.html in the builder's own Chrome with Gemini Nano: what the page said, word for word (written by hand). |
+
+The end-to-end extension run with Gemini Nano (`tools/e2e-practice.mjs --nano`) did not complete on November 22: the PC
+had too little free memory, and it is not counted. Gemini Nano's numbers come from `drift-nano.json` instead.

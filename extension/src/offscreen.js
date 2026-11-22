@@ -2,7 +2,7 @@
 // It talks to the side panel and the service worker by runtime messages addressed { target: 'offscreen' }.
 // The network ledger loads first, so it counts every request the Firebase code makes.
 import { ledgerSummary } from './ledger.js';
-import { deviceStatus, deviceJson, cloudJson, hybridJson, liveSettings, resetCloudBudget, remoteLibrary, TEXT_ONLY, TEXT_AND_IMAGE } from './ai.js';
+import { deviceStatus, deviceJson, cloudJson, hybridJson, liveSettings, resetCloudBudget, remoteLibrary, sendLayoutReport, TEXT_ONLY, TEXT_AND_IMAGE } from './ai.js';
 import { cleanText } from '../../shared/plan/invariants.js';
 import { validateLibrary } from '../../shared/steps-schema.js';
 import { classifyEntries, readWholePage, readScreenshot } from './classify.js';
@@ -156,6 +156,8 @@ const NANO = {
       return { error: String(e && e.message || e).slice(0, 200) };
     }
   },
+  // An opt-in, anonymous layout report, one per press of the button in the results (panel.js).
+  'sk:layout-report': async ({ body }) => sendLayoutReport(body, { onSend }),
   'sk:classify': async o => ({ items: await classifyEntries(o) }),
   'sk:read-page': async o => readWholePage(o),
   // A phone screenshot, read here only: it shows names. Gemini Nano with image input, or nothing.

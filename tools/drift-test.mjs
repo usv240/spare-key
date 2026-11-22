@@ -155,5 +155,11 @@ let site = {};
 try { site = JSON.parse(readFileSync(sitePath, 'utf8')); } catch { /* first run */ }
 const totals = results.map(({ rows, ...t }) => t);
 const keep = (site.rows || []).filter(r => !totals.some(t => t.kind === r.kind && t.mode === r.mode));
-writeFileSync(sitePath, JSON.stringify({ ...site, [useNano ? 'nanoDate' : 'date']: date, rows: [...keep, ...totals] }, null, 1) + '\n');
+// A fixed row order, so a run with the same results leaves the tracked file unchanged.
+const KIND_ORDER = ['none', ...DRIFT.map(d => d.id)];
+const MODE_ORDER = ['code', 'fixed', 'nano'];
+const rowsOut = [...keep, ...totals].sort((a, b) => KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind) || MODE_ORDER.indexOf(a.mode) - MODE_ORDER.indexOf(b.mode));
+// The date is the day of a run that changed a number; a run that only confirms them keeps the file as it was.
+const same = JSON.stringify(rowsOut.map(({ seconds, ...r }) => r)) === JSON.stringify((site.rows || []).map(({ seconds, ...r }) => r).sort((a, b) => KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind) || MODE_ORDER.indexOf(a.mode) - MODE_ORDER.indexOf(b.mode)));
+if (!same) writeFileSync(sitePath, JSON.stringify({ ...site, [useNano ? 'nanoDate' : 'date']: date, rows: rowsOut }, null, 1) + '\n');
 log(`wrote tools/out/drift${useNano ? '-nano' : ''}.json and ${sitePath}`);

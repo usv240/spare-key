@@ -124,6 +124,12 @@
     "why": "Names, emails, phone numbers and devices are never in it. You can check that here.",
     "tech": "Each request is written here before it is sent. It passes a check that allows only finding types and fixed answers, and that refuses anything this check found. The table above it counts every request the hidden page made, by where it went, by wrapping the browser's fetch."
   },
+  "which-account": {
+    "title": "Which Google account",
+    "what": "Chrome can be signed in to several Google accounts at once. Google numbers them in the order you signed in. Spare Key opens the settings pages of the one you choose.",
+    "why": "If it checked the wrong account, it would miss what is on yours. The results show the account it read, so you can tell.",
+    "tech": "The choice is Google's authuser number (0 to 3) in each settings page address."
+  },
   "phone-shot": {
     "title": "Reading a screenshot",
     "what": "Gemini Nano looks at the picture on this computer and lists the people and devices on the sharing screen. You check each one, like any other finding.",

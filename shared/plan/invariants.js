@@ -12,10 +12,18 @@ const EMAIL = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
 const PHONE = /(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\b/;
 const LINK = /\bhttps?:\/\/\S+|\bwww\.\S+|\b[a-z0-9-]+\.(com|net|org|gov|edu|app|io)\b/i;
 
-/** Model text with every sentence that breaks R6 or R7 removed. Returns { text, removed: [rule] }. */
+// Words a small model sometimes repeats ("see where you where you are"): a run of one to four words said twice in a
+// row is said once. Seen in the two voices' text on November 22, 2026.
+const tidy = text => {
+  let t = String(text || '');
+  for (let n = 4; n >= 1; n--) t = t.replace(new RegExp(String.raw`\b((?:\w+[\s,]+){${n - 1}}\w+)(\s+\1)+\b`, 'gi'), '$1');
+  return t.replace(/\s{2,}/g, ' ');
+};
+
+/** Model text with repeated words tidied and every sentence that breaks R6 or R7 removed. Returns { text, removed }. */
 export function cleanText(text, allowedText = '') {
   const removed = [];
-  const sentences = String(text || '').split(/(?<=[.!?])\s+/);
+  const sentences = tidy(text).split(/(?<=[.!?])\s+/);
   const kept = sentences.filter(sentence => {
     if (REASSURE.test(sentence)) { removed.push('R6'); return false; }
     const contact = sentence.match(EMAIL) || sentence.match(PHONE) || sentence.match(LINK);

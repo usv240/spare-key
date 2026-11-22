@@ -96,7 +96,7 @@ export function builtWithPage({ numbers }) {
     ['Hybrid inference (<code>PREFER_ON_DEVICE</code>)', 'Either', 'The practice check on this site, which holds only made-up data: Gemini Nano when the browser has it, the cloud when it does not. It reads changed practice pages and Jordan’s made-up phone screenshot the same way; the screenshot is checked by its hash before it can be sent.'],
     ['Firebase App Check (reCAPTCHA Enterprise)', 'Site and extension', 'Only Spare Key can spend its model quota. The extension gets tokens from a small page on this site that answers only the extension.'],
     ['Firebase Remote Config', 'Every install', 'Page readers, the words the code rules read, models and switches. When a site changes a page, a fix reaches every install with no store update: each install fetches it at most once an hour. The layout drift test runs every fix through the same code the extension runs.'],
-    ['Cloud Firestore', 'Google’s cloud', 'The public steps library, which the extension refreshes when it is newer.'],
+    ['Cloud Firestore', 'Google’s cloud', 'The public steps library, which the extension refreshes when it is newer. Opt-in anonymous reports when a page looked different: five fixed fields, create-only, sent only when the person presses the button.'],
     ['Firebase Hosting', 'Google’s cloud', 'This site, the practice pages and the Steps API.'],
     ['Chrome extension APIs', 'This computer', 'Side panel, the scan tab, permissions asked for per site, the extensions check, history cleanup.'],
     ['WebCrypto', 'This computer', 'The locked copy: PBKDF2 with 600,000 rounds and AES-GCM. Opening one beside a new check shows what is new since then.'],
@@ -144,13 +144,14 @@ person: Not sure   →   { "answer": "not_sure" }</code></pre>
 export function plantPage() {
   return doc('plant.html', 'Plant a test key', 'Three ways to plant a harmless way in to your own account, watch Spare Key find it, and undo it.', `
 <h1>Plant a test key</h1>
-<p class="lead">Try Spare Key on your own account without any risk: plant a harmless way in, run the check, watch it get found, then undo it. Mark each one “Mine” so the plan treats it as yours.</p>
+<p class="lead">Try Spare Key on your own account without any risk: plant a harmless way in, run the check, see whether it is found, then undo it. Mark each one “Mine” so the plan treats it as yours.</p>
+<div class="note"><p>These recipes have not yet been run on a real account by the builder: the readers were made on practice pages, and the real pages may look different. If Spare Key misses one, it should say the page “looked different” under Not checked. Either way, that is worth knowing.</p></div>
 <h2>1. A second signed-in device (2 minutes)</h2>
-<ol><li>Sign in to your Google account in another browser, such as Microsoft Edge, or in a Chrome guest window.</li><li>Run Spare Key. It lists the new browser under <strong>Signed in to your account</strong>.</li><li><strong>Undo:</strong> open <a href="https://myaccount.google.com/device-activity">Your devices</a>, select it, and sign out.</li></ol>
+<ol><li>Sign in to your Google account in another browser, such as Microsoft Edge, or in a Chrome guest window.</li><li>Run Spare Key. It should list the new browser under <strong>Can get into your account</strong>.</li><li><strong>Undo:</strong> open <a href="https://myaccount.google.com/device-activity">Your devices</a>, select it, and sign out.</li></ol>
 <h2>2. Share your location for one hour (2 minutes)</h2>
-<ol><li>In the Google Maps app on your phone, tap your picture, then <strong>Location sharing</strong>, then <strong>New share</strong>. Choose <strong>For 1 hour</strong> and a second Google account you own.</li><li>Run Spare Key. It lists the share under <strong>Can see your location</strong>.</li><li><strong>Undo:</strong> it ends by itself after an hour, or stop it in the same place.</li></ol>
+<ol><li>In the Google Maps app on your phone, tap your picture, then <strong>Location sharing</strong>, then <strong>New share</strong>. Choose <strong>For 1 hour</strong> and a second Google account you own.</li><li>Run Spare Key. It should list the share under <strong>Can see your location</strong>.</li><li><strong>Undo:</strong> it ends by itself after an hour, or stop it in the same place.</li></ol>
 <h2>3. A Gmail filter that forwards (2 minutes)</h2>
-<ol><li>In Gmail settings, under <strong>Forwarding and POP/IMAP</strong>, add a second address you own as a forwarding address, and confirm it from that inbox.</li><li>Make a filter for the subject <code>test-forward</code> that forwards to that address.</li><li>Run Spare Key. It lists the filter under <strong>Can read your mail</strong>.</li><li><strong>Undo:</strong> delete the filter under <strong>Filters and Blocked Addresses</strong>, and remove the forwarding address.</li></ol>`);
+<ol><li>In Gmail settings, under <strong>Forwarding and POP/IMAP</strong>, add a second address you own as a forwarding address, and confirm it from that inbox.</li><li>Make a filter for the subject <code>test-forward</code> that forwards to that address.</li><li>Run Spare Key. It should list the filter under <strong>Can read your mail</strong>.</li><li><strong>Undo:</strong> delete the filter under <strong>Filters and Blocked Addresses</strong>, and remove the forwarding address.</li></ol>`);
 }
 
 export function apiPage() {
@@ -241,7 +242,7 @@ ${n.practice ? `<p><strong>${n.practice.found} of ${n.practice.of}</strong> plan
 ${driftSection(drift, driftFirst)}
 <h2>Privacy: nothing that names a person leaves</h2>
 ${n.privacy ? `<p><strong>${n.privacy.withPrivate} of ${n.privacy.requests}</strong> requests from the extension held a name, email address, phone number, device or place, during a full practice check with every cloud step on. Every request from the service worker, the hidden page and the side panel was captured and searched in plain text, URL-encoded, base64 and JSON-escaped forms. All ${n.privacy.modelRequests} requests to the model matched “What left this computer” word for word. ${esc(n.privacy.date)}. Test: <code>tools/privacy-test.mjs</code>.</p>` : ''}
-<h2>Plan safety: the warning that a change may be noticed</h2>
+<h2>Plan safety: seven measures from the field’s advice</h2>
 ${p ? `<p>${p.of} situations, each a set of findings and answers, written before any results and not changed after. Measured by code.</p>
 <div class="table-wrap" tabindex="0" role="region" aria-label="Plan safety: table, scrolls sideways on small screens"><table><thead><tr><th>Measure</th>${p.columns.map(c => `<th class="num">${esc(c)}</th>`).join('')}</tr></thead>
 <tbody>${p.rows.map(r => `<tr><td>${esc(r.label)}</td>${r.values.map(v => `<td class="num">${v}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
@@ -300,4 +301,13 @@ export function safetyPage() {
 <p>If the other person may be watching this computer or your phone, a computer they never use, like a trusted friend’s, is a better place to check. A library computer is fine for reading this site and getting help, but usually does not allow installing extensions. Either is a better place to plan.</p>
 <h2>Remove Spare Key when you are done</h2>
 <p>Open <code>chrome://extensions</code>, find Spare Key, and select Remove.</p>`);
+}
+
+/** The page for an address that does not exist: the same header, with Quick exit, and the hotline. */
+export function notFoundPage() {
+  return doc('404.html', 'Page not found', 'This page does not exist.', `
+<h1>This page does not exist</h1>
+<p class="lead">The address may be mistyped, or the page has moved. Quick exit, at the top, leaves this site at once.</p>
+<p><strong>Talk to someone now:</strong> call <a href="tel:+18007997233">1-800-799-7233</a>, text START to 88788, or chat at <a href="https://www.thehotline.org">thehotline.org</a>. It is free and open all day, every day.</p>
+<p><a href="/index.html">Go to the home page</a> or <a href="/try.html">try the practice check</a>.</p>`);
 }

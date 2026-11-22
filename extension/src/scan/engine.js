@@ -94,13 +94,16 @@ export async function readToEntries({ check, read, account, ask = null, onState 
  *   offscreen  (type, options) => Promise: talks to the offscreen page, where Gemini Nano runs
  *   onProgress ({ index, total, check, state }) for the panel's progress line
  *   signal     an AbortSignal for Stop
- * Returns { findings, outcomes, account, visited, ms }. Everything in it stays on this computer.
+ * Returns { findings, outcomes, account, visited, pages, ms }. Everything in it stays on this computer. `pages` is a
+ * dated record of the words on each page read (for the locked copy), since an extension cannot take screenshots of them
+ * without asking to read every site.
  */
 export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = false, offscreen, onProgress = () => {}, signal, practiceOrigin = PRACTICE_ORIGIN }) {
   const t0 = Date.now();
   const findings = [];
   const outcomes = [];
   const visited = [];
+  const pages = [];
   let account = null;
   let refN = 0;
   const pageChecks = checks.filter(c => c.pages?.length);
@@ -139,6 +142,7 @@ export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = f
         }
         if (!read || read.errorPage) { outcome.status = 'not_checked'; outcome.why = 'did_not_load'; break; }
         account ||= read.account;
+        if (read.mainText) pages.push({ check: check.id, url: finalUrl, at: new Date().toISOString(), title: read.title || '', text: read.mainText.slice(0, 20000), cut: !!read.mainTextCut });
         const p = await readToEntries({ check, read, account, ask: nano ? offscreen : null,
           onState: state => onProgress({ index, total, check, state }) });
         if (p.why) { outcome.status = 'not_checked'; outcome.why = p.why; break; }
@@ -179,5 +183,5 @@ export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = f
       await chrome.storage.session.remove('scanTabId').catch(() => {});
     }
   }
-  return { findings, outcomes, account, visited, ms: Date.now() - t0 };
+  return { findings, outcomes, account, visited, pages, ms: Date.now() - t0 };
 }
