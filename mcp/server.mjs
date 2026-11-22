@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Spare Key MCP server: the verified steps library for advocates' and developers' AI assistants.
+// Spare Key MCP server: the steps library, checked against official help pages, for advocates' and developers' AI assistants.
 //
 // A chatbot asked "how do I stop my ex seeing my location" tends to give the steps and leave out the warning that the
 // change can alert the other person (NYU Tandon, USENIX Security 2026). An assistant that calls these tools gets the
@@ -11,7 +11,7 @@
 //
 // Tools:
 //   list_findings   every finding code with its title, group and whether a change may be noticed
-//   get_steps       one code's verified steps, what to screenshot first, the warning, and what to do if now is not a good time
+//   get_steps       one code's steps, what to screenshot first, the warning, and what to do if now is not a good time
 //   make_plan       a plan, in order, from codes and optional situation answers, with Spare Key's safety rules applied
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
@@ -75,8 +75,8 @@ server.registerTool('list_findings', {
 });
 
 server.registerTool('get_steps', {
-  title: 'Get verified steps for one finding',
-  description: 'The verified steps to remove one kind of access, with what to screenshot first, whether the other person may notice, and what to do if now is not a good time. Always pass the warning on: changing a setting can alert the other person.',
+  title: 'Get the steps for one finding',
+  description: 'The steps, checked against official help pages, to remove one kind of access, with what to screenshot first, whether the other person may notice, and what to do if now is not a good time. Always pass the warning on: changing a setting can alert the other person.',
   inputSchema: { code: codeEnum.describe('A finding code from list_findings, like gmail.forwarding.external') },
   annotations: { readOnlyHint: true, openWorldHint: false },
 }, async ({ code }) => {

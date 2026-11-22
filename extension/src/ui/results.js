@@ -21,6 +21,9 @@ export function h(tag, attrs = {}, ...children) {
   return el;
 }
 
+/** Replace an element's children, skipping empty ones (replaceChildren would print "null"). */
+export const put = (root, ...kids) => root.replaceChildren(...kids.flat().filter(k => k !== null && k !== undefined && k !== false));
+
 export const infoButton = (id, label) => {
   const b = h('button', { class: 'info', type: 'button', 'data-info': id, 'aria-label': label });
   b.innerHTML = '<svg aria-hidden="true"><use href="#i-info"/></svg>';
@@ -63,7 +66,7 @@ export const UNCHECKED = {
  *   catalogue  the checks, for labels
  *   onAnswer(ref, ownership), onOpen(url): actions, handled by the panel
  */
-export function renderResults(root, { scan, catalogue, reveal = new Set(), onAnswer, onOpen, onToggleReveal }) {
+export function renderResults(root, { scan, catalogue, library = {}, reveal = new Set(), onAnswer, onOpen, onToggleReveal }) {
   clearDynamicInfo();
   const label = id => catalogue.find(c => c.id === id)?.label || id;
   const checked = scan.outcomes.filter(o => o.status === 'checked');
@@ -83,29 +86,36 @@ export function renderResults(root, { scan, catalogue, reveal = new Set(), onAns
 
   const groups = GROUPS.map(g => ({ g, items: findings.filter(f => f.group === g) })).filter(x => x.items.length);
 
-  root.replaceChildren(
+  put(root,
     h('h1', { id: 'results-title', tabindex: '-1', text: scan.mode === 'practice' ? 'What we found for Jordan' : 'What we found' }),
     scan.mode === 'practice' ? h('p', { class: 'notice', text: 'Practice check. These are made-up pages for a person called Jordan.' }) : null,
     h('div', { class: 'with-info' }, h('p', { class: 'lead', text: summary }), infoButton('results-summary', 'About these results')),
     ...groups.map(({ g, items }) => h('section', { class: 'group', 'aria-labelledby': `g-${g}` },
       h('h2', { id: `g-${g}` }, `${GROUP_LABELS[g]} `, h('span', { class: 'count', text: `(${items.length})` })),
-      h('ul', { class: 'findings' }, items.map(f => findingCard(f, { reveal: reveal.has(f.ref), onAnswer, onOpen, onToggleReveal }))),
+      h('ul', { class: 'findings' }, items.map(f => findingCard(f, { reveal: reveal.has(f.ref), library, onAnswer, onOpen, onToggleReveal }))),
     )),
     checkedList(scan.outcomes, label),
     notChecked(skipped, label),
   );
 }
 
-function findingCard(f, { reveal, onAnswer, onOpen, onToggleReveal }) {
+// What removing it does for the other person, from the steps library and its quoted official source.
+export function noticeLine(entry) {
+  const n = entry?.who_can_notice || 'unknown';
+  return n === 'notifies' ? 'If you remove it, they are told.' : n === 'unlikely' ? 'Removing it is unlikely to be noticed.' : n === 'noticeable' ? 'If you remove it, they may notice.' : 'Removing it may alert them.';
+}
+
+function findingCard(f, { reveal, library, onAnswer, onOpen, onToggleReveal }) {
   const [title, means] = CODE_TEXT[f.code] || [f.code, ''];
+  const entry = library[f.code];
   const infoId = `finding-${f.ref}`;
   registerInfo(infoId, {
     title,
     what: means,
     whatLabel: 'What this means',
-    why: `${HOW[f.howFound] || 'Read by code'}${f.howFound === 'nano' ? '. Check it in the setting itself.' : '.'} Removing it may alert the other person, because whatever this gave them stops. If now is not a good time, screenshot it and leave it.`,
-    whyLabel: 'How Spare Key found it',
-    tech: `Finding type: ${f.code}. Only this type, and your answer below, can ever be sent to the cloud, and only if plan help is on.`,
+    why: `${entry?.what_they_see || 'Removing it may alert the other person, because whatever this gave them stops.'} If now is not a good time, screenshot it and leave it.`,
+    whyLabel: 'If you remove it',
+    tech: `${HOW[f.howFound] || 'Read by code'}. Finding type: ${f.code}. Only this type, and your answer below, can ever be sent to the cloud, and only if plan help is on.${entry?.notice_source ? ` Source: ${entry.notice_source.title}: “${entry.notice_source.quote}”` : ''}`,
   });
   const meta = [serviceName(f.service), RECENCY_WORDS[f.recency]].filter(Boolean).join(' · ');
   const answers = [['mine', 'Mine'], ['not_mine', 'Not mine'], ['unsure', 'Not sure']];
@@ -119,7 +129,7 @@ function findingCard(f, { reveal, onAnswer, onOpen, onToggleReveal }) {
       infoButton(infoId, `About ${title.charAt(0).toLowerCase()}${title.slice(1)}`)),
     f.confidence === 'check_it' ? h('p', { class: 'finding-note', text: 'Found by reading the page. Check it in the setting.' }) : null,
     f.disagree ? h('p', { class: 'finding-note', text: 'Spare Key is not sure whose this is. Your answer below decides.' }) : null,
-    h('p', { class: 'caution-line' }, cautionIcon(), h('span', { text: 'Removing it may alert them.' })),
+    h('p', { class: 'caution-line' }, cautionIcon(), h('span', { text: noticeLine(entry) })),
     h('div', { class: 'answer', role: 'group', 'aria-label': `Is this yours: ${title}` },
       answers.map(([value, word]) => h('button', {
         type: 'button', 'aria-pressed': String(f.ownership === value), 'data-answer': value,

@@ -292,7 +292,7 @@ async function cleanHistory(urls) {
 const reveal = new Set();
 // switchTo: false re-draws the results in place (after an answer) without taking the person away from another screen.
 function showResults(record, { switchTo = true } = {}) {
-  renderResults($('results'), {
+  renderResults($('results'), { library: LIBRARY,
     scan: record,
     catalogue: catalogue(),
     reveal,
@@ -390,7 +390,10 @@ async function makePlan() {
   const vocabulary = JSON.stringify([STEPS, Object.keys(CODES), SITUATION, OWNERSHIP, RECENCY, HOW_FOUND, CODE_TEXT]);
   const privateStrings = privateStringsFrom({ findings, account: scan.account, vocabulary });
   pendingAsk = { scan, refs };
-  const r = await offscreen('sk:cloud-plan', { body, privateStrings, library: LIBRARY, newScan: true }).catch(e => ({ error: String(e) }));
+  // The per-scan cloud budget starts once per scan, not on every press of "Make my plan".
+  const newScan = budgetScanAt !== scan.at;
+  budgetScanAt = scan.at;
+  const r = await offscreen('sk:cloud-plan', { body, privateStrings, library: LIBRARY, newScan }).catch(e => ({ error: String(e) }));
   pendingAsk = null;
   hideAsk();
   if (r?.error || !r?.answer) {
@@ -439,11 +442,18 @@ function redrawPlan() {
   const { result, source, extra, byRef, freshDays } = lastDraw;
   renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, freshDays, freshness, onCheckFresh, onOpen: url => chrome.tabs.create({ url }), ...extra });
 }
+let budgetScanAt = null;
 function onCheckFresh(code) {
   const url = LIBRARY[code]?.sources?.[0]?.url;
   if (!url) return;
+  // The person's own "plan help from the cloud: off" switch stops this too.
+  chrome.storage.local.get('cloudOn').then(({ cloudOn = true }) => {
+    if (!cloudOn) { freshness[code] = { still_matches: 'not_sure', cloudOff: true }; redrawPlan(); }
+  });
   const origin = `${new URL(url).origin}/*`;
   chrome.permissions.request({ origins: [origin] }).catch(() => false).then(async () => {
+    const { cloudOn = true } = await chrome.storage.local.get('cloudOn');
+    if (!cloudOn) return;
     freshness[code] = { pending: true };
     redrawPlan();
     const { scan } = await chrome.storage.session.get('scan');
@@ -646,7 +656,9 @@ async function renderSentLog() {
     const when = h('time', { datetime: e.time, text: new Date(e.time).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' }) });
     return h('li', {},
       h('div', { class: 'meta' }, h('span', { text: `${e.kind === 'function_answers' ? 'Answers to the cloud' : 'Request'}: ${e.purpose}, ${e.model}` }), when),
-      h('pre', { text: prettyText(e) }));
+      h('pre', { text: prettyText(e) }),
+      e.fixed ? h('details', { class: 'fixed' }, h('summary', { text: 'The fixed instructions sent with it' }),
+        h('pre', { text: [e.fixed.instructions, e.fixed.tools?.length ? `Functions offered: ${e.fixed.tools.join(', ')}` : '', e.fixed.format ? `Answer format: ${e.fixed.format}` : ''].filter(Boolean).join('\n\n') })) : null);
   }));
   $('sent-empty').hidden = sentLog.length > 0;
 }
@@ -713,3 +725,6 @@ async function loadOverrides() {
   // Start-up is done; the end-to-end tests wait for this before they click.
   document.body.dataset.ready = '1';
 })();
+
+// Print shows every folded block.
+addEventListener('beforeprint', () => { for (const d of document.querySelectorAll('#plan details')) d.open = true; });

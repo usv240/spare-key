@@ -12,7 +12,7 @@ export default function index({ numbers }) {
   <div class="wrap">
     <div>
       <h1 id="hero-title">Who still has a key to your accounts?</h1>
-      <p class="lead">Spare Key checks your Google, Gmail, location sharing, Amazon and Chrome settings in about a minute. It shows every person, device and app that can still see your location, your mail or your account. Read-only. Names never leave your computer.</p>
+      <p class="lead">Spare Key checks your Google, Gmail, location sharing, Amazon and Chrome settings in a few minutes. It shows every person, device and app that can still see your location, your mail or your account. Read-only. Names never leave your computer.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="/install.html">Get the Chrome extension</a>
         <a class="btn btn-secondary" href="/try.html">Try the practice check</a>
@@ -84,7 +84,7 @@ export default function index({ numbers }) {
     <div class="block-head"><h2 id="stays-title">What stays on your computer</h2>${info('sent-log', 'About what left this computer')}</div>
     <div class="split">
       <div><h3>On your computer</h3><ul><li>The settings pages Spare Key reads</li><li>Names, email addresses and phone numbers</li><li>Devices and apps</li><li>Your answers, like “Not mine”</li></ul><p class="muted">Gemini Nano reads the pages here, with no cloud fallback.</p></div>
-      <div><h3>Sent to Gemini in the cloud</h3><ul><li>Finding types, like <code>gmail.forwarding.external</code></li><li>Your optional choices, like “not sure”</li><li>Nothing at all, if you turn plan help off</li></ul><p class="muted">Every request is shown word for word under “What left this computer”.</p></div>
+      <div><h3>Sent to Gemini in the cloud</h3><ul><li>Finding types, like <code>gmail.forwarding.external</code></li><li>Your optional choices, like “not sure”</li><li>Nothing at all, if you turn plan help off</li></ul><p class="muted">Every request is shown word for word under “What left this computer”, with the fixed instructions sent with it.</p></div>
     </div>
     <div class="sent-sample">
       <div>
@@ -124,7 +124,7 @@ export default function index({ numbers }) {
     <h2 id="builders-title">For advocates and developers</h2>
     <div class="split" style="margin-top:24px">
       <div>
-        <p>Advocates can print the plan, with addresses hidden unless the person chooses to show them. The verified steps library is a free, open API, and an MCP server lets an AI assistant give the current steps with the warnings attached.</p>
+        <p>Advocates can print the plan, with addresses hidden unless the person chooses to show them. The steps library, checked against official help pages, is a free, open API, and an MCP server lets an AI assistant give the current steps with the warnings attached.</p>
         <p><a href="/api.html">The Steps API and the MCP server</a></p>
       </div>
       <pre tabindex="0" aria-label="Example request to the Steps API"><code>GET https://spare-key-app.web.app/api/v1/steps/gmail.forwarding.external.json
@@ -156,11 +156,11 @@ export default function index({ numbers }) {
 <section class="block" id="numbers" aria-labelledby="numbers-title">
   <div class="wrap">
     <h2 id="numbers-title">How well it works</h2>
-    <p class="muted">Measured on made-up practice pages and on our own test accounts. What these numbers do not show is on the <a href="/accuracy.html">Accuracy</a> page.</p>
+    <p class="muted">Measured on made-up practice pages, not yet on real accounts. What these numbers do not show is on the <a href="/accuracy.html">Accuracy</a> page.</p>
     <ul class="numbers">
-      ${n.practice ? `<li><span class="n">${n.practice.found} of ${n.practice.of}</span><p>planted ways in found on the practice pages, with ${n.practice.falseAlarms} false alarms, with code only and with Gemini Nano. ${esc(n.practice.date)}.</p></li>` : ''}
+      ${n.practice ? `<li><span class="n">${n.practice.found} of ${n.practice.of}</span><p>planted ways in found on the 13 made-up practice pages, and none of the 4 that belong to the person flagged, with code only and with Gemini Nano. ${esc(n.practice.date)}.</p></li>` : ''}
       ${n.privacy ? `<li><span class="n">${n.privacy.withPrivate} of ${n.privacy.requests}</span><p>requests from the extension held a name, email address, phone number or device, in a full practice check with every cloud step on. ${esc(n.privacy.date)}.</p></li>` : ''}
-      ${plan ? `<li><span class="n">${plan.shippedDoc} of ${plan.of}</span><p>plans put screenshots before any change, against ${plan.chatbotDoc} of ${plan.of} answers from a plain chatbot asked about the same ${plan.of} situations. ${esc(plan.date)}.</p></li>` : ''}
+      ${plan ? `<li><span class="n">${plan.chatbot.document_first} of ${plan.of}</span><p>answers from a plain chatbot said to screenshot before changing anything, on ${plan.of} made-up situations. It did warn that a change may be noticed in ${plan.chatbot.alert_warning}. Every plan Spare Key shows does both. ${esc(plan.date)}.</p></li>` : ''}
     </ul>
   </div>
 </section>

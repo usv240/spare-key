@@ -1,0 +1,744 @@
+{
+  "version": 3,
+  "updated_at": "2026-11-22",
+  "note": "who_can_notice is \"unknown\" unless an official help page or the builder’s own test accounts show what the other person sees; unknown is treated exactly like noticeable. notice_source quotes the official page. steps_followed is true only after the builder followed the steps on a test account.",
+  "entries": [
+    {
+      "code": "google.devices.other",
+      "title": "A device is signed in to your Google account",
+      "what_it_means": "Whoever has this device can open your Gmail, see where you have been, and change your settings.",
+      "who_can_notice": "noticeable",
+      "notice_why": "The device is signed out of your account. Whoever uses it will notice the next time they open Gmail or another Google app.",
+      "evidence_first": [
+        "Screenshot the device list, including this device's name, place and time."
+      ],
+      "steps": [
+        "Open this setting.",
+        "Select the device.",
+        "Select Sign out.",
+        "Then change your password, or they can sign back in."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Do not use this account for private messages until it is signed out. Talk to an advocate about when to do it.",
+      "also_check": [
+        "google.2sv.other_device",
+        "google.recovery.phone_unconfirmed",
+        "google.recovery.email_other"
+      ],
+      "sources": [
+        {
+          "title": "Google Account Help: See devices with account access",
+          "url": "https://support.google.com/accounts/answer/3067630"
+        },
+        {
+          "title": "Google Account Help: Change or reset your password",
+          "url": "https://support.google.com/accounts/answer/41078"
+        }
+      ],
+      "verified_at": "2026-11-22",
+      "verified_how": "Official help page checked for what the change does (Google Account Help: See devices with account access); steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "notice_source": {
+        "title": "Google Account Help: See devices with account access",
+        "url": "https://support.google.com/accounts/answer/3067630",
+        "quote": "Devices or sessions where you’re signed out will have a “Signed out” indication."
+      },
+      "what_they_see": "The device is signed out of your account. Whoever uses it sees they are signed out the next time they open a Google app."
+    },
+    {
+      "code": "google.apps.full_access",
+      "title": "An app can use your Google account",
+      "what_it_means": "This app can see, and may be able to change, information in your Google account.",
+      "who_can_notice": "unknown",
+      "notice_why": "The app stops working with your account. Whoever set it up may notice if they use it.",
+      "evidence_first": [
+        "Screenshot the app's name and what it has access to."
+      ],
+      "steps": [
+        "Open this setting.",
+        "Select the app.",
+        "Remove its access to your Google account."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Tell an advocate it is there.",
+      "also_check": [
+        "google.devices.other"
+      ],
+      "sources": [
+        {
+          "title": "Google Account Help: Manage links between your Google Account and apps from other developers",
+          "url": "https://support.google.com/accounts/answer/13533235"
+        },
+        {
+          "title": "Google Account Help: Share some access to your Google Account data with apps from other developers",
+          "url": "https://support.google.com/accounts/answer/3466521"
+        }
+      ],
+      "verified_at": "2026-11-21",
+      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+    },
+    {
+      "code": "google.apps.read_mail",
+      "title": "An app can read your Gmail",
+      "what_it_means": "This app can read your email, and may be able to send it.",
+      "who_can_notice": "unknown",
+      "notice_why": "The app stops getting your mail. Whoever reads your mail through it may notice.",
+      "evidence_first": [
+        "Screenshot the app's name and what it has access to."
+      ],
+      "steps": [
+        "Open this setting.",
+        "Select the app.",
+        "Remove its access to your Google account."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Use a new email account they do not know about for private messages.",
+      "also_check": [
+        "gmail.forwarding.external",
+        "gmail.delegate"
+      ],
+      "sources": [
+        {
+          "title": "Google Account Help: Manage links between your Google Account and apps from other developers",
+          "url": "https://support.google.com/accounts/answer/13533235"
+        }
+      ],
+      "verified_at": "2026-11-21",
+      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+    },
+    {
+      "code": "google.apps.location",
+      "title": "An app can see your location",
+      "what_it_means": "This app can see where you are or where you have been.",
+      "who_can_notice": "unknown",
+      "notice_why": "The app stops getting your location. Whoever watches it may notice.",
+      "evidence_first": [
+        "Screenshot the app's name and what it has access to."
+      ],
+      "steps": [
+        "Open this setting.",
+        "Select the app.",
+        "Remove its access to your Google account."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Talk to an advocate before you go anywhere you want to keep private.",
+      "also_check": [
+        "maps.sharing.person"
+      ],
+      "sources": [
+        {
+          "title": "Google Account Help: Manage links between your Google Account and apps from other developers",
+          "url": "https://support.google.com/accounts/answer/13533235"
+        }
+      ],
+      "verified_at": "2026-11-21",
+      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+    },
+    {
+      "code": "google.recovery.phone_unconfirmed",
+      "title": "A phone can reset your password",
+      "what_it_means": "Whoever has this number can use it to get into your account, even after you change your password.",
+      "who_can_notice": "noticeable",
+      "notice_why": "Spare Key does not know whether Google tells the old number. Whoever has it would notice if they tried to use it.",
+      "evidence_first": [
+        "Screenshot the recovery phone page. The last four digits are enough to show which number it is."
+      ],
+      "steps": [
+        "Open this setting.",
+        "If the number is not yours, change it to a number only you can reach, or remove it.",
+        "Google may still send codes to the old number for 7 days. Change your password and sign out other devices at the same time."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Tell an advocate, because this number could undo a password change.",
+      "also_check": [
+        "google.recovery.email_other",
+        "google.2sv.other_device"
+      ],
+      "sources": [
+        {
+          "title": "Google Account Help: Set up recovery options",
+          "url": "https://support.google.com/accounts/answer/183723"
+        }
+      ],
+      "verified_at": "2026-11-22",
+      "verified_how": "Official help page checked for what the change does (Google Account Help: Set up recovery options); steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "notice_source": {
+        "title": "Google Account Help: Set up recovery options",
+        "url": "https://support.google.com/accounts/answer/183723",
+        "quote": "If you change your recovery info or other authentication factors, Google may send codes to your previous info for 7 days."
+      },
+      "what_they_see": "Google may still send codes to the old number for 7 days after you change it. Whoever has that number could notice, and could still use a code in that time."
+    },
+    {
+      "code": "google.recovery.email_other",
+      "title": "Another email address can reset your password",
+      "what_it_means": "Whoever reads this email address can use it to get back into your account.",
+      "who_can_notice": "noticeable",
+      "notice_why": "Spare Key does not know whether Google tells the old address. Whoever reads it would notice if they tried to use it.",
+      "evidence_first": [
+        "Screenshot the recovery email page."
+      ],
+      "steps": [
+        "Open this setting.",
+        "Change it to an email only you can open, or take it off.",
+        "Google may still send codes to the old address for 7 days. Change your password and sign out other devices at the same time."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Tell an advocate, because this address could undo a password change.",
+      "also_check": [
+        "google.recovery.phone_unconfirmed",
+        "google.devices.other"
+      ],
+      "sources": [
+        {
+          "title": "Google Account Help: Set up recovery options",
+          "url": "https://support.google.com/accounts/answer/183723"
+        }
+      ],
+      "verified_at": "2026-11-22",
+      "verified_how": "Official help page checked for what the change does (Google Account Help: Set up recovery options); steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "notice_source": {
+        "title": "Google Account Help: Set up recovery options",
+        "url": "https://support.google.com/accounts/answer/183723",
+        "quote": "If you change your recovery info or other authentication factors, Google may send codes to your previous info for 7 days."
+      },
+      "what_they_see": "Google may still send codes to the old address for 7 days after you change it. Whoever reads it could notice, and could still use a code in that time."
+    },
+    {
+      "code": "google.2sv.other_device",
+      "title": "A phone or device can approve sign-ins",
+      "what_it_means": "A sign-in to your account can be approved from this phone or device.",
+      "who_can_notice": "noticeable",
+      "notice_why": "That phone stops getting sign-in prompts for your account. Whoever has it may notice.",
+      "evidence_first": [
+        "Screenshot the 2-Step Verification page."
+      ],
+      "steps": [
+        "Open this setting.",
+        "Remove any phone, number or key that is not yours.",
+        "Make sure at least one way to sign in is yours, so you are not locked out.",
+        "Google may still send codes to the old phone for 7 days. Change your password at the same time."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Tell an advocate it is there.",
+      "also_check": [
+        "google.devices.other",
+        "google.recovery.phone_unconfirmed"
+      ],
+      "sources": [
+        {
+          "title": "Google Account Help: Turn on 2-Step Verification",
+          "url": "https://support.google.com/accounts/answer/185839"
+        }
+      ],
+      "verified_at": "2026-11-22",
+      "verified_how": "Official help page checked for what the change does (Google Account Help: Set up recovery options); steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "notice_source": {
+        "title": "Google Account Help: Set up recovery options",
+        "url": "https://support.google.com/accounts/answer/183723",
+        "quote": "If you change your recovery info or other authentication factors, Google may send codes to your previous info for 7 days."
+      },
+      "what_they_see": "Google may still send codes to a removed sign-in phone for 7 days. Whoever has it could notice the prompts stop, or still get a code in that time."
+    },
+    {
+      "code": "gmail.forwarding.external",
+      "title": "Your mail is being copied to another address",
+      "what_it_means": "Every new email you get is also sent to this address. Whoever reads it sees your mail.",
+      "who_can_notice": "unknown",
+      "notice_why": "Their copies of your new mail stop arriving. They may notice within a day.",
+      "evidence_first": [
+        "Screenshot this settings page, including the address."
+      ],
+      "steps": [
+        "Open Gmail settings, then Forwarding and POP/IMAP.",
+        "Choose Disable forwarding.",
+        "Select Save Changes."
+      ],
+      "if_not_safe_yet": "Leave it for now. Tell an advocate it is there. Use a new email account they do not know about for private messages.",
+      "also_check": [
+        "gmail.filter.forwards",
+        "gmail.delegate"
+      ],
+      "sources": [
+        {
+          "title": "Gmail Help: Automatically forward Gmail messages to another account",
+          "url": "https://support.google.com/mail/answer/10957"
+        }
+      ],
+      "verified_at": "2026-11-21",
+      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+    },
+    {
+      "code": "gmail.filter.forwards",
+      "title": "A filter sends some of your mail to another address",
+      "what_it_means": "Mail that matches this filter is sent on to another address.",
+      "who_can_notice": "unknown",
+      "notice_why": "Those messages stop arriving for them. They may notice.",
+      "evidence_first": [
+        "Screenshot the filter, including what it matches and where it sends mail."
+      ],
+      "steps": [
+        "Open Gmail settings, then Filters and Blocked Addresses.",
+        "Find the filter.",
+        "Select delete, then confirm."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Use a new email account they do not know about for private messages.",
+      "also_check": [
+        "gmail.forwarding.external",
+        "gmail.filter.hides"
+      ],
+      "sources": [
+        {
+          "title": "Gmail Help: Create rules to filter your emails",
+          "url": "https://support.google.com/mail/answer/6579"
+        }
+      ],
+      "verified_at": "2026-11-21",
+      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+    },
+    {
+      "code": "gmail.filter.hides",
+      "title": "A filter hides some of your mail",
+      "what_it_means": "Mail that matches this filter skips your inbox or is deleted, so you may never see it.",
+      "who_can_notice": "unknown",
+      "notice_why": "Whoever set it up would only notice if they check your filters or expect you not to see those messages.",
+      "evidence_first": [
+        "Screenshot the filter, including what it matches and what it does."
+      ],
+      "steps": [
+        "Open Gmail settings, then Filters and Blocked Addresses.",
+        "Find the filter.",
+        "Select delete, then confirm.",
+        "Check All Mail and Trash for messages it hid."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Check All Mail and Trash for hidden messages when you can.",
+      "also_check": [
+        "gmail.filter.forwards",
+        "gmail.delegate"
+      ],
+      "sources": [
+        {
+          "title": "Gmail Help: Create rules to filter your emails",
+          "url": "https://support.google.com/mail/answer/6579"
+        }
+      ],
+      "verified_at": "2026-11-21",
+      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+    },
+    {
+      "code": "gmail.delegate",
+      "title": "Someone else can open your Gmail",
+      "what_it_means": "This person can read, send and delete your mail.",
+      "who_can_notice": "unknown",
+      "notice_why": "Your account disappears from the accounts they can open. They may notice the next time they look.",
+      "evidence_first": [
+        "Screenshot the Accounts and Import page, including this address."
+      ],
+      "steps": [
+        "Open Gmail settings, then Accounts and Import.",
+        "Under Grant access to your account, select delete next to the address.",
+        "Confirm."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Use a new email account they do not know about for private messages.",
+      "also_check": [
+        "gmail.forwarding.external",
+        "google.devices.other"
+      ],
+      "sources": [
+        {
+          "title": "Gmail Help: Delegate and collaborate on email",
+          "url": "https://support.google.com/mail/answer/138350"
+        }
+      ],
+      "verified_at": "2026-11-21",
+      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+    },
+    {
+      "code": "maps.sharing.person",
+      "title": "Someone can see your location",
+      "what_it_means": "This person can see where you are right now.",
+      "who_can_notice": "noticeable",
+      "notice_why": "You disappear from the people sharing with them, so they may notice quickly.",
+      "evidence_first": [
+        "Screenshot the location sharing page, including who it is shared with and until when."
+      ],
+      "steps": [
+        "Open this setting.",
+        "Select the person.",
+        "Stop sharing with them."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Talk to an advocate before you go anywhere you want to keep private, because they can see where you are.",
+      "also_check": [
+        "google.apps.location",
+        "photos.partner_sharing"
+      ],
+      "sources": [
+        {
+          "title": "Google Account Help: Manage your Location Sharing settings",
+          "url": "https://support.google.com/maps/answer/7326816"
+        }
+      ],
+      "verified_at": "2026-11-22",
+      "verified_how": "Official help page checked for what the change does (Google Maps Help: Get Location Sharing notifications); steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "notice_source": {
+        "title": "Google Maps Help: Get Location Sharing notifications",
+        "url": "https://support.google.com/maps/answer/11966807",
+        "quote": "Notifications stop when location sharing stops."
+      },
+      "what_they_see": "You disappear from their map, and any alerts they set for when you arrive or leave stop."
+    },
+    {
+      "code": "maps.sharing.link",
+      "title": "A link shows your location to anyone who has it",
+      "what_it_means": "Anyone with this link can see where you are while it is on.",
+      "who_can_notice": "unknown",
+      "notice_why": "The link stops working. Anyone using it may notice.",
+      "evidence_first": [
+        "Screenshot the location sharing page, including when the link ends."
+      ],
+      "steps": [
+        "Open this setting.",
+        "Find the link.",
+        "Stop sharing it."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Talk to an advocate before you go anywhere you want to keep private.",
+      "also_check": [
+        "maps.sharing.person"
+      ],
+      "sources": [
+        {
+          "title": "Google Account Help: Manage your Location Sharing settings",
+          "url": "https://support.google.com/maps/answer/7326816"
+        }
+      ],
+      "verified_at": "2026-11-21",
+      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+    },
+    {
+      "code": "chrome.extension.broad_access",
+      "title": "An extension can see what you do in Chrome",
+      "what_it_means": "This extension can read the pages you visit in this browser.",
+      "who_can_notice": "unknown",
+      "notice_why": "If someone uses this extension to watch you, what they see would stop.",
+      "evidence_first": [
+        "Screenshot the extension's page in Chrome, including its name."
+      ],
+      "steps": [
+        "Open this setting.",
+        "If you did not add this extension, select Remove.",
+        "If it says it was installed by whoever manages this browser, you cannot remove it here. Use another device for private things, and tell an advocate."
+      ],
+      "if_not_safe_yet": "Leave it for now. Use another device for anything private, because this extension may see it.",
+      "also_check": [
+        "chrome.sync.other_account"
+      ],
+      "sources": [
+        {
+          "title": "Chrome Web Store Help: Install and manage extensions",
+          "url": "https://support.google.com/chrome_webstore/answer/2664769"
+        }
+      ],
+      "verified_at": "2026-11-21",
+      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+    },
+    {
+      "code": "chrome.sync.other_account",
+      "title": "This browser sends your data to another account",
+      "what_it_means": "Chrome may be sending your history and saved passwords to an account that is not the one you checked.",
+      "who_can_notice": "unknown",
+      "notice_why": "Your history stops appearing in that account. Whoever uses it may notice.",
+      "evidence_first": [
+        "Screenshot Chrome's profile menu, showing which account it is signed in to."
+      ],
+      "steps": [
+        "Open this setting.",
+        "Turn off sync, or sign out of Chrome.",
+        "Change the passwords Chrome saved, from a device only you use."
+      ],
+      "if_not_safe_yet": "Leave it for now. Use another device for anything private, because what you do in this browser may be shared.",
+      "also_check": [
+        "chrome.extension.broad_access"
+      ],
+      "sources": [
+        {
+          "title": "Google Chrome Help: Sign in to Chrome",
+          "url": "https://support.google.com/chrome/answer/185277"
+        }
+      ],
+      "verified_at": "2026-11-21",
+      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+    },
+    {
+      "code": "amazon.household.adult",
+      "title": "Another adult shares your Amazon account",
+      "what_it_means": "They can see your orders and the addresses they go to.",
+      "who_can_notice": "noticeable",
+      "notice_why": "They lose what you shared, so they may notice. Amazon says they must then wait 12 months to join another family.",
+      "evidence_first": [
+        "Screenshot your Amazon Family page."
+      ],
+      "steps": [
+        "Open this setting.",
+        "If you joined their family, select Leave Amazon Family.",
+        "If you run it, select them. Then remove them from your Amazon Family.",
+        "Check where your recent orders went."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Avoid ordering anything to a new address from this account.",
+      "also_check": [
+        "amazon.device.other"
+      ],
+      "sources": [
+        {
+          "title": "Amazon Customer Service: Leave an Amazon Family",
+          "url": "https://www.amazon.com/gp/help/customer/display.html?nodeId=GBSVVXGRTJMULM47"
+        },
+        {
+          "title": "Amazon Customer Service: Remove a Member",
+          "url": "https://www.amazon.com/gp/help/customer/display.html?nodeId=GMA7DTL7BABZ6Z5A"
+        }
+      ],
+      "verified_at": "2026-11-22",
+      "verified_how": "Official help page checked for what the change does (Amazon Customer Service: Remove a Member); steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "notice_source": {
+        "title": "Amazon Customer Service: Remove a Member",
+        "url": "https://www.amazon.com/gp/help/customer/display.html?nodeId=GMA7DTL7BABZ6Z5A",
+        "quote": "For an account member, removing them disconnects them from your Family. They keep their account but lose access to shared benefits."
+      },
+      "what_they_see": "They lose the benefits and content you shared, so they will notice when they shop or watch."
+    },
+    {
+      "code": "amazon.household.teen",
+      "title": "A teen profile is on your Amazon account",
+      "what_it_means": "A teen in your household can shop from your account, and you approve their orders.",
+      "who_can_notice": "noticeable",
+      "notice_why": "The teen can no longer shop from your account and will notice.",
+      "evidence_first": [
+        "Screenshot your Amazon Family page."
+      ],
+      "steps": [
+        "Open this setting.",
+        "Talk this one over with an advocate first, because it involves a child.",
+        "To take the profile off, select it. Then remove it from your Amazon Family."
+      ],
+      "if_not_safe_yet": "Leave it for now. Talk to an advocate about anything that involves a child.",
+      "also_check": [
+        "amazon.household.adult"
+      ],
+      "sources": [
+        {
+          "title": "Amazon Customer Service: Remove a Member",
+          "url": "https://www.amazon.com/gp/help/customer/display.html?nodeId=GMA7DTL7BABZ6Z5A"
+        }
+      ],
+      "verified_at": "2026-11-22",
+      "verified_how": "Official help page checked for what the change does (Amazon Customer Service: Remove a Member); steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "notice_source": {
+        "title": "Amazon Customer Service: Remove a Member",
+        "url": "https://www.amazon.com/gp/help/customer/display.html?nodeId=GMA7DTL7BABZ6Z5A",
+        "quote": "For an account member, removing them disconnects them from your Family. They keep their account but lose access to shared benefits."
+      },
+      "what_they_see": "The teen can no longer shop from your account."
+    },
+    {
+      "code": "amazon.device.other",
+      "title": "A device is on your Amazon account",
+      "what_it_means": "This device can show your orders, messages or camera feeds.",
+      "who_can_notice": "noticeable",
+      "notice_why": "The device stops working with your account. Whoever uses it will notice.",
+      "evidence_first": [
+        "Screenshot your Amazon device list."
+      ],
+      "steps": [
+        "Open this setting.",
+        "Select the device.",
+        "Select Deregister."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. If it is an Echo or a camera, assume it can hear or see the room it is in.",
+      "also_check": [
+        "amazon.household.adult"
+      ],
+      "sources": [
+        {
+          "title": "Amazon Customer Service: Deregister your device",
+          "url": "https://www.amazon.com/gp/help/customer/display.html?nodeId=201357520"
+        }
+      ],
+      "verified_at": "2026-11-22",
+      "verified_how": "Official help page checked for what the change does (Amazon Customer Service: Deregister your device); steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "notice_source": {
+        "title": "Amazon Customer Service: Deregister your device",
+        "url": "https://www.amazon.com/gp/help/customer/display.html?nodeId=201357520",
+        "quote": "Deregistering removes a device from your Amazon account and disconnects it from all your digital content and Amazon Services."
+      },
+      "what_they_see": "The device stops showing your account’s content. Whoever uses it will notice at once."
+    },
+    {
+      "code": "google.family.member",
+      "title": "Someone is in your Google family group",
+      "what_it_means": "People in your family group may share what they buy, a calendar, and where they are.",
+      "who_can_notice": "notifies",
+      "notice_why": "Google emails a person when they are removed from a family group.",
+      "evidence_first": [
+        "Screenshot your family group page."
+      ],
+      "steps": [
+        "Open this setting.",
+        "Select the person.",
+        "Select Remove member, then Remove."
+      ],
+      "if_not_safe_yet": "Leave it for now. Google will email them if you remove them, so plan the timing with an advocate.",
+      "also_check": [
+        "maps.sharing.person"
+      ],
+      "sources": [
+        {
+          "title": "Google For Families Help: Manage your family on Google",
+          "url": "https://support.google.com/families/answer/6286986"
+        }
+      ],
+      "verified_at": "2026-11-22",
+      "verified_how": "Official help page checked for what the change does (Google For Families Help: Manage your family on Google); steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "notice_source": {
+        "title": "Google For Families Help: Manage your family on Google",
+        "url": "https://support.google.com/families/answer/6286986",
+        "quote": "Gets an email alert when they’re removed."
+      },
+      "what_they_see": "Google sends them an email saying they were removed."
+    },
+    {
+      "code": "google.family.manager_other",
+      "title": "Someone else manages your Google family group",
+      "what_it_means": "A family manager can see some of what you do and change some of your settings.",
+      "who_can_notice": "unknown",
+      "notice_why": "You disappear from their family group, so they may notice.",
+      "evidence_first": [
+        "Screenshot your family group page, including who manages it."
+      ],
+      "steps": [
+        "Open this setting.",
+        "Select Leave family group, then Leave.",
+        "If your account is supervised, you cannot leave it yourself. Talk to an advocate."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Talk to an advocate about when to leave.",
+      "also_check": [
+        "maps.sharing.person",
+        "google.devices.other"
+      ],
+      "sources": [
+        {
+          "title": "Google For Families Help: Join or leave a family on Google",
+          "url": "https://support.google.com/families/answer/6317858"
+        }
+      ],
+      "verified_at": "2026-11-21",
+      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+    },
+    {
+      "code": "photos.partner_sharing",
+      "title": "Your photos are shared with someone",
+      "what_it_means": "New photos you take may be shared with this person, and photos can show where they were taken.",
+      "who_can_notice": "noticeable",
+      "notice_why": "New photos stop arriving for them. They may notice.",
+      "evidence_first": [
+        "Screenshot the partner sharing settings."
+      ],
+      "steps": [
+        "Open this setting.",
+        "Under Partner sharing, remove your partner."
+      ],
+      "if_not_safe_yet": "Leave it for now. Avoid taking photos that show where you are, because they may be shared.",
+      "also_check": [
+        "maps.sharing.person"
+      ],
+      "sources": [
+        {
+          "title": "Google Photos Help: Set up partner sharing",
+          "url": "https://support.google.com/photos/answer/7378858"
+        }
+      ],
+      "verified_at": "2026-11-22",
+      "verified_how": "Official help page checked for what the change does (Google Photos Help: Set up partner sharing); steps not yet followed on a test account",
+      "steps_followed": false,
+      "version": 1,
+      "notice_source": {
+        "title": "Google Photos Help: Set up partner sharing",
+        "url": "https://support.google.com/photos/answer/7378858",
+        "quote": "If you remove your partner, they won’t be able to access the photos you shared and you won’t be able to access their photos."
+      },
+      "what_they_see": "They can no longer see the photos you shared. They will notice the next time they look at them."
+    },
+    {
+      "code": "screenshot.sharing.person",
+      "title": "Someone can see your location in another app",
+      "what_it_means": "A person on this sharing screen can see where you are.",
+      "who_can_notice": "unknown",
+      "notice_why": "Most location apps show when someone stops sharing, so they may notice.",
+      "evidence_first": [
+        "Keep the screenshot you checked."
+      ],
+      "steps": [
+        "Open the app on your phone.",
+        "Find its sharing or circle settings.",
+        "Follow the app's guide on Safety Net (NNEDV)."
+      ],
+      "if_not_safe_yet": "Leave it for now. Talk to an advocate before you go anywhere you want to keep private.",
+      "also_check": [
+        "maps.sharing.person"
+      ],
+      "sources": [
+        {
+          "title": "Safety Net (NNEDV): Resources for survivors",
+          "url": "https://www.techsafety.org/resources-survivors"
+        }
+      ],
+      "verified_at": "2026-11-21",
+      "verified_how": "Source page checked",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+    }
+  ]
+}

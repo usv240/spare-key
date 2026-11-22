@@ -96,7 +96,7 @@ export function builtWithPage({ numbers }) {
     ['Hybrid inference (<code>PREFER_ON_DEVICE</code>)', 'Either', 'The practice check on this site, which holds only made-up data: Gemini Nano when the browser has it, the cloud when it does not.'],
     ['Firebase App Check (reCAPTCHA Enterprise)', 'Site and extension', 'Only Spare Key can spend its model quota. The extension gets tokens from a small page on this site that answers only the extension.'],
     ['Firebase Remote Config', 'Every install', 'Page readers, models and switches. When a site changes a page, its reader is fixed for every install within about an hour, with no store update.'],
-    ['Cloud Firestore', 'Google’s cloud', 'The public steps library, which the extension refreshes when it is newer. Opt-in anonymous layout reports, create-only.'],
+    ['Cloud Firestore', 'Google’s cloud', 'The public steps library, which the extension refreshes when it is newer. Opt-in anonymous reports when a page reader breaks: five fixed fields, create-only.'],
     ['Firebase Hosting', 'Google’s cloud', 'This site, the practice pages and the Steps API.'],
     ['Chrome extension APIs', 'This computer', 'Side panel, the scan tab, permissions asked for per site, the extensions check, history cleanup.'],
     ['WebCrypto', 'This computer', 'The locked copy: PBKDF2 with 600,000 rounds and AES-GCM.'],
@@ -110,7 +110,7 @@ export function builtWithPage({ numbers }) {
 <tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody>
 </table></div>
 <h2>The cloud asks, the device answers</h2>
-<p>Gemini in the cloud orders the plan without ever learning who anyone is. When it needs a fact, it calls back to the device, and the device answers with an enum:</p>
+<p>Gemini in the cloud orders the plan without ever learning who anyone is. When it needs a fact, it calls back to the device, and the device answers with an enum. The shape of an exchange:</p>
 <pre tabindex="0" aria-label="Code example"><code>cloud:  ask_device({ ref: "f3", question: "filter_also_deletes" })
 device: { "answer": "no" }
 cloud:  ask_user({ ref: "f1", question: "set_up_by_you" })
@@ -135,9 +135,9 @@ export function plantPage() {
 }
 
 export function apiPage() {
-  return doc('api.html', 'Steps API and MCP server', 'The verified steps library as a free, open API and an MCP server.', `
+  return doc('api.html', 'Steps API and MCP server', 'The steps library as a free, open API and an MCP server.', `
 <h1>Steps API and MCP server</h1>
-<p class="lead">The verified steps library is free to use. It takes no input, so it cannot receive personal data, and it needs no key.</p>
+<p class="lead">The steps library is free to use. It takes no input, so it cannot receive personal data, and it needs no key.</p>
 <h2>Steps API</h2>
 <pre tabindex="0" aria-label="Code example"><code>GET https://spare-key-app.web.app/api/v1/index.json            every finding code
 GET https://spare-key-app.web.app/api/v1/steps/{code}.json     one entry

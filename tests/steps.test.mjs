@@ -35,11 +35,13 @@ test('the code plan with the real library passes every measure, for every code a
 
 test('the validator catches a bad entry', () => {
   const bad = structuredClone(LIB);
-  bad.entries[0].who_can_notice = 'unlikely';
+  const unsourced = bad.entries.findIndex(e => !e.notice_source);
+  bad.entries[unsourced].who_can_notice = 'unlikely';
   bad.entries[1].sources = [{ title: 'Blog', url: 'https://example.com/tips' }];
   bad.entries.pop();
   const problems = validateLibrary(bad);
   assert.ok(problems.some(p => p.includes('"unlikely" needs')));
+  assert.ok(problems.some(p => p.includes('needs a quoted official source')));
   assert.ok(problems.some(p => p.includes('not an official help page')));
   assert.ok(problems.some(p => p.includes('no library entry')));
 });

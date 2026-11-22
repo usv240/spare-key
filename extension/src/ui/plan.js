@@ -1,11 +1,12 @@
-// The plan screen (EXPERIENCE.md section 3.5): optional situation questions, then the plan as numbered steps.
-// Each step shows the steps library's own words; a model's words appear only in "why" and the summary, after the safety
-// rules have run on them.
-import { h, infoButton, UNCHECKED } from './results.js';
+// The plan screen (EXPERIENCE.md section 3.5): optional situation questions, then the plan in numbered sections:
+//   1. Screenshot these first   2. Talk to an advocate   3. Change these now (only when the person said it is a good time)
+//   4. Leave these for a better time, grouped by service and folded   5. Check the rest yourself
+// Each block shows the steps library's own words, including what the other person would see (from a quoted official
+// page where one exists). A model's words appear only in "why" and the summary, after the safety rules have run.
+import { h, put, infoButton, UNCHECKED } from './results.js';
 import { registerInfo } from './info.js';
 import { HOTLINE } from '../../../shared/config.js';
-import { SITUATION, CODE_TEXT } from '../../../shared/findings.js';
-import { noticeOf } from '../../../shared/plan/engine.js';
+import { CODE_TEXT } from '../../../shared/findings.js';
 
 export const QUESTIONS = [
   { key: 'living', text: 'Do you live with the other person?', answers: [['together', 'Yes'], ['apart', 'No'], ['prefer_not_to_say', 'Prefer not to say']] },
@@ -13,14 +14,6 @@ export const QUESTIONS = [
   { key: 'children_shared', text: 'Do you share children?', answers: [['yes', 'Yes'], ['no', 'No'], ['prefer_not_to_say', 'Prefer not to say']] },
   { key: 'has_advocate', text: 'Do you have an advocate?', answers: [['yes', 'Yes'], ['no', 'No'], ['prefer_not_to_say', 'Prefer not to say']] },
 ];
-
-const LABELS = {
-  document: 'Screenshot first',
-  talk_to_advocate: 'Talk to an advocate',
-  change_now: 'Change now',
-  wait: 'Wait for a better time',
-  check_manually: 'Check it yourself',
-};
 
 /** The optional questions. `values` are the current answers; `onChange(values, share)` saves them. */
 export function renderQuestions(root, { values, share, cloudOn, onChange, onMake }) {
@@ -43,7 +36,7 @@ export function renderQuestions(root, { values, share, cloudOn, onChange, onMake
   shareBox.checked = !!share;
   shareBox.disabled = !cloudOn;
   shareBox.addEventListener('change', () => onChange(values, shareBox.checked));
-  root.replaceChildren(
+  put(root,
     h('div', { class: 'with-info' }, h('h2', { class: 'plan-q-title', text: 'Want the plan ordered for your situation? These answers are optional.' }), infoButton('situation', 'About these questions')),
     ...fieldsets,
     h('label', { class: 'share-line' }, shareBox, h('span', { text: cloudOn ? 'Let plan help in the cloud see my choices' : 'Plan help from the cloud is off, so your choices stay here' })),
@@ -51,28 +44,45 @@ export function renderQuestions(root, { values, share, cloudOn, onChange, onMake
   );
 }
 
+const WHERE = {
+  cloud: model => [`Ordered with help from Gemini in the cloud, which saw finding types only.`, `Ordered by Gemini in the cloud (${model}) from finding types only, then checked by Spare Key’s safety rules on this computer.`],
+  device: model => [`Ordered by Gemini Nano on this computer. Nothing was sent anywhere.`, `Ordered by Gemini Nano on this computer (${model}), then checked by Spare Key’s safety rules. Nothing was sent anywhere.`],
+  code: () => [`Made on this computer from Spare Key’s steps library.`, `Made on this computer from Spare Key’s steps library, with no AI.`],
+};
+
 /**
  * The plan. `plan` uses local refs. `byRef` maps a local ref to its finding; `library` maps code to entry.
- * `source` is 'code' or 'cloud'; `fired` lists the safety rules that changed it; `onOpen(url)` opens a setting.
+ * `source` is 'code', 'device' or 'cloud'; `fired` lists the safety rules that changed it; `onOpen(url)` opens a setting.
  */
-export function renderPlan(root, { plan, byRef, library, source, model, fired = [], cloudNote = '', voices = null, freshDays = 45, freshness = {}, onCheckFresh = null, onOpen, onOverride }) {
-  const steps = plan.actions.map((a, i) => stepCard(a, i, { byRef, library, onOpen, onOverride, freshDays, freshness, onCheckFresh }));
+export function renderPlan(root, { plan, byRef, library, source, model, fired = [], cloudNote = '', voices = null, freshDays = 45, freshness = {}, onCheckFresh = null, onOpen }) {
+  const ctx = { byRef, library, onOpen, freshDays, freshness, onCheckFresh };
+  const acts = plan.actions;
+  const docs = acts.filter(a => a.action === 'document');
+  const adv = acts.find(a => a.action === 'talk_to_advocate');
+  const nows = acts.filter(a => a.action === 'change_now');
+  const waits = acts.filter(a => a.action === 'wait');
+  const checks = acts.filter(a => a.action === 'check_manually');
+  const [lead, tech] = (WHERE[source] || WHERE.code)(model);
   registerInfo('why-order', {
     title: 'Why this order',
     what: 'Screenshot first, because the record is gone once a setting changes. Talk to an advocate before changing anything that may be noticed. Quiet ways into your account come before the rest when now is a good time.',
     why: 'Changing a setting can alert the other person. That can be most dangerous right after you leave. This order follows advice from tech abuse clinics and the Safety Net project.',
-    tech: source === 'cloud'
-      ? `Ordered by Gemini in the cloud (${model}) from finding types only, then checked by Spare Key's safety rules on this computer.`
-      : 'Made on this computer from Spare Key\'s steps library, with no AI.',
+    tech,
   });
   const added = fired.filter(f => f.rule !== 'R3');
-  root.replaceChildren(
+  const sections = [];
+  if (docs.length) sections.push(screenshotSection(docs, ctx));
+  if (adv) sections.push(advocateSection(adv));
+  if (nows.length) sections.push(nowSection(nows, ctx));
+  if (waits.length) sections.push(waitSection(waits, ctx));
+  if (checks.length) sections.push(checkSection());
+  sections.forEach((el, i) => { el.querySelector('.step-n').textContent = String(i + 1); });
+  put(root,
     h('h1', { id: 'plan-title', tabindex: '-1', text: 'Your plan' }),
-    h('div', { class: 'with-info' },
-      h('p', { class: 'lead', text: source === 'cloud' ? 'Ordered with help from Gemini in the cloud, which saw finding types only.' : 'Made on this computer from Spare Key\'s steps library.' }),
-      infoButton('why-order', 'About why this order')),
+    h('div', { class: 'with-info' }, h('p', { class: 'lead', text: lead }), infoButton('why-order', 'About why this order')),
     cloudNote ? h('p', { class: 'notice', text: cloudNote }) : null,
-    plan.summary ? h('p', { class: 'plan-summary', text: plan.summary }) : null,
+    h('p', { class: 'plan-summary', text: plan.summary || summaryOf({ docs, nows, waits }) }),
+    h('ol', { class: 'plan' }, sections),
     voices ? h('details', { class: 'voices' },
       h('summary', { text: 'Why this order: two voices' }),
       h('p', { class: 'muted', text: 'Before you saw this plan, two AI voices argued over it, and a third settled it. Spare Key’s own rules then made sure every warning is there.' }),
@@ -80,29 +90,115 @@ export function renderPlan(root, { plan, byRef, library, source, model, fired = 
       h('p', { text: voices.close_the_doors || voices.arguments?.close_the_doors || '' }),
       h('h3', { text: 'Stay hidden' }),
       h('p', { text: voices.stay_hidden || voices.arguments?.stay_hidden || '' }),
-      h('h3', { text: 'How they settled it' }),
-      h('p', { text: plan.summary || 'The steps below are the settled order.' }),
       voices.arguments ? h('details', { class: 'later' },
         h('summary', { text: 'Read both arguments in full' }),
         h('p', {}, h('strong', { text: 'Close the doors: ' }), voices.arguments.close_the_doors || ''),
         h('p', {}, h('strong', { text: 'Stay hidden: ' }), voices.arguments.stay_hidden || '')) : null) : null,
-    h('ol', { class: 'plan' }, steps),
     added.length ? h('details', { class: 'checked-list' },
-      h('summary', { text: `Spare Key's safety rules changed this plan (${added.length})` }),
+      h('summary', { text: `Spare Key’s safety rules changed this plan (${added.length})` }),
       h('ul', {}, added.map(f => h('li', { text: ruleWords(f) })))) : null,
   );
+}
+
+function summaryOf({ docs, nows, waits }) {
+  const n = docs[0]?.refs.length || 0;
+  const c = nows.reduce((a, s) => a + s.refs.length, 0);
+  const w = waits.reduce((a, s) => a + s.refs.length, 0);
+  return `Screenshot ${n} ${n === 1 ? 'setting' : 'settings'} first.${c ? ` Change ${c} now.` : ''}${w ? ` Leave ${w} for a better time, after talking to an advocate.` : ''}`;
 }
 
 function ruleWords(f) {
   return {
     R1: 'Spare Key added a step for a finding the plan left out.',
     R2: 'Spare Key put "Screenshot first" before any change.',
-    R4: 'Spare Key moved a change that may be noticed to "Wait", because now may not be a good time.',
+    R4: 'Spare Key moved a change that may be noticed to "Leave for a better time", because now may not be a good time.',
     R5: 'Spare Key added the advocate step before any change.',
     R6: 'Spare Key removed a sentence that promised more than anyone can know.',
     R7: 'Spare Key removed a sentence with contact details or a link.',
     R8: 'Spare Key added a "Check it yourself" step for something not checked.',
   }[f.rule] || 'Spare Key adjusted this plan.';
+}
+
+const SERVICE_NAMES = { google: 'Google account', gmail: 'Gmail', photos: 'Google Photos', amazon: 'Amazon', chrome: 'This Chrome browser', other: 'Other' };
+const groupBy = (list, key) => list.reduce((m, x) => m.set(key(x), [...(m.get(key(x)) || []), x]), new Map());
+
+const section = (kind, title, ...body) => h('li', { class: `step step-${kind}`, 'data-action': kind },
+  h('div', { class: 'step-head' }, h('span', { class: 'step-n num' }), h('h2', { class: `step-kind kind-${kind}`, text: title })), ...body);
+
+function screenshotSection(docs, { byRef }) {
+  const items = [...new Set(docs.flatMap(a => a.refs))].map(r => byRef.get(r)).filter(Boolean);
+  const byCode = groupBy(items, f => f.code);
+  return section('document', `Screenshot these first (${items.length})`,
+    h('p', { text: 'A record of what is set up now helps you and an advocate, and it is gone once a setting changes. Keep the screenshots where the other person cannot see them, like an email to an account only you use.' }),
+    h('ul', { class: 'step-list' }, [...byCode].map(([code, fs]) => h('li', {},
+      h('strong', { text: `${(CODE_TEXT[code] || [code])[0]}${fs.length > 1 ? ` (${fs.length})` : ''}` }),
+      ...fs.map(f => h('span', { class: 'muted', text: f.label }))))));
+}
+
+function advocateSection(a) {
+  return section('talk_to_advocate', 'Talk to an advocate',
+    h('p', { text: a.why }),
+    h('div', { class: 'hotline compact' },
+      h('a', { href: HOTLINE.tel }, h('span', {}, 'Call ', h('strong', { text: HOTLINE.call }))),
+      h('a', { href: HOTLINE.sms }, h('span', {}, 'Text ', h('strong', { text: 'START' }), ' to ', h('strong', { text: '88788' }))),
+      h('a', { href: HOTLINE.web, target: '_blank', rel: 'noopener noreferrer' }, h('span', { text: 'Chat at thehotline.org' }))));
+}
+
+// One folded block per kind of finding, grouped under the service it belongs to.
+function byService(acts, ctx) {
+  const service = a => ctx.byRef.get(a.refs[0])?.service || 'other';
+  return [...groupBy(acts, service)].map(([svc, list]) => h('div', { class: 'wait-group' },
+    h('h3', { text: SERVICE_NAMES[svc] || svc }),
+    ...list.map(a => codeBlock(a, ctx, { open: false }))));
+}
+
+const countOf = acts => acts.reduce((n, a) => n + a.refs.length, 0);
+
+function nowSection(nows, ctx) {
+  const total = countOf(nows);
+  return section('change_now', total === 1 ? 'Change this now' : `Change these now (${total})`,
+    h('p', { text: 'You said now is a good time. Open each one to read what the other person would see, then follow the steps. If anything changes, stop and leave the rest for later.' }),
+    ...byService(nows, ctx));
+}
+
+function waitSection(waits, ctx) {
+  return section('wait', `Leave these for a better time (${countOf(waits)})`,
+    h('p', { text: 'Removing these may be noticed. For now, screenshot them and talk to an advocate about when to change each one. Open one to see what the other person would see, and the steps for later.' }),
+    ...byService(waits, ctx));
+}
+
+function checkSection() {
+  return section('check_manually', 'Check the rest yourself',
+    h('p', { text: 'Spare Key did not check everything. These guides show how to check other apps and your phone yourself.' }),
+    h('ul', { class: 'guides' }, UNCHECKED.guides.map(g => h('li', {}, h('a', { href: g.url, target: '_blank', rel: 'noopener noreferrer', text: g.title })))));
+}
+
+// A "why" a model wrote for this step, unless it is one of the code plan's stock sentences.
+const STOCK = /^(Removing this may be noticed|You said now is a good time|Changing this is unlikely|This gives someone a quiet way|Spare Key added this)/;
+
+// One kind of finding: its items, what the other person would see, what to do now or later, and the steps.
+function codeBlock(a, { byRef, library, onOpen, freshDays, freshness, onCheckFresh }, { open }) {
+  const items = a.refs.map(r => byRef.get(r)).filter(Boolean);
+  const f = items[0];
+  const code = a.code || f?.code;
+  const e = library[code] || {};
+  const title = `${e.title || (CODE_TEXT[code] || [''])[0]}${items.length > 1 ? ` (${items.length})` : ''}`;
+  const see = e.what_they_see || a.warning || 'Removing this may alert the other person.';
+  const inner = [
+    items.length ? h('ul', { class: 'step-list items' }, items.map(x => h('li', { class: 'muted', text: x.label }))) : null,
+    h('p', { class: 'caution-line' }, h('span', { text: a.action === 'change_now' ? `${see} If now is not a good time, leave it and screenshot it.` : see })),
+    a.why && !STOCK.test(a.why) ? h('p', { text: a.why }) : null,
+    a.action === 'wait' && e.if_not_safe_yet ? h('p', {}, h('strong', { text: 'For now: ' }), e.if_not_safe_yet) : null,
+    a.action === 'change_now'
+      ? h('ol', { class: 'how' }, (e.steps || []).map(s => h('li', { text: s })))
+      : h('details', { class: 'later' }, h('summary', { text: 'Steps for when it is a better time' }), h('ol', { class: 'how' }, (e.steps || []).map(s => h('li', { text: s })))),
+    f?.openUrl ? h('div', { class: 'finding-actions' }, h('button', { type: 'button', class: 'link-button', onclick: () => onOpen(f.openUrl) }, 'Open this setting')) : null,
+    e.sources?.length ? h('p', { class: 'source muted' }, 'Source: ', ...e.sources.flatMap((s, k) => [k ? '; ' : '', h('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer', text: s.title })])) : null,
+    ...(freshnessBlock(code, e, { freshDays, freshness, onCheckFresh }) || []),
+  ];
+  return open
+    ? h('div', { class: 'code-block', 'data-code': code }, h('p', { class: 'step-title', text: title }), ...inner)
+    : h('details', { class: 'code-block', 'data-code': code }, h('summary', { class: 'step-title', text: title }), ...inner);
 }
 
 const longDate = iso => new Date(`${iso}T12:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
@@ -113,57 +209,16 @@ function freshnessBlock(code, e, { freshDays, freshness, onCheckFresh }) {
   if (!e?.verified_at) return null;
   const r = freshness[code];
   const stale = ageDays(e.verified_at) > freshDays;
-  const lines = [h('p', { class: 'source muted', text: `Steps checked against the official help page on ${longDate(e.verified_at)}.` })];
+  const lines = [h('p', { class: 'source muted', text: `Checked against the official help page on ${longDate(e.verified_at)}.` })];
   if (r?.pending) lines.push(h('p', { class: 'muted', role: 'status', text: 'Checking the help page now.' }));
   else if (r) {
     const title = e.sources?.[0]?.title || 'the help page';
     lines.push(h('p', { class: 'fresh-result', role: 'status', text: r.still_matches === 'yes' ? `Still matches ${title} today.`
       : r.still_matches === 'no' ? `The help page may have changed. Here is what it says today: ${r.what_changed || 'the steps there are different.'} Follow the help page if the steps below do not work.`
+      : r.cloudOff ? 'Plan help from the cloud is off, so Spare Key did not check the help page. Open it to check the steps yourself.'
       : 'Spare Key could not compare these steps with the help page today. Open the help page to check.' }));
   } else if (stale && onCheckFresh) {
     lines.push(h('button', { type: 'button', class: 'link-button', onclick: () => onCheckFresh(code) }, 'Check these steps are still current'));
   }
   return lines;
-}
-
-function stepCard(a, i, { byRef, library, onOpen, onOverride, freshDays, freshness, onCheckFresh }) {
-  const kind = h('p', { class: `step-kind kind-${a.action}`, text: LABELS[a.action] || a.action });
-  const body = [];
-  if (a.action === 'document') {
-    const items = a.refs.map(r => byRef.get(r)).filter(Boolean);
-    body.push(h('p', { text: 'Take a screenshot of each of these settings before anything changes. Keep the screenshots somewhere the other person cannot see, like an email to an account only you use.' }));
-    body.push(h('ul', { class: 'step-list' }, items.map(f => h('li', {}, h('strong', { text: (CODE_TEXT[f.code] || [f.code])[0] }), h('span', { class: 'muted', text: f.label })))));
-  } else if (a.action === 'talk_to_advocate') {
-    body.push(h('p', { text: a.why }));
-    body.push(h('div', { class: 'hotline compact' },
-      h('a', { href: HOTLINE.tel }, h('span', {}, 'Call ', h('strong', { text: HOTLINE.call }))),
-      h('a', { href: HOTLINE.sms }, h('span', {}, 'Text ', h('strong', { text: 'START' }), ' to ', h('strong', { text: '88788' }))),
-      h('a', { href: HOTLINE.web, target: '_blank', rel: 'noopener noreferrer' }, h('span', { text: 'Chat at thehotline.org' }))));
-  } else if (a.action === 'change_now' || a.action === 'wait') {
-    const items = a.refs.map(r => byRef.get(r)).filter(Boolean);
-    const f = items[0];
-    const e = library[a.code || f?.code] || {};
-    body.push(h('p', { class: 'step-title', text: `${e.title || (CODE_TEXT[f?.code] || [''])[0]}${items.length > 1 ? ` (${items.length})` : ''}` }));
-    if (items.length === 1) body.push(h('p', { class: 'muted', text: f.label }));
-    else if (items.length > 1) body.push(h('ul', { class: 'step-list' }, items.map(x => h('li', { class: 'muted', text: x.label }))));
-    if (a.why) body.push(h('p', { text: a.why }));
-    if (a.action === 'change_now') {
-      if (a.warning || noticeOf(library, a.code) !== 'unlikely') body.push(h('p', { class: 'caution-line' }, h('span', { text: `${a.warning || e.notice_why || 'Removing this may alert the other person.'} If now is not a good time, leave it and screenshot it.` })));
-      body.push(h('ol', { class: 'how' }, (e.steps || []).map(s => h('li', { text: s }))));
-    } else {
-      if (e.if_not_safe_yet) body.push(h('p', { text: e.if_not_safe_yet }));
-      body.push(h('details', { class: 'later' },
-        h('summary', { text: 'When it is a better time' }),
-        h('p', { class: 'caution-line' }, h('span', { text: e.notice_why || 'Removing this may alert the other person.' })),
-        h('ol', { class: 'how' }, (e.steps || []).map(s => h('li', { text: s })))));
-    }
-    if (f?.openUrl) body.push(h('div', { class: 'finding-actions' }, h('button', { type: 'button', class: 'link-button', onclick: () => onOpen(f.openUrl) }, 'Open this setting')));
-    if (e.sources?.length) body.push(h('p', { class: 'source muted' }, 'Source: ', ...e.sources.flatMap((s, k) => [k ? '; ' : '', h('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer', text: s.title })])));
-    const fresh = freshnessBlock(a.code || f?.code, e, { freshDays, freshness, onCheckFresh });
-    if (fresh) body.push(...fresh);
-  } else if (a.action === 'check_manually') {
-    body.push(h('p', { text: a.why }));
-    body.push(h('ul', { class: 'guides' }, UNCHECKED.guides.map(g => h('li', {}, h('a', { href: g.url, target: '_blank', rel: 'noopener noreferrer', text: g.title })))));
-  }
-  return h('li', { class: 'step', 'data-action': a.action }, h('div', { class: 'step-head' }, h('span', { class: 'step-n num', text: String(i + 1) }), kind), ...body);
 }

@@ -85,7 +85,7 @@ function renderSent() {
 // ---------------------------------------------------------------------------------------------------------------
 // Results.
 function showResults() {
-  renderResults($('results'), {
+  renderResults($('results'), { library: LIBRARY,
     scan, catalogue: catalogue({}), reveal,
     onAnswer: (ref, ownership) => {
       const f = scan.findings.find(x => x.ref === ref);
@@ -119,6 +119,7 @@ const PRACTICE_CORPUS = (() => {
 })();
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+let lastSortError = '';
 function scanFrame() {
   try { return window.parent !== window ? window.parent.document.getElementById('scan-view') : null; } catch { return null; }
 }
@@ -170,10 +171,15 @@ async function runPractice() {
     where = r.source === 'on_device' ? 'Sorted by Gemini Nano, on this device.' : `Sorted by Gemini in the cloud (${r.model}). The practice data is made up, so this is the one place Spare Key lets the cloud read entries.`;
   } catch (e) {
     console.warn('Spare Key practice sorting:', String(e && e.message || e).slice(0, 300));
+    lastSortError = String(e && e.message || e);
     const norm = s => String(s).replace(/\s+/g, ' ').trim();
     const missing = raw.filter(r => !norm(PRACTICE_CORPUS).includes(norm(r.entry.text)));
     if (missing.length) console.warn('Not found on the practice pages:', JSON.stringify(missing.slice(0, 3).map(r => r.entry.text)));
-    where = 'Sorted by code only: Gemini did not answer.';
+    where = /appCheck|app-check|403|throttle|attestation/i.test(lastSortError)
+      ? 'Sorted by code only. Google’s check that this is a real browser (App Check) refused it just now, so Gemini was not asked. This happens in automated or very private browsers.'
+      : /429|RESOURCE_EXHAUSTED|quota|503|500|overloaded|timed? ?out|abort/i.test(lastSortError)
+        ? 'Sorted by code only. Gemini in the cloud was busy just now.'
+        : 'Sorted by code only: Gemini did not answer.';
   }
   const findings = [];
   for (const [i, r] of raw.entries()) {
@@ -185,7 +191,8 @@ async function runPractice() {
   }
   for (const o of outcomes) o.findings = findings.filter(f => f.check === o.id).length;
   scan = { mode: 'practice', findings, outcomes, account: PRACTICE_OWNER };
-  $('sorted-line').textContent = where;
+  $('sorted-line').replaceChildren(where);
+  if (/code only/.test(where)) $('sorted-line').append(' ', h('button', { type: 'button', class: 'link-button', onclick: () => runPractice() }, 'Try again'));
   $('sorted-line').hidden = false;
   showResults();
   $('results-title')?.focus({ preventScroll: true });

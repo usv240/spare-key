@@ -120,7 +120,7 @@
   },
   "sent-log": {
     "title": "What left this computer",
-    "what": "This is everything Spare Key sent to Gemini in the cloud, word for word.",
+    "what": "This is everything Spare Key sent to Gemini in the cloud, word for word: the data, and the fixed instructions sent with it.",
     "why": "Names, emails, phone numbers and devices are never in it. You can check that here.",
     "tech": "Each request is written here before it is sent. It passes a check that allows only finding types and fixed answers, and that refuses anything this check found."
   },
@@ -140,6 +140,6 @@
     "title": "The plan",
     "what": "An ordered list: screenshot first, talk to an advocate, then what can change now and what to leave for a better time.",
     "why": "Changing a setting can alert the other person. The plan says which changes may be noticed, every time.",
-    "tech": "The plan is built by code from a verified steps library. Gemini in the cloud can reorder it from finding types only, and Spare Key’s safety rules check every plan before you see it."
+    "tech": "The plan is built by code from a steps library checked against official help pages. Gemini in the cloud can reorder it from finding types only, and Spare Key’s safety rules check every plan before you see it."
   }
 }

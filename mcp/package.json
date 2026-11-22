@@ -1,7 +1,7 @@
 {
   "name": "spare-key-mcp",
   "version": "0.1.0",
-  "description": "MCP server for Spare Key's verified steps library: current steps with the warnings attached, and a safety-first plan built from finding codes. It never takes personal data.",
+  "description": "MCP server for Spare Key's steps library, checked against official help pages: current steps with the warnings attached, and a safety-first plan built from finding codes. It never takes personal data.",
   "license": "Apache-2.0",
   "type": "module",
   "bin": { "spare-key-mcp": "server.mjs" },

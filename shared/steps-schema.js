@@ -19,7 +19,7 @@ export function validateLibrary(lib) {
     }
     if (!NOTICE.includes(e?.who_can_notice)) problems.push(`${where}: who_can_notice must be one of ${NOTICE.join(', ')}`);
     // "unlikely" lets a plan change something now; only something seen on a test account or an official source may say so.
-    if (e?.who_can_notice === 'unlikely' && !e.steps_followed && !/source (page )?says/i.test(e.verified_how || '')) problems.push(`${where}: "unlikely" needs a test account or an official source`);
+    if (e?.who_can_notice === 'unlikely' && !e.steps_followed && !e.notice_source) problems.push(`${where}: "unlikely" needs a test account or an official source`);
     if (!Array.isArray(e?.steps) || !e.steps.length) problems.push(`${where}: no steps`);
     if (!Array.isArray(e?.evidence_first) || !e.evidence_first.length) problems.push(`${where}: no evidence_first`);
     if (!Array.isArray(e?.sources) || !e.sources.length) problems.push(`${where}: no sources`);
@@ -27,6 +27,9 @@ export function validateLibrary(lib) {
     for (const c of e?.also_check || []) if (!CODES[c]) problems.push(`${where}: also_check has an unknown code ${c}`);
     if (!/^\d{4}-\d{2}-\d{2}$/.test(e?.verified_at || '')) problems.push(`${where}: verified_at must be a date`);
     if (typeof e?.steps_followed !== 'boolean') problems.push(`${where}: steps_followed must be true or false`);
+    if (typeof e?.what_they_see !== 'string' || !e.what_they_see.trim()) problems.push(`${where}: missing what_they_see`);
+    // A known answer (anything but unknown) needs the official page that shows it, quoted, or a test-account observation.
+    if (e?.who_can_notice !== 'unknown' && !e.steps_followed && !(e.notice_source && OFFICIAL.test(e.notice_source.url || '') && e.notice_source.quote)) problems.push(`${where}: who_can_notice "${e.who_can_notice}" needs a quoted official source`);
   }
   for (const code of Object.keys(CODES)) if (!seen.has(code)) problems.push(`${code}: no library entry`);
   return problems;

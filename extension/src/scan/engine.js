@@ -66,7 +66,7 @@ export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = f
       index++;
       onProgress({ index, total, check, state: 'reading' });
       const c0 = Date.now();
-      const outcome = { id: check.id, service: check.service, status: 'checked', how: nano ? 'both' : 'reader', entries: 0, findings: 0, partly: false, ms: 0, why: null };
+      const outcome = { id: check.id, service: check.service, status: 'checked', how: 'reader', entries: 0, findings: 0, partly: false, ms: 0, why: null };
       for (const page of check.pages) {
         const url = mode === 'practice' ? new URL(page.practiceUrl, practiceOrigin).href : pageUrl(page.url, u);
         const finalUrl = await navigate(tabId, url, { signal });
@@ -92,7 +92,7 @@ export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = f
         if (!entries.length && nano && read.mainText) {
           onProgress({ index, total, check, state: 'nano-reading' });
           const r = await offscreen('sk:read-page', { description: check.label, text: read.mainText });
-          if (!r?.error && r?.entries?.length) { entries = r.entries; howFound = 'nano'; }
+          if (!r?.error && r?.entries?.length) { entries = r.entries; howFound = 'nano'; outcome.how = 'nano'; }
         }
         outcome.entries += entries.length;
         if (!entries.length) continue;
@@ -102,7 +102,7 @@ export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = f
         if (nano) {
           onProgress({ index, total, check, state: 'classifying' });
           const r = await offscreen('sk:classify', { description: check.label, owner: account, entries });
-          if (!r?.error) nanoItems = r.items;
+          if (!r?.error) { nanoItems = r.items; if (outcome.how === 'reader') outcome.how = 'both'; }
           else outcome.nanoError = r.error;
         }
         for (const [k, entry] of entries.entries()) {
@@ -113,7 +113,6 @@ export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = f
           if (f) findings.push(f);
         }
       }
-      if (!nano) outcome.how = 'reader';
       outcome.findings = findings.filter(f => f.check === check.id).length;
       outcome.ms = Date.now() - c0;
       outcomes.push(outcome);

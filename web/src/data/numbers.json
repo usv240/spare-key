@@ -6,10 +6,12 @@
     "date": "November 21, 2026"
   },
   "privacy": {
-    "requests": 15,
+    "requests": 17,
     "withPrivate": 0,
     "modelRequests": 6,
-    "date": "November 21, 2026"
+    "canaries": 30,
+    "hosts": 6,
+    "date": "November 22, 2026"
   },
   "voices": {
     "close": "We must close access soon before the other person takes your offline notes or locks you out.",
@@ -63,12 +65,12 @@
         ]
       },
       {
-        "label": "Never says safe, secure or all clear",
+        "label": "No promise that you are out of danger",
         "values": [
-          "0 of 30",
+          "23 of 30",
           "30 of 30",
-          "10 of 30",
-          "21 of 30",
+          "26 of 30",
+          "26 of 30",
           "30 of 30"
         ]
       },
@@ -93,22 +95,24 @@
         ]
       }
     ],
-    "chatbotDoc": 4,
-    "shippedDoc": 30,
-    "chatbotWarned": 30,
-    "shippedWarned": 30,
-    "fixesC": 69,
-    "fixesD": 32,
-    "firedC": {
-      "R3": 27,
-      "R6": 38,
-      "R8": 4
+    "chatbot": {
+      "alert_warning": 30,
+      "document_first": 4,
+      "advocate": 30,
+      "no_false_reassurance": 23,
+      "coverage": 27,
+      "order": 22
     },
-    "firedD": {
-      "R6": 12,
-      "R1": 5,
-      "R3": 15
+    "shipped": {
+      "alert_warning": 30,
+      "document_first": 30,
+      "advocate": 30,
+      "no_false_reassurance": 30,
+      "coverage": 30,
+      "order": 30
     },
-    "note": "Model: gemini-3.5-flash-lite on the Gemini Developer API free tier. 30 of the 40 situations were scored; the other 10 failed in the cloud (2 timed out, then the model was overloaded or the free tier ran out) and are not counted. The plain chatbot’s answers were read with fixed keyword lists, which is rough: “safe” counts against it even in “a safe device”. Before the safety rules, the two voices cut the fixes the rules had to make from 69 to 32, but dropped a finding 5 times, which the rules put back."
+    "fixesC": 42,
+    "fixesD": 17,
+    "note": "Model: gemini-3.5-flash-lite on the Gemini Developer API free tier. 30 of the 40 situations were scored. The other 10 failed in the cloud and are not counted: 8 timed out after 30 seconds (5 while making the plan, 3 in the two voices), 1 found the model overloaded (HTTP 500) and 1 ran out of free-tier quota (HTTP 429). The plain chatbot’s free-text answers were read with fixed keyword lists, which is rough. Before Spare Key’s safety rules ran, the two voices cut the fixes the rules had to make from 42 to 17, mostly because they changed fewer things at once (27 to 15 “change now” steps), but they dropped a finding 5 times, which the rules put back."
   }
 }

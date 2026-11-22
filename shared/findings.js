@@ -68,7 +68,7 @@ export const SITUATION = {
 export const SITUATION_DEFAULTS = { living: 'prefer_not_to_say', safe_to_change_now: 'not_sure', children_shared: 'prefer_not_to_say', has_advocate: 'prefer_not_to_say' };
 
 // What each code means, in plain words, for the results list. The steps library (data/steps.json, day 4) adds the
-// verified steps, sources and whether a change is likely to be noticed.
+// steps checked against official help pages, sources and whether a change is likely to be noticed.
 export const CODE_TEXT = {
   'google.devices.other': ['A device is signed in to your Google account', 'Whoever has this device can open your Gmail, see where you have been, and change your settings.'],
   'google.apps.full_access': ['An app can use your Google account', 'This app can see, and may be able to change, information in your Google account.'],

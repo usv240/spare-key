@@ -281,7 +281,10 @@ export function cloudJson({ purpose, body, system, schema, privateStrings = [], 
     for (let attempt = 0; attempt <= retries; attempt++) {
       for (const model of settings.models) {
         await spend();
-        const logSend = entry => onSend({ time: new Date().toISOString(), purpose, model, ...entry });
+        // Each entry also records the fixed parts sent with the data: the instructions, the answer format and the names of
+        // the functions offered. They are the same for everyone and hold nothing about the person.
+        const fixed = { instructions: system || '', format: schema ? JSON.stringify(schema) : '', tools: (tools || []).flatMap(t => (t.functionDeclarations || []).map(f => f.name).concat(t.urlContext ? ['url_context'] : [])) };
+        const logSend = entry => onSend({ time: new Date().toISOString(), purpose, model, ...(entry.kind === 'request' ? { fixed } : {}), ...entry });
         try {
           await logSend({ kind: 'request', text });
           let r = tools && onCall
@@ -338,7 +341,8 @@ export function hybridJson({ purpose, body, system, schema, guard = {}, onSend =
           },
         }, { timeout: CLOUD_TIMEOUT_MS });
         const onDevice = (await deviceStatus()) === 'available';
-        if (!onDevice) await onSend({ time: new Date().toISOString(), purpose, model, kind: 'request', text });
+        // Logged before it is sent: PREFER_ON_DEVICE can fall back to the cloud even when Gemini Nano is present.
+        await onSend({ time: new Date().toISOString(), purpose, model: onDevice ? `Gemini Nano, or ${model} if it falls back` : model, kind: 'request', text });
         const r = await m.generateContent(text);
         const source = r.response.inferenceSource || (onDevice ? 'on_device' : 'in_cloud');
         return { answer: schema ? JSON.parse(r.response.text()) : r.response.text(), source, model: source === 'on_device' ? 'Gemini Nano' : model };

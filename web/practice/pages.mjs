@@ -27,6 +27,7 @@ function page({ service, title, lead = '', body, gmail = false }) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Practice: ${esc(title)}</title>
+<link rel="icon" type="image/png" href="/icon-32.png">
 <link rel="stylesheet" href="/practice/practice.css">
 </head>
 <body>
