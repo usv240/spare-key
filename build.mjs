@@ -60,7 +60,7 @@ await cp('extension/icons/icon-32.png', 'web/dist/icon-32.png');
   const { default: index } = await import('./web/src/pages/index.mjs');
   const docs = await import('./web/src/pages/docs.mjs');
   const pages = {
-    'index.html': index({ numbers }),
+    'index.html': index({ numbers, drift: { ...(await readJson('web/src/data/drift.json')), first: await readJson('web/src/data/drift-first-run.json') } }),
     'try.html': docs.tryPage(),
     'install.html': docs.installPage(),
     'how-it-works.html': docs.howItWorksPage(),
@@ -83,6 +83,7 @@ for (const [file, html] of Object.entries(PAGES)) {
   await writeFile(out, html);
 }
 await writeFile('web/dist/practice/practice.css', PRACTICE_CSS);
+await cp('web/practice/phone-sharing.png', 'web/dist/practice/phone-sharing.png');
 // The same pages changed the way a site redesign changes them, for the layout drift test (web/practice/drift.mjs).
 {
   const { DRIFT, driftPage, renamedCss } = await import('./web/practice/drift.mjs');
@@ -117,4 +118,15 @@ if (debugToken) {
   if (leaks.length) { console.error('The App Check debug token is in the site build:', leaks.join(', ')); process.exit(1); }
 }
 await writeFile('extension/build/BUILD.txt', `${release ? 'release' : 'development'} build ${new Date().toISOString()}\n`);
+
+// A release build also makes the download the install page links to: the extension folder without the debug token's
+// file, checked once more for the token itself.
+if (release) {
+  const { zipDir } = await import('./tools/zip.mjs');
+  const files = await zipDir('extension', 'web/dist/downloads/spare-key-extension.zip', { prefix: 'spare-key', skip: rel => rel === 'appcheck-debug.local.js' });
+  if (debugToken) {
+    for (const f of files) if ((await readFile(`extension/${f}`, 'utf8').catch(() => '')).includes(debugToken)) { console.error('The debug token is in', f); process.exit(1); }
+  }
+  console.log(`Wrote web/dist/downloads/spare-key-extension.zip (${files.length} files)`);
+}
 console.log('Built extension/build and web/dist');

@@ -29,7 +29,62 @@ win where the page's own words decide (TECHNICAL-DESIGN.md section 6.4), and bot
 
 ## 2. Layout drift (EVALUATION.md section 2)
 
-Not run yet: it needs the real pages' snapshots.
+The real pages' snapshots need the test accounts, so this runs on the practice pages instead: `web/practice/drift.mjs`
+changes all 13 pages five ways, by script, the same every time (class names and link paths renamed; headings and labels
+reworded; lists and tables rebuilt from plain boxes with links turned into buttons; phone numbers masked, dates written
+out and a name shown without its email; all four at once). `tools/drift-test.mjs` runs every check on each copy through
+the scan engine's own `readToEntries`, and compares with the 24 planted ways in.
+
+"Shown" counts a way in listed at all; "right kind" counts it listed as exactly the planted kind (a teen listed as an
+adult is shown, not the right kind). A **silent miss** is a way in not shown on a check that says it was fully checked:
+the dangerous kind, because "nothing found" reads as "nobody has access".
+
+**First run, blind** (November 22, before any change made after seeing these pages; `web/src/data/drift-first-run.json`):
+
+| Change | Found, code only | Silent misses |
+|---|---|---|
+| Renamed | 19 of 24 | 5 |
+| Reworded | 13 of 24 | 7 |
+| Rebuilt | 16 of 24 | 8 |
+| New formats | 23 of 24 | 1 |
+| All four | 7 of 24 | 3 |
+
+24 silent misses: a reader that found nothing on a page that loaded reported "nothing listed".
+
+**What changed after that run** (general rules, not tuned to these pages):
+- A page that lists nothing counts as empty only when it says so (each check's `emptyText`, provisional until the real
+  pages are recorded) or the setting's own section is there. Otherwise the check is "Not checked: the page looked
+  different".
+- A page that never showed the words the reader waits for is "checked in part", and Gemini Nano also reads it.
+- If Nano had to read a page and the code rules make nothing of any entry, that is "looked different" too.
+- Lists and tables built from plain boxes with ARIA roles count as lists; masked phone numbers count; an app whose
+  access the page does not say, and a household member the page does not place, are listed rather than dropped.
+- Remote Config can now replace the words the code rules read, not only the readers.
+
+**Now** (November 22):
+
+| Change | Code only: shown (right kind) | Silent misses | Code and Gemini Nano: shown (right kind) | Silent misses | After the Remote Config fix |
+|---|---|---|---|---|---|
+| None | 24 (24) | 0 | 24 (24) | 0 | |
+| Renamed | 19 (19) | 0 | 24 (24) | 0 | 24 (24) |
+| Reworded | 14 (13) | 0 | 18 (16) | 0 | 24 (24) |
+| Rebuilt | 19 (19) | 0 | 24 (24) | 0 | 24 (24) |
+| New formats | 24 (24) | 0 | 24 (24) | 0 | 24 (24) |
+| All four | 8 (8) | 0 | 19 (17) | 0 | 24 (24) |
+
+With code alone and with Gemini Nano, every way in that is not shown is on a check marked "Not checked" or "checked in
+part", which tells the
+person to look for themselves.
+
+Gemini Nano listed 3 entries that are not planted ways in (2 on the reworded copy, 1 on the all-four copy); each is
+shown for the person to mark "Not mine". With Nano, reading the 13 pages of one copy took 106 to 160 seconds on this PC
+(code alone: about 1 second, or 15 seconds when headings changed and the reader waited for them). Nano read is
+`tools/out/drift-nano.json`; the totals are in `web/src/data/drift.json`.
+
+Limits: the builder wrote both the pages and the changes, so this measures how Spare Key fails, not how often real sites
+change. The Remote Config fixes (`web/practice/drift-fixes.mjs`) were written after seeing what broke, so that column
+shows the fix path works end to end (through the same `catalogue()` validation the extension runs on Remote Config's
+value), not how well a first guess reads a new page. Whether a fix reaches every install within an hour was not timed.
 
 ## 3. Privacy: nothing that names a person leaves (EVALUATION.md section 3)
 
@@ -107,6 +162,14 @@ counts as a warning, and "screenshot first" is judged by where the first such wo
 check for A was not run, to stay within the agreed number of calls. The question to the chatbot says "my ex" and "he",
 like the study's real-world questions.
 
+### The plan made by Gemini Nano on this computer
+
+`tools/plan-eval-nano.mjs` sends the same 40 situations to the plan made on this computer (`extension/src/device-plan.js`:
+Gemini Nano, the same finding codes and every situation answer, with the steps library's facts in its instructions), and
+`tools/plan-eval-score.mjs` scores the answers offline with the same measures. No cloud calls.
+
+NANO_PLAN_TABLE
+
 ## 5. Speed and readability (EVALUATION.md section 5)
 
 Speed: see section 1. On this PC, loading Gemini Nano the first time took 104 to 133 s; after that, each check took 4 to
@@ -122,3 +185,10 @@ where the formula counts the menu's name as hard words.
 The URL context tool could not fetch Google's or Amazon's help pages (`URL_RETRIEVAL_STATUS_ERROR`); it did read the
 Safety Net page. With the help page's text fetched on the computer instead, Gmail's forwarding steps were confirmed
 current. Amazon's page could not be read either way, and the check says "not sure".
+
+## 7. Phone screenshots (TECHNICAL-DESIGN.md section 6.3)
+
+`tools/screenshot-check.mjs` draws a made-up location-sharing screen (three people and "Me") and sends it to the
+extension's on-device reader: Gemini Nano with image input, `ONLY_ON_DEVICE`, no cloud fallback.
+
+SHOT_RESULT

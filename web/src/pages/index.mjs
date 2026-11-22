@@ -2,7 +2,18 @@
 // the test results; a number that has not been measured is not shown.
 import { page, info, esc } from '../layout.mjs';
 
-export default function index({ numbers }) {
+// The layout drift result: how often a check said it was done while missing a way in, on changed pages, now and on the
+// first, blind run (tools/drift-test.mjs).
+function driftItem(drift) {
+  const rows = (drift?.rows || []).filter(r => r.mode === 'code' && r.kind !== 'none');
+  if (!rows.length) return '';
+  const silent = rows.reduce((a, r) => a + r.silentMisses, 0);
+  const ways = rows.reduce((a, r) => a + r.of, 0);
+  const first = (drift.first?.rows || []).reduce((a, r) => a + r.silentMisses, 0);
+  return `<li><span class="n">${silent}</span><p>times a check said it was done while missing a way in, when the practice pages were changed five ways (${ways} planted ways in). A page Spare Key cannot read is listed as “Not checked” instead. On the first, blind run, this was ${first}. ${esc(drift.date)}.</p></li>`;
+}
+
+export default function index({ numbers, drift = null }) {
   const n = numbers;
   const plan = n.planSafety;
   const sentSample = n.sentSample || '';
@@ -112,7 +123,7 @@ export default function index({ numbers }) {
   <div class="wrap">
     <h2 id="try-title">Try it yourself</h2>
     <ul class="try-list">
-      <li><h3>Practice check</h3><p>A made-up person’s settings pages, start to finish, in about two minutes. Nothing of yours is used.</p><a class="big" href="/try.html">Start the practice check</a></li>
+      <li><h3>Practice check</h3><p>A made-up person’s settings pages, start to finish, in about two minutes. Nothing of yours is used. You can also break the pages first and watch what Spare Key does.</p><a class="big" href="/try.html">Start the practice check</a></li>
       <li><h3>Plant a test key</h3><p>Plant a harmless way in to your own account, watch Spare Key find it, then undo it.</p><a class="big" href="/plant.html">See the three recipes</a></li>
       <li><h3>New here?</h3><p>A short tour of the problem, a check, what left the computer, the two voices and how it is built.</p><a class="big" href="#tour" data-tour-start>Take the two-minute tour</a></li>
     </ul>
@@ -125,13 +136,14 @@ export default function index({ numbers }) {
     <div class="split" style="margin-top:24px">
       <div>
         <p>Advocates can print the plan, with addresses hidden unless the person chooses to show them. The steps library, checked against official help pages, is a free, open API, and an MCP server lets an AI assistant give the current steps with the warnings attached.</p>
-        <p><a href="/api.html">The Steps API and the MCP server</a></p>
+        <p><a href="/api.html">The Steps API and the MCP server</a> · <a href="/what-they-see.html">What they see when you change it</a></p>
       </div>
-      <pre tabindex="0" aria-label="Example request to the Steps API"><code>GET https://spare-key-app.web.app/api/v1/steps/gmail.forwarding.external.json
+      <pre tabindex="0" aria-label="Example request to the Steps API"><code>GET https://spare-key-app.web.app/api/v1/steps/google.recovery.email_other.json
 
-{ "title": "Your mail is being copied to another address",
-  "who_can_notice": "unknown",
-  "notice_why": "Their copies of your new mail stop arriving...",
+{ "title": "Another email address can reset your password",
+  "who_can_notice": "noticeable",
+  "what_they_see": "Google may still send codes to the old address for 7 days...",
+  "notice_source": { "url": "https://support.google.com/...", "quote": "..." },
   "evidence_first": ["Screenshot this settings page..."], ... }</code></pre>
     </div>
   </div>
@@ -143,10 +155,10 @@ export default function index({ numbers }) {
     <div class="table-wrap" tabindex="0" role="region" aria-label="Table, scrolls sideways on small screens"><table>
       <thead><tr><th>Piece</th><th>Runs</th><th>Why it is used</th></tr></thead>
       <tbody>
-        <tr><td>Gemini Nano through Firebase AI Logic (only on device)</td><td>This computer</td><td>Reads and sorts the private settings pages</td></tr>
-        <tr><td>Gemini through Firebase AI Logic (only in the cloud, function calling)</td><td>Google’s cloud</td><td>Orders the plan from finding types only, and asks the device yes or no questions</td></tr>
+        <tr><td>Gemini Nano through Firebase AI Logic (only on device)</td><td>This computer</td><td>Reads and sorts the private settings pages, reads a page a site has changed, reads a screenshot of a phone location app, and orders the plan when it is ready</td></tr>
+        <tr><td>Gemini through Firebase AI Logic (only in the cloud, function calling)</td><td>Google’s cloud</td><td>Orders the plan from finding types only when Gemini Nano cannot, and asks the device yes or no questions</td></tr>
         <tr><td>Hybrid inference (prefer on device)</td><td>Either</td><td>The practice check on this site, which holds no personal data</td></tr>
-        <tr><td>App Check, Remote Config, Cloud Firestore, Hosting</td><td>Firebase</td><td>Only Spare Key spends its model quota; page readers fixed without an update; the public steps library; this site and the Steps API</td></tr>
+        <tr><td>App Check, Remote Config, Cloud Firestore, Hosting</td><td>Firebase</td><td>Only Spare Key spends its model quota; page readers and the words they read, fixed without an update; the public steps library; this site and the Steps API</td></tr>
       </tbody>
     </table></div>
     <p style="margin-top:20px"><a href="/built-with.html">The full stack, and why each piece is there</a></p>
@@ -160,6 +172,7 @@ export default function index({ numbers }) {
     <ul class="numbers">
       ${n.practice ? `<li><span class="n">${n.practice.found} of ${n.practice.of}</span><p>planted ways in found on the 13 made-up practice pages, and none of the 4 that belong to the person flagged, with code only and with Gemini Nano. ${esc(n.practice.date)}.</p></li>` : ''}
       ${n.privacy ? `<li><span class="n">${n.privacy.withPrivate} of ${n.privacy.requests}</span><p>requests from the extension held a name, email address, phone number or device, in a full practice check with every cloud step on. ${esc(n.privacy.date)}.</p></li>` : ''}
+      ${driftItem(drift)}
       ${plan ? `<li><span class="n">${plan.chatbot.document_first} of ${plan.of}</span><p>answers from a plain chatbot said to screenshot before changing anything, on ${plan.of} made-up situations, judged by keywords. It did warn that a change may be noticed in ${plan.chatbot.alert_warning}. Every plan Spare Key shows does both. ${esc(plan.date)}.</p></li>` : ''}
     </ul>
   </div>
@@ -171,9 +184,9 @@ export default function index({ numbers }) {
     <ul class="limits">
       <li>No survivor or advocate has tested it yet.</li>
       <li>It covers the services listed above, and nothing else.</li>
-      <li>Websites change their pages, and a page reader can break. When it does, the result says so.</li>
+      <li>Websites change their pages, and a page reader can break. When it does, the result says so: the page is listed under “Not checked”, never shown as empty.</li>
       <li>Gemini Nano is needed for the best reading. Without it, pages are read by code only.</li>
-      <li>It cannot see your phone, or apps on it.</li>
+      <li>It cannot see your phone itself. For a location app on it, you can give it a screenshot, which Gemini Nano reads on this computer.</li>
       <li>It reads; it does not fix. Every change is yours to make, when the time is right.</li>
     </ul>
   </div>

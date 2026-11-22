@@ -34,7 +34,7 @@ const srv = await serve(0);
 const profile = useNano ? NANO_PROFILE : undefined;
 if (useNano) freshServiceWorkers(profile);
 const browser = await puppeteer.launch({
-  executablePath: CHROME, headless: !useNano, pipe: true, enableExtensions: useNano, userDataDir: profile, defaultViewport: null,
+  executablePath: CHROME, headless: !useNano, pipe: true, enableExtensions: useNano, userDataDir: profile, defaultViewport: null, protocolTimeout: 900000,
   ...(useNano ? { ignoreDefaultArgs: true } : {}),
   args: [...(useNano ? builtInModelArgs({ userDataDir: profile }) : []), '--window-size=1200,900', '--no-first-run', '--no-default-browser-check'],
 });

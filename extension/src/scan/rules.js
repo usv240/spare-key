@@ -84,6 +84,9 @@ export function codeClassify(checkId, entry, account, words) {
       return { ...base, kind: 'person', access: ['account', 'location'] };
     case 'photos.sharing':
       return { ...base, kind: emails.length ? 'person' : 'unknown', access: ['photos', 'location'], is_owner: others.length ? 'no' : 'unknown' };
+    // A phone app's sharing screen, read from a screenshot by Gemini Nano: everyone on it can see the person's location.
+    case 'screenshot':
+      return { ...base, kind: 'person', access: ['location'], is_owner: entry.is_owner === 'yes' || /^(me|you|this phone)\b/i.test(text) ? 'yes' : base.is_owner };
     default:
       return base;
   }
@@ -165,6 +168,8 @@ export function codeFor(checkId, entry, cls, words) {
       return w.manager.test(text) ? 'google.family.manager_other' : 'google.family.member';
     case 'photos.sharing':
       return cls.is_owner === 'yes' ? null : 'photos.partner_sharing';
+    case 'screenshot':
+      return cls.is_owner === 'yes' ? null : 'screenshot.sharing.person';
     default:
       return null;
   }

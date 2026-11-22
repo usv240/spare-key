@@ -153,7 +153,8 @@ export const TEXT_AND_IMAGE = { expectedInputs: [{ type: 'text', languages: ['en
  * A model that runs only on this device (ONLY_ON_DEVICE). There is no cloud fallback, on purpose: what it reads is
  * the person's own settings pages. `schema` is a JSON Schema the answer must follow.
  */
-export function deviceModel({ system, schema, inputs = TEXT_ONLY } = {}) {
+export function deviceModel({ system, schema, inputs = TEXT_ONLY, signal = null } = {}) {
+  const promptOptions = { ...(schema ? { responseConstraint: schema } : {}), ...(signal ? { signal } : {}) };
   return getGenerativeModel(ai, {
     mode: InferenceMode.ONLY_ON_DEVICE,
     onDeviceParams: {
@@ -161,15 +162,31 @@ export function deviceModel({ system, schema, inputs = TEXT_ONLY } = {}) {
         ...inputs,
         ...(system ? { initialPrompts: [{ role: 'system', content: [{ type: 'text', value: system }] }] } : {}),
       },
-      ...(schema ? { promptOptions: { responseConstraint: schema } } : {}),
+      ...(Object.keys(promptOptions).length ? { promptOptions } : {}),
     },
   });
 }
 
 /** One JSON answer from Gemini Nano. Throws when Nano is not available; callers fall back to code, never the cloud. */
-export async function deviceJson({ system, schema, text, inputs }) {
-  const r = await deviceModel({ system, schema, inputs }).generateContent(text);
-  return JSON.parse(r.response.text());
+export async function deviceJson({ system, schema, text, inputs, timeoutMs = 0 }) {
+  if (!timeoutMs) {
+    const r = await deviceModel({ system, schema, inputs }).generateContent(text);
+    return JSON.parse(r.response.text());
+  }
+  // A time limit: Gemini Nano can keep generating on some prompts (one plan ran past 7 minutes on November 22, 2026,
+  // against 30 to 45 seconds for the others). The prompt is stopped and the caller falls back.
+  const stop = new AbortController();
+  const model = deviceModel({ system, schema, inputs, signal: stop.signal });
+  let timer;
+  try {
+    const r = await Promise.race([
+      model.generateContent(text),
+      new Promise((_, reject) => { timer = setTimeout(() => { stop.abort(); reject(new Error('Gemini Nano timed out')); }, timeoutMs); }),
+    ]);
+    return JSON.parse(r.response.text());
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 /** Is Gemini Nano usable from the calling page? Returns the browser's own word: available, downloadable, downloading, unavailable, absent. */
@@ -351,6 +368,56 @@ export function hybridJson({ purpose, body, system, schema, guard = {}, onSend =
         // Logged before it is sent: PREFER_ON_DEVICE can fall back to the cloud even when Gemini Nano is present.
         await onSend({ time: new Date().toISOString(), purpose, model: onDevice ? `Gemini Nano, or ${model} if it falls back` : model, kind: 'request', text });
         const r = await m.generateContent(text);
+        const source = r.response.inferenceSource || (onDevice ? 'on_device' : 'in_cloud');
+        return { answer: schema ? JSON.parse(r.response.text()) : r.response.text(), source, model: source === 'on_device' ? 'Gemini Nano' : model };
+      } catch (e) {
+        last = e;
+        if (!RETRYABLE.test(String(e))) throw e;
+      }
+    }
+    throw last;
+  });
+}
+
+const sha256Hex = async base64 => {
+  const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+  return [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(b => b.toString(16).padStart(2, '0')).join('');
+};
+
+/**
+ * Hybrid inference with a picture (PREFER_ON_DEVICE, image input), for the website's practice check only: Jordan's
+ * made-up phone screenshot, read by Gemini Nano when this browser has image input, else by Gemini in the cloud. The
+ * picture's SHA-256 must be one of `allowed` before anything is sent, so this cannot carry anyone's own screenshot.
+ * The extension never uses it: there, a screenshot is read only on the device. Returns { answer, source, model }.
+ */
+export function hybridImageJson({ image, prompt, system, schema, allowed = [], onSend = async () => {} }) {
+  return oneAtATime(async () => {
+    const digest = await sha256Hex(image?.data || '');
+    if (!allowed.includes(digest)) throw new CloudSafetyError('only the practice screenshot may be sent');
+    const settings = await liveSettings();
+    const onDevice = (await deviceStatus(TEXT_AND_IMAGE)) === 'available';
+    let last;
+    for (const model of settings.models) {
+      try {
+        const m = getGenerativeModel(ai, {
+          mode: InferenceMode.PREFER_ON_DEVICE,
+          onDeviceParams: {
+            createOptions: { ...TEXT_AND_IMAGE, ...(system ? { initialPrompts: [{ role: 'system', content: [{ type: 'text', value: system }] }] } : {}) },
+            ...(schema ? { promptOptions: { responseConstraint: schema } } : {}),
+          },
+          inCloudParams: {
+            model,
+            ...(system ? { systemInstruction: system } : {}),
+            generationConfig: schema ? { responseMimeType: 'application/json', responseJsonSchema: schema, temperature: 0 } : { temperature: 0 },
+          },
+        }, { timeout: CLOUD_TIMEOUT_MS });
+        // Logged before it is sent, with the picture named by its hash (the picture itself is on the practice page).
+        await onSend({
+          time: new Date().toISOString(), purpose: 'practice', model: onDevice ? `Gemini Nano, or ${model} if it falls back` : model, kind: 'request',
+          text: JSON.stringify({ task: 'read_screenshot', prompt, picture: { name: 'practice/phone-sharing.png', made_up: true, sha256: digest } }),
+          fixed: { instructions: system || '', format: schema ? JSON.stringify(schema) : '', tools: [] },
+        });
+        const r = await m.generateContent([prompt, { inlineData: { mimeType: image.mimeType, data: image.data } }]);
         const source = r.response.inferenceSource || (onDevice ? 'on_device' : 'in_cloud');
         return { answer: schema ? JSON.parse(r.response.text()) : r.response.text(), source, model: source === 'on_device' ? 'Gemini Nano' : model };
       } catch (e) {

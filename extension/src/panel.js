@@ -5,6 +5,10 @@ import { compareChecks } from './scan/compare.js';
 import { SERVICES, catalogue } from './scan/catalogue.js';
 import { setRemoteOverrides } from './scan/overrides.js';
 import { runScan, ScanStopped } from './scan/engine.js';
+import { codeClassify, toFinding } from './scan/rules.js';
+
+// The phone screenshot check (below): not a page the scan opens, so not in the catalogue.
+const SHOT_CHECK = { id: 'screenshot', service: 'phone', label: 'A location app on your phone, from a screenshot', pages: [] };
 import { renderResults, h, put, infoButton } from './ui/results.js';
 import { renderQuestions, renderPlan } from './ui/plan.js';
 import { privateStringsFrom } from './scan/private.js';
@@ -295,7 +299,7 @@ const reveal = new Set();
 function showResults(record, { switchTo = true } = {}) {
   renderResults($('results'), { library: LIBRARY,
     scan: record,
-    catalogue: catalogue(),
+    catalogue: [...catalogue(), SHOT_CHECK],
     reveal,
     onAnswer: async (ref, ownership) => {
       const { scan } = await chrome.storage.session.get('scan');
@@ -778,7 +782,7 @@ async function loadOverrides() {
   applyTheme(theme);
   await loadOverrides();
   await refreshLibrary().catch(() => {});
-  await Promise.all([renderChecks(), showNano(), showCloud(), showExitShortcut()]);
+  await Promise.all([renderChecks(), showNano(), showCloud(), showExitShortcut(), setUpPhoneShot()]);
   // Load Gemini Nano in the background while the person reads the first screens.
   if (nanoStatus === 'available') offscreen('sk:nano-warm').catch(() => {});
   // The safety screen shows first in every new browser session. After "I understand", this session goes straight on,
@@ -799,3 +803,59 @@ async function loadOverrides() {
 
 // Print shows every folded block.
 addEventListener('beforeprint', () => { for (const d of document.querySelectorAll('#plan details')) d.open = true; });
+
+// ---------------------------------------------------------------------------------------------------------------
+// A location app on the phone, from a screenshot (TECHNICAL-DESIGN.md section 6.3). Gemini Nano reads the picture on
+// this computer, with image input and no cloud fallback: a screenshot shows names. The picture is not kept.
+
+async function setUpPhoneShot() {
+  const status = (await offscreen('sk:image-status').catch(() => ({})))?.status;
+  const ready = status === 'available';
+  $('phone-shot-file').disabled = !ready;
+  $('phone-shot-label').classList.toggle('is-disabled', !ready);
+  if (!ready) $('phone-shot-status').textContent = 'This needs Gemini Nano on this computer, because a screenshot can show names. Without it, this stays off.';
+}
+
+// The picture, made at most 1280 pixels on its longest side, as base64 PNG.
+async function shrink(file) {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, 1280 / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  const data = canvas.toDataURL('image/png').split(',')[1];
+  canvas.width = canvas.height = 0;
+  return { mimeType: 'image/png', data };
+}
+
+$('phone-shot-file').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  const status = $('phone-shot-status');
+  status.textContent = 'Reading the screenshot on this computer.';
+  try {
+    const r = await offscreen('sk:read-screenshot', await shrink(file));
+    if (!r || r.error) throw new Error(r?.error || 'no answer');
+    const { scan } = await chrome.storage.session.get('scan');
+    if (!scan) return;
+    const stamp = Date.now().toString(36);
+    const found = (r.entries || []).map((entry, k) => toFinding({
+      ref: `S${stamp}${k}`, check: SHOT_CHECK, entry: { ...entry, href: '', state: [] },
+      cls: { ...codeClassify('screenshot', entry, scan.account), source: 'both' }, howFound: 'nano', openUrl: '', account: scan.account,
+    })).filter(Boolean);
+    scan.findings.push(...found);
+    const o = scan.outcomes.find(x => x.id === 'screenshot');
+    if (o) { o.entries += r.entries.length; o.findings += found.length; }
+    else scan.outcomes.push({ id: 'screenshot', service: 'phone', status: 'checked', how: 'nano', entries: r.entries.length, findings: found.length, partly: false, why: null });
+    await chrome.storage.session.set({ scan });
+    showResults(scan, { switchTo: false });
+    status.textContent = found.length
+      ? `${found.length} added from ${r.app || 'the screenshot'}. Check each one in the list above.`
+      : 'Gemini Nano found no one on this screenshot who can see where you are. If that looks wrong, check the app yourself.';
+  } catch {
+    status.textContent = 'Gemini Nano could not read this screenshot. Try a clearer one, or check the app yourself.';
+  }
+});

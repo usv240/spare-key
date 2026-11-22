@@ -4,90 +4,6 @@
   {
    "kind": "none",
    "label": "As made (no change)",
-   "mode": "nano",
-   "found": 24,
-   "of": 24,
-   "silentMisses": 0,
-   "toldToLook": 0,
-   "falseAlarms": 0,
-   "notChecked": 0,
-   "checks": 12,
-   "nanoRead": 0,
-   "seconds": 151.1
-  },
-  {
-   "kind": "renamed",
-   "label": "Class names and link paths renamed",
-   "mode": "nano",
-   "found": 23,
-   "of": 24,
-   "silentMisses": 1,
-   "toldToLook": 0,
-   "falseAlarms": 6,
-   "notChecked": 0,
-   "checks": 12,
-   "nanoRead": 2,
-   "seconds": 161.5
-  },
-  {
-   "kind": "reworded",
-   "label": "Headings and labels reworded",
-   "mode": "nano",
-   "found": 17,
-   "of": 24,
-   "silentMisses": 2,
-   "toldToLook": 5,
-   "falseAlarms": 3,
-   "notChecked": 0,
-   "checks": 12,
-   "nanoRead": 4,
-   "seconds": 178.8
-  },
-  {
-   "kind": "rebuilt",
-   "label": "Lists and tables rebuilt from plain boxes, links turned into buttons",
-   "mode": "nano",
-   "found": 23,
-   "of": 24,
-   "silentMisses": 1,
-   "toldToLook": 0,
-   "falseAlarms": 3,
-   "notChecked": 0,
-   "checks": 12,
-   "nanoRead": 2,
-   "seconds": 108.8
-  },
-  {
-   "kind": "formats",
-   "label": "Phone numbers, dates and names written differently",
-   "mode": "nano",
-   "found": 24,
-   "of": 24,
-   "silentMisses": 0,
-   "toldToLook": 0,
-   "falseAlarms": 0,
-   "notChecked": 0,
-   "checks": 12,
-   "nanoRead": 0,
-   "seconds": 122.4
-  },
-  {
-   "kind": "all",
-   "label": "All four at once",
-   "mode": "nano",
-   "found": 18,
-   "of": 24,
-   "silentMisses": 2,
-   "toldToLook": 4,
-   "falseAlarms": 14,
-   "notChecked": 0,
-   "checks": 12,
-   "nanoRead": 7,
-   "seconds": 236.3
-  },
-  {
-   "kind": "none",
-   "label": "As made (no change)",
    "mode": "code",
    "found": 24,
    "shown": 24,
@@ -98,7 +14,22 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.5
+   "seconds": 0.7
+  },
+  {
+   "kind": "none",
+   "label": "As made (no change)",
+   "mode": "nano",
+   "found": 24,
+   "shown": 24,
+   "of": 24,
+   "silentMisses": 0,
+   "toldToLook": 0,
+   "falseAlarms": 0,
+   "notChecked": 0,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 106.1
   },
   {
    "kind": "renamed",
@@ -113,7 +44,7 @@
    "notChecked": 2,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.8
+   "seconds": 1.1
   },
   {
    "kind": "renamed",
@@ -128,7 +59,22 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.5
+   "seconds": 1.4
+  },
+  {
+   "kind": "renamed",
+   "label": "Class names and link paths renamed",
+   "mode": "nano",
+   "found": 24,
+   "shown": 24,
+   "of": 24,
+   "silentMisses": 0,
+   "toldToLook": 0,
+   "falseAlarms": 0,
+   "notChecked": 0,
+   "checks": 12,
+   "nanoRead": 2,
+   "seconds": 117.8
   },
   {
    "kind": "reworded",
@@ -143,7 +89,7 @@
    "notChecked": 4,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 13.2
+   "seconds": 13.7
   },
   {
    "kind": "reworded",
@@ -158,7 +104,22 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 2.3
+   "seconds": 2.8
+  },
+  {
+   "kind": "reworded",
+   "label": "Headings and labels reworded",
+   "mode": "nano",
+   "found": 16,
+   "shown": 18,
+   "of": 24,
+   "silentMisses": 0,
+   "toldToLook": 6,
+   "falseAlarms": 2,
+   "notChecked": 2,
+   "checks": 12,
+   "nanoRead": 2,
+   "seconds": 139.4
   },
   {
    "kind": "rebuilt",
@@ -173,7 +134,7 @@
    "notChecked": 2,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.8
+   "seconds": 1.2
   },
   {
    "kind": "rebuilt",
@@ -188,7 +149,22 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.7
+   "seconds": 1.1
+  },
+  {
+   "kind": "rebuilt",
+   "label": "Lists and tables rebuilt from plain boxes, links turned into buttons",
+   "mode": "nano",
+   "found": 24,
+   "shown": 24,
+   "of": 24,
+   "silentMisses": 0,
+   "toldToLook": 0,
+   "falseAlarms": 0,
+   "notChecked": 0,
+   "checks": 12,
+   "nanoRead": 2,
+   "seconds": 131.9
   },
   {
    "kind": "formats",
@@ -203,7 +179,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.9
+   "seconds": 1.1
   },
   {
    "kind": "formats",
@@ -218,7 +194,22 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1
+   "seconds": 1.1
+  },
+  {
+   "kind": "formats",
+   "label": "Phone numbers, dates and names written differently",
+   "mode": "nano",
+   "found": 24,
+   "shown": 24,
+   "of": 24,
+   "silentMisses": 0,
+   "toldToLook": 0,
+   "falseAlarms": 0,
+   "notChecked": 0,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 134.2
   },
   {
    "kind": "all",
@@ -233,7 +224,7 @@
    "notChecked": 7,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 13.3
+   "seconds": 14
   },
   {
    "kind": "all",
@@ -248,7 +239,22 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 2.2
+   "seconds": 2.9
+  },
+  {
+   "kind": "all",
+   "label": "All four at once",
+   "mode": "nano",
+   "found": 17,
+   "shown": 19,
+   "of": 24,
+   "silentMisses": 0,
+   "toldToLook": 5,
+   "falseAlarms": 1,
+   "notChecked": 1,
+   "checks": 12,
+   "nanoRead": 6,
+   "seconds": 159.6
   }
  ],
  "nanoDate": "November 22, 2026"

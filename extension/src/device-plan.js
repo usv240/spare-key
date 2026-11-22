@@ -21,6 +21,7 @@ ${PLAN_SHAPE}`;
 
 /** Ask Gemini Nano for a plan. Throws when Nano is not ready; the caller then uses the cloud or the code plan. */
 export async function devicePlan({ body, library }) {
-  const answer = await deviceJson({ system: devicePlanSystem(body, library), schema: PLAN_SCHEMA, text: JSON.stringify(body) });
+  // 90 seconds at most: a plan usually takes 30 to 45; after that, the cloud plan or the code plan is shown instead.
+  const answer = await deviceJson({ system: devicePlanSystem(body, library), schema: PLAN_SCHEMA, text: JSON.stringify(body), timeoutMs: 90000 });
   return { answer, model: 'Gemini Nano' };
 }

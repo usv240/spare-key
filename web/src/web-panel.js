@@ -13,8 +13,9 @@ import { renderQuestions, renderPlan } from '../../extension/src/ui/plan.js';
 import { readPage } from '../../extension/src/readers/read-page.js';
 import { catalogue } from '../../extension/src/scan/catalogue.js';
 import { codeClassify, codeFor, merge, toFinding } from '../../extension/src/scan/rules.js';
-import { hybridJson, deviceStatus } from '../../extension/src/ai.js';
-import { CLASSIFY_SYSTEM, CLASSIFY_SCHEMA, READ_PAGE_SYSTEM, READ_PAGE_SCHEMA } from '../../extension/src/classify.js';
+import { hybridJson, hybridImageJson, deviceStatus } from '../../extension/src/ai.js';
+import { CLASSIFY_SYSTEM, CLASSIFY_SCHEMA, READ_PAGE_SYSTEM, READ_PAGE_SCHEMA, READ_SHOT_SYSTEM, READ_SHOT_SCHEMA, shotEntries } from '../../extension/src/classify.js';
+import SHOT from '../practice/phone-sharing.json';
 import { DRIFT, driftPage, driftUrl } from '../practice/drift.mjs';
 import { FIXES } from '../practice/drift-fixes.mjs';
 import { cloudPlan } from '../../extension/src/cloud/plan.js';
@@ -99,7 +100,7 @@ function renderSent() {
 // Results.
 function showResults() {
   renderResults($('results'), { library: LIBRARY,
-    scan, catalogue: catalogue({}), reveal,
+    scan, catalogue: [...catalogue({}), SHOT_CHECK], reveal,
     onAnswer: (ref, ownership) => {
       const f = scan.findings.find(x => x.ref === ref);
       if (f) f.ownership = ownership;
@@ -110,8 +111,46 @@ function showResults() {
     onToggleReveal: ref => { if (reveal.has(ref)) reveal.delete(ref); else reveal.add(ref); showResults(); },
   });
   $('full-check').hidden = mode === 'live';
+  $('phone-shot').hidden = mode !== 'live';
   if (checkScreen !== 'results') show('results');
 }
+
+// ---------------------------------------------------------------------------------------------------------------
+// Jordan's phone: the made-up screenshot, read with hybrid inference and image input (Gemini Nano when this browser has
+// it, the cloud when not). Only this picture can be sent: hybridImageJson checks its SHA-256 first.
+const SHOT_CHECK = { id: 'screenshot', service: 'phone', label: 'A location app on Jordan’s phone, from a screenshot', pages: [] };
+const toBase64 = buf => {
+  const bytes = new Uint8Array(buf);
+  let s = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+};
+$('read-shot').addEventListener('click', async () => {
+  const button = $('read-shot');
+  const status = $('shot-status');
+  button.disabled = true;
+  status.textContent = 'Reading the screenshot.';
+  try {
+    const data = toBase64(await (await fetch('/practice/phone-sharing.png')).arrayBuffer());
+    const r = await hybridImageJson({ image: { mimeType: SHOT.mimeType, data }, prompt: 'Read this screenshot.', system: READ_SHOT_SYSTEM, schema: READ_SHOT_SCHEMA, allowed: [SHOT.sha256], onSend });
+    const { entries } = shotEntries(r.answer);
+    const how = r.source === 'on_device' ? 'nano' : 'cloud';
+    const found = entries.map((entry, k) => toFinding({
+      ref: `S${k + 1}`, check: SHOT_CHECK, entry: { ...entry, href: '', state: [] },
+      cls: { ...codeClassify('screenshot', entry, PRACTICE_OWNER), source: 'both' }, howFound: how, openUrl: '', account: PRACTICE_OWNER,
+    })).filter(Boolean);
+    scan.findings = scan.findings.filter(f => f.check !== 'screenshot').concat(found);
+    scan.outcomes = scan.outcomes.filter(o => o.id !== 'screenshot').concat({ id: 'screenshot', service: 'phone', status: 'checked', why: null, how, entries: entries.length, findings: found.length, partly: false });
+    showResults();
+    $('shot-status').textContent = how === 'nano'
+      ? `${found.length} added to the list above. Gemini Nano read it on this device.`
+      : `${found.length} added to the list above. Gemini in the cloud read it, because this browser has no Gemini Nano. The picture is made up, so that is allowed here. The extension reads your own screenshots only on your computer.`;
+  } catch (e) {
+    status.textContent = /appCheck|403|throttle/i.test(String(e)) ? 'Google’s check that this is a real browser refused it just now, so the screenshot was not read.' : 'Gemini could not read the screenshot just now. You can try again.';
+  } finally {
+    button.disabled = false;
+  }
+});
 
 // ---------------------------------------------------------------------------------------------------------------
 // The live practice check.

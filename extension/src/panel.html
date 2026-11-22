@@ -109,6 +109,15 @@
   <section class="screen" data-screen="results" id="screen-results" role="tabpanel" aria-labelledby="tab-check" hidden>
     <div id="since" class="since" aria-live="polite" hidden></div>
     <div id="results"></div>
+    <section class="phone-shot" id="phone-shot" aria-labelledby="phone-shot-title">
+      <div class="with-info">
+        <h2 id="phone-shot-title">Check a location app on your phone</h2>
+        <button class="info" type="button" data-info="phone-shot" aria-label="About reading a screenshot"><svg aria-hidden="true"><use href="#i-info"/></svg></button>
+      </div>
+      <p>Apps like Life360 or Find My live on your phone. Take a screenshot of the app’s sharing screen, move it to this computer, and choose it here. Gemini Nano reads it on this computer.</p>
+      <label class="btn btn-secondary btn-block file-button" id="phone-shot-label"><input type="file" id="phone-shot-file" accept="image/png,image/jpeg,image/webp" class="visually-hidden">Choose a screenshot</label>
+      <p class="muted" id="phone-shot-status" role="status"></p>
+    </section>
     <div class="actions">
       <button class="btn btn-primary btn-block" type="button" id="to-plan">Make my plan</button>
       <button class="btn btn-secondary btn-block" type="button" id="check-again">Check again</button>

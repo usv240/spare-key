@@ -162,3 +162,10 @@ test('the practice purpose sends a changed page only when every line is from the
   assert.throws(() => checkOutgoing('practice', { ...ok, check: 'somewhere.else' }, { practiceCorpus, practiceOwner }), CloudSafetyError);
   assert.throws(() => checkOutgoing('practice', { ...ok, extra: 'x' }, { practiceCorpus, practiceOwner }), CloudSafetyError);
 });
+
+test('the practice screenshot on the website is the one whose hash the practice check allows', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { createHash } = await import('node:crypto');
+  const shot = JSON.parse(readFileSync('web/practice/phone-sharing.json', 'utf8'));
+  assert.equal(createHash('sha256').update(readFileSync('web/practice/phone-sharing.png')).digest('hex'), shot.sha256);
+});

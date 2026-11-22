@@ -395,3 +395,12 @@ kbd {
 .since h2 { margin: 0; font-size: 17px; }
 .since p { margin: 8px 0 0; }
 .since-new { display: block; margin-top: 8px; }
+
+/* ---------- A location app on the phone, from a screenshot ---------- */
+.phone-shot { margin: 20px 0 0; padding: 14px; border: 1px solid var(--line); border-radius: 10px; }
+.phone-shot h2 { margin: 0; font-size: 17px; }
+.phone-shot p { margin: 8px 0 0; }
+.file-button { position: relative; margin-top: 12px; cursor: pointer; }
+.file-button:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
+.file-button.is-disabled { opacity: 0.55; cursor: not-allowed; }
+.phone-shot img { display: block; margin: 12px 0 0; width: 195px; max-width: 60%; height: auto; border: 1px solid var(--line); border-radius: 12px; }

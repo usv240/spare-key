@@ -39,9 +39,9 @@ export function installPage() {
 <h2>Install it</h2>
 <p>Spare Key is not in the Chrome Web Store yet. Until it is, install it this way:</p>
 <ol>
-  <li>Download <strong>spare-key-extension.zip</strong> from the <a href="https://github.com/usv240/spare-key/releases/latest">latest release</a> and unzip it.</li>
+  <li>Download <a href="/downloads/spare-key-extension.zip" download><strong>spare-key-extension.zip</strong></a> and unzip it. It holds a folder called <code>spare-key</code>.</li>
   <li>In Chrome, open <code>chrome://extensions</code> and turn on <strong>Developer mode</strong> (top right).</li>
-  <li>Select <strong>Load unpacked</strong> and choose the unzipped folder.</li>
+  <li>Select <strong>Load unpacked</strong> and choose the <code>spare-key</code> folder.</li>
   <li>Click the puzzle piece in Chrome’s toolbar, then the key, to open Spare Key beside the page.</li>
 </ol>
 <h2>Gemini Nano</h2>
@@ -89,17 +89,18 @@ export function howItWorksPage() {
 
 export function builtWithPage({ numbers }) {
   const rows = [
-    ['Gemini Nano through Firebase AI Logic (<code>ONLY_ON_DEVICE</code>)', 'This computer', 'Reads and sorts the private settings pages. No cloud fallback, on purpose: the pages are the private data.'],
-    ['Gemini through Firebase AI Logic (<code>ONLY_IN_CLOUD</code>, function calling)', 'Google’s cloud', 'Orders the plan from finding types only. It asks the device yes or no questions with <code>ask_device</code> and the person with <code>ask_user</code>, and reads the public steps with <code>get_steps</code>.'],
-    ['Two-voice check', 'Google’s cloud', 'Two arguments over the plan, and a third call that settles it. Finding types only.'],
+    ['Gemini Nano through Firebase AI Logic (<code>ONLY_ON_DEVICE</code>)', 'This computer', 'Reads and sorts the private settings pages, reads a page a site has changed, reads a screenshot of a phone location app (image input), and orders the plan when it is ready. No cloud fallback, on purpose: the pages and pictures are the private data.'],
+    ['Gemini through Firebase AI Logic (<code>ONLY_IN_CLOUD</code>, function calling)', 'Google’s cloud', 'Orders the plan from finding types only, when Gemini Nano is not on the computer. It asks the device yes or no questions with <code>ask_device</code> and the person with <code>ask_user</code>, and reads the public steps with <code>get_steps</code>.'],
+    ['Two-voice check', 'Google’s cloud', 'Two arguments over the plan, each from the steps library’s facts about what the other person would see, and a third call that settles it and says, kind by kind, what each voice argued. Finding types only.'],
     ['URL context tool', 'Google’s cloud', 'Checks that a library entry’s steps still match the official help page. (Search grounding is not on the free tier.)'],
-    ['Hybrid inference (<code>PREFER_ON_DEVICE</code>)', 'Either', 'The practice check on this site, which holds only made-up data: Gemini Nano when the browser has it, the cloud when it does not.'],
+    ['Hybrid inference (<code>PREFER_ON_DEVICE</code>)', 'Either', 'The practice check on this site, which holds only made-up data: Gemini Nano when the browser has it, the cloud when it does not. It reads changed practice pages and Jordan’s made-up phone screenshot the same way; the screenshot is checked by its hash before it can be sent.'],
     ['Firebase App Check (reCAPTCHA Enterprise)', 'Site and extension', 'Only Spare Key can spend its model quota. The extension gets tokens from a small page on this site that answers only the extension.'],
-    ['Firebase Remote Config', 'Every install', 'Page readers, models and switches. When a site changes a page, a new reader reaches every install with no store update: each install fetches it at most once an hour.'],
+    ['Firebase Remote Config', 'Every install', 'Page readers, the words the code rules read, models and switches. When a site changes a page, a fix reaches every install with no store update: each install fetches it at most once an hour. The layout drift test runs every fix through the same code the extension runs.'],
     ['Cloud Firestore', 'Google’s cloud', 'The public steps library, which the extension refreshes when it is newer.'],
     ['Firebase Hosting', 'Google’s cloud', 'This site, the practice pages and the Steps API.'],
     ['Chrome extension APIs', 'This computer', 'Side panel, the scan tab, permissions asked for per site, the extensions check, history cleanup.'],
-    ['WebCrypto', 'This computer', 'The locked copy: PBKDF2 with 600,000 rounds and AES-GCM.'],
+    ['WebCrypto', 'This computer', 'The locked copy: PBKDF2 with 600,000 rounds and AES-GCM. Opening one beside a new check shows what is new since then.'],
+    ['A wrapper around fetch', 'This computer', 'The ledger under “What left this computer”: every request by where it went and its size, and how many hold anything from the check.'],
     ['MCP server', 'The developer’s computer', 'Steps and plans for AI assistants, from finding types only.'],
   ];
   return doc('built-with.html', 'How it’s built', 'The full stack, where each piece runs and why.', `
@@ -109,6 +110,14 @@ export function builtWithPage({ numbers }) {
 <thead><tr><th>Piece</th><th>Runs</th><th>Why it is used</th></tr></thead>
 <tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody>
 </table></div>
+<h2>Privacy-tiered routing</h2>
+<p>Each step runs at the most private tier its data allows, and the tier is set by the data, not by convenience:</p>
+<ol>
+  <li><strong>Device only</strong> (<code>ONLY_ON_DEVICE</code>): anything that can name a person. The settings pages, a page a site has changed, a phone screenshot. Without Gemini Nano these are read by code or not at all, never by the cloud.</li>
+  <li><strong>Device first</strong>: finding types and the person’s chosen answers. Gemini Nano orders the plan when it is ready; Gemini in the cloud only when it is not, and only if plan help is on.</li>
+  <li><strong>Cloud</strong> (<code>ONLY_IN_CLOUD</code>): public text. The steps library, the official help pages, and the two voices arguing over finding types.</li>
+</ol>
+<p>One check, <code>checkOutgoing()</code>, sits between the tiers. The made-up practice check on this site is the one place a lower tier’s data may go up, because none of it is real.</p>
 <h2>The cloud asks, the device answers</h2>
 <p>Gemini in the cloud orders the plan without ever learning who anyone is. When it needs a fact, it can call back to the device, and the device answers with an enum. The shape of an exchange:</p>
 <pre tabindex="0" aria-label="Code example"><code>cloud:  ask_device({ ref: "f3", question: "filter_also_deletes" })
@@ -200,9 +209,9 @@ function driftSection(drift, first) {
   const sum = (rows, k) => rows.reduce((n, r) => n + (r?.[k] || 0), 0);
   const silentFirst = sum(kinds.map(k => firstOf(k.kind)), 'silentMisses');
   const silentNow = sum(drift.rows.filter(r => r.kind !== 'none'), 'silentMisses');
-  const found = r => (r ? `${r.found} of ${r.of}` : 'not run');
+  const found = r => (!r ? 'not run' : r.shown !== undefined && r.shown !== r.found ? `${r.shown} of ${r.of} (${r.found} the right kind)` : `${r.found} of ${r.of}`);
   return `<h2>When a site changes its pages</h2>
-<p>Sites change their settings pages without warning. A script changed the 13 practice pages five ways, the same way every time, and every check ran on each copy. The number is planted ways in found, of 24.</p>
+<p>Sites change their settings pages without warning. A script changed the 13 practice pages five ways, the same way every time, and every check ran on each copy. The number is planted ways in shown, of 24; in brackets, how many were shown as exactly the right kind when that differs (a teen shown as an adult is shown, not the right kind).</p>
 <div class="table-wrap" tabindex="0" role="region" aria-label="Table, scrolls sideways on small screens"><table><thead><tr><th>What changed</th><th class="num">Code only, first run</th><th class="num">Code only, now</th>${hasNano ? '<th class="num">Code and Gemini Nano</th>' : ''}<th class="num">After the Remote Config fix</th></tr></thead>
 <tbody>${kinds.map(k => `<tr><td>${esc(k.label)}</td><td class="num">${found(firstOf(k.kind))}</td><td class="num">${found(k)}</td>${hasNano ? `<td class="num">${found(cell(k.kind, 'nano'))}</td>` : ''}<td class="num">${found(cell(k.kind, 'fixed'))}</td></tr>`).join('')}</tbody></table></div>
 <p><strong>The miss that matters most is a silent one:</strong> a check that says it is done while a way in is still there. On the first run there were <strong>${silentFirst}</strong> silent misses. Now there are <strong>${silentNow}</strong>: a page that lists nothing, without saying it is empty, is shown under “Not checked” as “looked different”, and a page that never showed the words Spare Key waits for is marked “checked in part”. Both tell the person to look for themselves.</p>
@@ -226,6 +235,11 @@ ${p ? `<p>${p.of} situations, each a set of findings and answers, written before
 <div class="table-wrap" tabindex="0" role="region" aria-label="Table, scrolls sideways on small screens"><table><thead><tr><th>Measure</th>${p.columns.map(c => `<th class="num">${esc(c)}</th>`).join('')}</tr></thead>
 <tbody>${p.rows.map(r => `<tr><td>${esc(r.label)}</td>${r.values.map(v => `<td class="num">${v}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
 <p class="muted">${esc(p.note)}</p>` : '<p>Results are being measured.</p>'}
+${n.nanoPlan ? `<h3>The plan made by Gemini Nano, on this computer</h3>
+<p>The same ${n.nanoPlan.of} situations, ordered by Gemini Nano with nothing sent anywhere. ${n.nanoPlan.answered} of ${n.nanoPlan.of} answered${n.nanoPlan.medianSeconds ? `, in a median of ${n.nanoPlan.medianSeconds} seconds each on the builder’s PC` : ''}.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Table, scrolls sideways on small screens"><table><thead><tr><th>Measure</th><th class="num">Gemini Nano’s plan</th><th class="num">What you see (after the safety rules)</th></tr></thead>
+<tbody>${n.nanoPlan.rows.map(r => `<tr><td>${esc(r.label)}</td><td class="num">${r.before} of ${n.nanoPlan.answered}</td><td class="num">${r.after} of ${n.nanoPlan.answered}</td></tr>`).join('')}</tbody></table></div>
+<p class="muted">The safety rules made ${n.nanoPlan.fixes} fixes to Gemini Nano’s plans (not counting the warning rule, which runs on every plan). Test: <code>tools/plan-eval-nano.mjs</code>, scored by <code>tools/plan-eval-score.mjs</code>. ${esc(n.nanoPlan.date || '')}.</p>` : ''}
 <h2>What these numbers do not show</h2>
 <ul>
   <li>No survivor or advocate has tested Spare Key yet.</li>

@@ -134,7 +134,7 @@ function ruleWords(f) {
   }[f.rule] || 'Spare Key adjusted this plan.';
 }
 
-const SERVICE_NAMES = { google: 'Google account', gmail: 'Gmail', photos: 'Google Photos', amazon: 'Amazon', chrome: 'This Chrome browser', other: 'Other' };
+const SERVICE_NAMES = { google: 'Google account', gmail: 'Gmail', photos: 'Google Photos', amazon: 'Amazon', chrome: 'This Chrome browser', phone: 'Your phone', other: 'Other' };
 const groupBy = (list, key) => list.reduce((m, x) => m.set(key(x), [...(m.get(key(x)) || []), x]), new Map());
 
 const section = (kind, title, ...body) => h('li', { class: `step step-${kind}`, 'data-action': kind },

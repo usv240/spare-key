@@ -106,6 +106,12 @@ try {
   await new Promise(r => setTimeout(r, 1500));
 
   const sent = await panel.evaluate(() => chrome.storage.session.get('sentLog').then(r => r.sentLog || []));
+  // What the plan did (the function calls the cloud made, the two voices) and the ledger as the panel shows it.
+  const plan = await panel.evaluate(() => chrome.storage.session.get('plan').then(r => r.plan || null));
+  report.plan = plan ? { source: plan.source, model: plan.model, calls: plan.calls || null, voices: plan.voices || null } : null;
+  await panel.waitForFunction(() => document.getElementById('ledger')?.innerText.trim(), { timeout: 15000 }).catch(() => {});
+  report.ledger = await panel.evaluate(() => document.getElementById('ledger')?.innerText || '');
+  log('function calls:', JSON.stringify(report.plan?.calls), '| ledger:', report.ledger.replace(/\s+/g, ' ').slice(0, 300));
   clearInterval(sweep);
   report.contexts = [...sessions].map(t => `${t.type()} ${t.url().replace(origin, '')}`);
 
