@@ -91,7 +91,7 @@ export default function index({ numbers }) {
         ${n.privacy ? `<p class="result-line">In our test, ${n.privacy.withPrivate} of ${n.privacy.requests} requests from the extension held a name, email address, phone number or device.</p><p class="muted">Every request from the extension was captured during a full practice check with every cloud step on, and searched for every made-up name, address and number on the practice pages. ${esc(n.privacy.date)}.</p>` : ''}
         <p><a href="/privacy.html">Exactly what is read, sent and kept</a></p>
       </div>
-      ${sentSample ? `<figure class="shot"><pre aria-label="A real request from the practice check">${esc(sentSample)}</pre><figcaption class="muted">A real request from the practice check, word for word. ${esc(n.sentSampleNote || '')}</figcaption></figure>` : ''}
+      ${sentSample ? `<figure class="shot"><pre tabindex="0" aria-label="A real request from the practice check">${esc(sentSample)}</pre><figcaption class="muted">A real request from the practice check, word for word. ${esc(n.sentSampleNote || '')}</figcaption></figure>` : ''}
     </div>
   </div>
 </section>
@@ -127,7 +127,7 @@ export default function index({ numbers }) {
         <p>Advocates can print the plan, with addresses hidden unless the person chooses to show them. The verified steps library is a free, open API, and an MCP server lets an AI assistant give the current steps with the warnings attached.</p>
         <p><a href="/api.html">The Steps API and the MCP server</a></p>
       </div>
-      <pre aria-label="Example"><code>GET https://spare-key-app.web.app/api/v1/steps/gmail.forwarding.external.json
+      <pre tabindex="0" aria-label="Example request to the Steps API"><code>GET https://spare-key-app.web.app/api/v1/steps/gmail.forwarding.external.json
 
 { "title": "Your mail is being copied to another address",
   "who_can_notice": "unknown",
@@ -140,7 +140,7 @@ export default function index({ numbers }) {
 <section class="block" id="built" aria-labelledby="built-title">
   <div class="wrap">
     <h2 id="built-title">How it’s built</h2>
-    <div class="table-wrap"><table>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Table, scrolls sideways on small screens"><table>
       <thead><tr><th>Piece</th><th>Runs</th><th>Why it is used</th></tr></thead>
       <tbody>
         <tr><td>Gemini Nano through Firebase AI Logic (only on device)</td><td>This computer</td><td>Reads and sorts the private settings pages</td></tr>

@@ -121,7 +121,7 @@ body {
 .btn[disabled], .btn[aria-disabled="true"] { cursor: not-allowed; opacity: 1; background: var(--surface); color: var(--ink-2); border-color: var(--line); }
 
 /* ---------- Tabs: underline tabs on one rule ---------- */
-.tabs { display: flex; gap: 20px; padding: 0 16px; border-bottom: 1px solid var(--line); }
+.tabs { display: flex; gap: 20px; margin: 0 -16px; padding: 0 16px; border-bottom: 1px solid var(--line); }
 .tab {
   position: relative; min-height: 44px; padding: 0 2px;
   background: none; border: 0; color: var(--ink-2);

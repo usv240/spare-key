@@ -105,13 +105,13 @@ export function builtWithPage({ numbers }) {
   return doc('built-with.html', 'How it’s built', 'The full stack, where each piece runs and why.', `
 <h1>How it’s built</h1>
 <p class="lead">The split between this computer and the cloud is set by the problem: the settings pages are the private data, so they are read here, and the cloud only ever sees what kind of access was found.</p>
-<div class="table-wrap"><table>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Table, scrolls sideways on small screens"><table>
 <thead><tr><th>Piece</th><th>Runs</th><th>Why it is used</th></tr></thead>
 <tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody>
 </table></div>
 <h2>The cloud asks, the device answers</h2>
 <p>Gemini in the cloud orders the plan without ever learning who anyone is. When it needs a fact, it calls back to the device, and the device answers with an enum:</p>
-<pre><code>cloud:  ask_device({ ref: "f3", question: "filter_also_deletes" })
+<pre tabindex="0" aria-label="Code example"><code>cloud:  ask_device({ ref: "f3", question: "filter_also_deletes" })
 device: { "answer": "no" }
 cloud:  ask_user({ ref: "f1", question: "set_up_by_you" })
 person: Not sure   →   { "answer": "not_sure" }</code></pre>
@@ -139,7 +139,7 @@ export function apiPage() {
 <h1>Steps API and MCP server</h1>
 <p class="lead">The verified steps library is free to use. It takes no input, so it cannot receive personal data, and it needs no key.</p>
 <h2>Steps API</h2>
-<pre><code>GET https://spare-key-app.web.app/api/v1/index.json            every finding code
+<pre tabindex="0" aria-label="Code example"><code>GET https://spare-key-app.web.app/api/v1/index.json            every finding code
 GET https://spare-key-app.web.app/api/v1/steps/{code}.json     one entry
 GET https://spare-key-app.web.app/api/v1/plan-rules.json       the plan order and safety rules</code></pre>
 <p>Each entry has what the access means, whether removing it may be noticed and why, what to screenshot first, the steps, what to do if now is not a good time, and official sources with the date they were checked. Open CORS; cached for an hour.</p>
@@ -147,7 +147,7 @@ GET https://spare-key-app.web.app/api/v1/plan-rules.json       the plan order an
 <p>An AI assistant that uses these tools gives the current steps with the warnings attached. Every input is a finding code or a fixed answer, so no story or name can be sent to it.</p>
 <ul><li><code>list_findings</code>: every finding code</li><li><code>get_steps(code)</code>: one code’s steps, with what to screenshot and the warning</li><li><code>make_plan(findings, situation)</code>: a plan in a safety-first order, with the safety rules applied</li></ul>
 <p>From a copy of the <a href="https://github.com/usv240/spare-key">repository</a>, run <code>npm install</code> in <code>mcp/</code>, then add it to your assistant:</p>
-<pre><code>Claude Code:   claude mcp add spare-key -- node /path/to/spare-key/mcp/server.mjs
+<pre tabindex="0" aria-label="Code example"><code>Claude Code:   claude mcp add spare-key -- node /path/to/spare-key/mcp/server.mjs
 Codex:         codex mcp add spare-key -- node /path/to/spare-key/mcp/server.mjs
 Others (JSON): { "mcpServers": { "spare-key": { "command": "node", "args": ["/path/to/spare-key/mcp/server.mjs"] } } }</code></pre>
 <h2>The plan as code</h2>
@@ -167,7 +167,7 @@ ${n.practice ? `<p><strong>${n.practice.found} of ${n.practice.of}</strong> plan
 ${n.privacy ? `<p><strong>${n.privacy.withPrivate} of ${n.privacy.requests}</strong> requests from the extension held a name, email address, phone number, device or place, during a full practice check with every cloud step on. Every request from the service worker, the hidden page and the side panel was captured and searched in plain text, URL-encoded, base64 and JSON-escaped forms. All ${n.privacy.modelRequests} requests to the model matched “What left this computer” word for word. ${esc(n.privacy.date)}. Test: <code>tools/privacy-test.mjs</code>.</p>` : ''}
 <h2>Plan safety: the warning that a change may be noticed</h2>
 ${p ? `<p>${p.of} situations, each a set of findings and answers, written before any results and not changed after. Measured by code.</p>
-<div class="table-wrap"><table><thead><tr><th>Measure</th>${p.columns.map(c => `<th class="num">${esc(c)}</th>`).join('')}</tr></thead>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Table, scrolls sideways on small screens"><table><thead><tr><th>Measure</th>${p.columns.map(c => `<th class="num">${esc(c)}</th>`).join('')}</tr></thead>
 <tbody>${p.rows.map(r => `<tr><td>${esc(r.label)}</td>${r.values.map(v => `<td class="num">${v}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
 <p class="muted">${esc(p.note)}</p>` : '<p>Results are being measured.</p>'}
 <h2>What these numbers do not show</h2>

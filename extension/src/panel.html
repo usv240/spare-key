@@ -22,12 +22,12 @@
   <button class="btn btn-exit" id="quick-exit" type="button"><svg aria-hidden="true"><use href="#i-exit"/></svg>Quick exit</button>
 </header>
 
-<nav class="tabs" id="tabs" role="tablist" aria-label="Spare Key" hidden>
-  <button class="tab" role="tab" id="tab-check" aria-selected="true" aria-controls="screen-choose">Your check</button>
-  <button class="tab" role="tab" id="tab-hood" aria-selected="false" aria-controls="screen-hood" tabindex="-1">Under the hood</button>
-</nav>
 
 <main id="main">
+  <div class="tabs" id="tabs" role="tablist" aria-label="Spare Key" hidden>
+  <button class="tab" role="tab" id="tab-check" aria-selected="true" aria-controls="screen-choose">Your check</button>
+  <button class="tab" role="tab" id="tab-hood" aria-selected="false" aria-controls="screen-hood" tabindex="-1">Under the hood</button>
+</div>
   <!-- 1. The safety screen: always first. -->
   <section class="screen" data-screen="safety" id="screen-safety" aria-labelledby="safety-title">
     <h1 id="safety-title">Before you start</h1>

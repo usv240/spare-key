@@ -46,8 +46,8 @@ ${ICONS}
     <label class="visually-hidden" for="theme">Theme</label>
     <select class="theme-select" id="theme"><option value="system">System theme</option><option value="light">Light</option><option value="dark">Dark</option></select>
   </div>
+  <a class="skip" href="#main">Skip to the content</a>
 </header>
-<a class="skip" href="#main">Skip to the content</a>
 <div class="safety-strip" role="region" aria-label="Help now">
   <div class="wrap">
     <span>Talk to someone now, free, 24/7:</span>
