@@ -32,6 +32,16 @@
     <h1 tabindex="-1" id="start-title">Practice check</h1>
     <p class="lead">Spare Key reads made-up settings pages for a person called Jordan, the same way it reads yours. Nothing of yours is opened.</p>
     <div class="status-line"><span class="dot" id="where-dot" aria-hidden="true"></span><p class="text" id="where-line">Checking for Gemini Nano in this browser.</p></div>
+    <details class="break-it" id="break-it">
+      <summary>Break the pages first</summary>
+      <p>Sites change their pages without warning. Change Jordan’s pages here, then watch what Spare Key does: say it could not read a page, read it with AI instead, or read it by code again after a fix.</p>
+      <fieldset class="question">
+        <legend>Change the practice pages</legend>
+        <div class="choices drift-choices" id="drift-choices"></div>
+      </fieldset>
+      <label class="share-line"><input type="checkbox" id="apply-fix"><span>Apply the fix sent through Remote Config</span></label>
+      <p class="muted" id="drift-note">The fix is what the builder would publish once a page changes: new words and places to look. It reaches every copy of Spare Key within an hour, with no update to install.</p>
+    </details>
     <div class="actions"><button class="btn btn-primary btn-block" type="button" id="start">Start the practice check</button></div>
   </section>
 
@@ -45,6 +55,7 @@
   </section>
 
   <section class="screen" id="screen-results" hidden>
+    <p class="notice" id="drift-line" role="status" hidden></p>
     <div id="results"></div>
     <p class="muted" id="sorted-line" hidden></p>
     <div class="actions">
@@ -64,6 +75,7 @@
   <section class="screen" id="screen-sent" hidden>
     <h1>What left this computer</h1>
     <p class="muted">Everything this practice check sent to Gemini in the cloud, word for word. Nothing here is about you: the practice pages are made up. In the extension, only finding types leave the computer.</p>
+    <div id="ledger"></div>
     <ol class="log" id="sent-log"></ol>
     <p class="empty" id="sent-empty">Nothing has been sent yet.</p>
   </section>

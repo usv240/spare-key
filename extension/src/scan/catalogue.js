@@ -7,8 +7,10 @@
 //   "route"  a Gmail settings route inside the app (after #), which a signed-out request cannot test
 // Reader settings are PROVISIONAL until each page's signed-in structure is recorded from the test accounts
 // (tools/record-pages.mjs). They lean on text and links rather than class names, which change most often.
+// emptyText is each page's own words for an empty list, also provisional: a page that lists nothing without saying so
+// is reported as "looked different", never as nothing found (the layout drift test, tools/drift-test.mjs).
 import { remoteOverrides } from './overrides.js';
-import { EMAIL_SOURCE, PHONE_SOURCE } from '../../../shared/text.js';
+import { EMAIL_SOURCE, PHONE_SOURCE, MASKED_PHONE_SOURCE } from '../../../shared/text.js';
 
 const GOOGLE_SIGNED_OUT = 'accounts\\.google\\.com/(v3/signin/(identifier|accountchooser)|ServiceLogin|AccountChooser|InteractiveLogin|signin/v2/identifier)';
 const GOOGLE_REAUTH = 'accounts\\.google\\.com/(v3/signin/challenge|signin/v2/challenge|v3/signin/confirmidentifier)';
@@ -54,6 +56,7 @@ export const CHECKS = [
         waitFor: { text: '(third.party|apps (and|&) services|connections)' },
         item: 'a[href*="connections/link"], a[href*="connections/overview/"], a[href*="permissions/"]',
         exclude: '^(see all connections|learn more)$',
+        emptyText: '(no (third-party )?(apps|connections)|you (haven.t|have not) (given|granted|connected))',
       }),
     }],
   },
@@ -65,12 +68,12 @@ export const CHECKS = [
       {
         url: 'https://myaccount.google.com/signinoptions/rescuephone?authuser={u}', urlStatus: 'known',
         practiceUrl: '/practice/google/rescuephone.html',
-        reader: google({ waitFor: { text: '(recovery phone|phone)' }, patterns: [PHONE_SOURCE] }),
+        reader: google({ waitFor: { text: '(recovery phone|phone)' }, patterns: [PHONE_SOURCE, MASKED_PHONE_SOURCE], emptyText: '(add (a )?recovery phone|no recovery phone)' }),
       },
       {
         url: 'https://myaccount.google.com/recovery/email?authuser={u}', urlStatus: 'known',
         practiceUrl: '/practice/google/recovery-email.html',
-        reader: google({ waitFor: { text: '(recovery email|email)' }, patterns: [EMAIL_SOURCE] }),
+        reader: google({ waitFor: { text: '(recovery email|email)' }, patterns: [EMAIL_SOURCE], emptyText: '(add (a )?recovery email|no recovery email)' }),
       },
     ],
   },
@@ -83,8 +86,9 @@ export const CHECKS = [
       practiceUrl: '/practice/google/twosv.html',
       reader: google({
         waitFor: { text: '(2-step verification|second steps)' },
-        patterns: [PHONE_SOURCE, '\\b\\d+\\s+(devices?|phones?)\\b', '\\bauthenticator\\b', '\\b(security key|passkey)s?\\b'],
+        patterns: [PHONE_SOURCE, MASKED_PHONE_SOURCE, '\\b\\d+\\s+(devices?|phones?)\\b', '\\bauthenticator\\b', '\\b(security key|passkey)s?\\b'],
         exclude: '^(turn off 2-step verification|backup codes)',
+        emptyText: '(2-step verification is off|turn on 2-step verification)',
       }),
     }],
   },
@@ -100,6 +104,7 @@ export const CHECKS = [
         waitFor: { text: 'location sharing' },
         patterns: [EMAIL_SOURCE, '\\bsharing (until|for|since)\\b', 'anyone with (the|this) link'],
         exclude: '^(location sharing|learn more)$',
+        emptyText: '(you.re not sharing|not sharing your location|no one can see your location)',
       }),
     }],
   },
@@ -115,6 +120,7 @@ export const CHECKS = [
         waitFor: { text: '(forwarding|pop download|imap access)' },
         within: '^\\s*forwarding:?\\s*$',
         patterns: ['forward a copy of incoming mail to', 'disable forwarding'],
+        emptyText: '(add a forwarding address|forwarding is (off|disabled))',
       }),
     }],
   },
@@ -129,6 +135,7 @@ export const CHECKS = [
         main: '[role="main"]',
         waitFor: { text: '(filters|blocked addresses)' },
         patterns: ['\\bdo this:'],
+        emptyText: '(you (currently )?have no filters|no filters)',
       }),
     }],
   },
@@ -157,7 +164,7 @@ export const CHECKS = [
     pages: [{
       url: 'https://www.amazon.com/hz/profilepicker/amazonfamily/members', urlStatus: 'known',
       practiceUrl: '/practice/amazon/members.html',
-      reader: { waitFor: { text: '(household|family|members)' }, patterns: ['\\b(adult|teen|child)\\b'], exclude: '^(add (an )?(adult|teen|child)|learn more)' },
+      reader: { waitFor: { text: '(household|family|members)' }, patterns: ['\\b(adult|teen|child)\\b'], exclude: '^(add (an )?(adult|teen|child)|learn more)', emptyText: '(no (household|family) members|you (haven.t|have not) added anyone)' },
     }],
   },
   {
@@ -167,7 +174,7 @@ export const CHECKS = [
     pages: [{
       url: 'https://www.amazon.com/hz/mycd/digital-console/devicelist', urlStatus: 'known',
       practiceUrl: '/practice/amazon/devicelist.html',
-      reader: { waitFor: { text: '(devices|kindle|echo|fire)' }, patterns: ['\\b(echo|kindle|fire tv|fire tablet|ring|blink|alexa)\\b'] },
+      reader: { waitFor: { text: '(devices|kindle|echo|fire)' }, patterns: ['\\b(echo|kindle|fire tv|fire tablet|ring|blink|alexa)\\b'], emptyText: '(no devices (found|registered)|you (don.t|do not) have any devices)' },
     }],
   },
   {
@@ -177,7 +184,7 @@ export const CHECKS = [
     pages: [{
       url: 'https://myaccount.google.com/family/details?authuser={u}', urlStatus: 'known',
       practiceUrl: '/practice/google/family.html',
-      reader: google({ waitFor: { text: '(family group|family manager|members)' }, patterns: ['\\b(family manager|parent|member)\\b'] }),
+      reader: google({ waitFor: { text: '(family group|family manager|members)' }, patterns: ['\\b(family manager|parent|member)\\b'], emptyText: '(create a family group|you.re not (in|part of) a family group)' }),
     }],
   },
   {
@@ -193,7 +200,7 @@ export const CHECKS = [
 ];
 
 const DEFAULT_PAGE_READER = { timeoutMs: 15000 };
-const OVERRIDABLE = ['pages', 'enabled', 'progress', 'signedOutPattern', 'reauthPattern'];
+const OVERRIDABLE = ['pages', 'words', 'enabled', 'progress', 'signedOutPattern', 'reauthPattern'];
 
 // An override may only point a check at its own service's site (and the practice pages at the Spare Key site).
 function pagesAllowed(service, pages) {

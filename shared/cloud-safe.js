@@ -137,15 +137,22 @@ export const OUTGOING = {
 // The website's practice check (try.html): Gemini sorts entries from the made-up practice pages, on the device when it
 // can and in the cloud when it cannot. Every entry's words must appear on the practice pages themselves, and the owner
 // must be the made-up practice person, so this purpose cannot carry anything else. The extension never uses it.
+// "read_page" sends one changed practice page's text (the layout drift demo), every line of it from the practice pages.
 const norm = s => String(s || '').replace(/\s+/g, ' ').trim();
 OUTGOING.practice = (b, ctx) => {
-  onlyKeys(b, ['task', 'owner', 'entries'], 'body');
-  assertEnum(b.task, ['classify'], 'task');
+  assertEnum(b?.task, ['classify', 'read_page'], 'task');
+  onlyKeys(b, b.task === 'read_page' ? ['task', 'owner', 'check', 'page_text'] : ['task', 'owner', 'entries'], 'body');
   const owner = ctx?.practiceOwner;
   if (!owner || !isPlainObject(b.owner) || b.owner.name !== owner.name || b.owner.email !== owner.email || Object.keys(b.owner).length !== 2) fail('owner must be the practice person');
-  if (!Array.isArray(b.entries) || !b.entries.length || b.entries.length > 60) fail('entries must be a short list');
   const corpus = norm(ctx?.practiceCorpus);
   if (!corpus) fail('no practice pages to check against');
+  if (b.task === 'read_page') {
+    assertEnum(b.check, CHECK_IDS, 'check');
+    if (typeof b.page_text !== 'string' || !b.page_text.trim() || b.page_text.length > 20000) fail('page_text must be one page');
+    for (const line of b.page_text.split('\n')) if (norm(line) && !corpus.includes(norm(line))) fail('practice text must come from the practice pages');
+    return;
+  }
+  if (!Array.isArray(b.entries) || !b.entries.length || b.entries.length > 60) fail('entries must be a short list');
   for (const e of b.entries) {
     onlyKeys(e, ['i', 'check', 'text'], 'entry');
     if (!Number.isInteger(e.i)) fail('entry i must be a number');

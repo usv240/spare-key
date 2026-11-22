@@ -189,7 +189,27 @@ ${Object.entries(groups).map(([svc, list]) => `<h2>${esc(svc)}</h2>
 }
 const longDay = iso => new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 
-export function accuracyPage({ numbers }) {
+// Layout drift (tools/drift-test.mjs): the practice pages changed five ways, read by code, by code and Gemini Nano, and
+// after the Remote Config fix, next to the first, blind run.
+function driftSection(drift, first) {
+  if (!drift?.rows?.length) return '';
+  const kinds = drift.rows.filter(r => r.mode === 'code' && r.kind !== 'none');
+  const cell = (kind, mode) => drift.rows.find(r => r.kind === kind && r.mode === mode);
+  const firstOf = kind => first?.rows?.find(r => r.kind === kind);
+  const hasNano = drift.rows.some(r => r.mode === 'nano');
+  const sum = (rows, k) => rows.reduce((n, r) => n + (r?.[k] || 0), 0);
+  const silentFirst = sum(kinds.map(k => firstOf(k.kind)), 'silentMisses');
+  const silentNow = sum(drift.rows.filter(r => r.kind !== 'none'), 'silentMisses');
+  const found = r => (r ? `${r.found} of ${r.of}` : 'not run');
+  return `<h2>When a site changes its pages</h2>
+<p>Sites change their settings pages without warning. A script changed the 13 practice pages five ways, the same way every time, and every check ran on each copy. The number is planted ways in found, of 24.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Table, scrolls sideways on small screens"><table><thead><tr><th>What changed</th><th class="num">Code only, first run</th><th class="num">Code only, now</th>${hasNano ? '<th class="num">Code and Gemini Nano</th>' : ''}<th class="num">After the Remote Config fix</th></tr></thead>
+<tbody>${kinds.map(k => `<tr><td>${esc(k.label)}</td><td class="num">${found(firstOf(k.kind))}</td><td class="num">${found(k)}</td>${hasNano ? `<td class="num">${found(cell(k.kind, 'nano'))}</td>` : ''}<td class="num">${found(cell(k.kind, 'fixed'))}</td></tr>`).join('')}</tbody></table></div>
+<p><strong>The miss that matters most is a silent one:</strong> a check that says it is done while a way in is still there. On the first run there were <strong>${silentFirst}</strong> silent misses. Now there are <strong>${silentNow}</strong>: a page that lists nothing, without saying it is empty, is shown under “Not checked” as “looked different”, and a page that never showed the words Spare Key waits for is marked “checked in part”. Both tell the person to look for themselves.</p>
+<p class="muted">The first run was blind: nothing was changed after seeing these pages. The fixes since then are general (an empty-looking page is not called empty; lists built from plain boxes count as lists; masked phone numbers count), and the Remote Config fixes were written after seeing what broke, so the last column shows the fix path works, not how well a first guess reads a new page. ${esc(drift.date)}${drift.nanoDate ? `; Gemini Nano run ${esc(drift.nanoDate)}` : ''}. Test: <code>tools/drift-test.mjs</code>. You can try it on <a href="try.html">the practice check</a>: open “Break the pages first”.</p>`;
+}
+
+export function accuracyPage({ numbers, drift = null, driftFirst = null }) {
   const n = numbers;
   const p = n.planSafety;
   return doc('accuracy.html', 'Accuracy', 'How Spare Key is measured, the numbers, and what they do not show.', `
@@ -198,6 +218,7 @@ export function accuracyPage({ numbers }) {
 <h2>Practice pages: planted ways in</h2>
 ${n.practice ? `<p><strong>${n.practice.found} of ${n.practice.of}</strong> planted ways in found, with <strong>${n.practice.falseAlarms}</strong> false alarms, on the 13 made-up practice pages, both with code only and with Gemini Nano. ${esc(n.practice.date)}. Tests: <code>tools/reader-test.mjs</code>, <code>tools/e2e-practice.mjs</code>.</p>` : ''}
 <p class="muted">The practice pages were written by the builder, so the readers were tuned on the same pages they are tested on. They show the whole system works end to end; they do not show how well it reads real pages.</p>
+${driftSection(drift, driftFirst)}
 <h2>Privacy: nothing that names a person leaves</h2>
 ${n.privacy ? `<p><strong>${n.privacy.withPrivate} of ${n.privacy.requests}</strong> requests from the extension held a name, email address, phone number, device or place, during a full practice check with every cloud step on. Every request from the service worker, the hidden page and the side panel was captured and searched in plain text, URL-encoded, base64 and JSON-escaped forms. All ${n.privacy.modelRequests} requests to the model matched “What left this computer” word for word. ${esc(n.privacy.date)}. Test: <code>tools/privacy-test.mjs</code>.</p>` : ''}
 <h2>Plan safety: the warning that a change may be noticed</h2>

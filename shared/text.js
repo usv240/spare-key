@@ -4,6 +4,8 @@
 // An email address, and a US-style phone number (with or without +1, brackets, dots, spaces or dashes).
 export const EMAIL_SOURCE = '[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}';
 export const PHONE_SOURCE = '(?:\\+?1[\\s.-]?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}\\b';
+// A phone number shown with most digits hidden, like "•••-•••-0177".
+export const MASKED_PHONE_SOURCE = '(?:[\\u2022*]{2,}[\\s.-]?){1,3}\\d{2,4}\\b';
 export const emailsIn = text => [...String(text || '').matchAll(new RegExp(EMAIL_SOURCE, 'gi'))].map(m => m[0]);
 export const phonesIn = text => [...String(text || '').matchAll(new RegExp(PHONE_SOURCE, 'g'))].map(m => m[0].trim());
 

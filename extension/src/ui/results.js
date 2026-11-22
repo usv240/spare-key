@@ -37,6 +37,7 @@ const HOW = {
   reader: 'Read by code',
   both: 'Read by code and Gemini Nano on this computer',
   nano: 'Found by Gemini Nano reading the page',
+  cloud: 'Found by Gemini in the cloud reading the made-up practice page',
 };
 
 // Not checked: why, in plain words, with what to do next.
@@ -44,6 +45,7 @@ const WHY = {
   signed_out: s => `You are not signed in to ${s} in this browser. Sign in, then check again.`,
   needs_password: s => `${s} asked you to confirm your password first. Open the page, confirm it, then check again.`,
   did_not_load: () => 'The page did not load. You can check it again, or open it yourself.',
+  looked_different: () => 'The page looked different from what Spare Key knows, so it could not tell what is listed. Open it and check it yourself.',
   no_permission: () => 'Chrome did not give Spare Key access to this page.',
   practice: () => 'This runs only when you check your own browser, not in the practice check.',
   nothing_to_compare: () => 'This needs a Google account check to compare with.',

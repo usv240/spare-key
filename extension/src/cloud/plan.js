@@ -32,18 +32,24 @@ export const PLAN_TOOLS = [{
   ],
 }];
 
-const PLAN_SYSTEM = `You help a person decide the order in which to deal with access other people have to their accounts.
+// The instructions the cloud plan and the plan on this computer (extension/src/device-plan.js) share.
+export const PLAN_INTRO = `You help a person decide the order in which to deal with access other people have to their accounts.
 You see only finding codes and the person's chosen answers, never names or details. A finding with ownership "not_mine" or "unsure" gives someone else access; "mine" belongs to the person.
 Rules you must follow: document before changing anything; warn whenever a change may be noticed;
-when it may not be a good time to change things (safe_to_change_now is not "yes", or not given), say to wait and to talk to an advocate; never call anything safe or secure, and never say there is nothing to worry about.
-Use get_steps once, with every code you need, to read the steps. Use ask_device to learn a yes/no fact about a finding.
-Use ask_user only when the answer would change the order, at most two times.
-Return the plan as JSON that follows the schema, in this shape:
+when it may not be a good time to change things (safe_to_change_now is not "yes", or not given), say to wait and to talk to an advocate; never call anything safe or secure, and never say there is nothing to worry about.`;
+export const PLAN_SHAPE = `Return the plan as JSON that follows the schema, in this shape:
 1. One "document" step whose refs are every finding that is not "mine".
 2. One "talk_to_advocate" step.
 3. One step per finding code: put every ref with that code in the same step, as "change_now" or "wait". Every finding that is not "mine" must be in exactly one of these steps. Put first the codes that give the most access (mail, location, getting into the account).
 4. One "check_manually" step for each item in not_checked.
 Each "why" is one or two short sentences in plain words, at a grade 6 reading level, about that step only, with no names, addresses, phone numbers or links. The summary is two sentences at most.`;
+
+const PLAN_SYSTEM = `${PLAN_INTRO}
+Use get_steps once, with every code you need, to read the steps. In the same turn, use ask_device for any fact that
+would change the order: whether a filter also deletes mail, whether a device was used this week, whether an app can read
+mail or see location, whether more items are hidden. Ask about at most 4 findings.
+Use ask_user only when the answer would change the order, at most two times.
+${PLAN_SHAPE}`;
 
 export const PLAN_SCHEMA = {
   type: 'object',
@@ -69,8 +75,11 @@ export const PLAN_SCHEMA = {
  * Ask the cloud for a plan. `body` is toCloud() output; `ask(kind, args)` answers ask_device and ask_user on this
  * computer (the panel holds the findings). Returns { answer, model }.
  */
-export function cloudPlan({ body, library, privateStrings, ask, onSend }) {
+export async function cloudPlan({ body, library, privateStrings, ask, onSend }) {
+  // How often the cloud called each function, for the accuracy page: does it really ask the device?
+  const calls = { get_steps: 0, ask_device: 0, ask_user: 0, other: 0 };
   const onCall = async (name, args) => {
+    calls[Object.hasOwn(calls, name) ? name : 'other']++;
     if (name === 'get_steps') {
       const codes = [...new Set([...(Array.isArray(args.codes) ? args.codes : []), ...(args.code ? [args.code] : [])])].filter(c => library[c]).slice(0, 30);
       return codes.length ? { entries: Object.fromEntries(codes.map(c => [c, library[c]])) } : { note: 'Unknown function.' };
@@ -83,5 +92,6 @@ export function cloudPlan({ body, library, privateStrings, ask, onSend }) {
     }
     return { note: 'Unknown function.' };
   };
-  return cloudJson({ purpose: 'plan', body, system: PLAN_SYSTEM, schema: PLAN_SCHEMA, tools: PLAN_TOOLS, onCall, privateStrings, library, onSend });
+  const r = await cloudJson({ purpose: 'plan', body, system: PLAN_SYSTEM, schema: PLAN_SCHEMA, tools: PLAN_TOOLS, onCall, privateStrings, library, onSend });
+  return { ...r, calls };
 }

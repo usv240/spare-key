@@ -1,9 +1,12 @@
 // Offscreen page: a hidden extension page that hosts Gemini Nano sessions and every Firebase call.
 // It talks to the side panel and the service worker by runtime messages addressed { target: 'offscreen' }.
+// The network ledger loads first, so it counts every request the Firebase code makes.
+import { ledgerSummary } from './ledger.js';
 import { deviceStatus, deviceJson, cloudJson, liveSettings, resetCloudBudget, remoteLibrary, TEXT_ONLY, TEXT_AND_IMAGE } from './ai.js';
 import { validateLibrary } from '../../shared/steps-schema.js';
-import { classifyEntries, readWholePage } from './classify.js';
+import { classifyEntries, readWholePage, readScreenshot } from './classify.js';
 import { cloudPlan } from './cloud/plan.js';
+import { devicePlan } from './device-plan.js';
 import { twoVoices } from './cloud/voices.js';
 import { checkFreshness, fetchHelpPage } from './cloud/freshness.js';
 
@@ -76,6 +79,8 @@ const NANO = {
     text: 'Reply with {"ok": true}.',
   }).then(() => ({ ok: true }), e => { warm = null; return { error: String(e).slice(0, 200) }; })),
   'sk:nano-status': async () => ({ status: await deviceStatus(TEXT_ONLY) }),
+  // Bytes and requests per destination this session, and how many hold one of this scan's private strings.
+  'sk:ledger': async ({ privateStrings = [] } = {}) => ledgerSummary(privateStrings),
   // The cloud plan. The panel sends the toCloud() body, this session's private strings (to refuse any request that
   // holds one) and the public steps library; questions from the cloud go back to the panel, which holds the findings.
   'sk:cloud-plan': async ({ body, privateStrings, library, newScan }) => {
@@ -83,8 +88,8 @@ const NANO = {
     const ask = (kind, args) => chrome.runtime.sendMessage({ type: 'sk:ask', kind, ref: args.ref, question: args.question })
       .then(r => r?.answer, () => (kind === 'user' ? 'skipped' : 'unknown'));
     try {
-      const { answer, model } = await cloudPlan({ body, library, privateStrings, ask, onSend });
-      return { answer, model };
+      const { answer, model, calls } = await cloudPlan({ body, library, privateStrings, ask, onSend });
+      return { answer, model, calls };
     } catch (e) {
       return { error: String(e && e.message || e).slice(0, 300), kind: e?.name || 'Error' };
     }
@@ -121,8 +126,13 @@ const NANO = {
       return { error: String(e && e.message || e).slice(0, 300), kind: e?.name || 'Error' };
     }
   },
+  // The plan on this computer (extension/src/device-plan.js): finding codes in, nothing out.
+  'sk:device-plan': async ({ body, library }) => devicePlan({ body, library }),
   'sk:classify': async o => ({ items: await classifyEntries(o) }),
   'sk:read-page': async o => ({ entries: await readWholePage(o) }),
+  // A phone screenshot, read here only: it shows names. Gemini Nano with image input, or nothing.
+  'sk:read-screenshot': async o => readScreenshot(o),
+  'sk:image-status': async () => ({ status: await deviceStatus(TEXT_AND_IMAGE) }),
 };
 
 chrome.runtime.onMessage.addListener((msg, sender, reply) => {

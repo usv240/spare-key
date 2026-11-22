@@ -29,7 +29,7 @@ try {
       if (verbose || !read.ready) console.log(check.id, { ready: read.ready, via: read.via, entries: read.entries.map(e => e.text.replace(/\n/g, ' | ')), state: read.entries.map(e => e.state), account: read.account });
       if (!read.ready) { console.log('FAIL', check.id, 'page never became ready'); failed++; }
       for (const entry of read.entries) {
-        const cls = codeClassify(check.id, entry, account);
+        const cls = codeClassify(check.id, entry, account, check.words);
         const f = toFinding({ ref: `L${findings.length + 1}`, check, entry, cls, howFound: 'reader', openUrl: `https://spare-key-app.web.app${p.practiceUrl}`, account });
         if (f) { got.push([check.id, f.code, f.label]); findings.push(f); }
       }

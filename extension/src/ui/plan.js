@@ -54,7 +54,7 @@ const WHERE = {
  * The plan. `plan` uses local refs. `byRef` maps a local ref to its finding; `library` maps code to entry.
  * `source` is 'code', 'device' or 'cloud'; `fired` lists the safety rules that changed it; `onOpen(url)` opens a setting.
  */
-export function renderPlan(root, { plan, byRef, library, source, model, fired = [], cloudNote = '', voices = null, freshDays = 45, freshness = {}, onCheckFresh = null, onOpen }) {
+export function renderPlan(root, { plan, byRef, library, source, model, calls = null, fired = [], cloudNote = '', voices = null, freshDays = 45, freshness = {}, onCheckFresh = null, onOpen }) {
   const ctx = { byRef, library, onOpen, freshDays, freshness, onCheckFresh };
   const acts = plan.actions;
   const docs = acts.filter(a => a.action === 'document');
@@ -62,7 +62,11 @@ export function renderPlan(root, { plan, byRef, library, source, model, fired = 
   const nows = acts.filter(a => a.action === 'change_now');
   const waits = acts.filter(a => a.action === 'wait');
   const checks = acts.filter(a => a.action === 'check_manually');
-  const [lead, tech] = (WHERE[source] || WHERE.code)(model);
+  const [lead, base] = (WHERE[source] || WHERE.code)(model);
+  const times = n => (n === 1 ? 'once' : `${n} times`);
+  const tech = source === 'cloud' && calls
+    ? `${base} While ordering it, Gemini read the steps library ${times(calls.get_steps)}, asked this computer ${calls.ask_device} ${calls.ask_device === 1 ? 'question' : 'questions'} and asked you ${calls.ask_user}. Each answer was yes, no or not sure.`
+    : base;
   registerInfo('why-order', {
     title: 'Why this order',
     what: 'Screenshot first, because the record is gone once a setting changes. Talk to an advocate before changing anything that may be noticed. Quiet ways into your account come before the rest when now is a good time.',
@@ -90,6 +94,7 @@ export function renderPlan(root, { plan, byRef, library, source, model, fired = 
       h('p', { text: voices.close_the_doors || voices.arguments?.close_the_doors || '' }),
       h('h3', { text: 'Stay hidden' }),
       h('p', { text: voices.stay_hidden || voices.arguments?.stay_hidden || '' }),
+      voices.table?.length ? voiceTable(voices.table, ctx) : null,
       voices.arguments ? h('details', { class: 'later' },
         h('summary', { text: 'Read both arguments in full' }),
         h('p', {}, h('strong', { text: 'Close the doors: ' }), voices.arguments.close_the_doors || ''),
@@ -98,6 +103,16 @@ export function renderPlan(root, { plan, byRef, library, source, model, fired = 
       h('summary', { text: `Spare Key’s safety rules changed this plan (${added.length})` }),
       h('ul', {}, added.map(f => h('li', { text: ruleWords(f) })))) : null,
   );
+}
+
+// Where the two voices disagreed, kind by kind, and what the plan did with it.
+function voiceTable(rows, { library }) {
+  return h('div', { class: 'voice-table' },
+    h('h3', { text: 'Kind by kind' }),
+    ...rows.map(r => h('div', { class: 'voice-row' },
+      h('p', { class: 'step-title', text: library[r.code]?.title || (CODE_TEXT[r.code] || [r.code])[0] }),
+      h('p', {}, h('strong', { text: 'Close the doors: ' }), r.close_the_doors),
+      h('p', {}, h('strong', { text: 'Stay hidden: ' }), r.stay_hidden))));
 }
 
 function summaryOf({ docs, nows, waits }) {

@@ -6,7 +6,7 @@
 // one Gemini Nano call can take longer; the panel stays alive while it is open. Closing the panel (Quick exit does)
 // ends the scan, which is what should happen.
 import { readPage } from '../readers/read-page.js';
-import { codeClassify, merge, toFinding } from './rules.js';
+import { codeClassify, codeFor, merge, toFinding } from './rules.js';
 import { pageUrl, PRACTICE_ORIGIN } from './catalogue.js';
 import { checkExtensions, checkSync } from './chrome-checks.js';
 
@@ -28,6 +28,50 @@ async function navigate(tabId, url, { timeoutMs = 30000, signal } = {}) {
     if (tab.status === 'complete' && at && at !== 'about:blank' && (at.startsWith(target.origin) || !at.startsWith('about:'))) return at;
   }
   return tab?.url || url;
+}
+
+/**
+ * One page the reader has read, turned into classified entries: the scan's rules in one place, so the layout drift
+ * test (tools/drift-test.mjs) runs exactly what the extension runs.
+ *   ask      (type, options) => Promise, Gemini Nano through the offscreen page; null when Nano is not ready
+ *   onState  ('nano-reading' | 'classifying') for the progress line
+ * Returns { why } when the check cannot say what is listed, else { entries, classes, hows, howFound, items, partly }.
+ */
+export async function readToEntries({ check, read, account, ask = null, onState = () => {} }) {
+  let partly = !!read.moreHidden;
+  // The entries: from the reader, or, when it found none, from Gemini Nano reading the page's text. Nano also reads a
+  // page that never showed the words the reader waits for: a reworded heading is the commonest change.
+  let entries = read.entries || [];
+  let howFound = 'reader';
+  if (!entries.length && ask && read.mainText) {
+    onState('nano-reading');
+    const r = await ask('sk:read-page', { description: check.label, text: read.mainText });
+    if (!r?.error && r?.entries?.length) { entries = r.entries; howFound = 'nano'; }
+  }
+  if (read.timedOut && !entries.length) return { why: 'did_not_load' };
+  // The page never showed what the reader waits for, so it may not all be there.
+  if (read.timedOut) partly = true;
+  // Nothing listed counts as nothing found only when the page says so or the setting's own section is there.
+  // Otherwise the page looks different from what Spare Key knows, and "nothing found" could hide someone.
+  if (!entries.length && !read.emptyConfirmed && !read.withinFound) return { why: 'looked_different' };
+
+  // Classify: code always, Gemini Nano when it is ready.
+  let items = null;
+  let nanoError = null;
+  if (entries.length && ask) {
+    onState('classifying');
+    const r = await ask('sk:classify', { description: check.label, owner: account, entries });
+    if (!r?.error) items = r.items; else nanoError = r.error;
+  }
+  const classes = entries.map((entry, k) => {
+    const code = codeClassify(check.id, entry, account, check.words);
+    return items?.[k] ? merge(code, items[k], entry.text) : { ...code, source: 'reader' };
+  });
+  // Nano read a page the reader could not, so the page has changed; if the code rules then make nothing of what it
+  // read, their words have probably changed too ("Send a copy" for "Forward a copy"). That is not "nothing found".
+  if (howFound === 'nano' && entries.length && entries.every((e, k) => !codeFor(check.id, e, classes[k], check.words))) return { why: 'looked_different' };
+  const hows = entries.map((e, k) => (howFound === 'nano' ? 'nano' : items?.[k] ? 'both' : 'reader'));
+  return { entries, classes, hows, howFound, items, partly, nanoError };
 }
 
 /**
@@ -82,34 +126,18 @@ export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = f
           outcome.why = /permission|cannot access/i.test(String(e)) ? 'no_permission' : 'did_not_load';
           break;
         }
-        if (!read || read.errorPage || (read.timedOut && !read.entries?.length)) { outcome.status = 'not_checked'; outcome.why = 'did_not_load'; break; }
+        if (!read || read.errorPage) { outcome.status = 'not_checked'; outcome.why = 'did_not_load'; break; }
         account ||= read.account;
-        outcome.partly ||= read.moreHidden;
-
-        // The entries: from the reader, or, when it found none on a page that loaded, from Gemini Nano reading the page.
-        let entries = read.entries || [];
-        let howFound = 'reader';
-        if (!entries.length && nano && read.mainText) {
-          onProgress({ index, total, check, state: 'nano-reading' });
-          const r = await offscreen('sk:read-page', { description: check.label, text: read.mainText });
-          if (!r?.error && r?.entries?.length) { entries = r.entries; howFound = 'nano'; outcome.how = 'nano'; }
-        }
-        outcome.entries += entries.length;
-        if (!entries.length) continue;
-
-        // Classify: code always, Gemini Nano when it is ready.
-        let nanoItems = null;
-        if (nano) {
-          onProgress({ index, total, check, state: 'classifying' });
-          const r = await offscreen('sk:classify', { description: check.label, owner: account, entries });
-          if (!r?.error) { nanoItems = r.items; if (outcome.how === 'reader') outcome.how = 'both'; }
-          else outcome.nanoError = r.error;
-        }
-        for (const [k, entry] of entries.entries()) {
-          const code = codeClassify(check.id, entry, account);
-          const cls = nanoItems?.[k] ? merge(code, nanoItems[k], entry.text) : { ...code, source: 'reader' };
-          const how = howFound === 'nano' ? 'nano' : nanoItems?.[k] ? 'both' : 'reader';
-          const f = toFinding({ ref: `L${++refN}`, check, entry, cls, howFound: how, openUrl: mode === 'practice' ? url : pageUrl(check.pages[0].url, u), account });
+        const p = await readToEntries({ check, read, account, ask: nano ? offscreen : null,
+          onState: state => onProgress({ index, total, check, state }) });
+        if (p.why) { outcome.status = 'not_checked'; outcome.why = p.why; break; }
+        outcome.partly ||= p.partly;
+        if (p.howFound === 'nano') outcome.how = 'nano';
+        else if (p.items && outcome.how === 'reader') outcome.how = 'both';
+        if (p.nanoError) outcome.nanoError = p.nanoError;
+        outcome.entries += p.entries.length;
+        for (const [k, entry] of p.entries.entries()) {
+          const f = toFinding({ ref: `L${++refN}`, check, entry, cls: p.classes[k], howFound: p.hows[k], openUrl: mode === 'practice' ? url : pageUrl(check.pages[0].url, u), account });
           if (f) findings.push(f);
         }
       }

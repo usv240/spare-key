@@ -55,8 +55,9 @@ export const UNCHECKED_SERVICES = ['ring', 'life360', 'phone_carrier', 'apple', 
 // Enums shared by the finding schema, the cloud projection and the plan.
 export const OWNERSHIP = ['mine', 'not_mine', 'unsure'];
 export const RECENCY = ['now', 'today', 'this_week', 'this_month', 'older', 'unknown'];
-export const HOW_FOUND = ['reader', 'nano', 'both'];
-export const NOT_CHECKED_WHY = ['signed_out', 'needs_password', 'did_not_load', 'not_selected', 'not_covered', 'needs_nano', 'no_permission', 'practice', 'nothing_to_compare', 'stopped'];
+// "cloud" only on the website's practice check, where Gemini in the cloud may read a changed made-up page.
+export const HOW_FOUND = ['reader', 'nano', 'both', 'cloud'];
+export const NOT_CHECKED_WHY = ['signed_out', 'needs_password', 'did_not_load', 'looked_different', 'not_selected', 'not_covered', 'needs_nano', 'no_permission', 'practice', 'nothing_to_compare', 'stopped'];
 
 export const SITUATION = {
   living: ['together', 'apart', 'prefer_not_to_say'],

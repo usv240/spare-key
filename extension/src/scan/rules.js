@@ -4,17 +4,44 @@
 // Gemini Nano, or both merged (merge). Code rules per check then decide the finding code. Nano never picks a code; it
 // only fills enums these rules read. When the two disagree on whose an entry is, the finding says "Not sure".
 import { CODES, GROUPS } from '../../../shared/findings.js';
-import { emailsIn, phonesIn, recencyOf, shortLabel, maskText } from '../../../shared/text.js';
+import { emailsIn, phonesIn, recencyOf, shortLabel, maskText, MASKED_PHONE_SOURCE } from '../../../shared/text.js';
+
+const MASKED_PHONE = new RegExp(MASKED_PHONE_SOURCE);
 
 const lower = s => String(s || '').toLowerCase();
 const THIS_DEVICE = /\b(this device|this computer|current session|your current session|you.re using this device)\b/i;
 
-/** What code alone can say about one entry. Same shape as Nano's answer. */
-export function codeClassify(checkId, entry, account) {
+// The page words the code rules read, per check, as regular expression sources. Remote Config's catalogue can replace
+// any of them (a check's "words"), so when a site rewords a page, the rules are fixed for every install along with the
+// reader, with no store update (measured by tools/drift-test.mjs).
+export const WORDS = {
+  'google.apps': {
+    mail: 'gmail|mail|email', location: 'location',
+    account: 'full access|all your google|your google account data|some access to your google account',
+    sign_in_only: 'sign in with google|signing in with google',
+  },
+  'maps.sharing': { link: 'anyone with (the|this) link', person: '\\bsharing\\b' },
+  'gmail.forwarding': { on: 'forward a copy', off: 'forwarding is (off|disabled)' },
+  'gmail.filters': { forwards: '\\bforward (it )?to\\b', hides: '\\b(delete it|skip (the )?inbox|archive it|mark as read)\\b' },
+  'amazon.household': { teen: '\\bteen\\b', child: '\\b(child|kid)\\b' },
+  'google.family': { manager: 'family manager|\\bparent\\b' },
+};
+const NEVER = /(?!)/;
+const asRegExp = src => { try { return typeof src === 'string' && src ? new RegExp(src, 'i') : NEVER; } catch { return NEVER; } };
+/** A check's words as regular expressions: the defaults, with any of them replaced by `over` (from Remote Config). */
+export function wordsFor(checkId, over) {
+  const merged = { ...(WORDS[checkId] || {}) };
+  if (over && typeof over === 'object' && !Array.isArray(over)) for (const [k, v] of Object.entries(over)) if (k in merged && typeof v === 'string') merged[k] = v;
+  return Object.fromEntries(Object.entries(merged).map(([k, v]) => [k, asRegExp(v)]));
+}
+
+/** What code alone can say about one entry. Same shape as Nano's answer. `words` are the check's Remote Config words. */
+export function codeClassify(checkId, entry, account, words) {
+  const w = wordsFor(checkId, words);
   // The entry's words and its form state (the selected forwarding address lives in a select, not in the text).
   const text = [entry.text || '', ...(entry.state || [])].join('\n');
   const emails = emailsIn(text);
-  const phones = phonesIn(text);
+  const phones = [...phonesIn(text), ...(text.match(MASKED_PHONE) || []).slice(0, 1)];
   const ownerEmail = lower(account?.email);
   const mentionsOwner = !!ownerEmail && emails.some(e => lower(e) === ownerEmail);
   const others = emails.filter(e => lower(e) !== ownerEmail);
@@ -27,13 +54,12 @@ export function codeClassify(checkId, entry, account) {
     case 'google.devices':
       return { ...base, kind: 'device', access: ['account', 'mail', 'location'], is_owner: base.this_computer === 'yes' ? 'yes' : 'unknown' };
     case 'google.apps': {
-      const t = lower(text);
       const access = [];
-      if (/gmail|mail|email/.test(t)) access.push('mail');
-      if (/location/.test(t)) access.push('location');
-      if (/full access|all your google|your google account data|some access to your google account/.test(t)) access.push('account');
+      if (w.mail.test(text)) access.push('mail');
+      if (w.location.test(text)) access.push('location');
+      if (w.account.test(text)) access.push('account');
       // "Sign in with Google" alone gives the app nothing to read: certainly no access, not unknown.
-      if (!access.length && /sign in with google|signing in with google/.test(t)) return { ...base, kind: 'app', access: [] };
+      if (!access.length && w.sign_in_only.test(text)) return { ...base, kind: 'app', access: [] };
       return { ...base, kind: 'app', access: access.length ? access : ['unknown'] };
     }
     case 'google.recovery':
@@ -43,8 +69,8 @@ export function codeClassify(checkId, entry, account) {
     case 'google.2sv':
       return { ...base, kind: phones.length ? 'phone_number' : 'device', access: ['account'] };
     case 'maps.sharing':
-      if (/anyone with (the|this) link/i.test(text)) return { ...base, kind: 'share_link', access: ['location'] };
-      return { ...base, kind: emails.length || /\bsharing\b/i.test(text) ? 'person' : 'unknown', access: ['location'], is_owner: others.length ? 'no' : 'unknown' };
+      if (w.link.test(text)) return { ...base, kind: 'share_link', access: ['location'] };
+      return { ...base, kind: emails.length || w.person.test(text) ? 'person' : 'unknown', access: ['location'], is_owner: others.length ? 'no' : 'unknown' };
     case 'gmail.forwarding':
     case 'gmail.delegates':
       return { ...base, kind: emails.length ? 'email_address' : 'unknown', access: ['mail'], is_owner: others.length ? 'no' : mentionsOwner ? 'yes' : 'unknown' };
@@ -92,7 +118,8 @@ export function merge(code, nano, text = '') {
 }
 
 /** The finding code for an entry, or null when it gives no one else access (this computer, the owner's own address). */
-export function codeFor(checkId, entry, cls) {
+export function codeFor(checkId, entry, cls, words) {
+  const w = wordsFor(checkId, words);
   const text = lower(entry.text);
   const state = lower((entry.state || []).join(' '));
   switch (checkId) {
@@ -101,7 +128,8 @@ export function codeFor(checkId, entry, cls) {
     case 'google.apps':
       if (cls.access.includes('mail')) return 'google.apps.read_mail';
       if (cls.access.includes('location')) return 'google.apps.location';
-      if (cls.access.includes('account')) return 'google.apps.full_access';
+      // Access the page's words do not show is listed too, as the general kind: dropping it would hide it.
+      if (cls.access.includes('account') || cls.access.includes('unknown')) return 'google.apps.full_access';
       return null; // "Sign in with Google" only: it cannot read anything.
     case 'google.recovery':
       if (cls.kind === 'phone_number') return 'google.recovery.phone_unconfirmed';
@@ -114,24 +142,27 @@ export function codeFor(checkId, entry, cls) {
       return cls.is_owner === 'yes' ? null : 'maps.sharing.person';
     case 'gmail.forwarding': {
       // Forwarding is on only when "Forward a copy" is the chosen option and an address follows it.
-      const on = /chosen:[^,]*forward a copy/.test(state) || (!state && /forward a copy of incoming mail to\s*\S+@/.test(text) && !/forwarding is (off|disabled)/.test(text));
+      const chosen = (entry.state || []).some(c => /^chosen:/i.test(c) && w.on.test(c));
+      const on = chosen || (!state && new RegExp(`(${w.on.source})[\\s\\S]{0,80}?\\S+@`, 'i').test(text) && !w.off.test(text));
       return on && cls.is_owner !== 'yes' && emailsIn(entry.text + ' ' + state).length ? 'gmail.forwarding.external' : null;
     }
     case 'gmail.filters':
-      if (/\bforward (it )?to\b/.test(text)) return 'gmail.filter.forwards';
-      if (/\b(delete it|skip (the )?inbox|archive it|mark as read)\b/.test(text)) return 'gmail.filter.hides';
+      if (w.forwards.test(text)) return 'gmail.filter.forwards';
+      if (w.hides.test(text)) return 'gmail.filter.hides';
       return null;
     case 'gmail.delegates':
       return cls.is_owner === 'yes' ? null : 'gmail.delegate';
     case 'amazon.household':
       if (cls.is_owner === 'yes') return null;
-      if (/\bteen\b/.test(text)) return 'amazon.household.teen';
-      return /\badult\b/.test(text) ? 'amazon.household.adult' : null;
+      if (w.teen.test(text)) return 'amazon.household.teen';
+      if (w.child.test(text)) return null;
+      // An adult unless the page says otherwise: an adult can see the most, so a person it cannot place is listed as one.
+      return 'amazon.household.adult';
     case 'amazon.devices':
       return 'amazon.device.other';
     case 'google.family':
       if (cls.is_owner === 'yes') return null;
-      return /family manager|\bparent\b/.test(text) ? 'google.family.manager_other' : 'google.family.member';
+      return w.manager.test(text) ? 'google.family.manager_other' : 'google.family.member';
     case 'photos.sharing':
       return cls.is_owner === 'yes' ? null : 'photos.partner_sharing';
     default:
@@ -150,7 +181,7 @@ function labelFor(code, entry, extra, account) {
 
 /** One finding (TECHNICAL-DESIGN.md section 8). Everything in it stays on this computer. */
 export function toFinding({ ref, check, entry, cls, howFound, openUrl, account }) {
-  const code = codeFor(check.id, entry, cls);
+  const code = codeFor(check.id, entry, cls, check.words);
   if (!code || !CODES[code]) return null;
   const extra = (entry.state || []).filter(s => /^selected:/.test(s)).map(s => s.replace(/^selected:\s*/, ''));
   return {
@@ -162,7 +193,7 @@ export function toFinding({ ref, check, entry, cls, howFound, openUrl, account }
     label: labelFor(code, entry, extra, account),
     detail: [entry.text, ...extra].join('\n'),      // shown only when the person taps Show
     howFound,                                        // reader | nano | both
-    confidence: howFound === 'nano' ? 'check_it' : 'high',
+    confidence: howFound === 'nano' || howFound === 'cloud' ? 'check_it' : 'high',
     disagree: !!cls.disagree,
     recency: cls.recency || 'unknown',
     access: cls.access || ['unknown'],

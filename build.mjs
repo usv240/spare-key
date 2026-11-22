@@ -56,6 +56,7 @@ await cp('extension/src/theme-boot.js', 'web/dist/theme-boot.js');
 await cp('extension/icons/icon-32.png', 'web/dist/icon-32.png');
 {
   const numbers = JSON.parse(await readFile('web/src/data/numbers.json', 'utf8'));
+  const readJson = async f => { try { return JSON.parse(await readFile(f, 'utf8')); } catch { return null; } };
   const { default: index } = await import('./web/src/pages/index.mjs');
   const docs = await import('./web/src/pages/docs.mjs');
   const pages = {
@@ -66,7 +67,7 @@ await cp('extension/icons/icon-32.png', 'web/dist/icon-32.png');
     'built-with.html': docs.builtWithPage({ numbers }),
     'plant.html': docs.plantPage(),
     'api.html': docs.apiPage(),
-    'accuracy.html': docs.accuracyPage({ numbers }),
+    'accuracy.html': docs.accuracyPage({ numbers, drift: await readJson('web/src/data/drift.json'), driftFirst: await readJson('web/src/data/drift-first-run.json') }),
     'what-they-see.html': docs.whatTheySeePage({ library: JSON.parse(await readFile('data/steps.json', 'utf8')) }),
     'privacy.html': docs.privacyPage(),
     'safety.html': docs.safetyPage(),
@@ -82,6 +83,16 @@ for (const [file, html] of Object.entries(PAGES)) {
   await writeFile(out, html);
 }
 await writeFile('web/dist/practice/practice.css', PRACTICE_CSS);
+// The same pages changed the way a site redesign changes them, for the layout drift test (web/practice/drift.mjs).
+{
+  const { DRIFT, driftPage, renamedCss } = await import('./web/practice/drift.mjs');
+  for (const { id } of DRIFT) for (const [file, html] of Object.entries(PAGES)) {
+    const out = `web/dist/practice/drift/${id}/${file}`;
+    await mkdir(out.slice(0, out.lastIndexOf('/')), { recursive: true });
+    await writeFile(out, driftPage(html, file, id));
+  }
+  await writeFile('web/dist/practice/drift/renamed.css', renamedCss(PRACTICE_CSS));
+}
 
 // The static Steps API (api/build.mjs).
 const { buildApi } = await import('./api/build.mjs');

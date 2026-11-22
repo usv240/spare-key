@@ -152,3 +152,13 @@ test('the website practice purpose accepts only words from the practice pages, a
   // Without the practice pages to check against, nothing passes.
   assert.throws(() => checkOutgoing('practice', ok, {}), CloudSafetyError);
 });
+
+test('the practice purpose sends a changed page only when every line is from the practice pages', () => {
+  const practiceCorpus = 'Devices with access These devices are logged in to your Google Account. Pixel 8 Dayton, OH';
+  const practiceOwner = { name: 'Jordan Lee', email: 'jordan.lee@example.com' };
+  const ok = { task: 'read_page', owner: { ...practiceOwner }, check: 'google.devices', page_text: 'Devices with access\nPixel 8\nDayton, OH' };
+  assert.doesNotThrow(() => checkOutgoing('practice', ok, { practiceCorpus, practiceOwner }));
+  assert.throws(() => checkOutgoing('practice', { ...ok, page_text: `Pixel 8\n${CANARIES[0]}` }, { practiceCorpus, practiceOwner }), CloudSafetyError);
+  assert.throws(() => checkOutgoing('practice', { ...ok, check: 'somewhere.else' }, { practiceCorpus, practiceOwner }), CloudSafetyError);
+  assert.throws(() => checkOutgoing('practice', { ...ok, extra: 'x' }, { practiceCorpus, practiceOwner }), CloudSafetyError);
+});

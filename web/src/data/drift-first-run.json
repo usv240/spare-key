@@ -1,0 +1,84 @@
+{
+ "date": "November 22, 2026",
+ "note": "First run, before any change made after seeing these pages",
+ "rows": [
+  {
+   "kind": "none",
+   "label": "As made (no change)",
+   "mode": "code",
+   "found": 24,
+   "of": 24,
+   "silentMisses": 0,
+   "falseAlarms": 0,
+   "notChecked": 0,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 1.2
+  },
+  {
+   "kind": "renamed",
+   "label": "Class names and link paths renamed",
+   "mode": "code",
+   "found": 19,
+   "of": 24,
+   "silentMisses": 5,
+   "falseAlarms": 0,
+   "notChecked": 0,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 1
+  },
+  {
+   "kind": "reworded",
+   "label": "Headings and labels reworded",
+   "mode": "code",
+   "found": 13,
+   "of": 24,
+   "silentMisses": 7,
+   "falseAlarms": 0,
+   "notChecked": 2,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 13.3
+  },
+  {
+   "kind": "rebuilt",
+   "label": "Lists and tables rebuilt from plain boxes, links turned into buttons",
+   "mode": "code",
+   "found": 16,
+   "of": 24,
+   "silentMisses": 8,
+   "falseAlarms": 0,
+   "notChecked": 0,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 0.7
+  },
+  {
+   "kind": "formats",
+   "label": "Phone numbers, dates and names written differently",
+   "mode": "code",
+   "found": 23,
+   "of": 24,
+   "silentMisses": 1,
+   "falseAlarms": 0,
+   "notChecked": 0,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 0.6
+  },
+  {
+   "kind": "all",
+   "label": "All four at once",
+   "mode": "code",
+   "found": 7,
+   "of": 24,
+   "silentMisses": 3,
+   "falseAlarms": 0,
+   "notChecked": 6,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 13.3
+  }
+ ]
+}

@@ -1,10 +1,11 @@
 // The side panel: the safety screen, choosing what to check, the scan, the results, and Under the hood.
 // Quick exit is wired first, so it works even if anything below fails.
-import { initInfo, closeInfo, isInfoOpen, prepare } from './ui/info.js';
+import { initInfo, closeInfo, isInfoOpen, prepare, registerInfo } from './ui/info.js';
+import { compareChecks } from './scan/compare.js';
 import { SERVICES, catalogue } from './scan/catalogue.js';
 import { setRemoteOverrides } from './scan/overrides.js';
 import { runScan, ScanStopped } from './scan/engine.js';
-import { renderResults, h } from './ui/results.js';
+import { renderResults, h, put, infoButton } from './ui/results.js';
 import { renderQuestions, renderPlan } from './ui/plan.js';
 import { privateStringsFrom } from './scan/private.js';
 import { toCloud } from '../../shared/cloud-safe.js';
@@ -313,7 +314,32 @@ function showResults(record, { switchTo = true } = {}) {
       document.querySelector(`[data-ref="${ref}"] .finding-actions button:last-child`)?.focus({ preventScroll: true });
     },
   });
+  renderSince(record);
   if (switchTo && (checkScreen !== 'results' || $('screen-results').hidden)) show('results', { focus: 'results-title' });
+}
+
+// "Since your last check": this check compared with the one in a locked copy the person opened, on this computer only.
+async function renderSince(record) {
+  const el = $('since');
+  const { baseline } = await chrome.storage.session.get('baseline');
+  if (!baseline?.scan || !record || baseline.scan.at === record.at || baseline.scan.mode !== record.mode) { el.replaceChildren(); el.hidden = true; return; }
+  const r = compareChecks(baseline.scan, record);
+  const byRef = new Map(record.findings.map(f => [f.ref, f]));
+  const when = new Date(baseline.savedAt || baseline.scan.at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  registerInfo('since', {
+    title: 'Since your last check',
+    what: 'Spare Key compared this check with the one in your locked copy. Something new can mean someone was given access again, or got back in after you changed something.',
+    why: 'Only the places checked both times are compared. The locked copy stays on this computer, and nothing about the comparison is sent anywhere.',
+  });
+  put(el,
+    h('div', { class: 'with-info' }, h('h2', { text: `Since your check on ${when}` }), infoButton('since', 'About this comparison')),
+    r.added.length
+      ? h('div', { class: 'caution-line since-new' },
+        h('p', { text: `${r.added.length} new since then. Someone may have been given access again, or got back in.` }),
+        h('ul', { class: 'step-list' }, r.added.map(ref => h('li', { text: byRef.get(ref)?.label || '' }))))
+      : h('p', { text: 'Nothing new since then, on the pages checked both times.' }),
+    h('p', { class: 'muted', text: [r.removed.length ? `${r.removed.length} gone since then.` : '', `${r.same} still there.`].filter(Boolean).join(' ') }));
+  el.hidden = false;
 }
 
 $('check-again').addEventListener('click', () => show('choose', { focus: 'choose-title' }));
@@ -379,10 +405,25 @@ async function makePlan() {
   draw(codeResult, 'code', { cloudNote: cloudOn ? 'Asking Gemini in the cloud to order this for your situation. It sees finding types only.' : '' });
   $('plan-title')?.focus({ preventScroll: true });
   await chrome.storage.session.set({ plan: { source: 'code', result: codeResult } });
-  if (!cloudOn || !findings.some(f => f.ownership !== 'mine')) {
-    if (cloudOn) draw(codeResult, 'code');
-    return;
+  if (!findings.some(f => f.ownership !== 'mine')) { draw(codeResult, 'code'); return; }
+
+  // 2a. Gemini Nano on this computer, when it is ready: the same codes the cloud would see, plus every situation answer
+  // (nothing leaves, so nothing needs the person's permission to share). The cloud runs only if Nano cannot.
+  const nanoStatus = (await offscreen('sk:nano-status').catch(() => ({})))?.status;
+  if (nanoStatus === 'available') {
+    const all = Object.fromEntries(Object.keys(SITUATION).map(k => [k, true]));
+    const local = toCloud(findings, { situation: situation.values, shared: all, notChecked: notCheckedIds(scan) });
+    draw(codeResult, 'code', { cloudNote: 'Asking Gemini Nano on this computer to order this. Nothing is sent anywhere.' });
+    const d = await offscreen('sk:device-plan', { body: local.body, library: LIBRARY }).catch(e => ({ error: String(e) }));
+    if (d?.answer) {
+      const deviceActions = (d.answer.actions || []).map(a => ({ action: a.action, refs: (Array.isArray(a.refs) ? a.refs : []).map(ref => local.refs[ref]).filter(Boolean), why: a.why }));
+      const deviceResult = applyInvariants({ actions: deviceActions, summary: d.answer.summary }, ctx);
+      draw(deviceResult, 'device', { model: d.model });
+      await chrome.storage.session.set({ plan: { source: 'device', model: d.model, result: deviceResult } });
+      return;
+    }
   }
+  if (!cloudOn) { draw(codeResult, 'code'); return; }
 
   // 2. The cloud plan, from codes and the answers the person chose to share.
   const shared = situation.share ? Object.fromEntries(Object.keys(SITUATION).map(k => [k, !!situation.values[k]])) : {};
@@ -397,7 +438,7 @@ async function makePlan() {
   pendingAsk = null;
   hideAsk();
   if (r?.error || !r?.answer) {
-    const busy = /429|RESOURCE_EXHAUSTED|quota|503|UNAVAILABLE|overloaded/i.test(r?.error || '');
+    const busy = /429|RESOURCE_EXHAUSTED|quota|503|UNAVAILABLE|overloaded|timed? ?out|abort/i.test(r?.error || '');
     draw(codeResult, 'code', { cloudNote: busy
       ? 'Your plan was made on this computer from Spare Key\'s steps library. The cloud was busy. You can try again in a minute.'
       : 'Your plan was made on this computer from Spare Key\'s steps library.' });
@@ -410,13 +451,13 @@ async function makePlan() {
     why: a.why,
   }));
   const cloudResult = applyInvariants({ actions, summary: r.answer.summary }, ctx);
-  draw(cloudResult, 'cloud', { model: r.model, cloudNote: 'Checking the order with two voices: one for closing doors soon, one for staying hidden.' });
-  await chrome.storage.session.set({ plan: { source: 'cloud', model: r.model, result: cloudResult } });
+  draw(cloudResult, 'cloud', { model: r.model, calls: r.calls, cloudNote: 'Checking the order with two voices: one for closing doors soon, one for staying hidden.' });
+  await chrome.storage.session.set({ plan: { source: 'cloud', model: r.model, calls: r.calls, result: cloudResult } });
 
   // 3. The two-voice check, then the safety rules again on the settled plan.
   const v = await offscreen('sk:two-voices', { body, draft: r.answer, privateStrings, library: LIBRARY }).catch(e => ({ error: String(e) }));
   if (!v || v.off || v.error || !v.answer) {
-    draw(cloudResult, 'cloud', { model: r.model });
+    draw(cloudResult, 'cloud', { model: r.model, calls: r.calls });
     return;
   }
   const settledActions = (v.answer.actions || []).map(a => ({
@@ -429,9 +470,10 @@ async function makePlan() {
     close_the_doors: cleanText(v.lines?.close_the_doors || '').text,
     stay_hidden: cleanText(v.lines?.stay_hidden || '').text,
     arguments: { close_the_doors: cleanText(v.arguments?.close_the_doors || '').text, stay_hidden: cleanText(v.arguments?.stay_hidden || '').text },
+    table: Array.isArray(v.table) ? v.table : [],
   };
-  draw(settled, 'cloud', { model: v.model, voices });
-  await chrome.storage.session.set({ plan: { source: 'cloud', model: v.model, result: settled, voices, draftFired: cloudResult.fired } });
+  draw(settled, 'cloud', { model: v.model, calls: r.calls, voices });
+  await chrome.storage.session.set({ plan: { source: 'cloud', model: v.model, calls: r.calls, result: settled, voices, draftFired: cloudResult.fired } });
 }
 
 // Steps freshness: the help page's host is asked for inside the click, then the cloud compares the library's steps with it.
@@ -531,13 +573,22 @@ $('lock-form').addEventListener('submit', async e => {
       if (!file) return lockError('Choose the locked file first.');
       const value = await unlock(await file.text(), password);
       if (!value?.scan?.findings) return lockError('This file does not hold a Spare Key check.');
+      // Kept as the baseline: this check, and any check run after it, shows what changed since then.
+      await chrome.storage.session.set({ baseline: { scan: value.scan, savedAt: value.savedAt || value.scan.at } });
+      const { scan: current } = await chrome.storage.session.get('scan');
+      if (current && current.at !== value.scan.at && current.mode === value.scan.mode) {
+        closeLockSheet();
+        showResults(current);
+        announce('Your check now is compared with the locked copy.');
+        return;
+      }
       await chrome.storage.session.set({ scan: value.scan, plan: value.plan || null, safetySeen: true });
       closeLockSheet();
       practice = value.scan.mode === 'practice';
       if (value.plan) {
         $('plan-questions').hidden = true;
         $('plan-actions').hidden = false;
-        renderPlan($('plan'), { plan: value.plan.result.plan, fired: value.plan.result.fired, byRef: new Map(value.scan.findings.map(f => [f.ref, f])), library: LIBRARY, source: value.plan.source, model: value.plan.model, voices: value.plan.voices, onOpen: url => chrome.tabs.create({ url }) });
+        renderPlan($('plan'), { plan: value.plan.result.plan, fired: value.plan.result.fired, byRef: new Map(value.scan.findings.map(f => [f.ref, f])), library: LIBRARY, source: value.plan.source, model: value.plan.model, calls: value.plan.calls, voices: value.plan.voices, onOpen: url => chrome.tabs.create({ url }) });
       }
       showResults(value.scan);
       announce('The locked copy is open.');
@@ -650,7 +701,27 @@ $('run-setup').addEventListener('click', async () => {
 // The logged text exactly as sent, indented for reading. JSON.parse keeps the key order, so nothing is reordered.
 const prettyText = e => { try { return JSON.stringify(JSON.parse(e.text ?? JSON.stringify(e.body)), null, 2); } catch { return String(e.text || ''); } };
 
+// The ledger: every request the offscreen page made this session, by destination, counted by wrapping fetch
+// (extension/src/ledger.js), and how many of them hold anything from this check.
+async function renderLedger() {
+  const { scan } = await chrome.storage.session.get('scan');
+  const vocabulary = JSON.stringify([STEPS, Object.keys(CODES), SITUATION, OWNERSHIP, RECENCY, HOW_FOUND, CODE_TEXT]);
+  const privateStrings = scan ? privateStringsFrom({ findings: scan.findings, account: scan.account, vocabulary }) : [];
+  const r = await offscreen('sk:ledger', { privateStrings }).catch(() => null);
+  if (!r?.rows?.length) { $('ledger').replaceChildren(); return; }
+  const size = n => (n < 1024 ? `${n} bytes` : `${(n / 1024).toFixed(1)} KB`);
+  put($('ledger'),
+    h('div', { class: 'table-scroll' }, h('table', { class: 'ledger' },
+      h('caption', { class: 'visually-hidden', text: 'Requests this session, by where they went' }),
+      h('thead', {}, h('tr', {}, h('th', { scope: 'col', text: 'Sent to' }), h('th', { scope: 'col', class: 'num', text: 'Requests' }), h('th', { scope: 'col', class: 'num', text: 'Size' }))),
+      h('tbody', {}, r.rows.map(x => h('tr', {}, h('td', { text: x.who }), h('td', { class: 'num', text: String(x.requests) }), h('td', { class: 'num', text: size(x.bytes) })))))),
+    h('p', { class: 'ledger-line', text: r.holdingPrivate === null
+      ? 'After a check, Spare Key also tests these requests against what it found.'
+      : `Requests holding a name, email, phone number, device or page word from your check: ${r.holdingPrivate} of ${r.requests}.` }));
+}
+
 async function renderSentLog() {
+  renderLedger();
   const { sentLog = [] } = await chrome.storage.session.get('sentLog');
   $('sent-log').replaceChildren(...sentLog.slice().reverse().map(e => {
     const when = h('time', { datetime: e.time, text: new Date(e.time).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' }) });
@@ -718,7 +789,7 @@ async function loadOverrides() {
     practice = scan.mode === 'practice';
     $('plan-questions').hidden = true;
     $('plan-actions').hidden = false;
-    renderPlan($('plan'), { plan: plan.result.plan, fired: plan.result.fired, byRef: new Map(scan.findings.map(f => [f.ref, f])), library: LIBRARY, source: plan.source, model: plan.model, voices: plan.voices, onOpen: url => chrome.tabs.create({ url }) });
+    renderPlan($('plan'), { plan: plan.result.plan, fired: plan.result.fired, byRef: new Map(scan.findings.map(f => [f.ref, f])), library: LIBRARY, source: plan.source, model: plan.model, calls: plan.calls, voices: plan.voices, onOpen: url => chrome.tabs.create({ url }) });
     show('plan');
   } else if (scan) { practice = scan.mode === 'practice'; showResults(scan); }
   else show('choose');

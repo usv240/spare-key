@@ -185,6 +185,10 @@ export async function deviceStatus(inputs = TEXT_ONLY) {
 // ---------------------------------------------------------------------------------------------------------------
 // Gemini in the cloud. Only ever sees bodies that pass checkOutgoing().
 
+// A function-calling exchange is several requests in one chat, and the free tier is slowest on the first one: in the
+// plan safety run (November 21, 2026) 8 of 10 failures were 30-second timeouts during function calling.
+const TOOL_TIMEOUT_MS = 60000;
+
 function cloudModel({ system, schema, model, tools = null }) {
   return getGenerativeModel(ai, {
     mode: InferenceMode.ONLY_IN_CLOUD,
@@ -195,7 +199,7 @@ function cloudModel({ system, schema, model, tools = null }) {
       // Temperature 0: the same codes should get the same plan.
       generationConfig: schema ? { responseMimeType: 'application/json', responseJsonSchema: schema, temperature: 0 } : { temperature: 0 },
     },
-  }, { timeout: CLOUD_TIMEOUT_MS });
+  }, { timeout: tools ? TOOL_TIMEOUT_MS : CLOUD_TIMEOUT_MS });
 }
 
 // "Try the next model": busy, over quota, or a model that is no longer there.
@@ -282,7 +286,7 @@ export function cloudJson({ purpose, body, system, schema, privateStrings = [], 
       for (const model of settings.models) {
         await spend();
         // Each entry also records the fixed parts sent with the data: the instructions, the answer format and the names of
-        // the functions offered. They are the same for everyone and hold nothing about the person.
+        // the functions offered. They hold nothing about the person: fixed text, plus public steps library text for the codes sent.
         const fixed = { instructions: system || '', format: schema ? JSON.stringify(schema) : '', tools: (tools || []).flatMap(t => (t.functionDeclarations || []).map(f => f.name).concat(t.urlContext ? ['url_context'] : [])) };
         const logSend = entry => onSend({ time: new Date().toISOString(), purpose, model, ...(entry.kind === 'request' ? { fixed } : {}), ...entry });
         try {
@@ -306,6 +310,9 @@ export function cloudJson({ purpose, body, system, schema, privateStrings = [], 
           if (e instanceof CloudSafetyError || e instanceof CloudBudgetError) throw e;
           last = e;
           if (!RETRYABLE.test(String(e))) throw e;
+          // A timeout is not the model's fault: a second model would make the person wait as long again. The plan made on
+          // this computer is shown instead.
+          if (/timed? ?out|abort/i.test(String(e))) throw e;
         }
       }
       // One retry on 429 or 503, then the caller uses the plan built on this computer.

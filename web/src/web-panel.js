@@ -5,14 +5,18 @@
 //               browser has it, Gemini in the cloud when it does not; the data is made up, so the cloud is acceptable
 //               here), then builds the plan by code, asks the cloud to order it from finding types, and runs the two voices.
 // Everything uses the extension's modules: the reader, the rules, the results and plan views, the cloud gate.
+// The network ledger loads first, so it counts every request the Firebase code makes from this page.
+import { ledgerSummary } from '../../extension/src/ledger.js';
 import { initInfo, closeInfo, isInfoOpen } from '../../extension/src/ui/info.js';
 import { renderResults, h } from '../../extension/src/ui/results.js';
 import { renderQuestions, renderPlan } from '../../extension/src/ui/plan.js';
 import { readPage } from '../../extension/src/readers/read-page.js';
 import { catalogue } from '../../extension/src/scan/catalogue.js';
-import { codeClassify, merge, toFinding } from '../../extension/src/scan/rules.js';
+import { codeClassify, codeFor, merge, toFinding } from '../../extension/src/scan/rules.js';
 import { hybridJson, deviceStatus } from '../../extension/src/ai.js';
-import { CLASSIFY_SYSTEM, CLASSIFY_SCHEMA } from '../../extension/src/classify.js';
+import { CLASSIFY_SYSTEM, CLASSIFY_SCHEMA, READ_PAGE_SYSTEM, READ_PAGE_SCHEMA } from '../../extension/src/classify.js';
+import { DRIFT, driftPage, driftUrl } from '../practice/drift.mjs';
+import { FIXES } from '../practice/drift-fixes.mjs';
 import { cloudPlan } from '../../extension/src/cloud/plan.js';
 import { twoVoices } from '../../extension/src/cloud/voices.js';
 import { toCloud } from '../../shared/cloud-safe.js';
@@ -72,7 +76,16 @@ $('tab-check').addEventListener('click', () => show(checkScreen));
 $('tab-sent').addEventListener('click', () => { renderSent(); show('sent'); });
 
 const onSend = async entry => { sent.push(entry); renderSent(); };
+function renderLedger() {
+  const r = ledgerSummary();
+  const size = n => (n < 1024 ? `${n} bytes` : `${(n / 1024).toFixed(1)} KB`);
+  $('ledger').replaceChildren(...(r.rows.length ? [h('div', { class: 'table-scroll' }, h('table', { class: 'ledger' },
+    h('caption', { class: 'visually-hidden', text: 'Requests from this page, by where they went' }),
+    h('thead', {}, h('tr', {}, h('th', { scope: 'col', text: 'Sent to' }), h('th', { scope: 'col', class: 'num', text: 'Requests' }), h('th', { scope: 'col', class: 'num', text: 'Size' }))),
+    h('tbody', {}, r.rows.map(x => h('tr', {}, h('td', { text: x.who }), h('td', { class: 'num', text: String(x.requests) }), h('td', { class: 'num', text: size(x.bytes) }))))))] : []));
+}
 function renderSent() {
+  renderLedger();
   $('sent-log').replaceChildren(...sent.slice().reverse().map(e => {
     let pretty = e.text;
     try { pretty = JSON.stringify(JSON.parse(e.text), null, 2); } catch { /* as sent */ }
@@ -104,7 +117,9 @@ function showResults() {
 // The live practice check.
 const PRACTICE_CORPUS = (() => {
   const parser = new DOMParser();
-  return Object.values(PAGES).map(html => {
+  // The practice pages and their changed copies ("Break the pages first"): every word the practice check may send.
+  const all = Object.entries(PAGES).flatMap(([file, html]) => [html, ...DRIFT.map(d => driftPage(html, file, d.id))]);
+  return all.map(html => {
     const doc = parser.parseFromString(html, 'text/html');
     const parts = [];
     const walker = doc.createTreeWalker(doc.body, 4);
@@ -141,30 +156,102 @@ function setProgress(done, total, words) {
   $('scan-fill').style.transform = `scaleX(${done / total})`;
 }
 
+// "Break the pages first": which changed copy of the practice pages to read, and whether the Remote Config fix is on.
+let driftKind = 'none';
+function drawDriftChoices() {
+  const choices = [['none', 'As made'], ...DRIFT.map(d => [d.id, d.label])];
+  $('drift-choices').replaceChildren(...choices.map(([id, words]) => {
+    const input = h('input', { type: 'radio', name: 'drift', value: id });
+    input.checked = id === driftKind;
+    input.addEventListener('change', () => { driftKind = id; $('apply-fix').disabled = id === 'none'; });
+    return h('label', { class: 'choice' }, input, h('span', { text: words }));
+  }));
+  $('apply-fix').disabled = driftKind === 'none';
+}
+
+// A page the code reader found nothing on: Gemini reads its text (on this device when it can, else in the cloud; the
+// pages are made up). Only words that are on the page are kept. Returns { entries, where } or null.
+async function aiReadPage(check, read) {
+  try {
+    const r = await hybridJson({
+      purpose: 'practice',
+      body: { task: 'read_page', owner: { name: PRACTICE_OWNER.name, email: PRACTICE_OWNER.email }, check: check.id, page_text: read.mainText.slice(0, 6000) },
+      system: `${READ_PAGE_SYSTEM}\nFind: ${check.label}.`, schema: READ_PAGE_SCHEMA,
+      guard: { practiceCorpus: PRACTICE_CORPUS, practiceOwner: PRACTICE_OWNER }, onSend,
+    });
+    const flat = s => String(s).replace(/\s+/g, ' ').trim();
+    const page = flat(read.mainText);
+    const entries = (r.answer.entries || []).map(e => String(e.text || '').trim().slice(0, 300))
+      .filter((t, i, all) => t && page.includes(flat(t)) && all.findIndex(x => flat(x) === flat(t)) === i)
+      .map((text, i) => ({ i, text, href: '', state: [] }));
+    return { entries, where: r.source === 'on_device' ? 'nano' : 'cloud' };
+  } catch (e) {
+    lastSortError = String(e && e.message || e);
+    return null;
+  }
+}
+
+// What happened on the changed pages, in one or two sentences above the results.
+function driftSummary(kind, fix, outcomes) {
+  const total = outcomes.length;
+  const byCode = outcomes.filter(o => o.status === 'checked' && o.how === 'reader').length;
+  const byAi = outcomes.filter(o => o.status === 'checked' && (o.how === 'nano' || o.how === 'cloud'));
+  const notRead = outcomes.filter(o => o.status !== 'checked').length;
+  const ai = byAi.some(o => o.how === 'nano') ? 'Gemini Nano, on this device,' : 'Gemini in the cloud';
+  return [
+    `Pages changed: ${DRIFT.find(d => d.id === kind).label.toLowerCase()}${fix ? ', with the Remote Config fix' : ''}.`,
+    `The code reader read ${byCode} of ${total} checks.`,
+    byAi.length ? `${ai} read ${byAi.length} more that the code could not.` : '',
+    notRead ? `${notRead} could not be read, so ${notRead === 1 ? 'it is' : 'they are'} listed under “Not checked” rather than shown as empty.` : '',
+  ].filter(Boolean).join(' ');
+}
+
 async function runPractice() {
   show('scanning', 'scan-title');
   sent.length = 0;
-  const checks = catalogue({}).filter(c => c.pages.length);
+  const kind = driftKind;
+  const fix = kind !== 'none' && $('apply-fix').checked;
+  const checks = catalogue(fix ? FIXES[kind] : {}).filter(c => c.pages.length);
   const raw = [];
   const outcomes = [];
   for (const [k, check] of checks.entries()) {
     setProgress(k, checks.length, check.progress);
-    let entries = 0;
+    const outcome = { id: check.id, service: check.service, status: 'checked', why: null, how: 'reader', entries: 0, findings: 0, partly: false };
     for (const p of check.pages) {
-      const doc = await loadPage(new URL(p.practiceUrl, location.origin).href);
-      const read = await readPage({ ...p.reader, settleMs: 200 }, doc);
-      for (const entry of read.entries) raw.push({ check, entry, url: new URL(p.practiceUrl, location.origin).href });
-      entries += read.entries.length;
+      const path = kind === 'none' || p.practiceUrl.includes('/drift/') ? p.practiceUrl : driftUrl(p.practiceUrl, kind);
+      const url = new URL(path, location.origin).href;
+      const doc = await loadPage(url);
+      // The changed pages are static, so a short wait is enough to know the words the reader waits for are missing.
+      const read = await readPage({ ...p.reader, settleMs: 200, ...(kind === 'none' ? {} : { timeoutMs: 2500 }) }, doc);
+      let entries = read.entries;
+      let how = 'reader';
+      // The same rules as the extension's scan (extension/src/scan/engine.js readToEntries).
+      if (!entries.length && read.mainText) {
+        setProgress(k, checks.length, 'The code reader found nothing on this page, so Gemini is reading it');
+        const ai = await aiReadPage(check, read);
+        if (ai?.entries.length) { entries = ai.entries; how = ai.where; outcome.how = ai.where; }
+        // If the code rules make nothing of what Gemini read, the page's words changed too: not "nothing found".
+        if (how !== 'reader' && entries.every(e => !codeFor(check.id, e, codeClassify(check.id, e, PRACTICE_OWNER, check.words), check.words))) {
+          outcome.status = 'not_checked'; outcome.why = 'looked_different'; break;
+        }
+      }
+      if (read.timedOut && !entries.length) { outcome.status = 'not_checked'; outcome.why = 'did_not_load'; break; }
+      outcome.partly ||= read.timedOut || read.moreHidden;
+      if (!entries.length && !read.emptyConfirmed && !read.withinFound) { outcome.status = 'not_checked'; outcome.why = 'looked_different'; break; }
+      for (const entry of entries) raw.push({ check, entry, url, how });
+      outcome.entries += entries.length;
       await sleep(250);
     }
-    outcomes.push({ id: check.id, service: check.service, status: 'checked', how: 'reader', entries, findings: 0, partly: false });
+    outcomes.push(outcome);
   }
+  const driftWords = kind === 'none' ? '' : driftSummary(kind, fix, outcomes);
   setProgress(checks.length - 1, checks.length, 'Sorting what was found with Gemini');
 
   // One hybrid call sorts every entry: Gemini Nano if this browser has it, the cloud if not.
   let sorted = null;
   let where = '';
-  try {
+  if (!raw.length) where = 'Nothing could be read, so there was nothing to sort.';
+  else try {
     const body = { task: 'classify', owner: { name: PRACTICE_OWNER.name, email: PRACTICE_OWNER.email }, entries: raw.map((r, i) => ({ i, check: r.check.id, text: r.entry.text })) };
     const r = await hybridJson({ purpose: 'practice', body, system: `${CLASSIFY_SYSTEM}\nEach entry names the check it came from.`, schema: CLASSIFY_SCHEMA, guard: { practiceCorpus: PRACTICE_CORPUS, practiceOwner: PRACTICE_OWNER }, onSend });
     sorted = r.answer.items || [];
@@ -183,14 +270,16 @@ async function runPractice() {
   }
   const findings = [];
   for (const [i, r] of raw.entries()) {
-    const code = codeClassify(r.check.id, r.entry, PRACTICE_OWNER);
+    const code = codeClassify(r.check.id, r.entry, PRACTICE_OWNER, r.check.words);
     const nano = sorted?.find(x => x.i === i);
     const cls = nano ? merge(code, nano, r.entry.text) : code;
-    const f = toFinding({ ref: `L${i + 1}`, check: r.check, entry: r.entry, cls, howFound: nano ? 'both' : 'reader', openUrl: r.url, account: PRACTICE_OWNER });
+    const f = toFinding({ ref: `L${i + 1}`, check: r.check, entry: r.entry, cls, howFound: r.how !== 'reader' ? r.how : nano ? 'both' : 'reader', openUrl: r.url, account: PRACTICE_OWNER });
     if (f) findings.push(f);
   }
   for (const o of outcomes) o.findings = findings.filter(f => f.check === o.id).length;
   scan = { mode: 'practice', findings, outcomes, account: PRACTICE_OWNER };
+  $('drift-line').textContent = driftWords;
+  $('drift-line').hidden = !driftWords;
   $('sorted-line').replaceChildren(where);
   if (/code only/.test(where)) $('sorted-line').append(' ', h('button', { type: 'button', class: 'link-button', onclick: () => runPractice() }, 'Try again'));
   $('sorted-line').hidden = false;
@@ -237,7 +326,7 @@ async function makePlan() {
     try {
       const v = await twoVoices({ scan: body, draft: r.answer, privateStrings: [], library: LIBRARY, onSend });
       const settled = applyInvariants({ actions: v.answer.actions.map(a => ({ action: a.action, refs: local(a), why: a.why })), summary: v.answer.summary }, ctx);
-      draw(settled, 'cloud', { model: v.model, voices: { close_the_doors: cleanText(v.lines?.close_the_doors || '').text, stay_hidden: cleanText(v.lines?.stay_hidden || '').text, arguments: v.arguments } });
+      draw(settled, 'cloud', { model: v.model, voices: { close_the_doors: cleanText(v.lines?.close_the_doors || '').text, stay_hidden: cleanText(v.lines?.stay_hidden || '').text, arguments: v.arguments, table: v.table || [] } });
     } catch {
       draw(cloud, 'cloud', { model: r.model });
     }
@@ -261,6 +350,7 @@ async function makePlan() {
     ? 'Gemini Nano is ready in this browser, so the practice entries are sorted on this device.'
     : 'Gemini Nano is not in this browser, so the practice entries are sorted by Gemini in the cloud. That is acceptable here because the data is made up.';
   $('where-dot').classList.toggle('on', status === 'available');
+  drawDriftChoices();
   $('start').addEventListener('click', runPractice);
   show('start');
 })();

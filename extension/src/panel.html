@@ -107,6 +107,7 @@
 
   <!-- 4. Results. -->
   <section class="screen" data-screen="results" id="screen-results" role="tabpanel" aria-labelledby="tab-check" hidden>
+    <div id="since" class="since" aria-live="polite" hidden></div>
     <div id="results"></div>
     <div class="actions">
       <button class="btn btn-primary btn-block" type="button" id="to-plan">Make my plan</button>
@@ -149,6 +150,7 @@
       <h2 style="margin:0">What left this computer</h2>
       <button class="info" type="button" data-info="sent-log" aria-label="About what left this computer"><svg aria-hidden="true"><use href="#i-info"/></svg></button>
     </div>
+    <div id="ledger"></div>
     <ol class="log" id="sent-log" aria-live="polite"></ol>
     <p class="empty" id="sent-empty">Nothing has been sent in this session.</p>
 

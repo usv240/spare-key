@@ -12,8 +12,11 @@
 //   account     selectors whose aria-label or text names the checked account
 //   more        a regular expression for "Show all" style controls that mean more entries are hidden
 //   errorText   a regular expression for an error page
+//   emptyText   a regular expression for the page's own words when there is nothing to list ("You have no filters")
 //
-// Returns { ready, timedOut, errorPage, via, entries: [{ i, text, href }], account, moreHidden, mainText, title, waitedMs }.
+// Returns { ready, timedOut, errorPage, via, entries: [{ i, text, href }], account, moreHidden, mainText, title, waitedMs,
+// withinFound, emptyConfirmed }. A page that lists nothing counts as empty only when it says so (emptyConfirmed) or the
+// setting's own section was found (withinFound); otherwise the page may look different from what the reader knows.
 // `doc` is the page to read: the scan tab's own document when injected, or a same-origin frame's document on the site's
 // practice check.
 export function readPage(cfg, doc = document) {
@@ -55,6 +58,7 @@ export function readPage(cfg, doc = document) {
     if (isReady) await sleep(cfg.settleMs ?? 700);
     let root = rootOf();
     const mainText = textOf(root).slice(0, 20000);
+    let withinFound = false;
     // within: read only the part of the page under one setting's heading ("Grant access to your account").
     const within = re(cfg.within);
     if (within) {
@@ -63,7 +67,7 @@ export function readPage(cfg, doc = document) {
         if (!within.test(node.nodeValue || '')) continue;
         let el = node.parentElement;
         while (el && el !== root && !/^(TR|SECTION|FIELDSET|LI)$/.test(el.tagName) && !el.matches('[role="row"], [role="region"], [data-section]')) el = el.parentElement;
-        if (el && el !== root) { root = el; break; }
+        if (el && el !== root) { root = el; withinFound = true; break; }
       }
     }
     const errorPage = !!re(cfg.errorText || '(something went wrong|page not found|error 404|try again later|this page isn.t available)')?.test(`${doc.title}\n${mainText.slice(0, 2000)}`);
@@ -90,6 +94,8 @@ export function readPage(cfg, doc = document) {
         let el = node.parentElement;
         while (el && el !== root && el.parentElement && el.parentElement !== root && textOf(el.parentElement).length <= 240
           && !/^(UL|OL|TABLE|TBODY|SECTION|MAIN|FORM)$/.test(el.parentElement.tagName)
+          // ARIA lists and tables are lists and tables too: many sites build them from plain boxes.
+          && !el.parentElement.matches('[role="list"], [role="table"], [role="grid"], [role="rowgroup"], [role="listbox"], [role="region"]')
           && count(k, el.parentElement) <= count(k, el)) el = el.parentElement;
         if (el && visible(el)) found.add(el);
       }
@@ -145,6 +151,8 @@ export function readPage(cfg, doc = document) {
       mainText,
       title: doc.title.slice(0, 200),
       waitedMs: Math.round(performance.now() - t0),
+      withinFound,
+      emptyConfirmed: !!re(cfg.emptyText)?.test(mainText),
     };
   })();
 }

@@ -102,6 +102,36 @@ for (const l of failLines) {
 }
 const calls = Number((logText.match(/(\d+) calls so far/g) || []).pop()?.match(/\d+/)?.[0] || 0);
 const summary = { date: '2026-11-21', model, scored: n, of: scenarios.length, notYes, failures, failed: failLines.length, cloud_calls: calls, passing: table, fixes: { C: fixes(fired.C), D: fixes(fired.D) }, fired, change_now_steps: changeNow };
+// The plan made on this computer by Gemini Nano (tools/plan-eval-nano.mjs), when that run exists: the same measures,
+// before the safety rules (N) and after them (what a person sees), on all 40 situations and on the cloud's scored 30.
+let nanoRun = null;
+try { nanoRun = JSON.parse(readFileSync('tools/out/plan-eval-nano.json', 'utf8')); } catch { /* not run yet */ }
+if (nanoRun) {
+  const tally = rows => Object.fromEntries(MEASURES.map(m => [m, rows.filter(r => r[m]).length]));
+  const scoredByCloud = new Set(scenarios.filter(s => runs[s.id]?.A && runs[s.id]?.C && runs[s.id]?.D).map(s => s.id));
+  const raw = [], after = [], rawSame = [], firedN = {}, ms = [];
+  let changeNowN = 0;
+  for (const s of scenarios) {
+    const r = nanoRun.runs[s.id];
+    if (!r?.N) continue;
+    ms.push(r.ms);
+    const ctx = { findings: s.findings, situation: s.situation, notChecked: s.notChecked, library };
+    const m = measureRaw(r.N, s);
+    raw.push(m);
+    if (scoredByCloud.has(s.id)) rawSame.push(m);
+    changeNowN += m.change_now_steps;
+    const fixed = applyInvariants({ actions: (r.N.actions || []).map(a => ({ ...a, refs: a.refs || [] })), summary: r.N.summary }, ctx);
+    for (const x of fixed.fired) firedN[x.rule] = (firedN[x.rule] || 0) + 1;
+    after.push(planPasses(fixed.plan, ctx));
+  }
+  ms.sort((a, b) => a - b);
+  summary.nano = {
+    date: nanoRun.date, model: nanoRun.model, answered: raw.length, of: Object.keys(nanoRun.runs).length,
+    passing: { N: tally(raw), N_after_rules: tally(after), N_on_cloud_30: tally(rawSame) }, onCloud30: rawSame.length,
+    fixes: fixes(firedN), fired: firedN, change_now_steps: changeNowN,
+    median_seconds: ms.length ? Math.round(ms[Math.floor(ms.length / 2)] / 100) / 10 : null,
+  };
+}
 writeFileSync('tools/out/plan-eval-cloud-summary.json', JSON.stringify(summary, null, 2));
 console.log(JSON.stringify(summary, null, 2));
 
@@ -115,4 +145,11 @@ numbers.planSafety = {
   chatbot: table.A, shipped: table.E, fixesC: summary.fixes.C, fixesD: summary.fixes.D,
   note: `Model: ${model} on the Gemini Developer API free tier. ${n} of the ${scenarios.length} situations were scored. The other ${failLines.length} failed in the cloud and are not counted: ${failures.timeout_plan + failures.timeout_voices} timed out after 30 seconds (${failures.timeout_plan} while making the plan, ${failures.timeout_voices} in the two voices), ${failures.http_500} found the model overloaded (HTTP 500) and ${failures.http_429} ran out of free-tier quota (HTTP 429). The plain chatbot’s free-text answers were read with fixed keyword lists, which is rough. Before Spare Key’s safety rules ran, the two voices cut the fixes the rules had to make from ${summary.fixes.C} to ${summary.fixes.D}, mostly because they changed fewer things at once (${changeNow.C} to ${changeNow.D} “change now” steps), but they dropped a finding ${fired.D.R1 || 0} times, which the rules put back.`,
 };
+if (summary.nano) {
+  numbers.nanoPlan = {
+    date: summary.nano.date, answered: summary.nano.answered, of: summary.nano.of, medianSeconds: summary.nano.median_seconds,
+    rows: MEASURES.map(m => ({ label: label[m], before: summary.nano.passing.N[m], after: summary.nano.passing.N_after_rules[m] })),
+    fixes: summary.nano.fixes, changeNow: summary.nano.change_now_steps,
+  };
+}
 writeFileSync('web/src/data/numbers.json', JSON.stringify(numbers, null, 2) + '\n');

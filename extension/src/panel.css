@@ -367,3 +367,31 @@ kbd {
 .step-list.items li { margin: 2px 0; }
 .step-list li > span { display: block; }
 @media print { details > *:not(summary) { display: block !important; } .code-block > summary::after { display: none; } }
+
+/* ---------- Break the pages first (try.html only) ---------- */
+.break-it { margin: 16px 0 0; border: 1px solid var(--line); border-radius: 10px; padding: 0 14px; }
+.break-it > summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 600; }
+.break-it[open] { padding-bottom: 12px; }
+.break-it .question { margin-top: 8px; }
+.drift-choices { display: grid; gap: 6px; }
+#drift-line { margin-bottom: 12px; }
+
+/* ---------- Two voices, kind by kind ---------- */
+.voice-table { margin-top: 12px; }
+.voice-row { border-top: 1px solid var(--line); padding: 8px 0; }
+.voice-row p { margin: 4px 0; }
+
+/* ---------- The network ledger (Under the hood) ---------- */
+#ledger { margin: 12px 0 8px; }
+.table-scroll { overflow-x: auto; }
+.ledger { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ledger th, .ledger td { text-align: left; padding: 6px 8px 6px 0; border-top: 1px solid var(--line); vertical-align: top; }
+.ledger th { color: var(--ink-2); font-weight: 600; }
+.ledger .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ledger-line { margin: 8px 0 0; font-weight: 600; }
+
+/* ---------- Since your last check ---------- */
+.since { margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; }
+.since h2 { margin: 0; font-size: 17px; }
+.since p { margin: 8px 0 0; }
+.since-new { display: block; margin-top: 8px; }
