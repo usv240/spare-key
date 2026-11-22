@@ -6,13 +6,16 @@
 import { emailsIn, phonesIn } from '../../../shared/text.js';
 
 const SPLIT = /\s*(?:\n|·|\||,|;|\(|\)|:)\s*/;
+// A settings page's own labels name no one: the network ledger once counted "Phone number" (a 2-Step Verification
+// label) as private because the fixed instructions say "phone numbers" (November 22, 2026).
+const GENERIC = /^(phone( number)?|mobile( number)?|authenticator( app)?|google prompts?|security keys?|passkeys?|backup codes?|text or voice|this device|this computer|recovery (phone|email)|link|member|adult|teen|child|family manager)$/i;
 
 export function privateStringsFrom({ findings = [], account = null, vocabulary = '' }) {
   const vocab = vocabulary.toLowerCase();
   const out = new Set();
   const add = s => {
     const t = String(s || '').trim();
-    if (t.length < 4 || /^\d+$/.test(t)) return;
+    if (t.length < 4 || /^\d+$/.test(t) || GENERIC.test(t)) return;
     if (vocab.includes(t.toLowerCase())) return;
     out.add(t);
   };

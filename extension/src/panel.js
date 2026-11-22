@@ -411,9 +411,12 @@ async function makePlan() {
   await chrome.storage.session.set({ plan: { source: 'code', result: codeResult } });
   if (!findings.some(f => f.ownership !== 'mine')) { draw(codeResult, 'code'); return; }
 
-  // 2a. Gemini Nano on this computer, when it is ready: the same codes the cloud would see, plus every situation answer
-  // (nothing leaves, so nothing needs the person's permission to share). The cloud runs only if Nano cannot.
-  const nanoStatus = (await offscreen('sk:nano-status').catch(() => ({})))?.status;
+  // 2a. Plan help from the cloud is off: Gemini Nano orders the plan on this computer when it is ready, from the same
+  // codes plus every situation answer (nothing leaves, so nothing needs the person's permission to share). When plan
+  // help is on, the cloud orders it instead: on the 40 frozen situations (November 22, 2026), Nano's own plans needed
+  // 100 fixes from the safety rules against 42 for the cloud's (17 after the two voices), and 5 of 40 ran past the time
+  // limit. After the rules, both pass every measure.
+  const nanoStatus = cloudOn ? null : (await offscreen('sk:nano-status').catch(() => ({})))?.status;
   if (nanoStatus === 'available') {
     const all = Object.fromEntries(Object.keys(SITUATION).map(k => [k, true]));
     const local = toCloud(findings, { situation: situation.values, shared: all, notChecked: notCheckedIds(scan) });

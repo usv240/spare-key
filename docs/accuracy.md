@@ -88,7 +88,7 @@ value), not how well a first guess reads a new page. Whether a fix reaches every
 
 ## 3. Privacy: nothing that names a person leaves (EVALUATION.md section 3)
 
-`tools/privacy-test.mjs`, last run November 22, 2026: a full practice check with every cloud step on (the cloud plan
+`tools/privacy-test.mjs`, last run November 22, 2026 (an earlier run that day: 0 of 17): a full practice check with every cloud step on (the cloud plan
 with function calling, the two voices, every situation answer shared, two findings answered, and the setup probe). Every
 network request from the extension's service worker, hidden page and side panel was captured through the Chrome
 DevTools Protocol, with its URL, headers and body, and searched for 30 made-up names, emails, phone numbers, devices,
@@ -97,10 +97,17 @@ JSON-escaped.
 
 | Result | |
 |---|---|
-| Requests from the extension | 17, to 6 hosts (Firebase AI Logic, App Check, Remote Config, Installations, Firestore, and the extension itself) |
-| Requests holding a name, email, phone number, device or place | **0 of 17** |
-| Requests to the model | 6 |
-| Model requests that match "What left this computer" word for word | **6 of 6**, and all 6 logged entries were sent |
+| Requests from the extension | 20, to 6 hosts (Firebase AI Logic, App Check, Remote Config, Installations, Firestore, and the extension itself) |
+| Requests holding a name, email, phone number, device or place | **0 of 20** |
+| Requests to the model | 9 |
+| Model requests that match "What left this computer" word for word | **9 of 9**, and all 9 logged entries were sent |
+| The panel's own ledger (a wrapper around fetch in the hidden page) | **0 of 13** requests holding anything from the check |
+| Functions the cloud called while ordering the plan | `get_steps` once, `ask_device` once (answered "no"), `ask_user` never |
+
+The ledger and the network capture are independent checks: the first counts inside the extension, the second outside
+it. An earlier run of the ledger counted 5 requests as holding something from the check: the private-string list held
+"Phone number", a 2-Step Verification label, which the fixed instructions also use. Generic labels are no longer private
+strings (`tests/private.test.mjs`), and the privacy test now fails if the ledger counts anything.
 
 "Word for word" covers the part of each request that changes from scan to scan. Since November 22 the log also shows
 the fixed part sent with every request: the instructions, the answer format and the function names.
@@ -168,7 +175,28 @@ like the study's real-world questions.
 Gemini Nano, the same finding codes and every situation answer, with the steps library's facts in its instructions), and
 `tools/plan-eval-score.mjs` scores the answers offline with the same measures. No cloud calls.
 
-NANO_PLAN_TABLE
+Run November 22, 2026. **35 of 40 answered**; 5 ran past the plan's 90-second limit and were stopped (as they would be
+for a person, who then gets the code plan). Median 29.5 seconds per plan on this PC.
+
+| Measure (of 35) | Gemini Nano's plan | What you see (after the rules) |
+|---|---|---|
+| Warns that a change may be noticed | 15 | 35 |
+| Screenshot before any change | 31 | 35 |
+| Advocate or hotline step | 26 | 35 |
+| Never promises "you are safe", "all clear" or the like | 33 | 35 |
+| Every finding covered | 27 | 35 |
+| Changes that may be noticed wait, when now may not be a good time | 11 | 35 |
+
+The safety rules made **100 fixes** to Nano's 35 plans (R3 not counted): 44 moved a noticeable change to "wait" (R4),
+22 added a "check it yourself" step (R8), 17 put back a finding Nano left out (R1), 8 added the advocate step (R5), 5
+removed a banned word (R6), 4 moved the screenshot step first (R2). For comparison, the cloud plan on the 30 situations
+it answered needed 42, and 17 after the two voices. On the 25 situations both answered, Nano said to change a noticeable
+setting now when now may not be a good time far more often (Nano's plans had 58 "change now" steps across 35 plans,
+against 27 for the cloud's 30).
+
+**What this decided:** with plan help from the cloud on, the cloud orders the plan; Gemini Nano orders it only when the
+person turns plan help off, so that nothing leaves the computer. In both cases the safety rules, not the model, decide
+what a person sees, which is why both pass every measure after them.
 
 ## 5. Speed and readability (EVALUATION.md section 5)
 
@@ -191,4 +219,19 @@ current. Amazon's page could not be read either way, and the check says "not sur
 `tools/screenshot-check.mjs` draws a made-up location-sharing screen (three people and "Me") and sends it to the
 extension's on-device reader: Gemini Nano with image input, `ONLY_ON_DEVICE`, no cloud fallback.
 
-SHOT_RESULT
+November 22, 2026, three runs:
+
+1. Gemini Nano read every name and line, but as eight entries (each name, then the words under it, separately).
+   `extension/src/classify.js` now asks for one entry per person and joins a line like "Can see your location" to the
+   name above it.
+2. Nano could not start an image session ("unable to create a session"), with 3.7 GB of memory free. The panel then says
+   it could not read the screenshot, and nothing is sent anywhere.
+3. **Pass:** exactly Sam Porter, Riley and Dana (Work), one entry each with what they can see, and "Me / This phone"
+   marked as the person's own, in 131.5 seconds (most of it loading the image model).
+
+On the website (try.html, the builder's own Chrome with Gemini Nano, November 22): the practice check with the pages
+changed all four ways read 5 checks by code, Gemini Nano on the device read 6 more, and the last was listed as "looked
+different"; then "Read Jordan's screenshot" added Sam Porter and Riley, read by Gemini Nano on the device, and left out
+"Me". Headless Chrome cannot run this on the live site: App Check's reCAPTCHA refuses automated browsers.
+
+Limits: one made-up screen in no real app's look. Real Life360 or Find My screens have not been tried.

@@ -146,7 +146,7 @@ $('read-shot').addEventListener('click', async () => {
       ? `${found.length} added to the list above. Gemini Nano read it on this device.`
       : `${found.length} added to the list above. Gemini in the cloud read it, because this browser has no Gemini Nano. The picture is made up, so that is allowed here. The extension reads your own screenshots only on your computer.`;
   } catch (e) {
-    status.textContent = /appCheck|403|throttle/i.test(String(e)) ? 'Google’s check that this is a real browser refused it just now, so the screenshot was not read.' : 'Gemini could not read the screenshot just now. You can try again.';
+    status.textContent = /app ?check|app-check|40[13]|throttle|attestation/i.test(String(e)) ? 'Google’s check that this is a real browser refused it just now, so the screenshot was not read.' : 'Gemini could not read the screenshot just now. You can try again.';
   } finally {
     button.disabled = false;
   }
@@ -301,7 +301,7 @@ async function runPractice() {
     const norm = s => String(s).replace(/\s+/g, ' ').trim();
     const missing = raw.filter(r => !norm(PRACTICE_CORPUS).includes(norm(r.entry.text)));
     if (missing.length) console.warn('Not found on the practice pages:', JSON.stringify(missing.slice(0, 3).map(r => r.entry.text)));
-    where = /appCheck|app-check|403|throttle|attestation/i.test(lastSortError)
+    where = /app ?check|app-check|40[13]|throttle|attestation/i.test(lastSortError)
       ? 'Sorted by code only. Google’s check that this is a real browser (App Check) refused it just now, so Gemini was not asked. This happens in automated or very private browsers.'
       : /429|RESOURCE_EXHAUSTED|quota|503|500|overloaded|timed? ?out|abort/i.test(lastSortError)
         ? 'Sorted by code only. Gemini in the cloud was busy just now.'

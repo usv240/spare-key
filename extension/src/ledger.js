@@ -18,6 +18,8 @@ const WHO = [
   [/firebaseinstallations/, 'Firebase installation ID'],
   [/firebaseappcheck/, 'App Check (proof this is Spare Key)'],
   [/support\.google\.com|amazon\.com/, 'Official help page (read only)'],
+  [/^(www\.)?google\.com$|recaptcha/, 'reCAPTCHA (App Check’s browser check)'],
+  [/spare-key-app\.web\.app/, 'Spare Key’s site (the practice pages)'],
 ];
 const who = host => (WHO.find(([re]) => re.test(host)) || [null, host])[1];
 
@@ -35,6 +37,9 @@ async function bodyText(input, init) {
 const realFetch = globalThis.fetch.bind(globalThis);
 globalThis.fetch = async function ledgerFetch(input, init) {
   const url = String(input instanceof Request ? input.url : input);
+  // data: and blob: URLs never leave the page. Firebase AI fetches a picture as a data: URL to turn it into an image for
+  // Gemini Nano (seen on try.html, November 22, 2026); that is not a network request.
+  if (/^(data|blob):/i.test(url)) return realFetch(input, init);
   let host = 'unknown';
   try { host = new URL(url, location.href).host; } catch { /* keep unknown */ }
   const text = await bodyText(input, init);

@@ -32,14 +32,14 @@ If you need help now: National Domestic Violence Hotline, call 1-800-799-7233 or
 
 The split is set by the problem: the settings pages are the private data. Spare Key uses **privacy-tiered routing**:
 each step runs at the most private tier its data allows. Anything that can name a person is device only; finding types
-are device first; public text goes to the cloud.
+go to whichever tier the person chooses and the measurements favour; public text goes to the cloud.
 
 | Step | Where | Firebase AI Logic mode | Why |
 |---|---|---|---|
 | Read the settings pages and sort each entry | Gemini Nano | `ONLY_ON_DEVICE` | The pages name the other person. Sending them anywhere is the harm, so there is no cloud fallback, on purpose |
 | Read a page the code reader cannot (a site changed it) | Gemini Nano | `ONLY_ON_DEVICE` | Same |
 | Read a screenshot of a phone location app (Life360, Find My) | Gemini Nano, image input | `ONLY_ON_DEVICE` | A screenshot shows names |
-| Order the plan | Gemini Nano when ready, else the cloud | on device first, then `ONLY_IN_CLOUD` with function calling | Finding codes only. The cloud asks the device yes/no questions (`ask_device`), the person (`ask_user`), and reads the public steps (`get_steps`) |
+| Order the plan | Gemini in the cloud if plan help is on; Gemini Nano if the person turned it off | `ONLY_IN_CLOUD` with function calling, or `ONLY_ON_DEVICE` | Finding codes only. The cloud asks the device yes/no questions (`ask_device`), the person (`ask_user`), and reads the public steps (`get_steps`). Measured on 40 frozen situations: Nano's own plans needed 100 safety-rule fixes, the cloud's 42 (17 after the two voices), so the cloud orders by default and Nano is the private option |
 | Two voices ("close the doors" against "stay hidden", then settle) | Gemini in the cloud | `ONLY_IN_CLOUD` | Codes only; each voice argues from the steps library's facts |
 | Check a step still matches the official help page | Gemini in the cloud | `ONLY_IN_CLOUD`, URL context | A code and a public help page |
 | The practice check on the website | Either | `PREFER_ON_DEVICE` | Made-up data |
@@ -61,11 +61,15 @@ All from scripts in `tools/`; details and limits in [docs/accuracy.md](docs/accu
   check said it was done while missing a way in 24 times. Now 0 times, with code alone and with Gemini Nano: a page that
   cannot be read is listed under "Not checked". Nano reads what code cannot (pages changed all four ways: 8 of 24 shown
   by code, 19 with Nano, 24 after the Remote Config fix).
-- **Privacy:** 0 of 17 requests from the extension held a name, email, phone number, device or place, in a full check
-  with every cloud step on; all 6 model requests matched "What left this computer" word for word.
+- **Privacy:** 0 of 20 requests from the extension held a name, email, phone number, device or place, in a full check
+  with every cloud step on; all 9 model requests matched "What left this computer" word for word, and the panel's own
+  ledger agreed (0 of 13). The cloud plan asked the device a yes/no question (`ask_device`) and got an enum back.
 - **Plan safety (40 situations written before any run):** a plain chatbot put screenshots before changes in 4 of 30
   answered situations; every plan Spare Key shows does in 30 of 30, and carries the warning that a change may be noticed
-  in 30 of 30. NANO_PLAN_LINE
+  in 30 of 30. With plan help off, Gemini Nano orders
+  the plan on the computer: its own plans needed 100 fixes from the safety rules on 35 answered situations, against 42
+  for the cloud's (17 after the two voices), and after the rules pass every measure in 35 of 35. That measurement is why
+  the cloud orders by default and Nano is the private option.
 
 Limits: no survivor or advocate has tested it yet; the readers have not yet been measured on real test-account pages;
 the free tier failed 10 of 40 plan situations (when the cloud does not answer, you get the plan made on your computer).

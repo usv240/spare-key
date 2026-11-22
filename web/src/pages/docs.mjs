@@ -89,8 +89,8 @@ export function howItWorksPage() {
 
 export function builtWithPage({ numbers }) {
   const rows = [
-    ['Gemini Nano through Firebase AI Logic (<code>ONLY_ON_DEVICE</code>)', 'This computer', 'Reads and sorts the private settings pages, reads a page a site has changed, reads a screenshot of a phone location app (image input), and orders the plan when it is ready. No cloud fallback, on purpose: the pages and pictures are the private data.'],
-    ['Gemini through Firebase AI Logic (<code>ONLY_IN_CLOUD</code>, function calling)', 'Google’s cloud', 'Orders the plan from finding types only, when Gemini Nano is not on the computer. It asks the device yes or no questions with <code>ask_device</code> and the person with <code>ask_user</code>, and reads the public steps with <code>get_steps</code>.'],
+    ['Gemini Nano through Firebase AI Logic (<code>ONLY_ON_DEVICE</code>)', 'This computer', 'Reads and sorts the private settings pages, reads a page a site has changed, reads a screenshot of a phone location app (image input), and orders the plan when the person turns plan help from the cloud off. No cloud fallback, on purpose: the pages and pictures are the private data.'],
+    ['Gemini through Firebase AI Logic (<code>ONLY_IN_CLOUD</code>, function calling)', 'Google’s cloud', 'Orders the plan from finding types only, when plan help is on. It asks the device yes or no questions with <code>ask_device</code> and the person with <code>ask_user</code>, and reads the public steps with <code>get_steps</code>.'],
     ['Two-voice check', 'Google’s cloud', 'Two arguments over the plan, each from the steps library’s facts about what the other person would see, and a third call that settles it and says, kind by kind, what each voice argued. Finding types only.'],
     ['URL context tool', 'Google’s cloud', 'Checks that a library entry’s steps still match the official help page. (Search grounding is not on the free tier.)'],
     ['Hybrid inference (<code>PREFER_ON_DEVICE</code>)', 'Either', 'The practice check on this site, which holds only made-up data: Gemini Nano when the browser has it, the cloud when it does not. It reads changed practice pages and Jordan’s made-up phone screenshot the same way; the screenshot is checked by its hash before it can be sent.'],
@@ -114,7 +114,7 @@ export function builtWithPage({ numbers }) {
 <p>Each step runs at the most private tier its data allows, and the tier is set by the data, not by convenience:</p>
 <ol>
   <li><strong>Device only</strong> (<code>ONLY_ON_DEVICE</code>): anything that can name a person. The settings pages, a page a site has changed, a phone screenshot. Without Gemini Nano these are read by code or not at all, never by the cloud.</li>
-  <li><strong>Device first</strong>: finding types and the person’s chosen answers. Gemini Nano orders the plan when it is ready; Gemini in the cloud only when it is not, and only if plan help is on.</li>
+  <li><strong>The person’s choice</strong>: finding types and the answers the person chooses to share. With plan help from the cloud on, Gemini in the cloud orders the plan, because it measured better: on 40 frozen situations, Gemini Nano’s own plans needed 100 fixes from the safety rules, the cloud’s 42, and 17 after the two voices. With it off, Gemini Nano orders the plan on this computer, and the same safety rules make it pass every measure.</li>
   <li><strong>Cloud</strong> (<code>ONLY_IN_CLOUD</code>): public text. The steps library, the official help pages, and the two voices arguing over finding types.</li>
 </ol>
 <p>One check, <code>checkOutgoing()</code>, sits between the tiers. The made-up practice check on this site is the one place a lower tier’s data may go up, because none of it is real.</p>

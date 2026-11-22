@@ -155,8 +155,8 @@ export default function index({ numbers, drift = null }) {
     <div class="table-wrap" tabindex="0" role="region" aria-label="Table, scrolls sideways on small screens"><table>
       <thead><tr><th>Piece</th><th>Runs</th><th>Why it is used</th></tr></thead>
       <tbody>
-        <tr><td>Gemini Nano through Firebase AI Logic (only on device)</td><td>This computer</td><td>Reads and sorts the private settings pages, reads a page a site has changed, reads a screenshot of a phone location app, and orders the plan when it is ready</td></tr>
-        <tr><td>Gemini through Firebase AI Logic (only in the cloud, function calling)</td><td>Google’s cloud</td><td>Orders the plan from finding types only when Gemini Nano cannot, and asks the device yes or no questions</td></tr>
+        <tr><td>Gemini Nano through Firebase AI Logic (only on device)</td><td>This computer</td><td>Reads and sorts the private settings pages, reads a page a site has changed, reads a screenshot of a phone location app, and orders the plan when plan help from the cloud is off</td></tr>
+        <tr><td>Gemini through Firebase AI Logic (only in the cloud, function calling)</td><td>Google’s cloud</td><td>Orders the plan from finding types only, and asks the device yes or no questions</td></tr>
         <tr><td>Hybrid inference (prefer on device)</td><td>Either</td><td>The practice check on this site, which holds no personal data</td></tr>
         <tr><td>App Check, Remote Config, Cloud Firestore, Hosting</td><td>Firebase</td><td>Only Spare Key spends its model quota; page readers and the words they read, fixed without an update; the public steps library; this site and the Steps API</td></tr>
       </tbody>

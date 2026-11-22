@@ -160,6 +160,10 @@ try {
   log(hits.length ? `FAIL: ${report.requestsWithCanary} requests held a canary: ${JSON.stringify(hits.slice(0, 10))}` : `PASS: 0 of ${requests.length} extension requests held a name, email, phone number, device name or place`);
   log(unmatched.length ? `FAIL: ${unmatched.length} model requests do not match the sent log` : `PASS: all ${modelCalls.length} model requests match "What left this computer", word for word`);
   log(report.unloggedEntries.length ? `FAIL: logged but not found in any request: ${report.unloggedEntries}` : `PASS: all ${sent.length} logged entries were found in the requests`);
+  // The panel's own ledger (a wrapper around fetch in the hidden page) must agree: no request holds anything from the check.
+  const ledgerCount = (report.ledger.match(/from your check: (\d+) of (\d+)/) || []);
+  report.ledgerHolding = ledgerCount[1] === undefined ? null : Number(ledgerCount[1]);
+  log(report.ledgerHolding === 0 ? `PASS: the panel's ledger counts 0 of ${ledgerCount[2]} requests holding anything from the check` : `FAIL: the panel's ledger says ${report.ledgerHolding ?? 'nothing'}`);
 } catch (e) {
   log('FAIL run', String(e && e.stack || e).slice(0, 500));
   report.error = String(e);
@@ -168,4 +172,4 @@ try {
   try { rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 }); } catch { /* temp */ }
 }
 writeFileSync(path.join(out, 'privacy-report.json'), JSON.stringify(report, null, 2));
-process.exit(report.error || report.hits?.length || report.unmatchedModelRequests?.length || report.unloggedEntries?.length ? 1 : 0);
+process.exit(report.error || report.hits?.length || report.unmatchedModelRequests?.length || report.unloggedEntries?.length || report.ledgerHolding !== 0 ? 1 : 0);

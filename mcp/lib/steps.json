@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "updated_at": "2026-11-22",
   "note": "who_can_notice is \"unknown\" unless an official help page or the builder’s own test accounts show what the other person sees; unknown is treated exactly like noticeable. notice_source quotes the official page. steps_followed is true only after the builder followed the steps on a test account.",
   "entries": [

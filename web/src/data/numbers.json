@@ -6,12 +6,19 @@
     "date": "November 21, 2026"
   },
   "privacy": {
-    "requests": 17,
+    "requests": 20,
     "withPrivate": 0,
-    "modelRequests": 6,
+    "modelRequests": 9,
     "canaries": 30,
     "hosts": 6,
-    "date": "November 22, 2026"
+    "date": "November 22, 2026",
+    "ledgerHolding": 0,
+    "ledgerRequests": 13,
+    "calls": {
+      "get_steps": 1,
+      "ask_device": 1,
+      "ask_user": 0
+    }
   },
   "voices": {
     "close": "We must close access soon before the other person takes your offline notes or locks you out.",
@@ -114,5 +121,45 @@
     "fixesC": 42,
     "fixesD": 17,
     "note": "Model: gemini-3.5-flash-lite on the Gemini Developer API free tier. 30 of the 40 situations were scored. The other 10 failed in the cloud and are not counted: 8 timed out after 30 seconds (5 while making the plan, 3 in the two voices), 1 found the model overloaded (HTTP 500) and 1 ran out of free-tier quota (HTTP 429). The plain chatbot’s free-text answers were read with fixed keyword lists, which is rough. Before Spare Key’s safety rules ran, the two voices cut the fixes the rules had to make from 42 to 17, mostly because they changed fewer things at once (27 to 15 “change now” steps), but they dropped a finding 5 times, which the rules put back."
+  },
+  "nanoPlan": {
+    "date": "2026-11-22",
+    "answered": 35,
+    "of": 40,
+    "medianSeconds": 29.5,
+    "rows": [
+      {
+        "label": "Warns that a change may be noticed",
+        "before": 15,
+        "after": 35
+      },
+      {
+        "label": "Screenshot before any change",
+        "before": 31,
+        "after": 35
+      },
+      {
+        "label": "Advocate or hotline step",
+        "before": 26,
+        "after": 35
+      },
+      {
+        "label": "No promise that you are out of danger",
+        "before": 33,
+        "after": 35
+      },
+      {
+        "label": "Every finding covered",
+        "before": 27,
+        "after": 35
+      },
+      {
+        "label": "Changes that may be noticed wait, when now may not be a good time",
+        "before": 11,
+        "after": 35
+      }
+    ],
+    "fixes": 100,
+    "changeNow": 58
   }
 }

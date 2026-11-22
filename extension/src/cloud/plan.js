@@ -45,9 +45,10 @@ export const PLAN_SHAPE = `Return the plan as JSON that follows the schema, in t
 Each "why" is one or two short sentences in plain words, at a grade 6 reading level, about that step only, with no names, addresses, phone numbers or links. The summary is two sentences at most.`;
 
 const PLAN_SYSTEM = `${PLAN_INTRO}
-Use get_steps once, with every code you need, to read the steps. In the same turn, use ask_device for any fact that
-would change the order: whether a filter also deletes mail, whether a device was used this week, whether an app can read
-mail or see location, whether more items are hidden. Ask about at most 4 findings.
+Use get_steps once, with every code you need, to read the steps. In the same turn, call ask_device for the facts that
+decide the order, at most 4 calls in all: for a gmail.filter.hides finding, filter_also_deletes (a filter that deletes
+mail is more urgent); for a gmail.forwarding.external finding, forwarding_is_only_copy; for a google.devices.other
+finding with recency "unknown", device_active_this_week. Put the findings the answers make more urgent first.
 Use ask_user only when the answer would change the order, at most two times.
 ${PLAN_SHAPE}`;
 
