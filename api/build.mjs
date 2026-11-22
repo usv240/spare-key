@@ -17,7 +17,7 @@ export async function buildApi(outDir = 'web/dist/api/v1') {
   const meta = { api: 'spare-key-steps', version: 1, library_version: lib.version, updated_at: lib.updated_at, license: 'Apache-2.0', source: 'https://github.com/usv240/spare-key', note: lib.note };
   await writeFile(`${outDir}/index.json`, JSON.stringify({
     ...meta,
-    codes: lib.entries.map(e => ({ code: e.code, title: e.title, group: CODES[e.code].group, check: CODES[e.code].check, who_can_notice: e.who_can_notice, verified_at: e.verified_at, steps_followed: e.steps_followed, version: e.version, url: `/api/v1/steps/${e.code}.json` })),
+    codes: lib.entries.map(e => ({ code: e.code, title: e.title, group: CODES[e.code].group, check: CODES[e.code].check, who_can_notice: e.who_can_notice, what_they_see: e.what_they_see, notice_source: e.notice_source || null, verified_at: e.verified_at, steps_followed: e.steps_followed, version: e.version, url: `/api/v1/steps/${e.code}.json` })),
   }, null, 2));
   for (const e of lib.entries) await writeFile(`${outDir}/steps/${e.code}.json`, JSON.stringify({ ...e, group: CODES[e.code].group }, null, 2));
   await writeFile(`${outDir}/plan-rules.json`, JSON.stringify({

@@ -67,6 +67,7 @@ await cp('extension/icons/icon-32.png', 'web/dist/icon-32.png');
     'plant.html': docs.plantPage(),
     'api.html': docs.apiPage(),
     'accuracy.html': docs.accuracyPage({ numbers }),
+    'what-they-see.html': docs.whatTheySeePage({ library: JSON.parse(await readFile('data/steps.json', 'utf8')) }),
     'privacy.html': docs.privacyPage(),
     'safety.html': docs.safetyPage(),
   };

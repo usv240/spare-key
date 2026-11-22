@@ -49,7 +49,7 @@
       "code": "google.apps.full_access",
       "title": "An app can use your Google account",
       "what_it_means": "This app can see, and may be able to change, information in your Google account.",
-      "who_can_notice": "unknown",
+      "who_can_notice": "noticeable",
       "notice_why": "The app stops working with your account. Whoever set it up may notice if they use it.",
       "evidence_first": [
         "Screenshot the app's name and what it has access to."
@@ -73,17 +73,22 @@
           "url": "https://support.google.com/accounts/answer/3466521"
         }
       ],
-      "verified_at": "2026-11-21",
-      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "verified_at": "2026-11-22",
+      "verified_how": "Official help page checked for what the change does (Google Account Help: Manage links between your Google Account and apps from other developers); steps not yet followed on a test account",
       "steps_followed": false,
       "version": 1,
-      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+      "what_they_see": "The app can no longer reach your account. If they use it, they will see it stop working for your account. No official page says Google tells them.",
+      "notice_source": {
+        "title": "Google Account Help: Manage links between your Google Account and apps from other developers",
+        "url": "https://support.google.com/accounts/answer/13533235",
+        "quote": "If you remove access, the app can’t access your Google Account."
+      }
     },
     {
       "code": "google.apps.read_mail",
       "title": "An app can read your Gmail",
       "what_it_means": "This app can read your email, and may be able to send it.",
-      "who_can_notice": "unknown",
+      "who_can_notice": "noticeable",
       "notice_why": "The app stops getting your mail. Whoever reads your mail through it may notice.",
       "evidence_first": [
         "Screenshot the app's name and what it has access to."
@@ -104,17 +109,22 @@
           "url": "https://support.google.com/accounts/answer/13533235"
         }
       ],
-      "verified_at": "2026-11-21",
-      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "verified_at": "2026-11-22",
+      "verified_how": "Official help page checked for what the change does (Google Account Help: Manage links between your Google Account and apps from other developers); steps not yet followed on a test account",
       "steps_followed": false,
       "version": 1,
-      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+      "what_they_see": "The app stops getting your mail. If they use it, they will see your mail stop coming in. No official page says Google tells them.",
+      "notice_source": {
+        "title": "Google Account Help: Manage links between your Google Account and apps from other developers",
+        "url": "https://support.google.com/accounts/answer/13533235",
+        "quote": "If you remove access, the app can’t access your Google Account."
+      }
     },
     {
       "code": "google.apps.location",
       "title": "An app can see your location",
       "what_it_means": "This app can see where you are or where you have been.",
-      "who_can_notice": "unknown",
+      "who_can_notice": "noticeable",
       "notice_why": "The app stops getting your location. Whoever watches it may notice.",
       "evidence_first": [
         "Screenshot the app's name and what it has access to."
@@ -134,11 +144,16 @@
           "url": "https://support.google.com/accounts/answer/13533235"
         }
       ],
-      "verified_at": "2026-11-21",
-      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "verified_at": "2026-11-22",
+      "verified_how": "Official help page checked for what the change does (Google Account Help: Manage links between your Google Account and apps from other developers); steps not yet followed on a test account",
       "steps_followed": false,
       "version": 1,
-      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+      "what_they_see": "The app stops getting your location. If they use it, they will see your location stop updating. No official page says Google tells them.",
+      "notice_source": {
+        "title": "Google Account Help: Manage links between your Google Account and apps from other developers",
+        "url": "https://support.google.com/accounts/answer/13533235",
+        "quote": "If you remove access, the app can’t access your Google Account."
+      }
     },
     {
       "code": "google.recovery.phone_unconfirmed",
@@ -278,7 +293,7 @@
       "verified_how": "Source pages checked; steps not yet followed on a test account",
       "steps_followed": false,
       "version": 1,
-      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+      "what_they_see": "New mail stops going to their address. No official page says whether Gmail tells them, but they may notice the copies stop."
     },
     {
       "code": "gmail.filter.forwards",
@@ -309,7 +324,7 @@
       "verified_how": "Source pages checked; steps not yet followed on a test account",
       "steps_followed": false,
       "version": 1,
-      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+      "what_they_see": "The matching mail stops going to their address. No official page says whether Gmail tells them, but they may notice it stops."
     },
     {
       "code": "gmail.filter.hides",
@@ -341,13 +356,13 @@
       "verified_how": "Source pages checked; steps not yet followed on a test account",
       "steps_followed": false,
       "version": 1,
-      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+      "what_they_see": "The hidden mail starts reaching your inbox. No official page says whether anyone is told. Whoever set it up would notice only if they check your filters or your inbox."
     },
     {
       "code": "gmail.delegate",
       "title": "Someone else can open your Gmail",
       "what_it_means": "This person can read, send and delete your mail.",
-      "who_can_notice": "unknown",
+      "who_can_notice": "noticeable",
       "notice_why": "Your account disappears from the accounts they can open. They may notice the next time they look.",
       "evidence_first": [
         "Screenshot the Accounts and Import page, including this address."
@@ -368,11 +383,16 @@
           "url": "https://support.google.com/mail/answer/138350"
         }
       ],
-      "verified_at": "2026-11-21",
-      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "verified_at": "2026-11-22",
+      "verified_how": "Official help page checked for what the change does (Gmail Help: Delegate and collaborate on email); steps not yet followed on a test account",
       "steps_followed": false,
       "version": 1,
-      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+      "what_they_see": "They can no longer open your mail. They will notice the next time they try. No official page says Gmail tells them.",
+      "notice_source": {
+        "title": "Gmail Help: Delegate and collaborate on email",
+        "url": "https://support.google.com/mail/answer/138350",
+        "quote": "To prevent ongoing access, either reset the account password, or remove the delegated user."
+      }
     },
     {
       "code": "maps.sharing.person",
@@ -438,7 +458,7 @@
       "verified_how": "Source pages checked; steps not yet followed on a test account",
       "steps_followed": false,
       "version": 1,
-      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+      "what_they_see": "The link stops showing where you are. No official page says whether anyone is told. Anyone who opens the link after that may notice."
     },
     {
       "code": "chrome.extension.broad_access",
@@ -468,7 +488,7 @@
       "verified_how": "Source pages checked; steps not yet followed on a test account",
       "steps_followed": false,
       "version": 1,
-      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+      "what_they_see": "The extension stops running in this browser. No official page says whether anyone is told. If it was sending what it saw to someone, they may notice it stop."
     },
     {
       "code": "chrome.sync.other_account",
@@ -498,7 +518,7 @@
       "verified_how": "Source pages checked; steps not yet followed on a test account",
       "steps_followed": false,
       "version": 1,
-      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+      "what_they_see": "This browser stops saving to that account. No official page says whether anyone is told. Whoever uses that account may notice its history stop updating."
     },
     {
       "code": "amazon.household.adult",
@@ -649,7 +669,7 @@
       "code": "google.family.manager_other",
       "title": "Someone else manages your Google family group",
       "what_it_means": "A family manager can see some of what you do and change some of your settings.",
-      "who_can_notice": "unknown",
+      "who_can_notice": "noticeable",
       "notice_why": "You disappear from their family group, so they may notice.",
       "evidence_first": [
         "Screenshot your family group page, including who manages it."
@@ -670,11 +690,16 @@
           "url": "https://support.google.com/families/answer/6317858"
         }
       ],
-      "verified_at": "2026-11-21",
-      "verified_how": "Source pages checked; steps not yet followed on a test account",
+      "verified_at": "2026-11-22",
+      "verified_how": "Official help page checked for what the change does (Google For Families Help: Join or leave a family on Google); steps not yet followed on a test account",
       "steps_followed": false,
       "version": 1,
-      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+      "what_they_see": "You leave their family group, and what you shared through it stops for them. No official page says Google emails the manager, but they can see who is in the group.",
+      "notice_source": {
+        "title": "Google For Families Help: Join or leave a family on Google",
+        "url": "https://support.google.com/families/answer/6317858",
+        "quote": "Any purchases you added to Google Play Family Library are removed and your family members can’t use them."
+      }
     },
     {
       "code": "photos.partner_sharing",
@@ -738,7 +763,7 @@
       "verified_how": "Source page checked",
       "steps_followed": false,
       "version": 1,
-      "what_they_see": "No official page says whether they are told. Treat it as something they may notice."
+      "what_they_see": "They can no longer see where you are in that app. Whether the app tells them depends on the app. Treat it as something they may notice."
     }
   ]
 }

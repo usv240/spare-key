@@ -68,7 +68,7 @@ ${body}
       </div>
       <div><h2 class="visually-hidden">The product</h2><ul>
         <li><a href="/how-it-works.html">How it works</a></li><li><a href="/try.html">Try the practice check</a></li>
-        <li><a href="/plant.html">Plant a test key</a></li><li><a href="/accuracy.html">Accuracy</a></li></ul></div>
+        <li><a href="/plant.html">Plant a test key</a></li><li><a href="/what-they-see.html">What they see when you change it</a></li><li><a href="/accuracy.html">Accuracy</a></li></ul></div>
       <div><h2 class="visually-hidden">For builders</h2><ul>
         <li><a href="/built-with.html">How it’s built</a></li><li><a href="/api.html">Steps API and MCP server</a></li>
         <li><a href="https://github.com/usv240/spare-key">Source code (Apache-2.0)</a></li></ul></div>

@@ -95,8 +95,8 @@ export function builtWithPage({ numbers }) {
     ['URL context tool', 'Google’s cloud', 'Checks that a library entry’s steps still match the official help page. (Search grounding is not on the free tier.)'],
     ['Hybrid inference (<code>PREFER_ON_DEVICE</code>)', 'Either', 'The practice check on this site, which holds only made-up data: Gemini Nano when the browser has it, the cloud when it does not.'],
     ['Firebase App Check (reCAPTCHA Enterprise)', 'Site and extension', 'Only Spare Key can spend its model quota. The extension gets tokens from a small page on this site that answers only the extension.'],
-    ['Firebase Remote Config', 'Every install', 'Page readers, models and switches. When a site changes a page, its reader is fixed for every install within about an hour, with no store update.'],
-    ['Cloud Firestore', 'Google’s cloud', 'The public steps library, which the extension refreshes when it is newer. Opt-in anonymous reports when a page reader breaks: five fixed fields, create-only.'],
+    ['Firebase Remote Config', 'Every install', 'Page readers, models and switches. When a site changes a page, a new reader reaches every install with no store update: each install fetches it at most once an hour.'],
+    ['Cloud Firestore', 'Google’s cloud', 'The public steps library, which the extension refreshes when it is newer.'],
     ['Firebase Hosting', 'Google’s cloud', 'This site, the practice pages and the Steps API.'],
     ['Chrome extension APIs', 'This computer', 'Side panel, the scan tab, permissions asked for per site, the extensions check, history cleanup.'],
     ['WebCrypto', 'This computer', 'The locked copy: PBKDF2 with 600,000 rounds and AES-GCM.'],
@@ -110,12 +110,13 @@ export function builtWithPage({ numbers }) {
 <tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody>
 </table></div>
 <h2>The cloud asks, the device answers</h2>
-<p>Gemini in the cloud orders the plan without ever learning who anyone is. When it needs a fact, it calls back to the device, and the device answers with an enum. The shape of an exchange:</p>
+<p>Gemini in the cloud orders the plan without ever learning who anyone is. When it needs a fact, it can call back to the device, and the device answers with an enum. The shape of an exchange:</p>
 <pre tabindex="0" aria-label="Code example"><code>cloud:  ask_device({ ref: "f3", question: "filter_also_deletes" })
 device: { "answer": "no" }
 cloud:  ask_user({ ref: "f1", question: "set_up_by_you" })
 person: Not sure   →   { "answer": "not_sure" }</code></pre>
-<p>Every request and every answer passes one check, <code>checkOutgoing()</code>, which accepts only finding codes and fixed answers, and refuses any request holding a name, address or device this check found. Every request is shown word for word under “What left this computer”.</p>
+<p>How often each function was called in the measured runs is on the <a href="accuracy.html">accuracy page</a>.</p>
+<p>Every request and every answer passes one check, <code>checkOutgoing()</code>, which accepts only finding codes and fixed answers, and refuses any request holding a name, address or device this check found. Every request is shown word for word under “What left this computer”, with the fixed instructions sent with it.</p>
 <h2>Authentication only for developers</h2>
 <p>Survivors never sign in, and the extension has no sign-in at all: an account would be one more thing to find. The Steps API needs no key.</p>
 <h2>Reused code</h2>
@@ -142,7 +143,8 @@ export function apiPage() {
 <pre tabindex="0" aria-label="Code example"><code>GET https://spare-key-app.web.app/api/v1/index.json            every finding code
 GET https://spare-key-app.web.app/api/v1/steps/{code}.json     one entry
 GET https://spare-key-app.web.app/api/v1/plan-rules.json       the plan order and safety rules</code></pre>
-<p>Each entry has what the access means, whether removing it may be noticed and why, what to screenshot first, the steps, what to do if now is not a good time, and official sources with the date they were checked. Open CORS; cached for an hour.</p>
+<p>The same rows as a page for people: <a href="what-they-see.html">What they see when you change it</a>.</p>
+<p>Each entry has what the access means, whether removing it may be noticed, what the other person sees (with the official help page’s words where one says), and why, what to screenshot first, the steps, what to do if now is not a good time, and official sources with the date they were checked. Open CORS; cached for an hour.</p>
 <h2>MCP server</h2>
 <p>An AI assistant that uses these tools gives the current steps with the warnings attached. Every input is a finding code or a fixed answer, so no story or name can be sent to it.</p>
 <ul><li><code>list_findings</code>: every finding code</li><li><code>get_steps(code)</code>: one code’s steps, with what to screenshot and the warning</li><li><code>make_plan(findings, situation)</code>: a plan in a safety-first order, with the safety rules applied</li></ul>
@@ -153,6 +155,39 @@ Others (JSON): { "mcpServers": { "spare-key": { "command": "node", "args": ["/pa
 <h2>The plan as code</h2>
 <p><code>shared/plan/engine.js</code> and <code>shared/plan/invariants.js</code> build the same plan from finding codes, with no model, so hotline software can make plans locally. Apache-2.0.</p>`);
 }
+
+const SERVICE_OF = { google: 'Google account', gmail: 'Gmail', maps: 'Google Maps', chrome: 'Chrome', amazon: 'Amazon', photos: 'Google Photos', screenshot: 'Phone apps' };
+const NOTICE_WORDS = { notifies: 'They are told', noticeable: 'They may notice', unlikely: 'Unlikely to notice', unknown: 'Not known' };
+
+/** "What they see when you change it": every finding kind, what the other person sees, and the official words for it. */
+export function whatTheySeePage({ library }) {
+  const entries = library.entries;
+  const counts = entries.reduce((m, e) => ({ ...m, [e.who_can_notice]: (m[e.who_can_notice] || 0) + 1 }), {});
+  const sourced = entries.filter(e => e.notice_source).length;
+  const groups = entries.reduce((m, e) => { const s = SERVICE_OF[e.code.split('.')[0]] || 'Other'; (m[s] ||= []).push(e); return m; }, {});
+  const row = e => `<tr id="${esc(e.code)}">
+  <td data-label="What was found"><strong>${esc(e.title)}</strong><br><code class="muted">${esc(e.code)}</code></td>
+  <td data-label="Are they told?"><span class="notice-tag notice-${esc(e.who_can_notice)}">${esc(NOTICE_WORDS[e.who_can_notice])}</span></td>
+  <td data-label="What they see if you remove it">${esc(e.what_they_see)}</td>
+  <td data-label="The official words">${e.notice_source ? `<q>${esc(e.notice_source.quote)}</q><br><a href="${esc(e.notice_source.url)}">${esc(e.notice_source.title)}</a>` : '<span class="muted">No official page found</span>'}</td>
+</tr>`;
+  return doc('what-they-see.html', 'What they see when you change it', 'For each kind of access Spare Key finds: what the other person sees if you remove it, with the official words.', `
+<h1>What they see when you change it</h1>
+<p class="lead">Removing someone’s access can tell them you found it. Before you change anything, it helps to know what they will see. This is what Spare Key knows, kind by kind, and where it comes from.</p>
+<ul class="numbers compact-numbers">
+  <li><span class="n">${entries.length}</span><p>kinds of access Spare Key looks for</p></li>
+  <li><span class="n">${sourced}</span><p>with an official help page quoted for what the change does</p></li>
+  <li><span class="n">${counts.unknown || 0}</span><p>where no official page says, so Spare Key treats them as something they may notice</p></li>
+</ul>
+<p>“They may notice” means the change stops something they use, like your location on their map, so they can find out without being told. Spare Key never says a change is unnoticed unless an official page or a test account shows it, and today none of the ${entries.length} has that. Talk to an advocate before changing anything they may notice.</p>
+${Object.entries(groups).map(([svc, list]) => `<h2>${esc(svc)}</h2>
+<div class="see-wrap"><table class="see-table" aria-label="${esc(svc)}">
+<thead><tr><th>What was found</th><th>Are they told?</th><th>What they see if you remove it</th><th>The official words</th></tr></thead>
+<tbody>${list.map(row).join('')}</tbody></table></div>`).join('\n')}
+<h2>How this is kept</h2>
+<p>Each row comes from Spare Key’s steps library, version ${esc(String(library.version))}, updated ${esc(longDay(library.updated_at))}. The quotes are copied from the help page on the date shown in the <a href="api.html">Steps API</a>, where every row is also available as data (<code>who_can_notice</code>, <code>what_they_see</code> and <code>notice_source</code>). None of these steps has yet been followed on a test account, so a row says what the help page says, not what a test showed.</p>`);
+}
+const longDay = iso => new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 
 export function accuracyPage({ numbers }) {
   const n = numbers;
@@ -175,6 +210,8 @@ ${p ? `<p>${p.of} situations, each a set of findings and answers, written before
   <li>No survivor or advocate has tested Spare Key yet.</li>
   <li>The readers have not yet been measured on real settings pages from test accounts; that test is next.</li>
   <li>The plain chatbot was measured with fixed keyword lists, which are rougher than reading each answer.</li>
+  <li>“0 false alarms” rests on the 4 practice entries that belong to the person. On a real account, your own phone and recovery number are listed too, by design, for you to mark “Not mine”.</li>
+  <li>${p ? `${p.planned - p.of} of ${p.planned}` : 'Some'} plan situations failed in the cloud on the free tier (timeouts, an overloaded model, quota). When the cloud does not answer, you get the plan made by code on your computer.</li>
 </ul>`);
 }
 

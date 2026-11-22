@@ -160,7 +160,7 @@ export default function index({ numbers }) {
     <ul class="numbers">
       ${n.practice ? `<li><span class="n">${n.practice.found} of ${n.practice.of}</span><p>planted ways in found on the 13 made-up practice pages, and none of the 4 that belong to the person flagged, with code only and with Gemini Nano. ${esc(n.practice.date)}.</p></li>` : ''}
       ${n.privacy ? `<li><span class="n">${n.privacy.withPrivate} of ${n.privacy.requests}</span><p>requests from the extension held a name, email address, phone number or device, in a full practice check with every cloud step on. ${esc(n.privacy.date)}.</p></li>` : ''}
-      ${plan ? `<li><span class="n">${plan.chatbot.document_first} of ${plan.of}</span><p>answers from a plain chatbot said to screenshot before changing anything, on ${plan.of} made-up situations. It did warn that a change may be noticed in ${plan.chatbot.alert_warning}. Every plan Spare Key shows does both. ${esc(plan.date)}.</p></li>` : ''}
+      ${plan ? `<li><span class="n">${plan.chatbot.document_first} of ${plan.of}</span><p>answers from a plain chatbot said to screenshot before changing anything, on ${plan.of} made-up situations, judged by keywords. It did warn that a change may be noticed in ${plan.chatbot.alert_warning}. Every plan Spare Key shows does both. ${esc(plan.date)}.</p></li>` : ''}
     </ul>
   </div>
 </section>
