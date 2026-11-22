@@ -70,11 +70,11 @@ export const SITUATION_DEFAULTS = { living: 'prefer_not_to_say', safe_to_change_
 // What each code means, in plain words, for the results list. The steps library (data/steps.json, day 4) adds the
 // verified steps, sources and whether a change is likely to be noticed.
 export const CODE_TEXT = {
-  'google.devices.other': ['A device is signed in to your Google account', 'Whoever has this device can open your Gmail, see your location history and change your settings.'],
+  'google.devices.other': ['A device is signed in to your Google account', 'Whoever has this device can open your Gmail, see where you have been, and change your settings.'],
   'google.apps.full_access': ['An app can use your Google account', 'This app can see, and may be able to change, information in your Google account.'],
   'google.apps.read_mail': ['An app can read your Gmail', 'This app can read your email, and may be able to send it.'],
   'google.apps.location': ['An app can see your location', 'This app can see where you are or where you have been.'],
-  'google.recovery.phone_unconfirmed': ['A phone can reset your password', 'Whoever has this phone number can use it to get back into your account, even after you change your password.'],
+  'google.recovery.phone_unconfirmed': ['A phone can reset your password', 'Whoever has this number can use it to get into your account, even after you change your password.'],
   'google.recovery.email_other': ['Another email address can reset your password', 'Whoever reads this email address can use it to get back into your account.'],
   'google.2sv.other_device': ['A phone or device can approve sign-ins', 'A sign-in to your account can be approved from this phone or device.'],
   'gmail.forwarding.external': ['Your mail is being copied to another address', 'Every new email you get is also sent to this address. Whoever reads it sees your mail.'],
@@ -88,8 +88,8 @@ export const CODE_TEXT = {
   'amazon.household.adult': ['Another adult shares your Amazon account', 'They can see your orders and the addresses they go to.'],
   'amazon.household.teen': ['A teen profile is on your Amazon account', 'A teen in your household can shop from your account, and you approve their orders.'],
   'amazon.device.other': ['A device is on your Amazon account', 'This device can show your orders, messages or camera feeds.'],
-  'google.family.member': ['Someone is in your Google family group', 'People in your family group may share purchases, a calendar and location.'],
-  'google.family.manager_other': ['Someone else manages your Google family group', 'A family manager can see some of your activity and change some of your settings.'],
+  'google.family.member': ['Someone is in your Google family group', 'People in your family group may share what they buy, a calendar, and where they are.'],
+  'google.family.manager_other': ['Someone else manages your Google family group', 'A family manager can see some of what you do and change some of your settings.'],
   'photos.partner_sharing': ['Your photos are shared with someone', 'New photos you take may be shared with this person, and photos can show where they were taken.'],
   'screenshot.sharing.person': ['Someone can see your location in another app', 'A person on this sharing screen can see where you are.'],
 };

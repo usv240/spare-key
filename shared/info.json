@@ -1,7 +1,7 @@
 {
   "shared-computer": {
     "title": "If someone else uses this computer",
-    "what": "Chrome can keep a record of the pages Spare Key opens, and the other person may see that the extension is installed.",
+    "what": "Chrome can keep a list of the pages Spare Key opens. The other person may also see that Spare Key is in Chrome.",
     "why": "Running the check where they cannot look keeps it private. A library computer, a friend's device or a work computer they never use are all options.",
     "tech": "Spare Key keeps nothing after Chrome closes unless you save it. An optional cleanup removes the pages it opened from Chrome's history."
   },
@@ -43,7 +43,7 @@
   "check-google.devices": {
     "title": "Devices signed in to your Google account",
     "what": "Spare Key will open your Google account's device page and read the list of signed-in devices.",
-    "why": "A phone or computer that is still signed in can read your mail, see your location history and change your settings."
+    "why": "A phone or computer that is still signed in can read your mail, see where you have been, and change your settings."
   },
   "check-google.apps": {
     "title": "Apps that can use your Google account",
@@ -68,7 +68,7 @@
   "check-gmail.forwarding": {
     "title": "Gmail forwarding",
     "what": "Spare Key will open Gmail's forwarding settings and read where your mail is sent.",
-    "why": "Forwarding sends a copy of every new email to another address."
+    "why": "Forwarding sends a copy of each new email to someone else."
   },
   "check-gmail.filters": {
     "title": "Gmail filters",
@@ -83,7 +83,7 @@
   "check-google.family": {
     "title": "Your Google family group",
     "what": "Spare Key will read who is in your Google family group and who manages it.",
-    "why": "A family manager can see some of your activity and approve or block purchases."
+    "why": "A family manager can see some of what you do, and can stop you buying things."
   },
   "check-photos.sharing": {
     "title": "Google Photos partner sharing",
@@ -93,11 +93,11 @@
   "check-amazon.household": {
     "title": "Your Amazon household",
     "what": "Spare Key will read who is in your Amazon household.",
-    "why": "People in a household can see orders and delivery addresses."
+    "why": "People in a household can see what you buy and where it is sent."
   },
   "check-amazon.devices": {
     "title": "Devices on your Amazon account",
-    "what": "Spare Key will read the devices registered to your Amazon account, like Echo, Kindle or Fire TV.",
+    "what": "Spare Key will read the list of devices on your Amazon account, like an Echo, Kindle or Fire TV.",
     "why": "A device you do not have can still show your orders, messages or camera feeds."
   },
   "check-chrome.extensions": {
@@ -115,7 +115,7 @@
   "history-cleanup": {
     "title": "Remove these pages from history",
     "what": "After the check, Spare Key can remove the pages it opened from Chrome's history.",
-    "why": "It cannot hide everything: Google's own My Activity may still record the visits, and the other person may see the extension. Removing Spare Key when you are done helps.",
+    "why": "It cannot hide everything. Google's own My Activity may still list the visits. The other person may also see Spare Key in Chrome. Removing it when you are done helps.",
     "tech": "Uses chrome.history.deleteUrl for exactly the pages the scan opened. Chrome describes this as \"Read and change your browsing history\"."
   },
   "sent-log": {

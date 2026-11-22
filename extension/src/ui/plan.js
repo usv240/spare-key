@@ -60,7 +60,7 @@ export function renderPlan(root, { plan, byRef, library, source, model, fired = 
   registerInfo('why-order', {
     title: 'Why this order',
     what: 'Screenshot first, because the record is gone once a setting changes. Talk to an advocate before changing anything that may be noticed. Quiet ways into your account come before the rest when now is a good time.',
-    why: 'Changing a setting can alert the other person, and that can be most dangerous right after you leave. This order comes from the advice of tech abuse clinics and the Safety Net project.',
+    why: 'Changing a setting can alert the other person. That can be most dangerous right after you leave. This order follows advice from tech abuse clinics and the Safety Net project.',
     tech: source === 'cloud'
       ? `Ordered by Gemini in the cloud (${model}) from finding types only, then checked by Spare Key's safety rules on this computer.`
       : 'Made on this computer from Spare Key\'s steps library, with no AI.',
