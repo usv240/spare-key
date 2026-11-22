@@ -12,6 +12,13 @@ export const ACTIONS = ['document', 'talk_to_advocate', 'change_now', 'wait', 'c
 // the steps library says the other person is unlikely to notice and the person says now is a good time.
 export const TAKEOVER = new Set(['gmail.delegate', 'gmail.filter.hides', 'google.apps.full_access', 'google.recovery.email_other']);
 
+// Linked findings (rule R9). While the person's mail is copied to someone else, any email Google sends about a change to
+// the account (a security alert, a code) would reach them too. So the mail copying is dealt with first, and an account
+// change does not happen now while the mail copying waits.
+export const MAIL_OUT = new Set(['gmail.forwarding.external', 'gmail.filter.forwards', 'gmail.delegate']);
+export const EMAILS_ABOUT = new Set(['google.recovery.email_other', 'google.recovery.phone_unconfirmed', 'google.2sv.other_device', 'google.devices.other']);
+export const LINKED_NOTE = 'Your mail is copied to someone else. Any email Google sends you about this change, like a security alert or a code, would reach them too. Deal with the mail copying first.';
+
 /** How likely a change is to be noticed, from the library. Unknown counts as noticeable. */
 export const noticeOf = (library, code) => {
   const n = library?.[code]?.who_can_notice;
@@ -42,16 +49,20 @@ export function buildPlan({ findings = [], situation = {}, notChecked = [], libr
   // 3 and 4. One step per kind of finding (three signed-in devices are one step): change now, or wait.
   const byCode = new Map();
   for (const f of open) byCode.set(f.code, [...(byCode.get(f.code) || []), f.ref]);
-  const codes = [...byCode.keys()].sort((a, b) => Number(TAKEOVER.has(b)) - Number(TAKEOVER.has(a)));
+  // Mail copied elsewhere first (R9), then quiet ways into the account, then the rest.
+  const rank = code => (MAIL_OUT.has(code) ? 0 : TAKEOVER.has(code) ? 1 : 2);
+  const codes = [...byCode.keys()].sort((a, b) => rank(a) - rank(b));
+  const mailOut = codes.some(c => MAIL_OUT.has(c));
   for (const code of codes) {
     const refs = byCode.get(code);
     const notice = noticeOf(library, code);
+    const linked = mailOut && EMAILS_ABOUT.has(code) ? { linked: LINKED_NOTE } : {};
     if (notice === 'unlikely' && TAKEOVER.has(code) && goodTime) {
-      actions.push({ action: 'change_now', refs, code, why: 'This gives someone a quiet way into your account, and changing it is unlikely to be noticed.' });
+      actions.push({ action: 'change_now', refs, code, ...linked, why: 'This gives someone a quiet way into your account, and changing it is unlikely to be noticed.' });
     } else if (goodTime) {
-      actions.push({ action: 'change_now', refs, code, why: 'You said now is a good time. Removing this may be noticed, so read the warning first.' });
+      actions.push({ action: 'change_now', refs, code, ...linked, why: 'You said now is a good time. Removing this may be noticed, so read the warning first.' });
     } else {
-      actions.push({ action: 'wait', refs, code, why: notice === 'unlikely'
+      actions.push({ action: 'wait', refs, code, ...linked, why: notice === 'unlikely'
         ? 'Changing this is unlikely to be noticed, but you said now may not be a good time. Screenshot it and come back to it.'
         : 'Removing this may be noticed. Screenshot it and leave it until a better time, after talking to an advocate.' });
     }

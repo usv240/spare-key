@@ -54,8 +54,8 @@ const WHERE = {
  * The plan. `plan` uses local refs. `byRef` maps a local ref to its finding; `library` maps code to entry.
  * `source` is 'code', 'device' or 'cloud'; `fired` lists the safety rules that changed it; `onOpen(url)` opens a setting.
  */
-export function renderPlan(root, { plan, byRef, library, source, model, calls = null, fired = [], cloudNote = '', voices = null, freshDays = 45, freshness = {}, onCheckFresh = null, onOpen }) {
-  const ctx = { byRef, library, onOpen, freshDays, freshness, onCheckFresh };
+export function renderPlan(root, { plan, byRef, library, source, model, calls = null, fired = [], cloudNote = '', voices = null, freshDays = 45, freshness = {}, onCheckFresh = null, simpler = {}, onSimpler = null, onOpenCheck = null, checkLabels = {}, onOpen }) {
+  const ctx = { byRef, library, onOpen, freshDays, freshness, onCheckFresh, simpler, onSimpler, onOpenCheck, checkLabels };
   const acts = plan.actions;
   const docs = acts.filter(a => a.action === 'document');
   const adv = acts.find(a => a.action === 'talk_to_advocate');
@@ -79,13 +79,15 @@ export function renderPlan(root, { plan, byRef, library, source, model, calls = 
   if (adv) sections.push(advocateSection(adv));
   if (nows.length) sections.push(nowSection(nows, ctx));
   if (waits.length) sections.push(waitSection(waits, ctx));
-  if (checks.length) sections.push(checkSection());
+  if (checks.length) sections.push(checkSection(checks, ctx));
   sections.forEach((el, i) => { el.querySelector('.step-n').textContent = String(i + 1); });
   put(root,
     h('h1', { id: 'plan-title', tabindex: '-1', text: 'Your plan' }),
     h('div', { class: 'with-info' }, h('p', { class: 'lead', text: lead }), infoButton('why-order', 'About why this order')),
     cloudNote ? h('p', { class: 'notice', text: cloudNote }) : null,
-    h('p', { class: 'plan-summary', text: plan.summary || summaryOf({ docs, nows, waits }) }),
+    // A model's own summary when it wrote one; the code plan's summary is what "Start here" already says.
+    plan.summary ? h('p', { class: 'plan-summary', text: plan.summary }) : null,
+    startHere({ docs, adv, nows, waits }, ctx),
     h('ol', { class: 'plan' }, sections),
     voices ? h('details', { class: 'voices' },
       h('summary', { text: 'Why this order: two voices' }),
@@ -115,13 +117,6 @@ function voiceTable(rows, { library }) {
       h('p', {}, h('strong', { text: 'Stay hidden: ' }), r.stay_hidden))));
 }
 
-function summaryOf({ docs, nows, waits }) {
-  const n = docs[0]?.refs.length || 0;
-  const c = nows.reduce((a, s) => a + s.refs.length, 0);
-  const w = waits.reduce((a, s) => a + s.refs.length, 0);
-  return `Screenshot ${n} ${n === 1 ? 'setting' : 'settings'} first.${c ? ` Change ${c} now.` : ''}${w ? ` Leave ${w} for a better time, after talking to an advocate.` : ''}`;
-}
-
 function ruleWords(f) {
   return {
     R1: 'Spare Key added a step for a finding the plan left out.',
@@ -131,6 +126,7 @@ function ruleWords(f) {
     R6: 'Spare Key removed a sentence that promised more than anyone can know.',
     R7: 'Spare Key removed a sentence with contact details or a link.',
     R8: 'Spare Key added a "Check it yourself" step for something not checked.',
+    R9: 'Spare Key put the mail copying first. Google’s emails about the other changes would reach them.',
   }[f.rule] || 'Spare Key adjusted this plan.';
 }
 
@@ -143,11 +139,25 @@ const section = (kind, title, ...body) => h('li', { class: `step step-${kind}`, 
 function screenshotSection(docs, { byRef }) {
   const items = [...new Set(docs.flatMap(a => a.refs))].map(r => byRef.get(r)).filter(Boolean);
   const byCode = groupBy(items, f => f.code);
+  const list = h('ul', { class: 'step-list' }, [...byCode].map(([code, fs]) => h('li', {},
+    h('strong', { text: `${(CODE_TEXT[code] || [code])[0]}${fs.length > 1 ? ` (${fs.length})` : ''}` }),
+    ...fs.map(f => h('span', { class: 'muted', text: f.label })))));
   return section('document', `Screenshot these first (${items.length})`,
     h('p', { text: 'A record of what is set up now helps you and an advocate, and it is gone once a setting changes. Keep the screenshots where the other person cannot see them, like an email to an account only you use.' }),
-    h('ul', { class: 'step-list' }, [...byCode].map(([code, fs]) => h('li', {},
-      h('strong', { text: `${(CODE_TEXT[code] || [code])[0]}${fs.length > 1 ? ` (${fs.length})` : ''}` }),
-      ...fs.map(f => h('span', { class: 'muted', text: f.label }))))));
+    // A short list stays open; a long one folds, so the plan's next steps stay in view.
+    byCode.size > 4 ? h('details', { class: 'later shot-list' }, h('summary', { text: `See all ${items.length}, in ${byCode.size} kinds` }), list) : list);
+}
+
+// The first three things to do, before the full plan: screenshot, an advocate, and the most urgent kind.
+function startHere({ docs, adv, nows, waits }, { library }) {
+  const first = [...nows, ...waits][0];
+  const kind = first ? (library[first.code]?.title || (CODE_TEXT[first.code] || [first.code])[0]) : '';
+  const lines = [
+    docs.length ? `Screenshot the ${docs[0].refs.length} ${docs[0].refs.length === 1 ? 'setting' : 'settings'} in step 1, and keep the pictures where the other person cannot see them.` : '',
+    adv ? `Call or text an advocate: ${HOTLINE.call.replace(/-/g, '‑')}, or text START to 88788. It is free and open all day, every day.` : '',
+    first ? `Then the most urgent kind: ${kind.charAt(0).toLowerCase()}${kind.slice(1)}. ${first.action === 'change_now' ? 'You said now is a good time.' : 'Leave it for a better time, and ask the advocate when.'}` : '',
+  ].filter(Boolean);
+  return lines.length ? h('div', { class: 'start-here' }, h('h2', { text: 'Start here' }), h('ol', {}, lines.map(t => h('li', { text: t })))) : null;
 }
 
 function advocateSection(a) {
@@ -182,9 +192,16 @@ function waitSection(waits, ctx) {
     ...byService(waits, ctx));
 }
 
-function checkSection() {
+// The checks Spare Key could not read, or read only in part, by name, each with a way to open it; then the guides for
+// everything it does not cover.
+function checkSection(checks, { checkLabels = {}, onOpenCheck = null }) {
+  const named = [...new Set(checks.map(a => a.check).filter(id => id && id !== 'other_services'))];
   return section('check_manually', 'Check the rest yourself',
-    h('p', { text: 'Spare Key did not check everything. These guides show how to check other apps and your phone yourself.' }),
+    named.length ? h('p', { text: 'Spare Key could not read all of these. Open each one and look for anyone or anything you do not know.' }) : null,
+    named.length ? h('ul', { class: 'step-list' }, named.map(id => h('li', {},
+      h('strong', { text: checkLabels[id] || id }),
+      onOpenCheck ? h('button', { type: 'button', class: 'link-button', onclick: () => onOpenCheck(id) }, 'Open it') : null))) : null,
+    h('p', { text: 'Spare Key does not check other apps or your phone. These guides show how to check them yourself.' }),
     h('ul', { class: 'guides' }, UNCHECKED.guides.map(g => h('li', {}, h('a', { href: g.url, target: '_blank', rel: 'noopener noreferrer', text: g.title })))));
 }
 
@@ -192,21 +209,38 @@ function checkSection() {
 const STOCK = /^(Removing this may be noticed|You said now is a good time|Changing this is unlikely|This gives someone a quiet way|Spare Key added this)/;
 
 // One kind of finding: its items, what the other person would see, what to do now or later, and the steps.
-function codeBlock(a, { byRef, library, onOpen, freshDays, freshness, onCheckFresh }, { open }) {
+// "Say it more simply": the library's steps put in simpler words by Gemini (Nano when the computer has it), on request.
+// The library's own steps stay shown above them, and they are the ones to follow.
+function simplerBlock(code, { simpler = {}, onSimpler = null }) {
+  if (!onSimpler) return [];
+  const r = simpler[code];
+  if (!r) return [h('button', { type: 'button', class: 'link-button simpler-button', onclick: () => onSimpler(code) }, 'Say it more simply')];
+  if (r.pending) return [h('p', { class: 'muted', role: 'status', text: 'Putting these steps in simpler words.' })];
+  if (r.off) return [h('p', { class: 'muted', role: 'status', text: 'This needs Gemini Nano on this computer, or plan help from the cloud.' })];
+  if (!r.steps) return [h('p', { class: 'muted', role: 'status', text: 'Spare Key could not put these in simpler words just now.' })];
+  return [h('div', { class: 'simpler', role: 'status' },
+    h('p', {}, h('strong', { text: 'In simpler words' })),
+    h('ol', { class: 'how' }, r.steps.map(s => h('li', { text: s }))),
+    h('p', { class: 'muted', text: `${r.source === 'on_device' ? 'By Gemini Nano on this computer' : 'By Gemini in the cloud, which saw only these public steps'}. If anything here differs from the steps above, follow the steps above.` }))];
+}
+
+function codeBlock(a, { byRef, library, onOpen, freshDays, freshness, onCheckFresh, simpler, onSimpler }, { open }) {
   const items = a.refs.map(r => byRef.get(r)).filter(Boolean);
   const f = items[0];
   const code = a.code || f?.code;
   const e = library[code] || {};
   const title = `${e.title || (CODE_TEXT[code] || [''])[0]}${items.length > 1 ? ` (${items.length})` : ''}`;
   const see = e.what_they_see || a.warning || 'Removing this may alert the other person.';
+  const steps = [h('ol', { class: 'how' }, (e.steps || []).map(s => h('li', { text: s }))), ...simplerBlock(code, { simpler, onSimpler })];
   const inner = [
     items.length ? h('ul', { class: 'step-list items' }, items.map(x => h('li', { class: 'muted', text: x.label }))) : null,
     h('p', { class: 'caution-line' }, h('span', { text: a.action === 'change_now' ? `${see} If now is not a good time, leave it and screenshot it.` : see })),
+    a.linked ? h('p', { class: 'caution-line linked-line' }, h('span', { text: a.linked })) : null,
     a.why && !STOCK.test(a.why) ? h('p', { text: a.why }) : null,
     a.action === 'wait' && e.if_not_safe_yet ? h('p', {}, h('strong', { text: 'For now: ' }), e.if_not_safe_yet) : null,
     a.action === 'change_now'
-      ? h('ol', { class: 'how' }, (e.steps || []).map(s => h('li', { text: s })))
-      : h('details', { class: 'later' }, h('summary', { text: 'Steps for when it is a better time' }), h('ol', { class: 'how' }, (e.steps || []).map(s => h('li', { text: s })))),
+      ? h('div', { class: 'steps-now' }, ...steps)
+      : h('details', { class: 'later' }, h('summary', { text: 'Steps for when it is a better time' }), ...steps),
     f?.openUrl ? h('div', { class: 'finding-actions' }, h('button', { type: 'button', class: 'link-button', onclick: () => onOpen(f.openUrl) }, 'Open this setting')) : null,
     e.sources?.length ? h('p', { class: 'source muted' }, 'Source: ', ...e.sources.flatMap((s, k) => [k ? '; ' : '', h('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer', text: s.title })])) : null,
     ...(freshnessBlock(code, e, { freshDays, freshness, onCheckFresh }) || []),

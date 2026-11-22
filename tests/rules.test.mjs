@@ -45,13 +45,16 @@ test('recovery email: the owner\'s own address is not flagged', () => {
   assert.equal(code('google.recovery', 'sam.porter@example.net'), 'google.recovery.email_other');
 });
 
-test('Nano and code disagreeing on ownership gives "unknown" and marks the disagreement', () => {
+test('Nano and code disagreeing on ownership keeps the page\'s answer and marks the disagreement', () => {
   const c = { kind: 'email_address', is_owner: 'no', access: ['mail'], recency: 'unknown', this_computer: 'unknown' };
   const n = { kind: 'email_address', is_owner: 'yes', access: ['mail'], recency: 'today', this_computer: 'no' };
   const m = merge(c, n, 'Last used 2 hrs back');
-  assert.equal(m.is_owner, 'unknown');
+  // The page says it is someone else's address; Nano's "yours" cannot hide it.
+  assert.equal(m.is_owner, 'no');
   assert.equal(m.disagree, true);
   assert.equal(m.recency, 'today');
+  // Nano saying "not yours" where code does not know is still used.
+  assert.equal(merge({ ...c, is_owner: 'unknown' }, { ...n, is_owner: 'no' }, '').is_owner, 'no');
 });
 
 test('Nano cannot make an entry "this computer", invent a date, or widen sign-in-only access', () => {
@@ -98,4 +101,15 @@ test('a Remote Config override cannot send a check to another site', () => {
   assert.equal(catalogue(evil).find(c => c.id === 'google.devices').url, 'https://myaccount.google.com/device-activity?authuser={u}');
   const fix = { 'google.devices': { pages: [{ url: 'https://myaccount.google.com/device-activity', reader: { item: 'li' } }] } };
   assert.equal(catalogue(fix).find(c => c.id === 'google.devices').pages[0].reader.item, 'li');
+});
+
+test('Gemini Nano can never hide an entry by calling it the person\'s own', () => {
+  const sam = { i: 0, text: 'Sam Porter\nAdult', href: '', state: [] };
+  const nanoSaysMine = { kind: 'person', is_owner: 'yes', access: ['purchases'], recency: 'unknown', this_computer: 'unknown' };
+  const cls = merge(codeClassify('amazon.household', sam, OWNER), nanoSaysMine, sam.text);
+  assert.notEqual(cls.is_owner, 'yes');
+  assert.equal(codeFor('amazon.household', sam, cls), 'amazon.household.adult');
+  // The page's own words still mark the person's entry.
+  const me = { i: 1, text: 'Jordan Lee (you)\nAdult', href: '', state: [] };
+  assert.equal(codeFor('amazon.household', me, merge(codeClassify('amazon.household', me, OWNER), nanoSaysMine, me.text)), null);
 });

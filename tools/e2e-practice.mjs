@@ -25,7 +25,7 @@ const step = (name, ok, detail = '') => { steps.push({ name, ok, detail }); log(
 
 freshServiceWorkers(kept);
 const browser = await puppeteer.launch({
-  executablePath: CHROME, headless: false, pipe: true, enableExtensions: true, userDataDir: profile, defaultViewport: null,
+  executablePath: CHROME, headless: false, pipe: true, enableExtensions: true, userDataDir: profile, defaultViewport: null, protocolTimeout: 900000,
   ...(kept ? { ignoreDefaultArgs: true } : {}),
   args: [...(kept ? builtInModelArgs({ userDataDir: profile }) : []), '--window-size=1400,950', '--no-first-run', '--no-default-browser-check'],
 });

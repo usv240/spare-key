@@ -33,7 +33,7 @@ const uiStrings = () => [
 
 const EM_DASH = String.fromCharCode(0x2014);
 const EMOJI = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/u;
-const BANNED_WORDS = /\b(safe|secure|all clear|you'?re fine|nothing to worry|abuser|victim|act now|you should have)\b/i;
+const BANNED_WORDS = /\b(safe|safer|safest|safely|secure|securely|all clear|you'?re fine|nothing to worry|abuser|victim|act now|you should have)\b/i;
 
 test('no em dash, emoji or exclamation mark in any UI string', () => {
   for (const { where, text } of uiStrings()) {
@@ -51,7 +51,8 @@ test('no "safe", "secure", "all clear", "abuser" or "victim" in the product', ()
 });
 
 test('no em dash anywhere in the repo text files', () => {
-  const skip = /(^|\/)node_modules(\/|$)|^(\.git|extension\/build|web\/dist|private|tools\/out|\.taste-skill|mcp\/lib)(\/|$)/;
+  // docs/evidence holds models' answers word for word (a plain chatbot's em dashes are part of what was measured).
+  const skip = /(^|\/)node_modules(\/|$)|^(\.git|extension\/build|web\/dist|private|tools\/out|\.taste-skill|mcp\/lib|docs\/evidence)(\/|$)/;
   const bad = [];
   const walk = dir => {
     for (const name of readdirSync(dir)) {
@@ -77,4 +78,15 @@ test('every "i" button has text, and every text has a button', () => {
   for (const id of used) assert.ok(INFO[id], `"i" button ${id} has no entry in shared/info.json`);
   for (const id of Object.keys(INFO)) assert.ok(used.has(id) || later.has(id), `shared/info.json entry ${id} is not used`);
   for (const [id, e] of Object.entries(INFO)) assert.ok(e.title && e.what && e.why, `${id} needs title, what and why`);
+});
+
+test('no "safe", "safer" or "secure" in the site\'s page text or the README', () => {
+  // Page source with code identifiers (cloud-safe.js) and the instruction to the model taken out.
+  const files = [...readdirSync('web/src/pages').map(f => `web/src/pages/${f}`), 'web/panel-demo.html', 'README.md'];
+  const BANNED = new RegExp(String.raw`\b(safe|safer|safest|safely|secure|securely)\b`, 'i');
+  for (const f of files) {
+    const text = readFileSync(f, 'utf8').split('cloud-safe.js').join('').split('Never say safe or secure.').join('');
+    const m = text.match(BANNED);
+    assert.ok(!m, `${f}: "${m && m[0]}"`);
+  }
 });

@@ -14,7 +14,7 @@ import { readPage } from '../../extension/src/readers/read-page.js';
 import { catalogue } from '../../extension/src/scan/catalogue.js';
 import { codeClassify, codeFor, merge, toFinding } from '../../extension/src/scan/rules.js';
 import { hybridJson, hybridImageJson, deviceStatus } from '../../extension/src/ai.js';
-import { CLASSIFY_SYSTEM, CLASSIFY_SCHEMA, READ_PAGE_SYSTEM, READ_PAGE_SCHEMA, READ_SHOT_SYSTEM, READ_SHOT_SCHEMA, shotEntries } from '../../extension/src/classify.js';
+import { CLASSIFY_SYSTEM, CLASSIFY_SCHEMA, READ_PAGE_SYSTEM, READ_PAGE_SCHEMA, pageItemText, READ_SHOT_SYSTEM, READ_SHOT_SCHEMA, shotEntries } from '../../extension/src/classify.js';
 import SHOT from '../practice/phone-sharing.json';
 import { DRIFT, driftPage, driftUrl } from '../practice/drift.mjs';
 import { FIXES } from '../practice/drift-fixes.mjs';
@@ -91,7 +91,10 @@ function renderSent() {
     let pretty = e.text;
     try { pretty = JSON.stringify(JSON.parse(e.text), null, 2); } catch { /* as sent */ }
     return h('li', {}, h('div', { class: 'meta' }, h('span', { text: `${e.kind === 'function_answers' ? 'Answers to the cloud' : 'Request'}: ${e.purpose}, ${e.model}` }),
-      h('time', { text: new Date(e.time).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' }) })), h('pre', { text: pretty }));
+      h('time', { text: new Date(e.time).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' }) })), h('pre', { text: pretty }),
+      // The fixed parts sent with every request, as in the extension: the instructions, the answer format, the functions.
+      e.fixed ? h('details', { class: 'fixed' }, h('summary', { text: 'The fixed instructions sent with it' }),
+        h('pre', { text: [e.fixed.instructions, e.fixed.tools?.length ? `Functions offered: ${e.fixed.tools.join(', ')}` : '', e.fixed.format ? `Answer format: ${e.fixed.format}` : ''].filter(Boolean).join('\n\n') })) : null);
   }));
   $('sent-empty').hidden = sent.length > 0;
 }
@@ -220,7 +223,7 @@ async function aiReadPage(check, read) {
     });
     const flat = s => String(s).replace(/\s+/g, ' ').trim();
     const page = flat(read.mainText);
-    const entries = (r.answer.entries || []).map(e => String(e.text || '').trim().slice(0, 300))
+    const entries = (r.answer.entries || []).map(pageItemText)
       .filter((t, i, all) => t && page.includes(flat(t)) && all.findIndex(x => flat(x) === flat(t)) === i)
       .map((text, i) => ({ i, text, href: '', state: [] }));
     return { entries, where: r.source === 'on_device' ? 'nano' : 'cloud' };
@@ -274,7 +277,7 @@ async function runPractice() {
           outcome.status = 'not_checked'; outcome.why = 'looked_different'; break;
         }
       }
-      if (read.timedOut && !entries.length) { outcome.status = 'not_checked'; outcome.why = 'did_not_load'; break; }
+      if (read.timedOut && !entries.length) { outcome.status = 'not_checked'; outcome.why = String(read.mainText || '').trim() ? 'looked_different' : 'did_not_load'; break; }
       outcome.partly ||= read.timedOut || read.moreHidden;
       if (!entries.length && !read.emptyConfirmed && !read.withinFound) { outcome.status = 'not_checked'; outcome.why = 'looked_different'; break; }
       for (const entry of entries) raw.push({ check, entry, url, how });
@@ -285,6 +288,15 @@ async function runPractice() {
   }
   const driftWords = kind === 'none' ? '' : driftSummary(kind, fix, outcomes);
   setProgress(checks.length - 1, checks.length, 'Sorting what was found with Gemini');
+  // Gemini Nano sorting 24 entries took about 3 minutes in the builder's Chrome (November 22, 2026), so the line counts up.
+  const sortStart = Date.now();
+  const onDevice = (await deviceStatus()) === 'available';
+  const tick = setInterval(() => {
+    const secs = Math.round((Date.now() - sortStart) / 1000);
+    $('scan-line').textContent = onDevice
+      ? `Gemini Nano is sorting ${raw.length} entries on this device (${secs} s). It can take a few minutes.`
+      : `Gemini is sorting ${raw.length} made-up entries (${secs} s).`;
+  }, 1000);
 
   // One hybrid call sorts every entry: Gemini Nano if this browser has it, the cloud if not.
   let sorted = null;
@@ -307,6 +319,7 @@ async function runPractice() {
         ? 'Sorted by code only. Gemini in the cloud was busy just now.'
         : 'Sorted by code only: Gemini did not answer.';
   }
+  clearInterval(tick);
   const findings = [];
   for (const [i, r] of raw.entries()) {
     const code = codeClassify(r.check.id, r.entry, PRACTICE_OWNER, r.check.words);
@@ -320,13 +333,21 @@ async function runPractice() {
   $('drift-line').textContent = driftWords;
   $('drift-line').hidden = !driftWords;
   $('sorted-line').replaceChildren(where);
-  if (/code only/.test(where)) $('sorted-line').append(' ', h('button', { type: 'button', class: 'link-button', onclick: () => runPractice() }, 'Try again'));
+  // After an App Check refusal the SDK will not ask again in this page load, so the button reloads the panel instead.
+  const refused = /refused/.test(where);
+  if (/code only/.test(where)) $('sorted-line').append(' ', h('button', { type: 'button', class: 'link-button', onclick: () => (refused ? location.reload() : runPractice()) }, refused ? 'Reload and try again' : 'Try again'));
   $('sorted-line').hidden = false;
   showResults();
   $('results-title')?.focus({ preventScroll: true });
 }
 
 // ---------------------------------------------------------------------------------------------------------------
+const simpler = {};
+const SIMPLER_SYSTEM = `Rewrite these steps for changing one setting in very simple words, at a grade 4 reading level.
+Keep the same order, and the same number of steps or one more. Keep every button and menu name exactly as written.
+Keep every warning. Do not add names, numbers, links or advice that are not in the steps. Never say safe or secure.`;
+const SIMPLER_SCHEMA = { type: 'object', properties: { steps: { type: 'array', items: { type: 'string', maxLength: 200 } } }, required: ['steps'] };
+
 // The plan: by code at once, then ordered by the cloud from finding types, then the two voices.
 let situation = { values: {}, share: true };
 function showQuestions() {
@@ -347,8 +368,29 @@ $('back-results').addEventListener('click', () => show('results'));
 async function makePlan() {
   const values = { ...SITUATION_DEFAULTS, ...situation.values };
   const byRef = new Map(scan.findings.map(f => [f.ref, f]));
-  const ctx = { findings: scan.findings.map(f => ({ ref: f.ref, code: f.code, ownership: f.ownership })), situation: values, notChecked: ['other_services'], library: LIBRARY };
-  const draw = (result, source, extra = {}) => renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, onOpen: url => window.open(url, '_blank', 'noopener'), ...extra });
+  // Not checked, and checked only in part: both become "check it yourself" steps, as in the extension.
+  const notChecked = [...scan.outcomes.filter(o => (o.status !== 'checked' || o.partly) && o.id !== 'screenshot').map(o => o.id), 'other_services'];
+  const ctx = { findings: scan.findings.map(f => ({ ref: f.ref, code: f.code, ownership: f.ownership })), situation: values, notChecked, library: LIBRARY };
+  const cat = catalogue({});
+  const helpers = {
+    simpler, checkLabels: Object.fromEntries(cat.map(c => [c.id, c.label])),
+    onOpenCheck: id => { const p = cat.find(c => c.id === id)?.pages?.[0]; if (p) window.open(p.practiceUrl, '_blank', 'noopener'); },
+  };
+  let last = null;
+  const draw = (result, source, extra = {}) => { last = { result, source, extra }; return renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, ...helpers, onSimpler, onOpen: url => window.open(url, '_blank', 'noopener'), ...extra }); };
+  // "Say it more simply": hybrid inference on one library entry's public steps (Gemini Nano here if the browser has it).
+  async function onSimpler(code) {
+    const redraw = () => { draw(last.result, last.source, last.extra); const b = document.querySelector(`#plan [data-code="${code}"]`); if (b?.tagName === 'DETAILS') b.open = true; b?.querySelector('details.later')?.setAttribute('open', ''); };
+    simpler[code] = { pending: true };
+    redraw();
+    try {
+      const r = await hybridJson({ purpose: 'simpler', body: { code, steps: LIBRARY[code].steps }, guard: { library: LIBRARY }, onSend, system: SIMPLER_SYSTEM, schema: SIMPLER_SCHEMA });
+      const allowed = JSON.stringify(LIBRARY[code]);
+      const steps = (r.answer.steps || []).slice(0, LIBRARY[code].steps.length + 1).map(x => cleanText(String(x).slice(0, 200), allowed).text).filter(Boolean);
+      simpler[code] = steps.length ? { steps, source: r.source } : { error: true };
+    } catch { simpler[code] = { error: true }; }
+    redraw();
+  }
   const codeResult = applyInvariants(buildPlan(ctx), ctx);
   $('plan-questions').hidden = true;
   $('plan-actions').hidden = false;
@@ -356,7 +398,7 @@ async function makePlan() {
   $('plan-title')?.focus({ preventScroll: true });
   if (mode !== 'live') { draw(codeResult, 'code', { cloudNote: 'This is the plan built by code. Run the full practice check to see the cloud order it.' }); return; }
   const shared = situation.share ? Object.fromEntries(Object.keys(SITUATION).map(k => [k, !!situation.values[k]])) : {};
-  const { body, refs } = toCloud(scan.findings, { situation: situation.values, shared, notChecked: ['other_services'] });
+  const { body, refs } = toCloud(scan.findings, { situation: situation.values, shared, notChecked });
   try {
     const r = await cloudPlan({ body, library: LIBRARY, privateStrings: [], ask: async kind => (kind === 'user' ? 'skipped' : 'unknown'), onSend });
     const local = a => (Array.isArray(a.refs) ? a.refs : []).map(x => refs[x]).filter(Boolean);

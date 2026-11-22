@@ -342,8 +342,8 @@ export function cloudJson({ purpose, body, system, schema, privateStrings = [], 
 
 /**
  * Hybrid inference (PREFER_ON_DEVICE): Gemini Nano when this device has it, the cloud when it does not. Used only
- * where the text is public or made up (the practice check and "say it more simply"), so the cloud fallback exposes
- * nothing. Returns { answer, source: 'on_device' | 'in_cloud', model }.
+ * where the text is public or made up (the website's practice check, and "Say it more simply" on a steps library entry
+ * in the plan), so the cloud fallback exposes nothing. Returns { answer, source: 'on_device' | 'in_cloud', model }.
  */
 export function hybridJson({ purpose, body, system, schema, guard = {}, onSend = async () => {} }) {
   const text = checkOutgoing(purpose, body, guard);
@@ -366,7 +366,7 @@ export function hybridJson({ purpose, body, system, schema, guard = {}, onSend =
         }, { timeout: CLOUD_TIMEOUT_MS });
         const onDevice = (await deviceStatus()) === 'available';
         // Logged before it is sent: PREFER_ON_DEVICE can fall back to the cloud even when Gemini Nano is present.
-        await onSend({ time: new Date().toISOString(), purpose, model: onDevice ? `Gemini Nano, or ${model} if it falls back` : model, kind: 'request', text });
+        await onSend({ time: new Date().toISOString(), purpose, model: onDevice ? `Gemini Nano, or ${model} if it falls back` : model, kind: 'request', text, fixed: { instructions: system || '', format: schema ? JSON.stringify(schema) : '', tools: [] } });
         const r = await m.generateContent(text);
         const source = r.response.inferenceSource || (onDevice ? 'on_device' : 'in_cloud');
         return { answer: schema ? JSON.parse(r.response.text()) : r.response.text(), source, model: source === 'on_device' ? 'Gemini Nano' : model };

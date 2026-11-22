@@ -43,6 +43,7 @@ export async function buildApi(outDir = 'web/dist/api/v1') {
       R6: 'Plan text never calls anything safe or secure, or says there is nothing to worry about.',
       R7: 'Plan text never holds an email address, phone number or link the library does not.',
       R8: 'Everything not checked has a "check it yourself" step.',
+      R9: 'While mail is copied to someone else (forwarding, a forwarding filter, a delegate), that comes before any recovery, 2-Step Verification or signed-in device change, and none of those happens now while the mail copying waits: any email Google sends about them would reach the other person.',
     },
     code: 'shared/plan/engine.js and shared/plan/invariants.js in the repository build the same plan from codes, with no model.',
   }, null, 2));

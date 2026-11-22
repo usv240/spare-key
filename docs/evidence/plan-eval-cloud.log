@@ -1,0 +1,100 @@
+04:01:35 model gemini-3.5-flash-lite; 40 scenarios
+04:01:49 s02: A ok, C ok, D ok; 6 calls so far
+04:02:08 s03: A ok, C ok, D ok; 15 calls so far
+04:02:46 s04: A ok, C error, D error; 18 calls so far (C: AbortError: Timeout has expired.)
+04:03:30 s05: A ok, C ok, D ok; 24 calls so far
+04:03:46 s06: A ok, C ok, D ok; 32 calls so far
+04:04:27 s07: A ok, C error, D error; 37 calls so far (C: AbortError: Timeout has expired.)
+04:05:12 s08: A ok, C ok, D ok; 43 calls so far
+04:05:26 s09: A ok, C ok, D ok; 49 calls so far
+04:05:39 s10: A ok, C ok, D ok; 55 calls so far
+04:05:56 s11: A ok, C ok, D error; 62 calls so far (D: AI: Error fetching from https://firebasevertexai.googleapis.com/v1beta/projects/spare-key-app/models/gemini-3.8-flash:generateContent: [500 ] This model is currently experiencing high demand. Spikes i)
+04:06:44 s12: A ok, C ok, D ok; 71 calls so far
+04:07:47 s13: A ok, C ok, D error; 79 calls so far (D: AbortError: Timeout has expired.)
+04:08:30 s14: A ok, C ok, D ok; 85 calls so far
+04:08:46 s15: A ok, C ok, D ok; 93 calls so far
+04:09:24 s16: A ok, C error, D error; 97 calls so far (C: AbortError: Timeout has expired.)
+04:10:10 s17: A ok, C ok, D ok; 105 calls so far
+04:10:24 s18: A ok, C ok, D ok; 111 calls so far
+04:10:41 s19: A ok, C ok, D ok; 119 calls so far
+04:11:26 s20: A ok, C ok, D error; 126 calls so far (D: AbortError: Timeout has expired.)
+04:12:11 s21: A ok, C ok, D ok; 132 calls so far
+04:12:26 s22: A ok, C ok, D ok; 140 calls so far
+04:12:40 s23: A ok, C ok, D ok; 146 calls so far
+04:12:55 s24: A ok, C ok, D ok; 152 calls so far
+04:13:29 s25: A error, C error, D error; 154 calls so far (C: AbortError: Timeout has expired.) (A: _AIError: FirebaseError: AI: Error fetching from https://firebasevertexai.googleapis.com/v1beta/projects/spare-key-app/models/gemini-3.5-flash-lite:generateContent: [429 ] You exceeded your current qu)
+04:14:17 s26: A ok, C ok, D ok; 163 calls so far
+04:14:33 s27: A ok, C ok, D ok; 172 calls so far
+04:14:48 s28: A ok, C ok, D ok; 178 calls so far
+04:15:32 s29: A ok, C error, D error; 183 calls so far (C: AbortError: Timeout has expired.)
+04:16:18 s30: A ok, C ok, D ok; 191 calls so far
+04:16:32 s31: A ok, C ok, D ok; 197 calls so far
+04:16:46 s32: A ok, C ok, D ok; 203 calls so far
+04:17:07 s33: A ok, C ok, D error; 212 calls so far (D: AI: Error fetching from https://firebasevertexai.googleapis.com/v1beta/projects/spare-key-app/models/gemini-3.8-flash:generateContent: [429 ] You exceeded your current quota, please check your plan an)
+04:17:51 s34: A ok, C ok, D ok; 218 calls so far
+04:18:04 s35: A ok, C ok, D ok; 224 calls so far
+04:18:31 s36: A ok, C ok, D ok; 237 calls so far
+04:18:45 s37: A ok, C ok, D ok; 243 calls so far
+04:19:38 s38: A ok, C ok, D error; 253 calls so far (D: AbortError: Timeout has expired.)
+04:20:21 s39: A ok, C ok, D ok; 259 calls so far
+04:20:38 s40: A ok, C ok, D ok; 267 calls so far
+{
+  "date": "2026-11-22",
+  "scenarios_scored": 30,
+  "of": 40,
+  "cloud_calls_this_run": 267,
+  "passing": {
+    "A": {
+      "alert_warning": 30,
+      "document_first": 4,
+      "advocate": 30,
+      "no_false_reassurance": 0,
+      "coverage": 27,
+      "order": 22
+    },
+    "B": {
+      "alert_warning": 30,
+      "document_first": 30,
+      "advocate": 30,
+      "no_false_reassurance": 30,
+      "coverage": 30,
+      "order": 30
+    },
+    "C": {
+      "alert_warning": 24,
+      "document_first": 30,
+      "advocate": 30,
+      "no_false_reassurance": 10,
+      "coverage": 30,
+      "order": 30
+    },
+    "D": {
+      "alert_warning": 26,
+      "document_first": 30,
+      "advocate": 30,
+      "no_false_reassurance": 21,
+      "coverage": 29,
+      "order": 30
+    },
+    "E": {
+      "alert_warning": 30,
+      "document_first": 30,
+      "advocate": 30,
+      "no_false_reassurance": 30,
+      "coverage": 30,
+      "order": 30
+    }
+  },
+  "rules_fired_before_rules": {
+    "C": {
+      "R3": 27,
+      "R6": 38,
+      "R8": 4
+    },
+    "D": {
+      "R6": 12,
+      "R1": 5,
+      "R3": 15
+    }
+  }
+}

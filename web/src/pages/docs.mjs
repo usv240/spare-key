@@ -35,7 +35,7 @@ export function installPage() {
   return doc('install.html', 'Get the Chrome extension', 'How to install Spare Key in Chrome.', `
 <h1>Get the Chrome extension</h1>
 <p class="lead">Spare Key runs in Chrome on a computer. It is free, and it does not ask you to sign in.</p>
-<div class="note caution"><p><strong>Before you install:</strong> if someone else uses this computer, they may see that the extension is installed. A library computer or a friend’s device is a better place to check. You can remove Spare Key when you are done.</p></div>
+<div class="note caution"><p><strong>Before you install:</strong> if someone else uses this computer, they may see that the extension is installed. A computer they never use, like a trusted friend’s, is a better place to check. Library and work computers usually do not allow installing extensions. You can remove Spare Key when you are done.</p></div>
 <h2>Install it</h2>
 <p>Spare Key is not in the Chrome Web Store yet. Until it is, install it this way:</p>
 <ol>
@@ -106,7 +106,7 @@ export function builtWithPage({ numbers }) {
   return doc('built-with.html', 'How it’s built', 'The full stack, where each piece runs and why.', `
 <h1>How it’s built</h1>
 <p class="lead">The split between this computer and the cloud is set by the problem: the settings pages are the private data, so they are read here, and the cloud only ever sees what kind of access was found.</p>
-<div class="table-wrap" tabindex="0" role="region" aria-label="Table, scrolls sideways on small screens"><table>
+<div class="table-wrap" tabindex="0" role="region" aria-label="The full stack: table, scrolls sideways on small screens"><table>
 <thead><tr><th>Piece</th><th>Runs</th><th>Why it is used</th></tr></thead>
 <tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody>
 </table></div>
@@ -114,10 +114,19 @@ export function builtWithPage({ numbers }) {
 <p>Each step runs at the most private tier its data allows, and the tier is set by the data, not by convenience:</p>
 <ol>
   <li><strong>Device only</strong> (<code>ONLY_ON_DEVICE</code>): anything that can name a person. The settings pages, a page a site has changed, a phone screenshot. Without Gemini Nano these are read by code or not at all, never by the cloud.</li>
-  <li><strong>The person’s choice</strong>: finding types and the answers the person chooses to share. With plan help from the cloud on, Gemini in the cloud orders the plan, because it measured better: on 40 frozen situations, Gemini Nano’s own plans needed 100 fixes from the safety rules, the cloud’s 42, and 17 after the two voices. With it off, Gemini Nano orders the plan on this computer, and the same safety rules make it pass every measure.</li>
+  <li><strong>The person’s choice</strong>: finding types and the answers the person chooses to share. With plan help from the cloud on, Gemini in the cloud orders and explains the plan; with it off, Gemini Nano does, on this computer. Either way, code’s safety rules decide what is shown.</li>
   <li><strong>Cloud</strong> (<code>ONLY_IN_CLOUD</code>): public text. The steps library, the official help pages, and the two voices arguing over finding types.</li>
 </ol>
 <p>One check, <code>checkOutgoing()</code>, sits between the tiers. The made-up practice check on this site is the one place a lower tier’s data may go up, because none of it is real.</p>
+<h2>What code decides, and what Gemini adds</h2>
+<p>Code decides everything that keeps a person out of danger. The plan made by code, with no model, passes every safety measure on its own, and the safety rules check any plan a model writes. Gemini adds what code cannot do:</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="What Gemini adds: table, scrolls sideways on small screens"><table><thead><tr><th>What</th><th>Without Gemini</th><th>With Gemini</th></tr></thead><tbody>
+<tr><td>Read settings pages a site has changed (all four kinds of change at once)</td><td>8 of 24 ways in shown</td><td>18 of 24, by Gemini Nano on the computer</td></tr>
+<tr><td>Read a phone app’s sharing screen from a screenshot</td><td>Nothing: code cannot read a picture</td><td>3 of 3 made-up people, with “Me” left out</td></tr>
+<tr><td>Order the plan for this situation and explain each step in plain words</td><td>One fixed order and stock sentences</td><td>Per-situation order and wording, asking the computer yes or no questions it needs</td></tr>
+<tr><td>Put a step in simpler words, on request</td><td>Not possible</td><td>Gemini Nano on the computer, or the cloud for the public steps only</td></tr>
+</tbody></table></div>
+<p>Ordering is where models still fall short, so the rules stay in charge. Before the rules ran, the cloud’s plans needed 43 fixes on 30 situations (18 after the two voices) and Gemini Nano’s 103 on 35. The <a href="accuracy.html">accuracy page</a> has the measures.</p>
 <h2>The cloud asks, the device answers</h2>
 <p>Gemini in the cloud orders the plan without ever learning who anyone is. When it needs a fact, it can call back to the device, and the device answers with an enum. The shape of an exchange:</p>
 <pre tabindex="0" aria-label="Code example"><code>cloud:  ask_device({ ref: "f3", question: "filter_also_deletes" })
@@ -209,12 +218,14 @@ function driftSection(drift, first) {
   const sum = (rows, k) => rows.reduce((n, r) => n + (r?.[k] || 0), 0);
   const silentFirst = sum(kinds.map(k => firstOf(k.kind)), 'silentMisses');
   const silentNow = sum(drift.rows.filter(r => r.kind !== 'none'), 'silentMisses');
+  const extra = mode => drift.rows.filter(r => r.mode === mode && r.kind !== 'none').reduce((n, r) => n + (r.falseAlarms || 0), 0);
   const found = r => (!r ? 'not run' : r.shown !== undefined && r.shown !== r.found ? `${r.shown} of ${r.of} (${r.found} the right kind)` : `${r.found} of ${r.of}`);
   return `<h2>When a site changes its pages</h2>
 <p>Sites change their settings pages without warning. A script changed the 13 practice pages five ways, the same way every time, and every check ran on each copy. The number is planted ways in shown, of 24; in brackets, how many were shown as exactly the right kind when that differs (a teen shown as an adult is shown, not the right kind).</p>
-<div class="table-wrap" tabindex="0" role="region" aria-label="Table, scrolls sideways on small screens"><table><thead><tr><th>What changed</th><th class="num">Code only, first run</th><th class="num">Code only, now</th>${hasNano ? '<th class="num">Code and Gemini Nano</th>' : ''}<th class="num">After the Remote Config fix</th></tr></thead>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Layout drift: table, scrolls sideways on small screens"><table><thead><tr><th>What changed</th><th class="num">Code only, first run</th><th class="num">Code only, now</th>${hasNano ? '<th class="num">Code and Gemini Nano</th>' : ''}<th class="num">After the Remote Config fix</th></tr></thead>
 <tbody>${kinds.map(k => `<tr><td>${esc(k.label)}</td><td class="num">${found(firstOf(k.kind))}</td><td class="num">${found(k)}</td>${hasNano ? `<td class="num">${found(cell(k.kind, 'nano'))}</td>` : ''}<td class="num">${found(cell(k.kind, 'fixed'))}</td></tr>`).join('')}</tbody></table></div>
 <p><strong>The miss that matters most is a silent one:</strong> a check that says it is done while a way in is still there. On the first run there were <strong>${silentFirst}</strong> silent misses. Now there are <strong>${silentNow}</strong>: a page that lists nothing, without saying it is empty, is shown under “Not checked” as “looked different”, and a page that never showed the words Spare Key waits for is marked “checked in part”. Both tell the person to look for themselves.</p>
+<p>Entries listed that are not planted ways in, across the five copies: ${extra('code')} with code alone${hasNano ? `, ${extra('nano')} with Gemini Nano` : ''}. Each is shown for the person to mark “Mine” or “Not mine”.</p>
 <p class="muted">The first run was blind: nothing was changed after seeing these pages. The fixes since then are general (an empty-looking page is not called empty; lists built from plain boxes count as lists; masked phone numbers count), and the Remote Config fixes were written after seeing what broke, so the last column shows the fix path works, not how well a first guess reads a new page. ${esc(drift.date)}${drift.nanoDate ? `; Gemini Nano run ${esc(drift.nanoDate)}` : ''}. Test: <code>tools/drift-test.mjs</code>. You can try it on <a href="try.html">the practice check</a>: open “Break the pages first”.</p>`;
 }
 
@@ -223,7 +234,7 @@ export function accuracyPage({ numbers, drift = null, driftFirst = null }) {
   const p = n.planSafety;
   return doc('accuracy.html', 'Accuracy', 'How Spare Key is measured, the numbers, and what they do not show.', `
 <h1>Accuracy</h1>
-<p class="lead">Every number here comes from a test you can run from the repository. Misses and limits are reported as plainly as passes.</p>
+<p class="lead">Every number here comes from a test you can run from the repository, and the saved runs are in its <code>docs/evidence</code> folder. Misses and limits are reported as plainly as passes.</p>
 <h2>Practice pages: planted ways in</h2>
 ${n.practice ? `<p><strong>${n.practice.found} of ${n.practice.of}</strong> planted ways in found, with <strong>${n.practice.falseAlarms}</strong> false alarms, on the 13 made-up practice pages, both with code only and with Gemini Nano. ${esc(n.practice.date)}. Tests: <code>tools/reader-test.mjs</code>, <code>tools/e2e-practice.mjs</code>.</p>` : ''}
 <p class="muted">The practice pages were written by the builder, so the readers were tuned on the same pages they are tested on. They show the whole system works end to end; they do not show how well it reads real pages.</p>
@@ -232,12 +243,12 @@ ${driftSection(drift, driftFirst)}
 ${n.privacy ? `<p><strong>${n.privacy.withPrivate} of ${n.privacy.requests}</strong> requests from the extension held a name, email address, phone number, device or place, during a full practice check with every cloud step on. Every request from the service worker, the hidden page and the side panel was captured and searched in plain text, URL-encoded, base64 and JSON-escaped forms. All ${n.privacy.modelRequests} requests to the model matched “What left this computer” word for word. ${esc(n.privacy.date)}. Test: <code>tools/privacy-test.mjs</code>.</p>` : ''}
 <h2>Plan safety: the warning that a change may be noticed</h2>
 ${p ? `<p>${p.of} situations, each a set of findings and answers, written before any results and not changed after. Measured by code.</p>
-<div class="table-wrap" tabindex="0" role="region" aria-label="Table, scrolls sideways on small screens"><table><thead><tr><th>Measure</th>${p.columns.map(c => `<th class="num">${esc(c)}</th>`).join('')}</tr></thead>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Plan safety: table, scrolls sideways on small screens"><table><thead><tr><th>Measure</th>${p.columns.map(c => `<th class="num">${esc(c)}</th>`).join('')}</tr></thead>
 <tbody>${p.rows.map(r => `<tr><td>${esc(r.label)}</td>${r.values.map(v => `<td class="num">${v}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
 <p class="muted">${esc(p.note)}</p>` : '<p>Results are being measured.</p>'}
 ${n.nanoPlan ? `<h3>The plan made by Gemini Nano, on this computer</h3>
 <p>The same ${n.nanoPlan.of} situations, ordered by Gemini Nano with nothing sent anywhere. ${n.nanoPlan.answered} of ${n.nanoPlan.of} answered${n.nanoPlan.medianSeconds ? `, in a median of ${n.nanoPlan.medianSeconds} seconds each on the builder’s PC` : ''}.</p>
-<div class="table-wrap" tabindex="0" role="region" aria-label="Table, scrolls sideways on small screens"><table><thead><tr><th>Measure</th><th class="num">Gemini Nano’s plan</th><th class="num">What you see (after the safety rules)</th></tr></thead>
+<div class="table-wrap" tabindex="0" role="region" aria-label="The plan made by Gemini Nano: table, scrolls sideways on small screens"><table><thead><tr><th>Measure</th><th class="num">Gemini Nano’s plan</th><th class="num">What you see (after the safety rules)</th></tr></thead>
 <tbody>${n.nanoPlan.rows.map(r => `<tr><td>${esc(r.label)}</td><td class="num">${r.before} of ${n.nanoPlan.answered}</td><td class="num">${r.after} of ${n.nanoPlan.answered}</td></tr>`).join('')}</tbody></table></div>
 <p class="muted">The safety rules made ${n.nanoPlan.fixes} fixes to Gemini Nano’s plans (not counting the warning rule, which runs on every plan). Test: <code>tools/plan-eval-nano.mjs</code>, scored by <code>tools/plan-eval-score.mjs</code>. ${esc(n.nanoPlan.date || '')}.</p>` : ''}
 <h2>What these numbers do not show</h2>
@@ -245,7 +256,7 @@ ${n.nanoPlan ? `<h3>The plan made by Gemini Nano, on this computer</h3>
   <li>No survivor or advocate has tested Spare Key yet.</li>
   <li>The readers have not yet been measured on real settings pages from test accounts; that test is next.</li>
   <li>The plain chatbot was measured with fixed keyword lists, which are rougher than reading each answer.</li>
-  <li>“0 false alarms” rests on the 4 practice entries that belong to the person. On a real account, your own phone and recovery number are listed too, by design, for you to mark “Not mine”.</li>
+  <li>“0 false alarms” rests on the 4 practice entries that belong to the person. On a real account, your own phone and recovery number are listed too, by design, for you to mark “Mine”.</li>
   <li>${p ? `${p.planned - p.of} of ${p.planned}` : 'Some'} plan situations failed in the cloud on the free tier (timeouts, an overloaded model, quota). When the cloud does not answer, you get the plan made by code on your computer.</li>
 </ul>`);
 }
@@ -286,7 +297,7 @@ export function safetyPage() {
   <li><a href="https://www.thehotline.org/plan-for-safety/">Plan for safety</a>, from the hotline</li>
 </ul>
 <h2>Use a device they cannot see</h2>
-<p>If the other person may be watching this computer or your phone, a library computer, a work computer they never use, or a friend’s device is a better place to check and to plan.</p>
+<p>If the other person may be watching this computer or your phone, a computer they never use, like a trusted friend’s, is a better place to check. A library computer is fine for reading this site and getting help, but usually does not allow installing extensions. Either is a better place to plan.</p>
 <h2>Remove Spare Key when you are done</h2>
 <p>Open <code>chrome://extensions</code>, find Spare Key, and select Remove.</p>`);
 }

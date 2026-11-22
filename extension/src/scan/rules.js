@@ -101,7 +101,11 @@ export function codeClassify(checkId, entry, account, words) {
 export function merge(code, nano, text = '') {
   if (!nano) return { ...code, source: 'reader' };
   const pick = (a, b) => (a && a !== 'unknown' ? a : b || 'unknown');
-  const owner = code.is_owner !== 'unknown' && nano.is_owner !== 'unknown' && code.is_owner !== nano.is_owner ? 'unknown' : pick(code.is_owner, nano.is_owner);
+  // Only the page's words can make an entry the person's own, which hides it. Nano may say an entry is not theirs, never
+  // that it is: on the website's practice check (November 22, 2026), Nano sorting all 24 entries at once called four
+  // household and family members the person's own, Sam Porter among them, and they disappeared from the results.
+  const nanoOwner = nano.is_owner === 'yes' ? 'unknown' : nano.is_owner;
+  const owner = code.is_owner !== 'unknown' && nanoOwner !== 'unknown' && code.is_owner !== nanoOwner ? 'unknown' : pick(code.is_owner, nanoOwner);
   // An empty list from code means "certainly no access" (sign-in only); only "unknown" lets Nano fill it in.
   const access = code.access.includes('unknown') ? (nano.access?.length ? nano.access : code.access) : code.access;
   // Only the page's words can make an entry this computer; Nano may only say it is not.

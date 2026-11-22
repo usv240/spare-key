@@ -1,0 +1,135 @@
+{
+  "date": "2026-11-21",
+  "model": "gemini-3.5-flash-lite",
+  "scored": 30,
+  "linkedApplies": 7,
+  "of": 40,
+  "notYes": 21,
+  "failures": {
+    "timeout_plan": 5,
+    "timeout_voices": 3,
+    "http_500": 1,
+    "http_429": 1,
+    "other": 0
+  },
+  "failed": 10,
+  "cloud_calls": 267,
+  "passing": {
+    "A": {
+      "alert_warning": 30,
+      "document_first": 4,
+      "advocate": 30,
+      "no_false_reassurance": 23,
+      "coverage": 27,
+      "order": 22,
+      "linked_order": 27
+    },
+    "B": {
+      "alert_warning": 30,
+      "document_first": 30,
+      "advocate": 30,
+      "no_false_reassurance": 30,
+      "coverage": 30,
+      "order": 30,
+      "linked_order": 30
+    },
+    "C": {
+      "alert_warning": 24,
+      "document_first": 30,
+      "advocate": 30,
+      "no_false_reassurance": 26,
+      "coverage": 30,
+      "order": 30,
+      "linked_order": 29
+    },
+    "D": {
+      "alert_warning": 26,
+      "document_first": 30,
+      "advocate": 30,
+      "no_false_reassurance": 26,
+      "coverage": 29,
+      "order": 30,
+      "linked_order": 28
+    },
+    "E": {
+      "alert_warning": 30,
+      "document_first": 30,
+      "advocate": 30,
+      "no_false_reassurance": 30,
+      "coverage": 30,
+      "order": 30,
+      "linked_order": 30
+    }
+  },
+  "fixes": {
+    "C": 43,
+    "D": 18
+  },
+  "fired": {
+    "C": {
+      "R3": 27,
+      "R6": 38,
+      "R9": 1,
+      "R8": 4
+    },
+    "D": {
+      "R6": 12,
+      "R1": 5,
+      "R3": 15,
+      "R9": 1
+    }
+  },
+  "change_now_steps": {
+    "C": 27,
+    "D": 15
+  },
+  "nano": {
+    "date": "2026-11-22",
+    "model": "Gemini Nano (Chrome built-in)",
+    "answered": 35,
+    "of": 40,
+    "passing": {
+      "N": {
+        "alert_warning": 15,
+        "document_first": 31,
+        "advocate": 26,
+        "no_false_reassurance": 33,
+        "coverage": 27,
+        "order": 11,
+        "linked_order": 31
+      },
+      "N_after_rules": {
+        "alert_warning": 35,
+        "document_first": 35,
+        "advocate": 35,
+        "no_false_reassurance": 35,
+        "coverage": 35,
+        "order": 35,
+        "linked_order": 35
+      },
+      "N_on_cloud_30": {
+        "alert_warning": 11,
+        "document_first": 22,
+        "advocate": 18,
+        "no_false_reassurance": 23,
+        "coverage": 17,
+        "order": 9,
+        "linked_order": 21
+      }
+    },
+    "onCloud30": 25,
+    "fixes": 103,
+    "fired": {
+      "R3": 20,
+      "R2": 4,
+      "R5": 8,
+      "R8": 22,
+      "R4": 44,
+      "R1": 17,
+      "R6": 5,
+      "R9": 3
+    },
+    "change_now_steps": 58,
+    "median_seconds": 29.5
+  }
+}

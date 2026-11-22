@@ -1,0 +1,29 @@
+{
+ "imageStatus": "available",
+ "read": {
+  "app": "Location sharing",
+  "entries": [
+   {
+    "i": 0,
+    "text": "Sam Porter\nCan see your location\nSharing since March",
+    "is_owner": "no"
+   },
+   {
+    "i": 1,
+    "text": "Riley\nCan see your location\nSharing since 2024",
+    "is_owner": "no"
+   },
+   {
+    "i": 2,
+    "text": "Dana (Work)\nCan see your location until 6:00 PM",
+    "is_owner": "no"
+   },
+   {
+    "i": 3,
+    "text": "Me\nThis phone",
+    "is_owner": "yes"
+   }
+  ]
+ },
+ "seconds": 131.5
+}

@@ -15,6 +15,15 @@ export class ScanStopped extends Error { constructor() { super('stopped'); this.
 
 /** Navigate the scan tab and wait until it has loaded (or left for a sign-in page). Returns the final URL. */
 async function navigate(tabId, url, { timeoutMs = 30000, signal } = {}) {
+  // Gmail's settings tabs differ only after the "#". Moving between them by hash would keep the previous tab's content
+  // on screen while the tab already reports "complete", and Gmail's tab bar holds every tab's name, so the reader's wait
+  // could match the wrong tab. Loading about:blank first makes every settings page a fresh load.
+  const now = await chrome.tabs.get(tabId).catch(() => null);
+  const same = u => { try { const a = new URL(u); const b = new URL(url); return a.origin === b.origin && a.pathname === b.pathname && a.search === b.search; } catch { return false; } };
+  if (now?.url && new URL(url).hash && same(now.url)) {
+    await chrome.tabs.update(tabId, { url: 'about:blank' });
+    for (let i = 0; i < 20; i++) { await sleep(100); if ((await chrome.tabs.get(tabId)).url === 'about:blank') break; }
+  }
   await chrome.tabs.update(tabId, { url });
   const target = new URL(url);
   const t0 = Date.now();
@@ -46,9 +55,11 @@ export async function readToEntries({ check, read, account, ask = null, onState 
   if (!entries.length && ask && read.mainText) {
     onState('nano-reading');
     const r = await ask('sk:read-page', { description: check.label, text: read.mainText });
-    if (!r?.error && r?.entries?.length) { entries = r.entries; howFound = 'nano'; }
+    if (!r?.error && r?.entries?.length) { entries = r.entries; howFound = 'nano'; if (r.partial || read.mainTextCut) partly = true; }
   }
-  if (read.timedOut && !entries.length) return { why: 'did_not_load' };
+  // A page that never showed the words the reader waits for, with nothing read from it: if it has text, it loaded and
+  // looks different; trying again would not help.
+  if (read.timedOut && !entries.length) return { why: String(read.mainText || '').trim() ? 'looked_different' : 'did_not_load' };
   // The page never showed what the reader waits for, so it may not all be there.
   if (read.timedOut) partly = true;
   // Nothing listed counts as nothing found only when the page says so or the setting's own section is there.

@@ -1,8 +1,9 @@
 // The plan on this computer: Gemini Nano orders it from the same finding codes and chosen answers the cloud would see
 // (the toCloud() body), with the steps library's facts for those codes written into its instructions in place of the
-// cloud's get_steps function. This is the plan's PREFER_ON_DEVICE: when Nano is ready, nothing at all leaves the
-// computer, and when it is not, the cloud plan runs (the codes are not private). The plan that comes back passes the
-// same safety rules as the cloud's before anyone sees it.
+// cloud's get_steps function. It runs when the person has turned plan help from the cloud off and Nano is ready, so
+// nothing at all leaves the computer; otherwise the plan made by code is shown (panel.js makePlan). The plan that comes
+// back passes the same safety rules as the cloud's before anyone sees it. Measured on the 40 frozen situations
+// (tools/plan-eval-nano.mjs): 35 answered within the 90-second limit, and the rules made 103 fixes.
 import { deviceJson } from './ai.js';
 import { PLAN_INTRO, PLAN_SHAPE, PLAN_SCHEMA } from './cloud/plan.js';
 

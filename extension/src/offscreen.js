@@ -2,7 +2,8 @@
 // It talks to the side panel and the service worker by runtime messages addressed { target: 'offscreen' }.
 // The network ledger loads first, so it counts every request the Firebase code makes.
 import { ledgerSummary } from './ledger.js';
-import { deviceStatus, deviceJson, cloudJson, liveSettings, resetCloudBudget, remoteLibrary, TEXT_ONLY, TEXT_AND_IMAGE } from './ai.js';
+import { deviceStatus, deviceJson, cloudJson, hybridJson, liveSettings, resetCloudBudget, remoteLibrary, TEXT_ONLY, TEXT_AND_IMAGE } from './ai.js';
+import { cleanText } from '../../shared/plan/invariants.js';
 import { validateLibrary } from '../../shared/steps-schema.js';
 import { classifyEntries, readWholePage, readScreenshot } from './classify.js';
 import { cloudPlan } from './cloud/plan.js';
@@ -72,6 +73,11 @@ async function setupCheck({ cloud = true } = {}) {
 // Gemini Nano work for the scan. Only the extension's own pages may ask (the sender check below).
 // Loading Gemini Nano takes long the first time (104 s on the builder's PC before the first check, November 21, 2026;
 // 4 to 12 s per check after). The panel asks for one tiny prompt as it opens, so the model is loaded before a scan.
+const SIMPLER_SYSTEM = `Rewrite these steps for changing one setting in very simple words, at a grade 4 reading level.
+Keep the same order, and the same number of steps or one more. Keep every button and menu name exactly as written.
+Keep every warning. Do not add names, numbers, links or advice that are not in the steps. Never say safe or secure.`;
+const SIMPLER_SCHEMA = { type: 'object', properties: { steps: { type: 'array', items: { type: 'string', maxLength: 200 } } }, required: ['steps'] };
+
 let warm = null;
 const NANO = {
   'sk:nano-warm': () => (warm ||= deviceJson({
@@ -128,8 +134,30 @@ const NANO = {
   },
   // The plan on this computer (extension/src/device-plan.js): finding codes in, nothing out.
   'sk:device-plan': async ({ body, library }) => devicePlan({ body, library }),
+  // "Say it more simply": one steps library entry's public steps in simpler words, with hybrid inference
+  // (PREFER_ON_DEVICE): Gemini Nano when this computer has it, the cloud when it does not and plan help is on. The text
+  // is the library's, not the person's, so a cloud fallback exposes nothing. Every step comes back through the safety
+  // rules' text check (no reassurance, no contact details or links).
+  'sk:simpler': async ({ code, library }) => {
+    const settings = await liveSettings();
+    const onDevice = (await deviceStatus(TEXT_ONLY)) === 'available';
+    if (!onDevice && !settings.cloudOn) return { off: true };
+    const entry = library?.[code];
+    if (!entry) return { error: 'unknown code' };
+    try {
+      const r = await hybridJson({
+        purpose: 'simpler', body: { code, steps: entry.steps }, guard: { library }, onSend,
+        system: SIMPLER_SYSTEM, schema: SIMPLER_SCHEMA,
+      });
+      const allowed = JSON.stringify(entry);
+      const steps = (r.answer.steps || []).slice(0, entry.steps.length + 1).map(s => cleanText(String(s).slice(0, 200), allowed).text).filter(Boolean);
+      return steps.length ? { steps, source: r.source, model: r.model } : { error: 'empty' };
+    } catch (e) {
+      return { error: String(e && e.message || e).slice(0, 200) };
+    }
+  },
   'sk:classify': async o => ({ items: await classifyEntries(o) }),
-  'sk:read-page': async o => ({ entries: await readWholePage(o) }),
+  'sk:read-page': async o => readWholePage(o),
   // A phone screenshot, read here only: it shows names. Gemini Nano with image input, or nothing.
   'sk:read-screenshot': async o => readScreenshot(o),
   'sk:image-status': async () => ({ status: await deviceStatus(TEXT_AND_IMAGE) }),

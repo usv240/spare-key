@@ -132,6 +132,13 @@ export const OUTGOING = {
     if (!cited.some(s => s.url === b.help_url && s.title === b.help_title)) fail('help page is not one the library cites');
     if (b.steps !== undefined && JSON.stringify(b.steps) !== JSON.stringify(entry?.steps)) fail('steps must be the library entry\'s own steps');
   },
+  // "Say it more simply": one library entry's own public steps, to be put in simpler words (Gemini Nano when this
+  // computer has it, else the cloud). Nothing about the person: a code and the library's text for it.
+  simpler: (b, ctx) => {
+    onlyKeys(b, ['code', 'steps'], 'body');
+    assertCode(b.code);
+    if (JSON.stringify(b.steps) !== JSON.stringify(ctx?.library?.[b.code]?.steps)) fail('steps must be the library entry\'s own steps');
+  },
 };
 
 // The website's practice check (try.html): Gemini sorts entries from the made-up practice pages, on the device when it

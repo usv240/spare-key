@@ -100,3 +100,35 @@ test('every finding code can be planned', () => {
   const { plan } = applyInvariants(buildPlan(ctx), ctx);
   assert.ok(Object.values(planPasses(plan, ctx)).every(Boolean));
 });
+
+test('R9: with mail copied elsewhere, the mail copying comes first and account changes wait with it', async () => {
+  const { buildPlan } = await import('../shared/plan/engine.js');
+  const { applyInvariants, planPasses } = await import('../shared/plan/invariants.js');
+  const library = {};
+  const findings = [
+    { ref: 'f1', code: 'google.recovery.email_other', ownership: 'not_mine' },
+    { ref: 'f2', code: 'google.devices.other', ownership: 'unsure' },
+    { ref: 'f3', code: 'gmail.forwarding.external', ownership: 'not_mine' },
+  ];
+  const ctx = { findings, situation: { safe_to_change_now: 'yes' }, notChecked: [], library };
+  // The code plan puts the forwarding first and explains the link on the account steps.
+  const code = applyInvariants(buildPlan(ctx), ctx).plan;
+  const steps = code.actions.filter(a => ['change_now', 'wait'].includes(a.action));
+  assert.equal(steps[0].code, 'gmail.forwarding.external');
+  assert.ok(steps.filter(a => a.code !== 'gmail.forwarding.external').every(a => /mail is copied/.test(a.linked)));
+  assert.equal(planPasses(code, ctx).linked_order, true);
+  // A model plan that changes the recovery email now while the forwarding waits is fixed.
+  const model = { actions: [
+    { action: 'document', refs: ['f1', 'f2', 'f3'], why: '' }, { action: 'talk_to_advocate', refs: [], why: '' },
+    { action: 'change_now', refs: ['f1'], why: 'Change the recovery email now.' },
+    { action: 'change_now', refs: ['f2'], why: 'Sign out the device.' },
+    { action: 'wait', refs: ['f3'], why: 'Leave the forwarding for later.' },
+  ] };
+  assert.equal(planPasses({ ...model, actions: model.actions.map(a => ({ ...a, code: findings.find(f => f.ref === a.refs[0])?.code })) }, ctx).linked_order, false);
+  const { plan, fired } = applyInvariants(model, ctx);
+  assert.ok(fired.some(f => f.rule === 'R9'));
+  const after = plan.actions.filter(a => ['change_now', 'wait'].includes(a.action));
+  assert.equal(after[0].code, 'gmail.forwarding.external');
+  assert.ok(after.every(a => a.action === 'wait'));
+  assert.equal(planPasses(plan, ctx).linked_order, true);
+});

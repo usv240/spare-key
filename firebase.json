@@ -30,6 +30,15 @@
         ]
       },
       {
+        "source": "**/*.@(js|css|html)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
         "source": "/practice/**",
         "headers": [
           {

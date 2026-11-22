@@ -2,7 +2,7 @@
 // Quick exit is wired first, so it works even if anything below fails.
 import { initInfo, closeInfo, isInfoOpen, prepare, registerInfo } from './ui/info.js';
 import { compareChecks } from './scan/compare.js';
-import { SERVICES, catalogue } from './scan/catalogue.js';
+import { SERVICES, catalogue, pageUrl, PRACTICE_ORIGIN } from './scan/catalogue.js';
 import { setRemoteOverrides } from './scan/overrides.js';
 import { runScan, ScanStopped } from './scan/engine.js';
 import { codeClassify, toFinding } from './scan/rules.js';
@@ -360,7 +360,8 @@ $('clear-all-2').addEventListener('click', clearAll);
 // The plan: built by code at once, then, when plan help is on, ordered by the cloud from codes only. Either way it
 // passes the safety rules before it is shown.
 
-const notCheckedIds = scan => [...scan.outcomes.filter(o => o.status !== 'checked').map(o => o.id), 'other_services'];
+// Not checked, and checked only in part: both become "check it yourself" steps in the plan.
+const notCheckedIds = scan => [...scan.outcomes.filter(o => o.status !== 'checked' || o.partly).map(o => o.id).filter(id => id !== 'screenshot'), 'other_services'];
 
 async function showQuestions() {
   const { situation = { values: {}, share: false } } = await chrome.storage.session.get('situation');
@@ -403,8 +404,8 @@ async function makePlan() {
   $('plan-actions').hidden = false;
   const freshDays = (await offscreen('sk:fresh-days').catch(() => ({})))?.freshDays ?? 45;
   const draw = (result, source, extra = {}) => {
-    lastDraw = { result, source, extra, byRef, freshDays };
-    return renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, freshDays, freshness, onCheckFresh, onOpen: url => chrome.tabs.create({ url }), ...extra });
+    lastDraw = { result, source, extra, byRef, freshDays, scan };
+    return renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, freshDays, freshness, onCheckFresh, ...planHelpers(scan), onOpen: url => chrome.tabs.create({ url }), ...extra });
   };
   draw(codeResult, 'code', { cloudNote: cloudOn ? 'Asking Gemini in the cloud to order this for your situation. It sees finding types only.' : '' });
   $('plan-title')?.focus({ preventScroll: true });
@@ -413,9 +414,9 @@ async function makePlan() {
 
   // 2a. Plan help from the cloud is off: Gemini Nano orders the plan on this computer when it is ready, from the same
   // codes plus every situation answer (nothing leaves, so nothing needs the person's permission to share). When plan
-  // help is on, the cloud orders it instead: on the 40 frozen situations (November 22, 2026), Nano's own plans needed
-  // 100 fixes from the safety rules against 42 for the cloud's (17 after the two voices), and 5 of 40 ran past the time
-  // limit. After the rules, both pass every measure.
+  // help is on, the cloud orders it instead. Measured on the 40 frozen situations (November 22, 2026): before the safety
+  // rules, Nano's plans needed 103 fixes on 35, the cloud's 43 on 30 (18 after the two voices), and the code plan none;
+  // 5 of Nano's 40 ran past the time limit. After the rules, every plan passes every measure.
   const nanoStatus = cloudOn ? null : (await offscreen('sk:nano-status').catch(() => ({})))?.status;
   if (nanoStatus === 'available') {
     const all = Object.fromEntries(Object.keys(SITUATION).map(k => [k, true]));
@@ -486,10 +487,36 @@ async function makePlan() {
 // Steps freshness: the help page's host is asked for inside the click, then the cloud compares the library's steps with it.
 let lastDraw = null;
 const freshness = {};
-function redrawPlan() {
+function redrawPlan(openCode = null) {
   if (!lastDraw) return;
+  // Keep the block the person is reading open after the redraw.
+  if (openCode) queueMicrotask(() => { const b = document.querySelector(`#plan [data-code="${openCode}"]`); if (b?.tagName === 'DETAILS') b.open = true; b?.querySelector('details.later')?.setAttribute('open', ''); });
   const { result, source, extra, byRef, freshDays } = lastDraw;
-  renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, freshDays, freshness, onCheckFresh, onOpen: url => chrome.tabs.create({ url }), ...extra });
+  renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, freshDays, freshness, onCheckFresh, ...planHelpers(lastDraw.scan), onOpen: url => chrome.tabs.create({ url }), ...extra });
+}
+
+// "Say it more simply" and the "check it yourself" links, for every drawing of the plan.
+const simpler = {};
+function planHelpers(scan) {
+  const cat = catalogue();
+  return {
+    simpler,
+    onSimpler,
+    checkLabels: Object.fromEntries(cat.map(c => [c.id, c.label])),
+    onOpenCheck: id => {
+      const c = cat.find(x => x.id === id);
+      const page = c?.pages?.[0];
+      if (!page) return;
+      chrome.tabs.create({ url: scan?.mode === 'practice' ? new URL(page.practiceUrl, PRACTICE_ORIGIN).href : pageUrl(page.url, 0) });
+    },
+  };
+}
+async function onSimpler(code) {
+  simpler[code] = { pending: true };
+  redrawPlan(code);
+  const r = await offscreen('sk:simpler', { code, library: LIBRARY }).catch(e => ({ error: String(e) }));
+  simpler[code] = r?.steps ? { steps: r.steps, source: r.source } : r?.off ? { off: true } : { error: true };
+  redrawPlan(code);
 }
 let budgetScanAt = null;
 function onCheckFresh(code) {

@@ -1,0 +1,46 @@
+{
+  "steps": [
+    {
+      "name": "the practice check runs in the browser",
+      "ok": true,
+      "detail": "24 findings in 11.3 s"
+    },
+    {
+      "name": "the entries were sorted by Gemini (hybrid)",
+      "ok": true,
+      "detail": "Sorted by Gemini in the cloud (gemini-3.5-flash-lite). The practice data is made up, so this is the one place Spare Key lets the cloud read entries."
+    },
+    {
+      "name": "the cloud ordered the plan",
+      "ok": true,
+      "detail": "Ordered with help from Gemini in the cloud, which saw finding types only."
+    },
+    {
+      "name": "the two voices settled it",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "\"What left this computer\" lists every request",
+      "ok": true,
+      "detail": [
+        "Request: voices, gemini-3.5-flash-lite",
+        "Request: voices, gemini-3.5-flash-lite",
+        "Request: voices, gemini-3.5-flash-lite",
+        "Answers to the cloud: plan, gemini-3.5-flash-lite",
+        "Request: plan, gemini-3.5-flash-lite",
+        "Request: practice, gemini-3.5-flash-lite"
+      ]
+    }
+  ],
+  "voices": true,
+  "note": "",
+  "sent": [
+    "Request: voices, gemini-3.5-flash-lite",
+    "Request: voices, gemini-3.5-flash-lite",
+    "Request: voices, gemini-3.5-flash-lite",
+    "Answers to the cloud: plan, gemini-3.5-flash-lite",
+    "Request: plan, gemini-3.5-flash-lite",
+    "Request: practice, gemini-3.5-flash-lite"
+  ]
+}

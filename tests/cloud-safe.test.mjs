@@ -169,3 +169,14 @@ test('the practice screenshot on the website is the one whose hash the practice 
   const shot = JSON.parse(readFileSync('web/practice/phone-sharing.json', 'utf8'));
   assert.equal(createHash('sha256').update(readFileSync('web/practice/phone-sharing.png')).digest('hex'), shot.sha256);
 });
+
+test('"Say it more simply" sends only one library entry\'s own steps', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { libraryMap } = await import('../shared/steps-schema.js');
+  const library = libraryMap(JSON.parse(readFileSync('data/steps.json', 'utf8')));
+  const code = 'gmail.forwarding.external';
+  assert.doesNotThrow(() => checkOutgoing('simpler', { code, steps: library[code].steps }, { library }));
+  assert.throws(() => checkOutgoing('simpler', { code, steps: [...library[code].steps, CANARIES[0]] }, { library }), CloudSafetyError);
+  assert.throws(() => checkOutgoing('simpler', { code, steps: library[code].steps, note: 'x' }, { library }), CloudSafetyError);
+  assert.throws(() => checkOutgoing('simpler', { code: 'not.a.code', steps: [] }, { library }), CloudSafetyError);
+});

@@ -19,7 +19,10 @@ If you need help now: National Domestic Violence Hotline, call 1-800-799-7233 or
 2. **Break the pages.** Before you start, open **Break the pages first** and pick a change (reworded labels, rebuilt
    lists, all four at once). The code readers fail on some pages; watch Gemini read those pages instead, and see every
    page it cannot read listed under "Not checked" instead of shown as empty. Then tick **Apply the fix sent through
-   Remote Config** and run it again: the code readers read every page again.
+   Remote Config** and run it again: the code readers read every page again. After either run, **Read Jordan's
+   screenshot** reads a made-up phone sharing screen. (Checked in Chrome with Gemini Nano on November 22: code read 5 of
+   12 checks, Gemini Nano read 6 more, 1 was listed as "looked different", and the screenshot added 2 people. Automated
+   browsers are refused by App Check's reCAPTCHA, so there Gemini is not asked and the page says so.)
 3. **See what left the computer.** Make the plan, then open **What left this computer**: a ledger of every request
    by destination, and every request to Gemini word for word with the fixed instructions sent with it. In the
    extension, those requests hold finding types like `gmail.forwarding.external`, never a name.
@@ -39,10 +42,28 @@ go to whichever tier the person chooses and the measurements favour; public text
 | Read the settings pages and sort each entry | Gemini Nano | `ONLY_ON_DEVICE` | The pages name the other person. Sending them anywhere is the harm, so there is no cloud fallback, on purpose |
 | Read a page the code reader cannot (a site changed it) | Gemini Nano | `ONLY_ON_DEVICE` | Same |
 | Read a screenshot of a phone location app (Life360, Find My) | Gemini Nano, image input | `ONLY_ON_DEVICE` | A screenshot shows names |
-| Order the plan | Gemini in the cloud if plan help is on; Gemini Nano if the person turned it off | `ONLY_IN_CLOUD` with function calling, or `ONLY_ON_DEVICE` | Finding codes only. The cloud asks the device yes/no questions (`ask_device`), the person (`ask_user`), and reads the public steps (`get_steps`). Measured on 40 frozen situations: Nano's own plans needed 100 safety-rule fixes, the cloud's 42 (17 after the two voices), so the cloud orders by default and Nano is the private option |
+| Order and explain the plan | Gemini in the cloud if plan help is on; Gemini Nano if the person turned it off | `ONLY_IN_CLOUD` with function calling, or `ONLY_ON_DEVICE` | Finding codes only. The cloud asks the device yes/no questions (`ask_device`), the person (`ask_user`), and reads the public steps (`get_steps`). Code's safety rules decide what is shown either way (below) |
 | Two voices ("close the doors" against "stay hidden", then settle) | Gemini in the cloud | `ONLY_IN_CLOUD` | Codes only; each voice argues from the steps library's facts |
 | Check a step still matches the official help page | Gemini in the cloud | `ONLY_IN_CLOUD`, URL context | A code and a public help page |
 | The practice check on the website | Either | `PREFER_ON_DEVICE` | Made-up data |
+
+### What code decides, and what Gemini adds
+
+Code decides everything that keeps a person out of danger. The readers and rules find the ways in on pages they know,
+and the plan made by code, with no model, passes every safety measure on its own (30 of 30 on all seven measures). The
+safety rules (R1 to R9) then check any plan a model writes, so a model can never make the plan less careful.
+
+Gemini adds what code cannot do, measured:
+
+| What | Without Gemini | With Gemini |
+|---|---|---|
+| Read settings pages a site has changed (all four kinds of change at once) | 8 of 24 ways in shown | 18 of 24 with Gemini Nano on the computer |
+| Read a phone app's sharing screen from a screenshot | nothing (code cannot read a picture) | 3 of 3 made-up people, with "Me" left out |
+| Order the plan for this person's situation and say why each step comes where it does, in plain words | one fixed order and stock sentences | per-situation order and wording; Gemini asks the computer yes/no questions it needs |
+
+The plan's ordering is where models still fall short, so the rules stay in charge: before the rules ran, the cloud's
+plans needed 43 fixes on 30 situations (18 after the two voices), Gemini Nano's 103 on 35. So the cloud orders the plan
+by default, and Gemini Nano is the private option for a person who turns plan help off.
 
 `shared/cloud-safe.js` is the only exit to the cloud. `toCloud()` builds a new object from an allow-list of codes and
 enums, and `checkOutgoing()` checks every request again just before it is sent, refusing any request that holds a name,
@@ -54,22 +75,25 @@ fetches, at most once an hour, with no store update), Cloud Firestore (the publi
 
 ## Results
 
-All from scripts in `tools/`; details and limits in [docs/accuracy.md](docs/accuracy.md).
+All from scripts in `tools/`; details and limits in [docs/accuracy.md](docs/accuracy.md), and the saved runs in
+[docs/evidence/](docs/evidence/).
 
-- **Practice pages:** 24 of 24 planted ways in found, 0 false alarms, code only and with Gemini Nano.
+- **Practice pages:** 24 of 24 planted ways in found, code only and with Gemini Nano, and none of the 4 entries that
+  belong to the person flagged. On a real account, your own phones, authenticator and Kindle are listed too, by design,
+  for you to mark "Mine": Spare Key cannot tell whose phone is whose.
 - **When a site changes its pages:** a script changed the 13 practice pages five ways. On the first, blind run, a
   check said it was done while missing a way in 24 times. Now 0 times, with code alone and with Gemini Nano: a page that
   cannot be read is listed under "Not checked". Nano reads what code cannot (pages changed all four ways: 8 of 24 shown
-  by code, 19 with Nano, 24 after the Remote Config fix).
+  by code, 18 with Nano, 24 after the Remote Config fix).
 - **Privacy:** 0 of 20 requests from the extension held a name, email, phone number, device or place, in a full check
   with every cloud step on; all 9 model requests matched "What left this computer" word for word, and the panel's own
   ledger agreed (0 of 13). The cloud plan asked the device a yes/no question (`ask_device`) and got an enum back.
 - **Plan safety (40 situations written before any run):** a plain chatbot put screenshots before changes in 4 of 30
   answered situations; every plan Spare Key shows does in 30 of 30, and carries the warning that a change may be noticed
-  in 30 of 30. With plan help off, Gemini Nano orders
-  the plan on the computer: its own plans needed 100 fixes from the safety rules on 35 answered situations, against 42
-  for the cloud's (17 after the two voices), and after the rules pass every measure in 35 of 35. That measurement is why
-  the cloud orders by default and Nano is the private option.
+  in 30 of 30. Where the person's mail was copied to someone else and an account change was also needed (7 of the 30),
+  the chatbot brought up the account change (recovery, password, sign-ins) before stopping the mail copying in 3 of 7:
+  Google's alert emails and codes would then reach the other person. Spare Key's rule R9 puts the mail copying first in
+  7 of 7. The rule was added after these runs, and the chatbot's answers are judged by keyword position, which is rough.
 
 Limits: no survivor or advocate has tested it yet; the readers have not yet been measured on real test-account pages;
 the free tier failed 10 of 40 plan situations (when the cloud does not answer, you get the plan made on your computer).

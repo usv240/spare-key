@@ -4,6 +4,9 @@ Measured on November 21 and 22, 2026, with extension version 0.1.0 and Chrome 15
 (32 GB of RAM, with other programs running and as little as 1 to 3 GB free during the runs). Every number comes from a
 script in `tools/` that anyone can run. Misses and limits are reported as plainly as passes.
 
+The saved runs behind every number are in [docs/evidence/](evidence/), copied from `tools/out/` by
+`tools/save-evidence.mjs`.
+
 ## 1. Planted ways in (EVALUATION.md section 1)
 
 **Practice pages only, so far.** 13 made-up settings pages for a person called Jordan (`web/practice/pages.mjs`) with
@@ -16,12 +19,18 @@ labels mail, Jordan's own household profile).
 | Code and Gemini Nano | 24 of 24 | 0 | 101 s for 12 checks, after loading Gemini Nano (133 s, once) | `tools/e2e-practice.mjs --nano` |
 
 "0 false alarms" rests on only 4 entries that belong to Jordan. On a real account, the person's own phone, recovery
-number, authenticator app and Kindle are listed too, by design, for the person to mark "Not mine": Spare Key cannot tell
+number, authenticator app and Kindle are listed too, by design, for the person to mark "Mine": Spare Key cannot tell
 whose phone is whose, so it shows them rather than guess.
 
 What this does not show: the builder wrote the practice pages and tuned the readers on them, so this proves the whole
 system works end to end, not how well it reads real pages. The planted-access test on real test accounts (25 paths,
 10 controls, three modes, three runs each) has not been run yet: it needs the test accounts (`docs/test-accounts.md`).
+
+**A second rule from a live run (November 22).** On the website's practice check in the builder's Chrome, Gemini Nano
+sorted all 24 entries in one prompt and called four household and family members the person's own, Sam Porter among
+them; the rules then hid them, and the plan said 20 settings instead of 24. Now only the page's own words (like "(you)"
+or the person's own address) can make an entry the person's: Nano may say an entry is not theirs, never that it is
+(`extension/src/scan/rules.js` merge, `tests/rules.test.mjs`).
 
 What Gemini Nano changed: on its first run it marked an "Active now" phone as "this computer" (which would have hidden
 it), gave a "Sign in with Google" app full access, and dated a device the page gave no date for. The rules now let code
@@ -70,16 +79,18 @@ the dangerous kind, because "nothing found" reads as "nobody has access".
 | Reworded | 14 (13) | 0 | 18 (16) | 0 | 24 (24) |
 | Rebuilt | 19 (19) | 0 | 24 (24) | 0 | 24 (24) |
 | New formats | 24 (24) | 0 | 24 (24) | 0 | 24 (24) |
-| All four | 8 (8) | 0 | 19 (17) | 0 | 24 (24) |
+| All four | 8 (8) | 0 | 18 (17) | 0 | 24 (24) |
 
 With code alone and with Gemini Nano, every way in that is not shown is on a check marked "Not checked" or "checked in
 part", which tells the
 person to look for themselves.
 
-Gemini Nano listed 3 entries that are not planted ways in (2 on the reworded copy, 1 on the all-four copy); each is
-shown for the person to mark "Not mine". With Nano, reading the 13 pages of one copy took 106 to 160 seconds on this PC
-(code alone: about 1 second, or 15 seconds when headings changed and the reader waited for them). Nano read is
-`tools/out/drift-nano.json`; the totals are in `web/src/data/drift.json`.
+Entries listed that are not planted ways in: code alone listed 1 (on the reworded copy, an app whose access the page
+no longer said, listed as "can use your Google account" rather than dropped); Gemini Nano listed 13 (4 on the reworded
+copy, 9 on the all-four copy), mostly one device or person split into two entries. Each is shown for the person to mark
+"Mine" or "Not mine". This went up from 3 when Nano lost the power to call an entry the person's own (above): an extra
+entry costs a tap, a hidden one can cost the person's safety. These Nano numbers are from the run with that rule, on
+November 22.
 
 Limits: the builder wrote both the pages and the changes, so this measures how Spare Key fails, not how often real sites
 change. The Remote Config fixes (`web/practice/drift-fixes.mjs`) were written after seeing what broke, so that column
@@ -137,13 +148,14 @@ counted rule R3 as a fix (R3 adds the library's warning to every noticeable "cha
 | Never promises "you are safe", "all clear" or the like | 23 | 30 | 26 | 26 | 30 |
 | Every finding covered | 27 | 30 | 30 | 29 | 30 |
 | Changes that may be noticed wait, when now may not be a good time | 22 | 30 | 30 | 30 | 30 |
+| Mail copying stopped before account changes Google emails about (R9) | 27 | 30 | 29 | 28 | 30 |
 
 Fixes the safety rules made to the model's plan (R3 not counted):
 
-| | R1 finding missing | R6 promise or banned word | R8 not-checked step | Total |
-|---|---|---|---|---|
-| C. Cloud plan | 0 | 38 | 4 | 42 |
-| D. With two voices | 5 | 12 | 0 | 17 |
+| | R1 finding missing | R6 promise or banned word | R8 not-checked step | R9 linked order | Total |
+|---|---|---|---|---|---|
+| C. Cloud plan | 0 | 38 | 4 | 1 | 43 |
+| D. With two voices | 5 | 12 | 0 | 1 | 18 |
 
 Rule R6 removes any sentence with the word "safe" or "secure", not only promises, because Spare Key never uses those
 words (README hard rule 3). That is why R6 fires more often than the "promise" measure fails.
@@ -157,8 +169,14 @@ words (README hard rule 3). That is why R6 fires more often than the "promise" m
   and did not tell the person to wait in 8 of the 21 situations where now may not be a good time.
 - The cloud plan alone (C) left out the warning on a noticeable "change now" step in 6 of 30 situations, and the two
   voices (D) in 4. Rule R3 attaches the library's warning in every case.
-- The two voices cut the fixes from 42 to 17, and cut "change now" steps from 27 to 15 (more waits). They also dropped
+- The two voices cut the fixes from 43 to 18, and cut "change now" steps from 27 to 15 (more waits). They also dropped
   a finding 5 times, which rule R1 put back.
+- **Linked findings (R9, added November 22, after these runs).** In 7 of the 30 situations, the person's mail was copied
+  to someone else (forwarding, a forwarding filter, a delegate) and an account change was also needed (recovery, 2-Step
+  Verification, signed-in devices). Any email Google sends about such a change, like a security alert or a code, would
+  reach the other person, so the mail copying has to come first. The plain chatbot brought up the account change first
+  in 3 of the 7 (keyword position, rough); the cloud plan got it wrong once, the two voices twice. The code plan puts the
+  mail copying first by construction, and R9 fixes any model plan that does not.
 - What a person sees (E) passes every measure by construction: the rules enforce it whatever the model writes.
 - 10 of 40 situations failed in the cloud, a quarter of the run. On the free tier, the plan made by code on the
   computer is what a person sees when the cloud does not answer, and it passes every measure.
@@ -186,11 +204,12 @@ for a person, who then gets the code plan). Median 29.5 seconds per plan on this
 | Never promises "you are safe", "all clear" or the like | 33 | 35 |
 | Every finding covered | 27 | 35 |
 | Changes that may be noticed wait, when now may not be a good time | 11 | 35 |
+| Mail copying stopped before account changes Google emails about (R9) | 31 | 35 |
 
-The safety rules made **100 fixes** to Nano's 35 plans (R3 not counted): 44 moved a noticeable change to "wait" (R4),
+The safety rules made **103 fixes** to Nano's 35 plans (R3 not counted): 44 moved a noticeable change to "wait" (R4),
 22 added a "check it yourself" step (R8), 17 put back a finding Nano left out (R1), 8 added the advocate step (R5), 5
-removed a banned word (R6), 4 moved the screenshot step first (R2). For comparison, the cloud plan on the 30 situations
-it answered needed 42, and 17 after the two voices. On the 25 situations both answered, Nano said to change a noticeable
+removed a banned word (R6), 4 moved the screenshot step first (R2), 3 put the mail copying first (R9). For comparison,
+the cloud plan on the 30 situations it answered needed 43, and 18 after the two voices. The plan made by code needs none. On the 25 situations both answered, Nano said to change a noticeable
 setting now when now may not be a good time far more often (Nano's plans had 58 "change now" steps across 35 plans,
 against 27 for the cloud's 30).
 

@@ -46,6 +46,10 @@ export const READ_PAGE_SCHEMA = {
   properties: { entries: { type: 'array', items: { type: 'object', properties: { text: { type: 'string', maxLength: 300 } }, required: ['text'] } } },
   required: ['entries'],
 };
+// A structured form (a name plus details per item) was tried on November 22, 2026 but could not be measured: the PC ran
+// out of memory for Gemini Nano. This is the form the published drift numbers were measured with.
+/** One answer entry from READ_PAGE_SCHEMA as an entry's text. */
+export const pageItemText = e => String(e?.text || '').trim().slice(0, 300);
 
 // A screenshot of a phone app's sharing screen (TECHNICAL-DESIGN.md section 6.3): read by Gemini Nano on this computer
 // only, because it shows names. The picture is not kept after reading.
@@ -128,18 +132,21 @@ export async function classifyEntries({ description, owner, entries }) {
 
 const flat = s => String(s).replace(/\s+/g, ' ').trim();
 
-/** When a reader found nothing on a page that loaded: Nano reads the page text itself, in chunks. */
+/**
+ * When a reader found nothing on a page that loaded: Nano reads the page text itself, in chunks, up to 14,000
+ * characters. Returns { entries, partial }: partial when the page had more text than that, so the check says "in part".
+ */
 export async function readWholePage({ description, text }) {
   const entries = [];
   const body = String(text || '');
   for (let start = 0; start < body.length && start < CHUNK * 4; start += CHUNK) {
     const chunk = body.slice(start, start + CHUNK);
     const answer = await deviceJson({ system: READ_PAGE_SYSTEM, schema: READ_PAGE_SCHEMA, text: `Find: ${description}\n\nPage text:\n${chunk}`, timeoutMs: NANO_LIMIT_MS });
-    for (const e of answer.entries || []) {
-      const t = String(e.text || '').trim().slice(0, 300);
+    for (const it of answer.entries || []) {
+      const t = pageItemText(it);
       // Keep only words that are really on the page: Nano copies, it does not write.
       if (t && flat(body).includes(flat(t.slice(0, Math.min(40, t.length)))) && !entries.some(x => x.text === t)) entries.push({ i: entries.length, text: t, href: '', state: [] });
     }
   }
-  return entries;
+  return { entries, partial: body.length > CHUNK * 4 };
 }

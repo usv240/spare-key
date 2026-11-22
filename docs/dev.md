@@ -23,7 +23,9 @@ Commands run from the `spare-key` folder. Node 20 or later, Chrome, and (for the
 | Plan safety, rescore the saved cloud run | `node tools/plan-eval-score.mjs` (offline) |
 | Phone screenshot reading with Gemini Nano | `node tools/screenshot-check.mjs` (a made-up sharing screen; no cloud calls) |
 | Plan screen screenshots | `node tools/plan-shots.mjs` |
-| Privacy test | `node tools/privacy-test.mjs` (about 7 cloud calls) |
+| Privacy test | `node tools/privacy-test.mjs` (about 9 cloud calls) |
+| Copy the saved runs into `docs/evidence/` | `node tools/save-evidence.mjs` (refuses a file holding the debug token) |
+| "Break the pages first" and the phone screenshot on the live site | `node tools/try-break.mjs` (about 12 cloud calls; automated browsers are refused by App Check) |
 
 Load the extension by hand: `chrome://extensions`, turn on Developer mode, Load unpacked, pick `extension/`. Its id is
 always `opmpimgddnahhbmhioookicpekibjahl` (fixed by the `key` in `manifest.json`).

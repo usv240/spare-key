@@ -1,0 +1,32 @@
+[
+ {
+  "name": "changed pages: the result says what happened",
+  "ok": true,
+  "detail": "Pages changed: all four at once. The code reader read 5 of 12 checks. 7 could not be read, so they are listed under “Not checked” rather than shown as empty."
+ },
+ {
+  "name": "changed pages: pages that could not be read are listed, not shown as empty",
+  "ok": true,
+  "detail": "11 listed"
+ },
+ {
+  "name": "with the Remote Config fix, the code reader reads every page",
+  "ok": true,
+  "detail": "24 findings; Pages changed: all four at once, with the Remote Config fix. The code reader read 12 of 12 checks."
+ },
+ {
+  "name": "Jordan's screenshot is read and its people are added",
+  "ok": false,
+  "detail": "24 findings; Gemini could not read the screenshot just now. You can try again."
+ },
+ {
+  "name": "the ledger lists where requests went",
+  "ok": true,
+  "detail": "Requests from this page, by where they went Sent to Requests Size Gemini in the cloud 2 85.1 KB App Check (proof this is Spare Key) 1 2.5 KB www.google.com 1 1.9 KB spare-key-app.web.app 1 27 bytes"
+ },
+ {
+  "name": "the screenshot request is logged by its hash, not its pixels",
+  "ok": true,
+  "detail": ""
+ }
+]

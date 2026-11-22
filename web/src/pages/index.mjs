@@ -28,7 +28,7 @@ export default function index({ numbers, drift = null }) {
         <a class="btn btn-primary" href="/install.html">Get the Chrome extension</a>
         <a class="btn btn-secondary" href="/try.html">Try the practice check</a>
       </div>
-      <p class="hero-note">Free. No sign-in. If someone may be watching this computer, a library computer or a friend’s device is a better place to check. ${info('shared-computer', 'About using a shared computer')}</p>
+      <p class="hero-note">Free. No sign-in. If someone may be watching this computer, a computer they never use, like a trusted friend’s, is a better place to check. ${info('shared-computer', 'About using a shared computer')}</p>
       <p class="hero-note"><a href="#tour" id="tour-start">New here? Take the two-minute tour</a></p>
     </div>
     <figure class="panel-frame" id="panel-demo">

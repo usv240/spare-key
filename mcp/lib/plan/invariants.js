@@ -1,7 +1,8 @@
-// The safety rules every plan passes, from code or from the cloud (TECHNICAL-DESIGN.md section 8, rules R1 to R8).
+// The safety rules every plan passes, from code or from the cloud (TECHNICAL-DESIGN.md section 8, rules R1 to R8, and R9
+// for linked findings, added November 22, 2026).
 // Code enforces them whatever a model wrote, and records each time one had to change the plan, so the panel can show
 // "Spare Key added this warning" and the evaluation can count how often the cloud needed fixing.
-import { ACTIONS, noticeOf } from './engine.js';
+import { ACTIONS, noticeOf, MAIL_OUT, EMAILS_ABOUT, LINKED_NOTE } from './engine.js';
 import { SITUATION_DEFAULTS } from '../findings.js';
 
 // R6: words a plan must never use.
@@ -25,7 +26,7 @@ export function cleanText(text, allowedText = '') {
 }
 
 /**
- * Apply R1 to R8 to a plan. Returns { plan, fired: [{ rule, ref?, detail }] }.
+ * Apply R1 to R9 to a plan. Returns { plan, fired: [{ rule, ref?, detail }] }.
  *   plan:       { actions: [{ action, refs, code, why }], summary? }
  *   findings:   [{ ref, code, ownership }]
  *   situation, notChecked, library: as in buildPlan
@@ -119,6 +120,27 @@ export function applyInvariants(plan, { findings = [], situation = {}, notChecke
     fired.push({ rule: 'R5', detail: 'advocate step moved before the first change' });
   }
 
+  // R9: linked findings. While mail is copied to someone else, the mail copying comes before any account change Google
+  // emails about, every such change carries the note saying why, and none of them happens now while the copying waits.
+  const mailSteps = actions.filter(a => isStep(a) && MAIL_OUT.has(a.code));
+  if (mailSteps.length) {
+    const linkedSteps = actions.filter(a => isStep(a) && EMAILS_ABOUT.has(a.code));
+    for (const a of linkedSteps) {
+      a.linked = LINKED_NOTE;
+      if (a.action === 'change_now' && mailSteps.some(m => m.action === 'wait')) {
+        a.action = 'wait';
+        a.why = 'Spare Key moved this to wait: your mail copying waits, and Google’s emails about this change would reach the other person.';
+        fired.push({ rule: 'R9', ref: a.refs[0], detail: 'account change moved to wait while mail copying waits' });
+      }
+    }
+    const lastMail = Math.max(...mailSteps.map(m => actions.indexOf(m)));
+    const early = linkedSteps.filter(a => actions.indexOf(a) < lastMail);
+    if (early.length) {
+      actions = [...actions.filter(a => !early.includes(a)).slice(0, lastMail - early.length + 1), ...early, ...actions.filter(a => !early.includes(a)).slice(lastMail - early.length + 1)];
+      fired.push({ rule: 'R9', ref: early[0].refs[0], detail: `${early.length} account ${early.length === 1 ? 'change' : 'changes'} moved after the mail copying` });
+    }
+  }
+
   // R8: everything not checked has a "check it yourself" step. A model's check step names no check id (it sees only
   // codes), so its steps are matched to the not-checked list in order.
   const free = actions.filter(a => a.action === 'check_manually' && !a.check);
@@ -162,6 +184,14 @@ export function planPasses(plan, { findings = [], situation = {}, library = {} }
   const warned = acts.filter(a => a.action === 'change_now' && noticeOf(library, a.code) !== 'unlikely').every(a => a.warning);
   const order = s.safe_to_change_now === 'yes' || acts.every(a => a.action !== 'change_now' || noticeOf(library, a.code) === 'unlikely');
   const words = [plan.summary || '', ...acts.map(a => a.why)].join(' ');
+  // R9's measure: with mail copied elsewhere, every account change Google emails about comes after the mail copying, and
+  // none happens now while the copying waits. Passes trivially when the plan has no such pair.
+  const steps = acts.filter(a => ['change_now', 'wait'].includes(a.action));
+  const mail = steps.filter(a => MAIL_OUT.has(a.code));
+  const later = steps.filter(a => EMAILS_ABOUT.has(a.code));
+  const linkedOrder = !mail.length || !later.length || (
+    later.every(a => acts.indexOf(a) > Math.max(...mail.map(m => acts.indexOf(m))))
+    && !(mail.some(m => m.action === 'wait') && later.some(a => a.action === 'change_now')));
   return {
     alert_warning: warned,
     document_first: !open.length || (doc >= 0 && (firstChange < 0 || doc < firstChange)),
@@ -169,5 +199,6 @@ export function planPasses(plan, { findings = [], situation = {}, library = {} }
     no_false_reassurance: !REASSURE.test(words),
     coverage: covered,
     order,
+    linked_order: linkedOrder,
   };
 }

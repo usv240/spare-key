@@ -1,0 +1,1882 @@
+{
+ "date": "November 22, 2026",
+ "results": [
+  {
+   "kind": "none",
+   "label": "As made (no change)",
+   "mode": "code",
+   "found": 24,
+   "of": 24,
+   "silentMisses": 0,
+   "falseAlarms": 0,
+   "notChecked": 0,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 1.2,
+   "rows": [
+    {
+     "id": "google.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.apps",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.recovery",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.2sv",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "maps.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.forwarding",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.filters",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.delegates",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.household",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.family",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "photos.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    }
+   ]
+  },
+  {
+   "kind": "renamed",
+   "label": "Class names and link paths renamed",
+   "mode": "code",
+   "found": 19,
+   "of": 24,
+   "silentMisses": 5,
+   "falseAlarms": 0,
+   "notChecked": 0,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 1,
+   "rows": [
+    {
+     "id": "google.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 0,
+     "missing": [
+      "google.devices google.devices.other",
+      "google.devices google.devices.other",
+      "google.devices google.devices.other"
+     ],
+     "extra": [],
+     "silent": 3,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.apps",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "google.apps google.apps.read_mail",
+      "google.apps google.apps.location"
+     ],
+     "extra": [],
+     "silent": 2,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.recovery",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.2sv",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "maps.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.forwarding",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.filters",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.delegates",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.household",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.family",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "photos.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    }
+   ]
+  },
+  {
+   "kind": "renamed",
+   "label": "Class names and link paths renamed",
+   "mode": "fixed",
+   "found": 19,
+   "of": 24,
+   "silentMisses": 5,
+   "falseAlarms": 0,
+   "notChecked": 0,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 0.5,
+   "rows": [
+    {
+     "id": "google.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 0,
+     "missing": [
+      "google.devices google.devices.other",
+      "google.devices google.devices.other",
+      "google.devices google.devices.other"
+     ],
+     "extra": [],
+     "silent": 3,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.apps",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "google.apps google.apps.read_mail",
+      "google.apps google.apps.location"
+     ],
+     "extra": [],
+     "silent": 2,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.recovery",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.2sv",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "maps.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.forwarding",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.filters",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.delegates",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.household",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.family",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "photos.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    }
+   ]
+  },
+  {
+   "kind": "reworded",
+   "label": "Headings and labels reworded",
+   "mode": "code",
+   "found": 13,
+   "of": 24,
+   "silentMisses": 7,
+   "falseAlarms": 0,
+   "notChecked": 2,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 13.3,
+   "rows": [
+    {
+     "id": "google.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.apps",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 2,
+     "found": 1,
+     "missing": [
+      "google.apps google.apps.location"
+     ],
+     "extra": [],
+     "silent": 1,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.recovery",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.2sv",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 3,
+     "found": 1,
+     "missing": [
+      "google.2sv google.2sv.other_device",
+      "google.2sv google.2sv.other_device"
+     ],
+     "extra": [],
+     "silent": 2,
+     "nanoMs": 0
+    },
+    {
+     "id": "maps.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 2,
+     "found": 1,
+     "missing": [
+      "maps.sharing maps.sharing.link"
+     ],
+     "extra": [],
+     "silent": 1,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.forwarding",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 0,
+     "missing": [
+      "gmail.forwarding gmail.forwarding.external"
+     ],
+     "extra": [],
+     "silent": 1,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.filters",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "gmail.filters gmail.filter.forwards",
+      "gmail.filters gmail.filter.hides"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.delegates",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.household",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "amazon.household amazon.household.adult",
+      "amazon.household amazon.household.teen"
+     ],
+     "extra": [],
+     "silent": 2,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.family",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "google.family google.family.manager_other",
+      "google.family google.family.member"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "photos.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    }
+   ]
+  },
+  {
+   "kind": "reworded",
+   "label": "Headings and labels reworded",
+   "mode": "fixed",
+   "found": 13,
+   "of": 24,
+   "silentMisses": 7,
+   "falseAlarms": 0,
+   "notChecked": 2,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 13.3,
+   "rows": [
+    {
+     "id": "google.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.apps",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 2,
+     "found": 1,
+     "missing": [
+      "google.apps google.apps.location"
+     ],
+     "extra": [],
+     "silent": 1,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.recovery",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.2sv",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 3,
+     "found": 1,
+     "missing": [
+      "google.2sv google.2sv.other_device",
+      "google.2sv google.2sv.other_device"
+     ],
+     "extra": [],
+     "silent": 2,
+     "nanoMs": 0
+    },
+    {
+     "id": "maps.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 2,
+     "found": 1,
+     "missing": [
+      "maps.sharing maps.sharing.link"
+     ],
+     "extra": [],
+     "silent": 1,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.forwarding",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 0,
+     "missing": [
+      "gmail.forwarding gmail.forwarding.external"
+     ],
+     "extra": [],
+     "silent": 1,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.filters",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "gmail.filters gmail.filter.forwards",
+      "gmail.filters gmail.filter.hides"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.delegates",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.household",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "amazon.household amazon.household.adult",
+      "amazon.household amazon.household.teen"
+     ],
+     "extra": [],
+     "silent": 2,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.family",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "google.family google.family.manager_other",
+      "google.family google.family.member"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "photos.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    }
+   ]
+  },
+  {
+   "kind": "rebuilt",
+   "label": "Lists and tables rebuilt from plain boxes, links turned into buttons",
+   "mode": "code",
+   "found": 16,
+   "of": 24,
+   "silentMisses": 8,
+   "falseAlarms": 0,
+   "notChecked": 0,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 0.7,
+   "rows": [
+    {
+     "id": "google.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 0,
+     "missing": [
+      "google.devices google.devices.other",
+      "google.devices google.devices.other",
+      "google.devices google.devices.other"
+     ],
+     "extra": [],
+     "silent": 3,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.apps",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "google.apps google.apps.read_mail",
+      "google.apps google.apps.location"
+     ],
+     "extra": [],
+     "silent": 2,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.recovery",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.2sv",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 1,
+     "missing": [
+      "google.2sv google.2sv.other_device",
+      "google.2sv google.2sv.other_device"
+     ],
+     "extra": [],
+     "silent": 2,
+     "nanoMs": 0
+    },
+    {
+     "id": "maps.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 1,
+     "missing": [
+      "maps.sharing maps.sharing.person"
+     ],
+     "extra": [],
+     "silent": 1,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.forwarding",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.filters",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.delegates",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.household",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.family",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "photos.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    }
+   ]
+  },
+  {
+   "kind": "rebuilt",
+   "label": "Lists and tables rebuilt from plain boxes, links turned into buttons",
+   "mode": "fixed",
+   "found": 16,
+   "of": 24,
+   "silentMisses": 8,
+   "falseAlarms": 0,
+   "notChecked": 0,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 0.7,
+   "rows": [
+    {
+     "id": "google.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 0,
+     "missing": [
+      "google.devices google.devices.other",
+      "google.devices google.devices.other",
+      "google.devices google.devices.other"
+     ],
+     "extra": [],
+     "silent": 3,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.apps",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "google.apps google.apps.read_mail",
+      "google.apps google.apps.location"
+     ],
+     "extra": [],
+     "silent": 2,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.recovery",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.2sv",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 1,
+     "missing": [
+      "google.2sv google.2sv.other_device",
+      "google.2sv google.2sv.other_device"
+     ],
+     "extra": [],
+     "silent": 2,
+     "nanoMs": 0
+    },
+    {
+     "id": "maps.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 1,
+     "missing": [
+      "maps.sharing maps.sharing.person"
+     ],
+     "extra": [],
+     "silent": 1,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.forwarding",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.filters",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.delegates",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.household",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.family",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "photos.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    }
+   ]
+  },
+  {
+   "kind": "formats",
+   "label": "Phone numbers, dates and names written differently",
+   "mode": "code",
+   "found": 23,
+   "of": 24,
+   "silentMisses": 1,
+   "falseAlarms": 0,
+   "notChecked": 0,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 0.6,
+   "rows": [
+    {
+     "id": "google.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.apps",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.recovery",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.2sv",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 2,
+     "missing": [
+      "google.2sv google.2sv.other_device"
+     ],
+     "extra": [],
+     "silent": 1,
+     "nanoMs": 0
+    },
+    {
+     "id": "maps.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.forwarding",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.filters",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.delegates",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.household",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.family",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "photos.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    }
+   ]
+  },
+  {
+   "kind": "formats",
+   "label": "Phone numbers, dates and names written differently",
+   "mode": "fixed",
+   "found": 23,
+   "of": 24,
+   "silentMisses": 1,
+   "falseAlarms": 0,
+   "notChecked": 0,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 0.6,
+   "rows": [
+    {
+     "id": "google.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.apps",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.recovery",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.2sv",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 2,
+     "missing": [
+      "google.2sv google.2sv.other_device"
+     ],
+     "extra": [],
+     "silent": 1,
+     "nanoMs": 0
+    },
+    {
+     "id": "maps.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.forwarding",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.filters",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.delegates",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.household",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.family",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "photos.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    }
+   ]
+  },
+  {
+   "kind": "all",
+   "label": "All four at once",
+   "mode": "code",
+   "found": 7,
+   "of": 24,
+   "silentMisses": 3,
+   "falseAlarms": 0,
+   "notChecked": 6,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 13.3,
+   "rows": [
+    {
+     "id": "google.devices",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 0,
+     "missing": [
+      "google.devices google.devices.other",
+      "google.devices google.devices.other",
+      "google.devices google.devices.other"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.apps",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "google.apps google.apps.read_mail",
+      "google.apps google.apps.location"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.recovery",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.2sv",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 0,
+     "missing": [
+      "google.2sv google.2sv.other_device",
+      "google.2sv google.2sv.other_device",
+      "google.2sv google.2sv.other_device"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "maps.sharing",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "maps.sharing maps.sharing.person",
+      "maps.sharing maps.sharing.link"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.forwarding",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 0,
+     "missing": [
+      "gmail.forwarding gmail.forwarding.external"
+     ],
+     "extra": [],
+     "silent": 1,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.filters",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "gmail.filters gmail.filter.forwards",
+      "gmail.filters gmail.filter.hides"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.delegates",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.household",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "amazon.household amazon.household.adult",
+      "amazon.household amazon.household.teen"
+     ],
+     "extra": [],
+     "silent": 2,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.family",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "google.family google.family.manager_other",
+      "google.family google.family.member"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "photos.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    }
+   ]
+  },
+  {
+   "kind": "all",
+   "label": "All four at once",
+   "mode": "fixed",
+   "found": 7,
+   "of": 24,
+   "silentMisses": 3,
+   "falseAlarms": 0,
+   "notChecked": 6,
+   "checks": 12,
+   "nanoRead": 0,
+   "seconds": 13.2,
+   "rows": [
+    {
+     "id": "google.devices",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 0,
+     "missing": [
+      "google.devices google.devices.other",
+      "google.devices google.devices.other",
+      "google.devices google.devices.other"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.apps",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "google.apps google.apps.read_mail",
+      "google.apps google.apps.location"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.recovery",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 2,
+     "found": 2,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.2sv",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 0,
+     "missing": [
+      "google.2sv google.2sv.other_device",
+      "google.2sv google.2sv.other_device",
+      "google.2sv google.2sv.other_device"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "maps.sharing",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "maps.sharing maps.sharing.person",
+      "maps.sharing maps.sharing.link"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.forwarding",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 0,
+     "missing": [
+      "gmail.forwarding gmail.forwarding.external"
+     ],
+     "extra": [],
+     "silent": 1,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.filters",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "gmail.filters gmail.filter.forwards",
+      "gmail.filters gmail.filter.hides"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "gmail.delegates",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.household",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "amazon.household amazon.household.adult",
+      "amazon.household amazon.household.teen"
+     ],
+     "extra": [],
+     "silent": 2,
+     "nanoMs": 0
+    },
+    {
+     "id": "amazon.devices",
+     "status": "checked",
+     "how": "reader",
+     "partly": false,
+     "want": 3,
+     "found": 3,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "google.family",
+     "status": "not_checked",
+     "how": "reader",
+     "partly": false,
+     "want": 2,
+     "found": 0,
+     "missing": [
+      "google.family google.family.manager_other",
+      "google.family google.family.member"
+     ],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    },
+    {
+     "id": "photos.sharing",
+     "status": "checked",
+     "how": "reader",
+     "partly": true,
+     "want": 1,
+     "found": 1,
+     "missing": [],
+     "extra": [],
+     "silent": 0,
+     "nanoMs": 0
+    }
+   ]
+  }
+ ]
+}

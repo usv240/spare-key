@@ -1,0 +1,14 @@
+{
+  "steps": [
+    {
+      "name": "Gemini Nano is available",
+      "ok": true,
+      "detail": "available"
+    },
+    {
+      "name": "run",
+      "ok": false,
+      "detail": "TargetCloseError: Protocol error (Runtime.callFunctionOn): Target closed\n    at CallbackRegistry.clear (file:///C:/Hackathons/%23BuildHybridAI%202026/spare-key/node_modules/puppeteer-core/lib/esm/puppeteer/common/CallbackRegistry.js:79:36)\n    at CdpCDPSession.onClosed (file:///C:/Hackathons/%23BuildHybridAI%202026/spare-key/node_modules/puppeteer-core/lib/esm/puppeteer/cdp/CdpSession.js:112:25)\n    at #onClose (file:///C:/Hackathons/%23BuildHybridAI%202026/spare-key/node_modules/puppeteer-core/lib/esm/puppeteer/cdp/Connection.js:186:21)\n    at Socket.<anonymous> (file:///C:/Hackathons/%23Buil"
+    }
+  ]
+}

@@ -97,7 +97,7 @@ export function renderResults(root, { scan, catalogue, library = {}, reveal = ne
       h('ul', { class: 'findings' }, items.map(f => findingCard(f, { reveal: reveal.has(f.ref), library, onAnswer, onOpen, onToggleReveal }))),
     )),
     checkedList(scan.outcomes, label),
-    notChecked(skipped, label),
+    notChecked(skipped, label, checked.filter(o => o.partly && o.id !== 'screenshot')),
   );
 }
 
@@ -165,16 +165,18 @@ function checkedList(outcomes, label) {
         : o.how === 'reader' && o.entries === 0 ? 'Checked by code only: nothing listed' : o.partly ? 'Nothing listed in what was shown. More may be hidden.' : 'Nothing listed' })))));
 }
 
-function notChecked(skipped, label) {
+function notChecked(skipped, label, partial = []) {
   registerInfo('not-checked', {
     title: 'Not checked',
     what: 'These are the places Spare Key did not read this time, and the services it does not cover yet.',
     why: 'Someone could still have access through any of them. The guides below show how to check each one yourself.',
   });
   return h('section', { class: 'group not-checked', 'aria-labelledby': 'g-not-checked' },
-    h('div', { class: 'with-info' }, h('h2', { id: 'g-not-checked', text: `Not checked (${skipped.length + 1})` }), infoButton('not-checked', 'About Not checked')),
+    h('div', { class: 'with-info' }, h('h2', { id: 'g-not-checked', text: `Not checked (${skipped.length + partial.length + 1})` }), infoButton('not-checked', 'About Not checked')),
     h('ul', { class: 'plain-list' },
       skipped.map(o => h('li', {}, h('strong', { text: label(o.id) }), h('span', { text: (WHY[o.why] || WHY.did_not_load)(serviceName(o.service)) }))),
+      // Checked only in part: what was read is in the list above, but some may be missing.
+      partial.map(o => h('li', {}, h('strong', { text: `${label(o.id)}, in part` }), h('span', { text: 'Spare Key read some of this page but may have missed some. Open it and look for anyone or anything you do not know. It is in your plan too.' }))),
       h('li', {}, h('strong', { text: 'Not covered yet' }), h('span', { text: `${UNCHECKED.services}. How to check each one yourself:` }),
         h('ul', { class: 'guides' }, UNCHECKED.guides.map(g => h('li', {}, h('a', { href: g.url, target: '_blank', rel: 'noopener noreferrer', text: g.title })))))));
 }

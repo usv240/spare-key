@@ -20,7 +20,9 @@ test('a page that lists nothing without saying so is "looked different", not not
 test('a page that never showed the words the reader waits for is checked in part, or not at all', async () => {
   const entries = [{ i: 0, text: 'Sam Porter\nAdult', href: '', state: [] }];
   assert.equal((await readToEntries({ check, read: read({ timedOut: true, entries }), account: OWNER })).partly, true);
-  assert.equal((await readToEntries({ check, read: read({ timedOut: true }), account: OWNER })).why, 'did_not_load');
+  // A page with text that never showed the expected words looks different; a page with no text did not load.
+  assert.equal((await readToEntries({ check, read: read({ timedOut: true }), account: OWNER })).why, 'looked_different');
+  assert.equal((await readToEntries({ check, read: read({ timedOut: true, mainText: '' }), account: OWNER })).why, 'did_not_load');
 });
 
 test('Gemini Nano reads a page the reader could not, and its entries are marked as found by Nano', async () => {

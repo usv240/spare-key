@@ -57,7 +57,8 @@ export function readPage(cfg, doc = document) {
     // Lists on single-page apps often fill in just after the heading appears.
     if (isReady) await sleep(cfg.settleMs ?? 700);
     let root = rootOf();
-    const mainText = textOf(root).slice(0, 20000);
+    const fullText = textOf(root);
+    const mainText = fullText.slice(0, 20000);
     let withinFound = false;
     // within: read only the part of the page under one setting's heading ("Grant access to your account").
     const within = re(cfg.within);
@@ -152,6 +153,8 @@ export function readPage(cfg, doc = document) {
       title: doc.title.slice(0, 200),
       waitedMs: Math.round(performance.now() - t0),
       withinFound,
+      // More text than mainText holds: anything read from mainText alone is only part of the page.
+      mainTextCut: fullText.length > mainText.length,
       emptyConfirmed: !!re(cfg.emptyText)?.test(mainText),
     };
   })();

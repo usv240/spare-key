@@ -404,3 +404,13 @@ kbd {
 .file-button:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
 .file-button.is-disabled { opacity: 0.55; cursor: not-allowed; }
 .phone-shot img { display: block; margin: 12px 0 0; width: 195px; max-width: 60%; height: auto; border: 1px solid var(--line); border-radius: 12px; }
+
+/* ---------- Start here, simpler words, linked steps ---------- */
+.start-here { margin: 12px 0 16px; padding: 12px 14px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); }
+.start-here h2 { margin: 0 0 6px; font-size: 17px; }
+.start-here ol { margin: 0; padding-left: 20px; }
+.start-here li { margin: 4px 0; }
+.simpler { margin: 8px 0 0; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; }
+.simpler p { margin: 4px 0; }
+.simpler-button { margin-top: 6px; }
+.linked-line { margin-top: 6px; }
