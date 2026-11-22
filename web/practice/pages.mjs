@@ -166,7 +166,7 @@ export const PRACTICE_CSS = `:root{color-scheme:light dark;--bg:#fbfbf9;--surfac
 main,.gmail{max-width:760px;margin:0 auto;padding:16px}h1{font-size:24px;margin:16px 0 8px}h2{font-size:18px;margin:0 0 6px}.lead,.muted{color:var(--ink-2)}
 .list{list-style:none;margin:16px 0;padding:0;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
 .list li{padding:12px 14px;border-top:1px solid var(--line)}.list li:first-child{border-top:0}
-.list a{display:grid;color:inherit;text-decoration:none}.list li>*{display:block}.list span{color:var(--ink-2)}
+.list li>*{display:block}.list a{color:inherit;text-decoration:none}.list a>*{display:block}.list span{color:var(--ink-2)}
 .card{margin:16px 0;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}.value{font-size:18px;font-weight:600;margin:0}
 .settings{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line)}.settings td{padding:12px 14px;border-top:1px solid var(--line);vertical-align:top}.settings .label{width:34%;font-weight:600}
 `;

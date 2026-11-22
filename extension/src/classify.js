@@ -3,14 +3,14 @@
 // uses code alone.
 import { deviceJson, deviceStatus } from './ai.js';
 
-const CLASSIFY_SYSTEM = `You sort entries from a person's own account settings page.
+export const CLASSIFY_SYSTEM = `You sort entries from a person's own account settings page.
 For each entry, say what it is, whether it is the account owner's own, and what it gives access to.
 Use only what the entry says. If the entry does not say, answer "unknown". Never guess a person's identity.
 "is_owner" is "yes" only when the entry plainly belongs to the account owner (their own address, or "this device").
 "this_computer" is "yes" only when the entry says it is this device or the current session.`;
 
-const ACCESS = ['location', 'mail', 'account', 'purchases', 'addresses', 'photos', 'cameras', 'browsing', 'messages', 'unknown'];
-const CLASSIFY_SCHEMA = {
+export const ACCESS = ['location', 'mail', 'account', 'purchases', 'addresses', 'photos', 'cameras', 'browsing', 'messages', 'unknown'];
+export const CLASSIFY_SCHEMA = {
   type: 'object',
   properties: {
     items: {

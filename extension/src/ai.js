@@ -318,8 +318,8 @@ export function cloudJson({ purpose, body, system, schema, privateStrings = [], 
  * where the text is public or made up (the practice check and "say it more simply"), so the cloud fallback exposes
  * nothing. Returns { answer, source: 'on_device' | 'in_cloud', model }.
  */
-export function hybridJson({ purpose, body, system, schema, onSend = async () => {} }) {
-  const text = checkOutgoing(purpose, body, {});
+export function hybridJson({ purpose, body, system, schema, guard = {}, onSend = async () => {} }) {
+  const text = checkOutgoing(purpose, body, guard);
   return oneAtATime(async () => {
     const settings = await liveSettings();
     let last;

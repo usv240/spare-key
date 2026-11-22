@@ -66,8 +66,10 @@ test('no em dash anywhere in the repo text files', () => {
 });
 
 test('every "i" button has text, and every text has a button', () => {
+  // The panel, and the site's pages (which call info('id', ...)).
   const html = readFileSync('extension/src/panel.html', 'utf8');
-  const used = new Set([...html.matchAll(/data-info="([^"]+)"/g)].map(m => m[1]));
+  const site = ['web/src/pages/index.mjs', 'web/src/pages/docs.mjs'].map(f => readFileSync(f, 'utf8')).join('\n');
+  const used = new Set([...html.matchAll(/data-info="([^"]+)"/g), ...site.matchAll(/info\('([^']+)'/g)].map(m => m[1]));
   for (const c of CHECKS) used.add(`check-${c.id}`);
   for (const extra of ['check-chrome.extensions', 'check-chrome.sync', 'history-cleanup']) used.add(extra);
   // Entries the site and later screens use.

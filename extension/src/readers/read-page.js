@@ -14,16 +14,19 @@
 //   errorText   a regular expression for an error page
 //
 // Returns { ready, timedOut, errorPage, via, entries: [{ i, text, href }], account, moreHidden, mainText, title, waitedMs }.
-export function readPage(cfg) {
+// `doc` is the page to read: the scan tab's own document when injected, or a same-origin frame's document on the site's
+// practice check.
+export function readPage(cfg, doc = document) {
+  const SHOW_TEXT = 4; // SHOW_TEXT, the same in every window
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-  const rootOf = () => (cfg.main && document.querySelector(cfg.main)) || document.querySelector('main, [role="main"]') || document.body;
+  const rootOf = () => (cfg.main && doc.querySelector(cfg.main)) || doc.querySelector('main, [role="main"]') || doc.body;
   const visible = el => !el.checkVisibility || el.checkVisibility({ visibilityProperty: true, opacityProperty: true });
   // An element's visible text, one line per text node. innerText depends on layout and runs words together when two
   // inline elements touch ("Sam Porter" + "sam.porter@..." became "Portersam.porter@..."); text nodes do not.
   const textOf = el => {
     if (!el) return '';
     const parts = [];
-    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const walker = doc.createTreeWalker(el, SHOW_TEXT);
     for (let n = walker.nextNode(); n; n = walker.nextNode()) {
       const p = n.parentElement;
       if (!p || /^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE|OPTION)$/.test(p.tagName) || !visible(p)) continue;
@@ -37,7 +40,7 @@ export function readPage(cfg) {
   const ready = () => {
     const root = rootOf();
     if (!root) return false;
-    if (cfg.waitFor?.selector && !document.querySelector(cfg.waitFor.selector)) return false;
+    if (cfg.waitFor?.selector && !doc.querySelector(cfg.waitFor.selector)) return false;
     const want = re(cfg.waitFor?.text);
     if (want && !want.test(textOf(root))) return false;
     return true;
@@ -55,7 +58,7 @@ export function readPage(cfg) {
     // within: read only the part of the page under one setting's heading ("Grant access to your account").
     const within = re(cfg.within);
     if (within) {
-      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      const walker = doc.createTreeWalker(root, SHOW_TEXT);
       for (let node = walker.nextNode(); node; node = walker.nextNode()) {
         if (!within.test(node.nodeValue || '')) continue;
         let el = node.parentElement;
@@ -63,7 +66,7 @@ export function readPage(cfg) {
         if (el && el !== root) { root = el; break; }
       }
     }
-    const errorPage = !!re(cfg.errorText || '(something went wrong|page not found|error 404|try again later|this page isn.t available)')?.test(`${document.title}\n${mainText.slice(0, 2000)}`);
+    const errorPage = !!re(cfg.errorText || '(something went wrong|page not found|error 404|try again later|this page isn.t available)')?.test(`${doc.title}\n${mainText.slice(0, 2000)}`);
     const exclude = re(cfg.exclude);
 
     // The entries: by the item selector, or else by patterns.
@@ -78,7 +81,7 @@ export function readPage(cfg) {
       const patterns = cfg.patterns.map(p => re(p, 'i')).filter(Boolean);
       const counters = cfg.patterns.map(p => re(p, 'gi'));
       const count = (k, el) => (textOf(el).match(counters[k]) || []).length;
-      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      const walker = doc.createTreeWalker(root, SHOW_TEXT);
       for (let node = walker.nextNode(); node; node = walker.nextNode()) {
         const k = patterns.findIndex(p => p.test(node.nodeValue || ''));
         if (k < 0) continue;
@@ -98,7 +101,7 @@ export function readPage(cfg) {
     // address while the setting itself is off ("Disable forwarding" chosen), and the text alone cannot say which.
     const stateOf = el => {
       const out = [];
-      const labelFor = input => textOf(input.closest('label') || (input.id && document.querySelector(`label[for="${CSS.escape(input.id)}"]`)) || input.parentElement).slice(0, 120);
+      const labelFor = input => textOf(input.closest('label') || (input.id && doc.querySelector(`label[for="${(doc.defaultView || window).CSS.escape(input.id)}"]`)) || input.parentElement).slice(0, 120);
       for (const r of el.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked, [role="radio"][aria-checked="true"]')) out.push(`chosen: ${labelFor(r)}`);
       for (const s of el.querySelectorAll('select')) if (s.selectedOptions[0]) out.push(`selected: ${s.selectedOptions[0].textContent.trim().slice(0, 120)}`);
       return out;
@@ -118,7 +121,7 @@ export function readPage(cfg) {
     let account = null;
     for (const sel of cfg.account || []) {
       let el = null;
-      try { el = document.querySelector(sel); } catch { /* bad selector from config */ }
+      try { el = doc.querySelector(sel); } catch { /* bad selector from config */ }
       const label = el && (el.getAttribute('aria-label') || textOf(el));
       const email = label && (label.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i) || [])[0];
       if (email) {
@@ -140,7 +143,7 @@ export function readPage(cfg) {
       account,
       moreHidden,
       mainText,
-      title: document.title.slice(0, 200),
+      title: doc.title.slice(0, 200),
       waitedMs: Math.round(performance.now() - t0),
     };
   })();

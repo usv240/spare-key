@@ -40,12 +40,38 @@ await build({
   loader: { '.woff2': 'file' },
 });
 
-// The site: plain HTML pages, with bundled scripts. The bridge page never carries a debug token.
+// The site: pages rendered to plain HTML here, with bundled scripts. No site bundle ever carries a debug token: the
+// site's own cloud calls use reCAPTCHA Enterprise.
 await rm('web/dist', { recursive: true, force: true });
 await mkdir('web/dist/build', { recursive: true });
-await build({ ...common, define: { ...common.define, __APPCHECK_DEBUG_TOKEN__: '""' }, format: 'esm', outdir: 'web/dist/build', entryPoints: { bridge: 'web/src/bridge.js' } });
+const site = { ...common, define: { __APPCHECK_DEBUG_TOKEN__: '""', __BRIDGE_URL__: '""' }, format: 'esm', outdir: 'web/dist/build', splitting: true };
+await build({ ...site, entryPoints: { bridge: 'web/src/bridge.js', site: 'web/src/site.js', tour: 'web/src/tour.js', 'web-panel': 'web/src/web-panel.js' } });
 for (const f of await readdir('web')) if (f.endsWith('.html')) await cp(`web/${f}`, `web/dist/${f}`);
 if (existsSync('web/public')) await cp('web/public', 'web/dist', { recursive: true });
+await cp('web/src/site.css', 'web/dist/build/site.css');
+await mkdir('web/dist/panel', { recursive: true });
+await cp('extension/src/panel.css', 'web/dist/panel/panel.css');
+await cp('extension/fonts', 'web/dist/fonts', { recursive: true });
+await cp('extension/src/theme-boot.js', 'web/dist/theme-boot.js');
+await cp('extension/icons/icon-32.png', 'web/dist/icon-32.png');
+{
+  const numbers = JSON.parse(await readFile('web/src/data/numbers.json', 'utf8'));
+  const { default: index } = await import('./web/src/pages/index.mjs');
+  const docs = await import('./web/src/pages/docs.mjs');
+  const pages = {
+    'index.html': index({ numbers }),
+    'try.html': docs.tryPage(),
+    'install.html': docs.installPage(),
+    'how-it-works.html': docs.howItWorksPage(),
+    'built-with.html': docs.builtWithPage({ numbers }),
+    'plant.html': docs.plantPage(),
+    'api.html': docs.apiPage(),
+    'accuracy.html': docs.accuracyPage({ numbers }),
+    'privacy.html': docs.privacyPage(),
+    'safety.html': docs.safetyPage(),
+  };
+  for (const [file, html] of Object.entries(pages)) await writeFile(`web/dist/${file}`, html);
+}
 
 // The practice check's made-up settings pages (web/practice/pages.mjs).
 const { PAGES, PRACTICE_CSS } = await import('./web/practice/pages.mjs');

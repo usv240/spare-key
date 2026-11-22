@@ -134,6 +134,26 @@ export const OUTGOING = {
   },
 };
 
+// The website's practice check (try.html): Gemini sorts entries from the made-up practice pages, on the device when it
+// can and in the cloud when it cannot. Every entry's words must appear on the practice pages themselves, and the owner
+// must be the made-up practice person, so this purpose cannot carry anything else. The extension never uses it.
+const norm = s => String(s || '').replace(/\s+/g, ' ').trim();
+OUTGOING.practice = (b, ctx) => {
+  onlyKeys(b, ['task', 'owner', 'entries'], 'body');
+  assertEnum(b.task, ['classify'], 'task');
+  const owner = ctx?.practiceOwner;
+  if (!owner || !isPlainObject(b.owner) || b.owner.name !== owner.name || b.owner.email !== owner.email || Object.keys(b.owner).length !== 2) fail('owner must be the practice person');
+  if (!Array.isArray(b.entries) || !b.entries.length || b.entries.length > 60) fail('entries must be a short list');
+  const corpus = norm(ctx?.practiceCorpus);
+  if (!corpus) fail('no practice pages to check against');
+  for (const e of b.entries) {
+    onlyKeys(e, ['i', 'check', 'text'], 'entry');
+    if (!Number.isInteger(e.i)) fail('entry i must be a number');
+    assertEnum(e.check, CHECK_IDS, 'check');
+    if (typeof e.text !== 'string' || !corpus.includes(norm(e.text))) fail('practice text must come from the practice pages');
+  }
+};
+
 /** Answers the device gives to the cloud's function calls. Enums only, or public text from the steps library. */
 export const FUNCTION_ANSWERS = {
   ask_device: a => { onlyKeys(a, ['answer'], 'answer'); assertEnum(a.answer, ['yes', 'no', 'unknown'], 'answer'); },
@@ -169,10 +189,10 @@ function b64(s) {
  * The last check before anything is sent. Throws CloudSafetyError unless `body` has an allowed shape for `purpose`
  * and contains none of `privateStrings`. Returns the exact JSON text to send, so what is logged is what is sent.
  */
-export function checkOutgoing(purpose, body, { privateStrings = [], library = null } = {}) {
+export function checkOutgoing(purpose, body, { privateStrings = [], library = null, practiceCorpus = '', practiceOwner = null } = {}) {
   const check = Object.hasOwn(OUTGOING, purpose) ? OUTGOING[purpose] : null;
   if (!check) fail(`nothing may be sent for purpose "${String(purpose).slice(0, 30)}"`);
-  check(body, { library });
+  check(body, { library, practiceCorpus, practiceOwner });
   const text = JSON.stringify(body);
   if (leaksAny(text, privateStrings)) fail('the request holds a private string from this scan');
   return text;

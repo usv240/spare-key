@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Spare Key panel</title>
+<link rel="stylesheet" href="/panel/panel.css">
+<script src="/theme-boot.js"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-key" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M7.5 6.5a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11Zm0 3.3a2.2 2.2 0 1 0 0 4.4 2.2 2.2 0 0 0 0-4.4Z"/><path fill="currentColor" d="M12 10.6h9.5a1 1 0 0 1 1 1v.8a1 1 0 0 1-1 1H20.5v2.4a.8.8 0 0 1-.8.8h-1a.8.8 0 0 1-.8-.8v-2.4h-.9v1.6a.8.8 0 0 1-.8.8h-1a.8.8 0 0 1-.8-.8v-1.6H12Z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="6.2" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-exit" viewBox="0 0 16 16"><path d="M6.5 2.5h-3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3M10 5l3 3-3 3M13 8H6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-close" viewBox="0 0 20 20"><path d="M5 5l10 10M15 5 5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+</svg>
+
+<header class="bar">
+  <span class="mark"><svg aria-hidden="true"><use href="#i-key"/></svg>Spare Key</span>
+  <button class="btn btn-exit" id="quick-exit" type="button"><svg aria-hidden="true"><use href="#i-exit"/></svg>Quick exit</button>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Spare Key">
+  <button class="tab" role="tab" id="tab-check" aria-selected="true" aria-controls="screen-results">Your check</button>
+  <button class="tab" role="tab" id="tab-sent" aria-selected="false" aria-controls="screen-sent" tabindex="-1">What left this computer</button>
+</nav>
+
+<main>
+  <section class="screen" id="screen-start" hidden>
+    <h1 tabindex="-1" id="start-title">Practice check</h1>
+    <p class="lead">Spare Key reads made-up settings pages for a person called Jordan, the same way it reads yours. Nothing of yours is opened.</p>
+    <div class="status-line"><span class="dot" id="where-dot" aria-hidden="true"></span><p class="text" id="where-line">Checking for Gemini Nano in this browser.</p></div>
+    <div class="actions"><button class="btn btn-primary btn-block" type="button" id="start">Start the practice check</button></div>
+  </section>
+
+  <section class="screen" id="screen-scanning" hidden>
+    <h1 tabindex="-1" id="scan-title">Checking Jordan’s practice pages</h1>
+    <div class="progress-block">
+      <p class="progress-line" id="scan-line" aria-live="polite">Starting</p>
+      <div class="progress" role="progressbar" aria-labelledby="scan-line" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" id="scan-bar"><span id="scan-fill"></span></div>
+      <p class="muted num" id="scan-count"></p>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-results" hidden>
+    <div id="results"></div>
+    <p class="muted" id="sorted-line" hidden></p>
+    <div class="actions">
+      <button class="btn btn-primary btn-block" type="button" id="to-plan">Make my plan</button>
+      <a class="btn btn-secondary btn-block" id="full-check" href="/try.html" target="_top">Run the full practice check</a>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-plan" hidden>
+    <div id="plan-questions"></div>
+    <div id="plan" aria-live="polite"></div>
+    <div class="actions" id="plan-actions" hidden>
+      <button class="btn btn-secondary btn-block" type="button" id="back-results">Back to what we found</button>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-sent" hidden>
+    <h1>What left this computer</h1>
+    <p class="muted">Everything this practice check sent to Gemini in the cloud, word for word. Nothing here is about you: the practice pages are made up. In the extension, only finding types leave the computer.</p>
+    <ol class="log" id="sent-log"></ol>
+    <p class="empty" id="sent-empty">Nothing has been sent yet.</p>
+  </section>
+</main>
+
+<div class="scrim" id="scrim" hidden></div>
+<section class="sheet" id="sheet" role="dialog" aria-modal="false" aria-labelledby="sheet-title" data-state="closed" hidden>
+  <button class="info close" type="button" id="sheet-close" aria-label="Close"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+  <h2 id="sheet-title"></h2>
+  <p><span class="label" id="sheet-what-label">What this is</span><span id="sheet-what"></span></p>
+  <p><span class="label" id="sheet-why-label">Why it matters</span><span id="sheet-why"></span></p>
+  <details id="sheet-tech-wrap"><summary>Technical detail</summary><p id="sheet-tech"></p></details>
+</section>
+<div class="visually-hidden" aria-live="polite" id="announce"></div>
+<script type="module" src="/build/web-panel.js"></script>
+</body>
+</html>

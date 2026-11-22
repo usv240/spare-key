@@ -1,0 +1,604 @@
+{
+ "mode": "practice",
+ "at": "2026-11-21T00:00:00.000Z",
+ "account": {
+  "email": "jordan.lee@example.com",
+  "name": "Jordan Lee"
+ },
+ "findings": [
+  {
+   "ref": "L1",
+   "code": "google.devices.other",
+   "check": "google.devices",
+   "service": "google",
+   "group": "account",
+   "label": "iPhone 15 · Columbus, OH · Active now",
+   "detail": "iPhone 15\nColumbus, OH · Active now",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "now",
+   "access": [
+    "account",
+    "mail",
+    "location"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/google/device-activity.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L2",
+   "code": "google.devices.other",
+   "check": "google.devices",
+   "service": "google",
+   "group": "account",
+   "label": "Pixel 8 · Dayton, OH · 2 hours ago",
+   "detail": "Pixel 8\nDayton, OH · 2 hours ago",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "today",
+   "access": [
+    "account",
+    "mail",
+    "location"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/google/device-activity.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L3",
+   "code": "google.devices.other",
+   "check": "google.devices",
+   "service": "google",
+   "group": "account",
+   "label": "Mac · Safari · Dayton, OH · 3 weeks ago",
+   "detail": "Mac\nSafari · Dayton, OH · 3 weeks ago",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "this_month",
+   "access": [
+    "account",
+    "mail",
+    "location"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/google/device-activity.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L4",
+   "code": "google.apps.read_mail",
+   "check": "google.apps",
+   "service": "google",
+   "group": "mail",
+   "label": "InboxPilot · Has access to Gmail · Access given 3 months ago",
+   "detail": "InboxPilot\nHas access to Gmail · Access given 3 months ago",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "older",
+   "access": [
+    "mail"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/google/connections.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L5",
+   "code": "google.apps.location",
+   "check": "google.apps",
+   "service": "google",
+   "group": "location",
+   "label": "TrailMate · Has access to your location · Access given 5 weeks ago",
+   "detail": "TrailMate\nHas access to your location · Access given 5 weeks ago",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "location"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/google/connections.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L6",
+   "code": "google.recovery.phone_unconfirmed",
+   "check": "google.recovery",
+   "service": "google",
+   "group": "account",
+   "label": "•••-•••-0177 · Added 2 years ago",
+   "detail": "(937) 555-0177\nAdded 2 years ago",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "older",
+   "access": [
+    "account"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/google/rescuephone.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L7",
+   "code": "google.recovery.email_other",
+   "check": "google.recovery",
+   "service": "google",
+   "group": "account",
+   "label": "s••••@example.net · Verified",
+   "detail": "sam.porter@example.net\nVerified",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "account"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/google/recovery-email.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L8",
+   "code": "google.2sv.other_device",
+   "check": "google.2sv",
+   "service": "google",
+   "group": "account",
+   "label": "Google prompts · 2 devices: Pixel 8, iPhone 15",
+   "detail": "Google prompts\n2 devices: Pixel 8, iPhone 15",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "account"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/google/twosv.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L9",
+   "code": "google.2sv.other_device",
+   "check": "google.2sv",
+   "service": "google",
+   "group": "account",
+   "label": "Phone number · •••-•••-0177 · Text or voice",
+   "detail": "Phone number\n(937) 555-0177 · Text or voice",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "account"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/google/twosv.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L10",
+   "code": "google.2sv.other_device",
+   "check": "google.2sv",
+   "service": "google",
+   "group": "account",
+   "label": "Authenticator app · Added 2 years ago",
+   "detail": "Authenticator app\nAdded 2 years ago",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "older",
+   "access": [
+    "account"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/google/twosv.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L11",
+   "code": "maps.sharing.person",
+   "check": "maps.sharing",
+   "service": "google",
+   "group": "location",
+   "label": "Sam Porter · s••••@example.net · Sharing until you turn this off",
+   "detail": "Sam Porter\nsam.porter@example.net\nSharing until you turn this off",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "location"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/google/locationsharing.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L12",
+   "code": "maps.sharing.link",
+   "check": "maps.sharing",
+   "service": "google",
+   "group": "location",
+   "label": "Link · Anyone with this link can see your location until 9:00 PM",
+   "detail": "Link\nAnyone with this link can see your location until 9:00 PM",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "location"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/google/locationsharing.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L13",
+   "code": "gmail.forwarding.external",
+   "check": "gmail.forwarding",
+   "service": "gmail",
+   "group": "mail",
+   "label": "Forwards new mail to s••••@example.net",
+   "detail": "Disable forwarding\nForward a copy of incoming mail to\nand keep Gmail's copy in the Inbox\nsam.porter@example.net",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "mail"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/gmail/fwdandpop.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L14",
+   "code": "gmail.filter.forwards",
+   "check": "gmail.filters",
+   "service": "gmail",
+   "group": "mail",
+   "label": "Matches: from:(a••••@examplebank.com). Do this: Forward to s••••@example.net",
+   "detail": "Matches: from:(alerts@examplebank.com)\nDo this: Forward to sam.porter@example.net",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "mail"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/gmail/filters.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L15",
+   "code": "gmail.filter.hides",
+   "check": "gmail.filters",
+   "service": "gmail",
+   "group": "mail",
+   "label": "Matches: subject:(appointment). Do this: Skip Inbox, Mark as read",
+   "detail": "Matches: subject:(appointment)\nDo this: Skip Inbox, Mark as read",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "mail"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/gmail/filters.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L16",
+   "code": "gmail.delegate",
+   "check": "gmail.delegates",
+   "service": "gmail",
+   "group": "mail",
+   "label": "s••••@example.net",
+   "detail": "sam.porter@example.net\nMark conversation as read when opened by others",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "mail"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/gmail/accounts.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L17",
+   "code": "amazon.household.adult",
+   "check": "amazon.household",
+   "service": "amazon",
+   "group": "purchases",
+   "label": "Sam Porter · Adult",
+   "detail": "Sam Porter\nAdult",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "purchases",
+    "addresses"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/amazon/members.html",
+   "accountEmail": ""
+  },
+  {
+   "ref": "L18",
+   "code": "amazon.household.teen",
+   "check": "amazon.household",
+   "service": "amazon",
+   "group": "purchases",
+   "label": "Riley · Teen",
+   "detail": "Riley\nTeen",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "purchases",
+    "addresses"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/amazon/members.html",
+   "accountEmail": ""
+  },
+  {
+   "ref": "L19",
+   "code": "amazon.device.other",
+   "check": "amazon.devices",
+   "service": "amazon",
+   "group": "devices",
+   "label": "Sam's Echo Dot · Registered 2023",
+   "detail": "Sam's Echo Dot\nRegistered 2023",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "older",
+   "access": [
+    "purchases",
+    "cameras"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/amazon/devicelist.html",
+   "accountEmail": ""
+  },
+  {
+   "ref": "L20",
+   "code": "amazon.device.other",
+   "check": "amazon.devices",
+   "service": "amazon",
+   "group": "devices",
+   "label": "Kindle Paperwhite · Registered 2022",
+   "detail": "Kindle Paperwhite\nRegistered 2022",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "older",
+   "access": [
+    "purchases",
+    "cameras"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/amazon/devicelist.html",
+   "accountEmail": ""
+  },
+  {
+   "ref": "L21",
+   "code": "amazon.device.other",
+   "check": "amazon.devices",
+   "service": "amazon",
+   "group": "devices",
+   "label": "Fire TV Stick · Living room",
+   "detail": "Fire TV Stick\nLiving room",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "purchases",
+    "cameras"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/amazon/devicelist.html",
+   "accountEmail": ""
+  },
+  {
+   "ref": "L22",
+   "code": "google.family.manager_other",
+   "check": "google.family",
+   "service": "google",
+   "group": "account",
+   "label": "Sam Porter · Family manager",
+   "detail": "Sam Porter\nFamily manager",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "account",
+    "location"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/google/family.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L23",
+   "code": "google.family.member",
+   "check": "google.family",
+   "service": "google",
+   "group": "account",
+   "label": "Riley · Member",
+   "detail": "Riley\nMember",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "account",
+    "location"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/google/family.html",
+   "accountEmail": "jordan.lee@example.com"
+  },
+  {
+   "ref": "L24",
+   "code": "photos.partner_sharing",
+   "check": "photos.sharing",
+   "service": "photos",
+   "group": "photos",
+   "label": "Shared with s••••@example.net",
+   "detail": "Shared with sam.porter@example.net",
+   "howFound": "reader",
+   "confidence": "high",
+   "disagree": false,
+   "recency": "unknown",
+   "access": [
+    "photos",
+    "location"
+   ],
+   "ownership": null,
+   "openUrl": "https://spare-key-app.web.app/practice/photos/settings.html",
+   "accountEmail": "jordan.lee@example.com"
+  }
+ ],
+ "outcomes": [
+  {
+   "id": "google.devices",
+   "service": "google",
+   "status": "checked",
+   "why": null,
+   "how": "reader",
+   "entries": 4,
+   "findings": 3,
+   "partly": false
+  },
+  {
+   "id": "google.apps",
+   "service": "google",
+   "status": "checked",
+   "why": null,
+   "how": "reader",
+   "entries": 3,
+   "findings": 2,
+   "partly": false
+  },
+  {
+   "id": "google.recovery",
+   "service": "google",
+   "status": "checked",
+   "why": null,
+   "how": "reader",
+   "entries": 2,
+   "findings": 2,
+   "partly": false
+  },
+  {
+   "id": "google.2sv",
+   "service": "google",
+   "status": "checked",
+   "why": null,
+   "how": "reader",
+   "entries": 3,
+   "findings": 3,
+   "partly": false
+  },
+  {
+   "id": "maps.sharing",
+   "service": "google",
+   "status": "checked",
+   "why": null,
+   "how": "reader",
+   "entries": 2,
+   "findings": 2,
+   "partly": false
+  },
+  {
+   "id": "gmail.forwarding",
+   "service": "gmail",
+   "status": "checked",
+   "why": null,
+   "how": "reader",
+   "entries": 1,
+   "findings": 1,
+   "partly": false
+  },
+  {
+   "id": "gmail.filters",
+   "service": "gmail",
+   "status": "checked",
+   "why": null,
+   "how": "reader",
+   "entries": 3,
+   "findings": 2,
+   "partly": false
+  },
+  {
+   "id": "gmail.delegates",
+   "service": "gmail",
+   "status": "checked",
+   "why": null,
+   "how": "reader",
+   "entries": 1,
+   "findings": 1,
+   "partly": false
+  },
+  {
+   "id": "amazon.household",
+   "service": "amazon",
+   "status": "checked",
+   "why": null,
+   "how": "reader",
+   "entries": 3,
+   "findings": 2,
+   "partly": false
+  },
+  {
+   "id": "amazon.devices",
+   "service": "amazon",
+   "status": "checked",
+   "why": null,
+   "how": "reader",
+   "entries": 3,
+   "findings": 3,
+   "partly": false
+  },
+  {
+   "id": "google.family",
+   "service": "google",
+   "status": "checked",
+   "why": null,
+   "how": "reader",
+   "entries": 3,
+   "findings": 2,
+   "partly": false
+  },
+  {
+   "id": "photos.sharing",
+   "service": "photos",
+   "status": "checked",
+   "why": null,
+   "how": "reader",
+   "entries": 1,
+   "findings": 1,
+   "partly": false
+  }
+ ],
+ "visited": [],
+ "nano": false
+}

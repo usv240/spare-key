@@ -71,6 +71,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+button, input, select, textarea { color: inherit; }
 html { -webkit-text-size-adjust: 100%; scrollbar-color: var(--line) transparent; scrollbar-width: thin; }
 body {
   margin: 0;
