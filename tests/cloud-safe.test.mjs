@@ -137,3 +137,18 @@ test('leaksAny finds plain, URL-encoded and base64 forms', () => {
   assert.ok(leaksAny('QUILLON VARNADOE', ['Quillon Varnadoe']));
   assert.ok(!leaksAny('{"code":"gmail.delegate"}', [s, 'Quillon Varnadoe']));
 });
+
+test('the website practice purpose accepts only words from the practice pages, and only the practice person', () => {
+  const practiceCorpus = 'Your devices Windows computer Chrome Columbus, OH This device Pixel 8 Dayton, OH 2 hours ago';
+  const practiceOwner = { name: 'Jordan Lee', email: 'jordan.lee@example.com' };
+  const ok = { task: 'classify', owner: { ...practiceOwner }, entries: [{ i: 0, check: 'google.devices', text: 'Pixel 8\nDayton, OH\n2 hours ago' }] };
+  assert.doesNotThrow(() => checkOutgoing('practice', ok, { practiceCorpus, practiceOwner }));
+  const realText = structuredClone(ok);
+  realText.entries[0].text = CANARIES[0];
+  assert.throws(() => checkOutgoing('practice', realText, { practiceCorpus, practiceOwner }), CloudSafetyError);
+  const realOwner = structuredClone(ok);
+  realOwner.owner = { name: CANARIES[0], email: CANARIES[1] };
+  assert.throws(() => checkOutgoing('practice', realOwner, { practiceCorpus, practiceOwner }), CloudSafetyError);
+  // Without the practice pages to check against, nothing passes.
+  assert.throws(() => checkOutgoing('practice', ok, {}), CloudSafetyError);
+});

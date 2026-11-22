@@ -108,7 +108,12 @@ const PRACTICE_CORPUS = (() => {
     const doc = parser.parseFromString(html, 'text/html');
     const parts = [];
     const walker = doc.createTreeWalker(doc.body, 4);
-    for (let n = walker.nextNode(); n; n = walker.nextNode()) { const t = n.nodeValue.replace(/\s+/g, ' ').trim(); if (t) parts.push(t); }
+    // The same text the reader sees: it skips option, script and style text (read-page.js textOf).
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      if (/^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE|OPTION|TITLE)$/.test(n.parentElement?.tagName || '')) continue;
+      const t = n.nodeValue.replace(/\s+/g, ' ').trim();
+      if (t) parts.push(t);
+    }
     return parts.join(' ');
   }).join(' ');
 })();
@@ -164,6 +169,10 @@ async function runPractice() {
     sorted = r.answer.items || [];
     where = r.source === 'on_device' ? 'Sorted by Gemini Nano, on this device.' : `Sorted by Gemini in the cloud (${r.model}). The practice data is made up, so this is the one place Spare Key lets the cloud read entries.`;
   } catch (e) {
+    console.warn('Spare Key practice sorting:', String(e && e.message || e).slice(0, 300));
+    const norm = s => String(s).replace(/\s+/g, ' ').trim();
+    const missing = raw.filter(r => !norm(PRACTICE_CORPUS).includes(norm(r.entry.text)));
+    if (missing.length) console.warn('Not found on the practice pages:', JSON.stringify(missing.slice(0, 3).map(r => r.entry.text)));
     where = 'Sorted by code only: Gemini did not answer.';
   }
   const findings = [];
