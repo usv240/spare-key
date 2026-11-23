@@ -179,6 +179,12 @@ async function showNano() {
   try {
     if ('LanguageModel' in self) status = await self.LanguageModel.availability({ expectedInputs: [{ type: 'text', languages: ['en'] }], expectedOutputs: [{ type: 'text', languages: ['en'] }] });
   } catch { status = 'unavailable'; }
+  // Gemini Nano runs in the hidden offscreen page. After a long run there, the panel's own check can stop saying
+  // "available" (seen November 23, 2026, after a 7-minute practice check), so ask the page that runs it.
+  if (status !== 'available' && 'LanguageModel' in self) {
+    const s = await offscreen('sk:nano-status').catch(() => null);
+    if (s?.status === 'available') status = 'available';
+  }
   nanoStatus = status;
   const line = {
     available: 'Gemini Nano is ready on this computer.',

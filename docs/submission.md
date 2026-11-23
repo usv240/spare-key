@@ -8,7 +8,8 @@ from `docs/accuracy.md` and the saved runs in `docs/evidence/`; check them again
 - Site: https://spare-key-app.web.app
 - Try it in any browser: https://spare-key-app.web.app/try.html
 - Code: https://github.com/usv240/spare-key (Apache-2.0)
-- Video: (YouTube link, public, under 3 minutes; script in `docs/video.md`)
+- Video: (YouTube link, public, 2:34; made by `tools/record-demo.mjs` and `tools/make-video.mjs` from the real extension
+  on the practice pages; upload steps in `docs/video.md`)
 
 ---
 

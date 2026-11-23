@@ -127,6 +127,10 @@ node tools/reader-test.mjs          # readers and rules on the practice pages (n
 node tools/drift-test.mjs           # the same pages changed five ways (no cloud; --nano adds Gemini Nano)
 node tools/e2e-practice.mjs         # the practice check through the real extension (no cloud)
 node tools/privacy-test.mjs         # the privacy test (about 7 cloud calls)
+node tools/e2e-quick-exit.mjs       # Quick exit through the real extension (no cloud)
+node tools/a11y-check.mjs           # axe-core on the site and the side panel
+node tools/reading-grade.mjs        # reading grade of the site and the panel
+node tools/record-demo.mjs --nano && node tools/make-video.mjs   # the demo video, from the practice check
 ```
 
 More in [docs/dev.md](docs/dev.md). The design documents written before the build, and the build brief with its hard

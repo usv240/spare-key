@@ -1,5 +1,26 @@
 # Demo video script (under 3 minutes)
 
+## The generated video
+
+`node tools/record-demo.mjs --nano` records the real extension running the practice check (the made-up person
+Jordan, no real account), and `node tools/make-video.mjs` turns it into `spare-key-demo.mp4` (1920 x 1080, about
+2:35) with narration (edge-tts) and burned-in captions, plus `spare-key-demo.srt`. Every number in it is from
+README.md "Results". Footage that runs faster than real time is labeled with its speed.
+
+To publish: upload to YouTube as **Public**, title "Spare Key: who still has a key to your accounts? (#BuildHybridAI)",
+upload the `.srt` as English captions, paste the description below, then put the link in Devpost and the README.
+
+Description: Spare Key is a free, read-only Chrome extension for people leaving an abusive partner in the US. It reads
+your own Google, Gmail and Amazon settings pages, lists who can still see your location, mail or account, and makes a
+safety-first plan. Gemini Nano sorts the private pages on the device through Firebase AI Logic; the cloud sees finding
+codes only. Everything shown uses made-up practice pages. Try it: https://spare-key-app.web.app. Hotline:
+1-800-799-7233.
+
+## The script below
+
+The table is the first hand-written script; the generated video follows the same order with the narration in
+`tools/make-video.mjs`.
+
 For YouTube, public, English. Record at 1920x1080 in Chrome with Gemini Nano available. Use only the practice check and
 your own test accounts: never a real survivor's account, and keep test account names, emails and passwords out of the
 frame (Spare Key masks addresses until "Show details"; do not press it on a real test account). Speak slowly; the
