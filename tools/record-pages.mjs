@@ -68,8 +68,10 @@ async function record() {
         const id = n ? `${check.id}.${n}` : check.id;
         const url = pageUrl(pageDef.url, u);
         log('open', id, url);
-        try {
-          await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
+        let inPlace = false;
+        attempt: for (let tries = 0; tries < 2; tries++) try {
+          // After "Verify it's you", Google returns to the page by itself; opening it again asks again, so read it in place.
+          if (!inPlace) await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
           // Single-page apps keep loading after the document: give them time, but never interact.
           await page.waitForNetworkIdle({ idleTime: 1500, timeout: 20000 }).catch(() => {});
           await new Promise(r => setTimeout(r, 2500));
@@ -90,7 +92,31 @@ async function record() {
             return { title: document.title, text: (main.innerText || '').slice(0, 30000), outline: outline.join('\n') };
           });
           const signedOut = new RegExp(check.signedOutPattern).test(finalUrl);
-          const reauth = new RegExp(check.reauthPattern).test(finalUrl) || /verify it.s you|confirm it.s you|enter your password|to continue, first verify/i.test(snap.text);
+          const asksToVerify = (u, text) => new RegExp(check.reauthPattern).test(u) || /verify it.s you|confirm it.s you|enter your password|to continue, first verify/i.test(text);
+          let reauth = asksToVerify(finalUrl, snap.text);
+          // --wait: the person types their own password in this window; the tool only watches the address and text, then
+          // opens the page again and records it. Google's "verify it's you" lasts only minutes, so this keeps them together.
+          if (reauth && tries === 0 && args.includes('--wait')) {
+            log(`Google asks to verify on ${id}. Type your password in the Chrome window. Waiting up to 5 minutes.`);
+            const until = Date.now() + 300000;
+            const want = new URL(url).host;
+            let clear = 0, last = '';
+            while (Date.now() < until) {
+              await new Promise(r => setTimeout(r, 2000));
+              const now = new URL(page.url());
+              const where = `${now.host}${now.pathname}`;
+              if (where !== last) log('  now on', where);
+              last = where;
+              const text = await page.evaluate(() => document.body?.innerText || '').catch(() => '');
+              // Back on the settings site, not asking, with a real page's worth of text, for 10 seconds: the settings page
+              // first shows its frame and only then sends the browser on to "Verify it's you".
+              clear = now.host === want && !asksToVerify(page.url(), text) && text.length > 300 ? clear + 1 : 0;
+              if (clear >= 5) break;
+            }
+            log(clear >= 5 ? '  verified, recording again' : '  gave up waiting');
+            inPlace = clear >= 5 && new URL(page.url()).pathname === new URL(url).pathname;
+            continue attempt;
+          }
           // What the current reader settings find on the real page, for tuning them.
           const reader = signedOut || reauth ? null : await page.evaluate(readPage, pageDef.reader).catch(e => ({ error: String(e).slice(0, 200) }));
           const rawRecord = { id, check: check.id, url, finalUrl, signedOut, reauth, reader: reader && { ...reader, mainText: undefined }, ...snap, recordedAt: new Date().toISOString() };
@@ -99,9 +125,11 @@ async function record() {
           await page.screenshot({ path: path.join(OUT, `${id}.png`), fullPage: true }).catch(() => {});
           summary.push({ id, finalUrl: mask(finalUrl), signedOut, reauth, textChars: snap.text.length, readerVia: reader?.via, readerEntries: reader?.entries?.length ?? null, readerReady: reader?.ready ?? null });
           log(signedOut ? 'SIGNED OUT' : reauth ? 'ASKS TO VERIFY' : 'ok', id, `${snap.text.length} chars`);
+          break;
         } catch (e) {
           summary.push({ id, error: String(e).slice(0, 200) });
           log('ERROR', id, String(e).slice(0, 200));
+          break;
         }
       }
     }

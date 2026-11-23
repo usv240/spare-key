@@ -43,7 +43,7 @@ const HOW = {
 // Not checked: why, in plain words, with what to do next.
 const WHY = {
   signed_out: s => `You are not signed in to ${s} in this browser. Sign in, then check again.`,
-  needs_password: s => `${s} asked you to confirm your password first. Open the page, confirm it, then check again.`,
+  needs_password: s => `${s} asked you to confirm it is you, and that was skipped. Check it again below: Spare Key waits while you confirm it in the page beside this panel.`,
   did_not_load: () => 'The page did not load. You can check it again, or open it yourself.',
   looked_different: () => 'The page looked different from what Spare Key knows, so it could not tell what is listed. Open it and check it yourself.',
   no_permission: () => 'Chrome did not give Spare Key access to this page.',
@@ -68,7 +68,7 @@ export const UNCHECKED = {
  *   catalogue  the checks, for labels
  *   onAnswer(ref, ownership), onOpen(url): actions, handled by the panel
  */
-export function renderResults(root, { scan, catalogue, library = {}, reveal = new Set(), onAnswer, onOpen, onToggleReveal, onReport = null, reportState = '' }) {
+export function renderResults(root, { scan, catalogue, library = {}, reveal = new Set(), onAnswer, onOpen, onToggleReveal, onReport = null, onRecheck = null, reportState = '' }) {
   clearDynamicInfo();
   const label = id => catalogue.find(c => c.id === id)?.label || id;
   const checked = scan.outcomes.filter(o => o.status === 'checked');
@@ -99,7 +99,7 @@ export function renderResults(root, { scan, catalogue, library = {}, reveal = ne
       h('ul', { class: 'findings' }, items.map(f => findingCard(f, { reveal: reveal.has(f.ref), library, onAnswer, onOpen, onToggleReveal }))),
     )),
     checkedList(scan.outcomes, label),
-    notChecked(skipped, label, checked.filter(o => o.partly && o.id !== 'screenshot')),
+    notChecked(skipped, label, checked.filter(o => o.partly && o.id !== 'screenshot'), scan.mode !== 'practice' ? onRecheck : null),
     pageRecord(scan.pages, label),
     scan.mode !== 'practice' && onReport ? reportBox(skipped.filter(o => ['looked_different', 'did_not_load'].includes(o.why)), label, { onReport, reportState }) : null,
   );
@@ -200,7 +200,11 @@ function reportBox(broken, label, { onReport, reportState }) {
         : h('button', { type: 'button', class: 'btn btn-secondary btn-block', onclick: () => onReport(broken) }, 'Tell Spare Key (anonymous)'));
 }
 
-function notChecked(skipped, label, partial = []) {
+// Reasons a second try can fix: the person signs in or confirms it is them, or the page loads this time.
+const RETRY = ['signed_out', 'needs_password', 'did_not_load', 'stopped'];
+
+function notChecked(skipped, label, partial = [], onRecheck = null) {
+  const again = skipped.filter(o => RETRY.includes(o.why) && o.service !== 'chrome');
   registerInfo('not-checked', {
     title: 'Not checked',
     what: 'These are the places Spare Key did not read this time, and the services it does not cover yet.',
@@ -213,5 +217,9 @@ function notChecked(skipped, label, partial = []) {
       // Checked only in part: what was read is in the list above, but some may be missing.
       partial.map(o => h('li', {}, h('strong', { text: `${label(o.id)}, in part` }), h('span', { text: 'Spare Key read some of this page but may have missed some. Open it and look for anyone or anything you do not know. It is in your plan too.' }))),
       h('li', {}, h('strong', { text: 'Not covered yet' }), h('span', { text: `${UNCHECKED.services}. How to check each one yourself:` }),
-        h('ul', { class: 'guides' }, UNCHECKED.guides.map(g => h('li', {}, h('a', { href: g.url, target: '_blank', rel: 'noopener noreferrer', text: g.title })))))));
+        h('ul', { class: 'guides' }, UNCHECKED.guides.map(g => h('li', {}, h('a', { href: g.url, target: '_blank', rel: 'noopener noreferrer', text: g.title })))))),
+    onRecheck && again.length
+      ? h('button', { type: 'button', class: 'btn btn-secondary btn-block', 'data-recheck': '', onclick: () => onRecheck(again.map(o => o.id)) },
+        again.length === 1 ? `Check ${label(again[0].id).charAt(0).toLowerCase()}${label(again[0].id).slice(1)} again` : `Check just these ${again.length} again`)
+      : null);
 }

@@ -232,7 +232,28 @@ $('start').addEventListener('click', () => {
   });
 });
 
-async function startScan(checks) {
+// "Check just these again": runs only the checks that were skipped and puts their results in place of the old ones.
+function recheck(ids) {
+  const chosen = catalogue().filter(c => ids.includes(c.id));
+  const services = new Set(chosen.map(c => c.service));
+  const origins = SERVICES.filter(s => services.has(s.id)).flatMap(s => s.origins);
+  // Asked inside the click, before anything is awaited, as Chrome requires.
+  const ask = practice || !origins.length ? Promise.resolve(true) : chrome.permissions.request({ origins }).catch(() => false);
+  ask.then(async granted => {
+    if (!granted || !chosen.length) return;
+    const { scan: prev } = await chrome.storage.session.get('scan');
+    startScan(chosen, prev);
+  });
+}
+
+function mergeScan(prev, next, ids) {
+  const keep = x => !ids.includes(x.check ?? x.id);
+  const outcomes = prev.outcomes.map(o => next.outcomes.find(n => n.id === o.id) || o);
+  return { ...next, findings: [...prev.findings.filter(keep), ...next.findings], outcomes,
+    account: prev.account || next.account, visited: [...prev.visited, ...next.visited], pages: [...(prev.pages || []).filter(keep), ...next.pages] };
+}
+
+async function startScan(checks, prev = null) {
   const nano = nanoStatus === 'available' && (await offscreen('sk:nano-status').catch(() => ({})))?.status === 'available';
   const win = await chrome.windows.getCurrent();
   const { extras = {} } = await chrome.storage.local.get('extras');
@@ -246,7 +267,10 @@ async function startScan(checks) {
   try {
     scan = await runScan({
       checks, mode: practice ? 'practice' : 'real', u: practice ? 0 : Math.max(0, Math.min(3, Number($('account-u').value) || 0)), windowId: win.id, nano, offscreen, signal: scanAbort.signal,
+      onVerify: check => showVerify(check),
+      refStart: prev ? Math.max(0, ...prev.findings.map(f => Number(String(f.ref).replace(/\D/g, '')) || 0)) : 0,
       onProgress: ({ index, total, check, state, outcome }) => {
+        hideVerify();
         if (state === 'done') {
           setProgress(index, total, check.progress);
           $('scan-done').append(h('li', {}, h('span', { text: check.label }), h('span', { class: 'muted', text: outcomeWords(outcome) })));
@@ -264,12 +288,38 @@ async function startScan(checks) {
   // Checks not reached (Stop, or an error) are listed as not checked.
   const reached = new Set(scan.outcomes.map(o => o.id));
   for (const c of checks) if (!reached.has(c.id)) scan.outcomes.push({ id: c.id, service: c.service, status: 'not_checked', why: 'stopped', findings: 0, entries: 0 });
-  const record = { mode: practice ? 'practice' : 'real', at: new Date().toISOString(), findings: scan.findings, outcomes: scan.outcomes, account: scan.account || null, visited: scan.visited || [], pages: scan.pages || [], nano };
+  let record = { mode: practice ? 'practice' : 'real', at: new Date().toISOString(), findings: scan.findings, outcomes: scan.outcomes, account: scan.account || null, visited: scan.visited || [], pages: scan.pages || [], nano };
+  if (prev && prev.mode === record.mode) record = mergeScan(prev, record, checks.map(c => c.id));
   await chrome.storage.session.set({ scan: record });
   if (extras['history-cleanup'] && !practice) await cleanHistory(record.visited);
   scanAbort = null;
   showResults(record);
 }
+
+// "Verify it's you": the site wants the person to confirm it is them before it shows this setting. They can do that in
+// the scan tab while Spare Key waits (it only watches the tab's address), or skip the check. Returns the Skip signal.
+let verifySkip = null;
+let verifyTimer = null;
+function showVerify(check) {
+  hideVerify();
+  verifySkip = new AbortController();
+  const site = SERVICES.find(s => s.id === check.service)?.label.replace(/ account$/, '') || 'The site';
+  $('verify-title').textContent = `${site} wants you to confirm it is you before it shows ${check.label.charAt(0).toLowerCase()}${check.label.slice(1)}.`;
+  $('verify-how').textContent = `You can do that in the page beside this panel, the same way you always do. Spare Key does not read that page and never sees your password. When ${site} shows the setting again, Spare Key reads it and goes on.`;
+  const until = Date.now() + 5 * 60000;
+  const tick = () => { $('verify-time').textContent = `Spare Key waits up to ${Math.max(1, Math.ceil((until - Date.now()) / 60000))} more minutes, then skips it.`; };
+  tick();
+  verifyTimer = setInterval(tick, 15000);
+  $('verify-box').hidden = false;
+  $('scan-line').textContent = `Waiting for you to confirm it is you on ${site}`;
+  return verifySkip.signal;
+}
+function hideVerify() {
+  clearInterval(verifyTimer);
+  verifyTimer = null;
+  $('verify-box').hidden = true;
+}
+$('verify-skip').addEventListener('click', () => { verifySkip?.abort(); hideVerify(); });
 
 function setProgress(done, total, words) {
   $('scan-line').textContent = words;
@@ -315,6 +365,7 @@ function showResults(record, { switchTo = true } = {}) {
       document.querySelector(`[data-ref="${ref}"] [data-answer="${ownership || 'mine'}"]`)?.focus({ preventScroll: true });
     },
     onOpen: url => chrome.tabs.create({ url }),
+    onRecheck: ids => recheck(ids),
     reportState: reportStates[record.at] || '',
     onReport: async broken => {
       const manifest = chrome.runtime.getManifest();

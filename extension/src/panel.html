@@ -113,6 +113,13 @@
       <div class="progress" role="progressbar" aria-labelledby="scan-line" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" id="scan-bar"><span id="scan-fill"></span></div>
       <p class="muted num" id="scan-count"></p>
     </div>
+    <!-- A site asked "Verify it's you": the person can do it in the scan tab; Spare Key only waits. -->
+    <div class="notice caution verify-box" id="verify-box" role="status" hidden>
+      <p class="verify-title" id="verify-title"></p>
+      <p id="verify-how"></p>
+      <p class="muted" id="verify-time"></p>
+      <button class="btn btn-secondary btn-block" type="button" id="verify-skip">Skip this check</button>
+    </div>
     <ul class="plain-list scan-done" id="scan-done"></ul>
     <div class="actions">
       <button class="btn btn-secondary btn-block" type="button" id="stop">Stop and keep what was found</button>

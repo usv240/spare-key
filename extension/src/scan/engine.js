@@ -40,6 +40,29 @@ async function navigate(tabId, url, { timeoutMs = 30000, signal } = {}) {
 }
 
 /**
+ * Google or Amazon asked "Verify it's you". The person can do that in the scan tab, in the site's own page: Spare Key
+ * cannot read that page (it has no access to accounts.google.com) and only watches the tab's address until the site sends
+ * it back. Returns that address, or null when the person skips or five minutes pass.
+ */
+export async function waitForVerify(tabId, url, reauthRe, { signal, skip, minutes = 5 } = {}) {
+  const target = new URL(url);
+  const t0 = Date.now();
+  let clear = 0;
+  while (Date.now() - t0 < minutes * 60000) {
+    if (signal?.aborted) throw new ScanStopped();
+    if (skip?.aborted) return null;
+    await sleep(1000);
+    const tab = await chrome.tabs.get(tabId).catch(() => null);
+    if (!tab) return null;
+    const at = tab.pendingUrl || tab.url || '';
+    // Back on the settings site and staying there: its page first shows a frame, then may move on to verify again.
+    clear = tab.status === 'complete' && at.startsWith(target.origin) && !reauthRe.test(at) ? clear + 1 : 0;
+    if (clear >= 3) return at;
+  }
+  return null;
+}
+
+/**
  * One page the reader has read, turned into classified entries: the scan's rules in one place, so the layout drift
  * test (tools/drift-test.mjs) runs exactly what the extension runs.
  *   ask      (type, options) => Promise, Gemini Nano through the offscreen page; null when Nano is not ready
@@ -93,19 +116,22 @@ export async function readToEntries({ check, read, account, ask = null, onState 
  *   nano       true when Gemini Nano is ready; then it classifies entries and reads pages the readers could not
  *   offscreen  (type, options) => Promise: talks to the offscreen page, where Gemini Nano runs
  *   onProgress ({ index, total, check, state }) for the panel's progress line
+ *   onVerify   (check) => AbortSignal: a site asked "Verify it's you"; the panel tells the person they can do it in the
+ *              scan tab, and aborts the signal when they choose Skip. Without it, such a check is "needs_password".
  *   signal     an AbortSignal for Stop
  * Returns { findings, outcomes, account, visited, pages, ms }. Everything in it stays on this computer. `pages` is a
  * dated record of the words on each page read (for the locked copy), since an extension cannot take screenshots of them
  * without asking to read every site.
  */
-export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = false, offscreen, onProgress = () => {}, signal, practiceOrigin = PRACTICE_ORIGIN }) {
+export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = false, offscreen, onProgress = () => {}, onVerify = null, signal, practiceOrigin = PRACTICE_ORIGIN, refStart = 0 }) {
   const t0 = Date.now();
   const findings = [];
   const outcomes = [];
   const visited = [];
   const pages = [];
   let account = null;
-  let refN = 0;
+  // A check of only some pages again continues the numbering, so its findings join the earlier ones without a clash.
+  let refN = refStart;
   const pageChecks = checks.filter(c => c.pages?.length);
   const chromeChecks = checks.filter(c => c.service === 'chrome');
   const total = pageChecks.length + chromeChecks.length;
@@ -127,19 +153,40 @@ export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = f
       const outcome = { id: check.id, service: check.service, status: 'checked', how: 'reader', entries: 0, findings: 0, partly: false, ms: 0, why: null };
       for (const page of check.pages) {
         const url = mode === 'practice' ? new URL(page.practiceUrl, practiceOrigin).href : pageUrl(page.url, u);
-        const finalUrl = await navigate(tabId, url, { signal });
-        visited.push(finalUrl);
-        if (mode === 'real' && new RegExp(check.signedOutPattern).test(finalUrl)) { outcome.status = 'not_checked'; outcome.why = 'signed_out'; break; }
-        if (mode === 'real' && new RegExp(check.reauthPattern).test(finalUrl)) { outcome.status = 'not_checked'; outcome.why = 'needs_password'; break; }
-
-        let read;
-        try {
-          [{ result: read }] = await chrome.scripting.executeScript({ target: { tabId }, func: readPage, args: [page.reader] });
-        } catch (e) {
-          outcome.status = 'not_checked';
-          outcome.why = /permission|cannot access/i.test(String(e)) ? 'no_permission' : 'did_not_load';
+        const reauthRe = new RegExp(check.reauthPattern);
+        const asks = u => mode === 'real' && reauthRe.test(u || '');
+        let finalUrl = await navigate(tabId, url, { signal });
+        let read = null;
+        let why = null;
+        let verified = false;
+        for (let tries = 0; tries < 3; tries++) {
+          why = null;
+          if (mode === 'real' && new RegExp(check.signedOutPattern).test(finalUrl)) { why = 'signed_out'; break; }
+          if (asks(finalUrl)) {
+            // One wait per check: the person verifies in the scan tab, or skips.
+            const skip = !verified && onVerify ? onVerify(check) : null;
+            if (skip) await chrome.tabs.update(tabId, { active: true }).catch(() => {});
+            const back = skip ? await waitForVerify(tabId, url, reauthRe, { signal, skip }) : null;
+            if (skip) onProgress({ index, total, check, state: 'reading' });
+            verified = true;
+            if (!back) { why = 'needs_password'; break; }
+            finalUrl = new URL(back).pathname === new URL(url).pathname ? back : await navigate(tabId, url, { signal });
+            continue;
+          }
+          let failed = null;
+          try {
+            [{ result: read }] = await chrome.scripting.executeScript({ target: { tabId }, func: readPage, args: [page.reader] });
+          } catch (e) { read = null; failed = e; }
+          // A settings page can show its frame first and only then move on to "Verify it's you": what was read then
+          // was the frame, so look at where the tab is now before trusting it.
+          const now = await chrome.tabs.get(tabId).then(t => t.pendingUrl || t.url || '').catch(() => '');
+          if (asks(now)) { finalUrl = now; read = null; continue; }
+          if (failed) why = /permission|cannot access/i.test(String(failed)) ? 'no_permission' : 'did_not_load';
           break;
         }
+        if (!why && asks(finalUrl)) why = 'needs_password';
+        visited.push(finalUrl);
+        if (why) { outcome.status = 'not_checked'; outcome.why = why; break; }
         if (!read || read.errorPage) { outcome.status = 'not_checked'; outcome.why = 'did_not_load'; break; }
         account ||= read.account;
         if (read.mainText) pages.push({ check: check.id, url: finalUrl, at: new Date().toISOString(), title: read.title || '', text: read.mainText.slice(0, 20000), cut: !!read.mainTextCut });
