@@ -16,7 +16,7 @@ labels mail, Jordan's own household profile).
 | Mode | Found | False alarms | Time | Test |
 |---|---|---|---|---|
 | Code only | 24 of 24 | 0 | 13 s for 12 checks | `tools/reader-test.mjs`, `tools/e2e-practice.mjs` |
-| Code and Gemini Nano | 24 of 24 | 0 | 112.5 s for 12 checks (November 22, with the rule that Nano cannot hide an entry) | `tools/drift-test.mjs --nano`, the unchanged copy (`docs/evidence/drift-nano.json`) |
+| Code and Gemini Nano | 24 of 24 | 0 | 234 s for 12 checks through the real extension, after 85 s loading Gemini Nano (November 22, with the rule that Nano cannot hide an entry; 13 of 13 steps passed) | `tools/e2e-practice.mjs --nano` (`docs/evidence/e2e-e2e-practice-nano.json`); also 24 of 24 in `tools/drift-test.mjs --nano` on the unchanged copy |
 
 "0 false alarms" rests on only 4 entries that belong to Jordan. On a real account, the person's own phone, recovery
 number, authenticator app and Kindle are listed too, by design, for the person to mark "Mine": Spare Key cannot tell

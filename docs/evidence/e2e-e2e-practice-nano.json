@@ -1,0 +1,402 @@
+{
+  "steps": [
+    {
+      "name": "Gemini Nano is available",
+      "ok": true,
+      "detail": "available"
+    },
+    {
+      "name": "Gemini Nano loads while the first screens show",
+      "ok": true,
+      "detail": "84.7 s"
+    },
+    {
+      "name": "scan starts and shows progress",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "results appear",
+      "ok": true,
+      "detail": "234.4 s"
+    },
+    {
+      "name": "every planted path is found",
+      "ok": true,
+      "detail": "24 of 24"
+    },
+    {
+      "name": "no false alarms",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "every page check was read",
+      "ok": true,
+      "detail": "12 checks"
+    },
+    {
+      "name": "Gemini Nano classified the entries",
+      "ok": true,
+      "detail": "both,both,both,both,both,both,both,both,both,both,reader,reader,reader,both,both,both,both,both,both,both,both,both,both,both"
+    },
+    {
+      "name": "the results list every finding",
+      "ok": true,
+      "detail": "24 cards"
+    },
+    {
+      "name": "\"Not checked\" is shown",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "addresses are masked until \"Show details\"",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "\"Not mine\" is saved for this session",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "nothing from the scan is in local storage",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "warmMs": 84677,
+  "ms": 234392,
+  "nano": true,
+  "outcomes": [
+    {
+      "entries": 4,
+      "findings": 3,
+      "how": "both",
+      "id": "google.devices",
+      "ms": 15075,
+      "partly": false,
+      "service": "google",
+      "status": "checked",
+      "why": null
+    },
+    {
+      "entries": 3,
+      "findings": 2,
+      "how": "both",
+      "id": "google.apps",
+      "ms": 11571,
+      "partly": false,
+      "service": "google",
+      "status": "checked",
+      "why": null
+    },
+    {
+      "entries": 2,
+      "findings": 2,
+      "how": "both",
+      "id": "google.recovery",
+      "ms": 8519,
+      "partly": false,
+      "service": "google",
+      "status": "checked",
+      "why": null
+    },
+    {
+      "entries": 3,
+      "findings": 3,
+      "how": "both",
+      "id": "google.2sv",
+      "ms": 9591,
+      "partly": false,
+      "service": "google",
+      "status": "checked",
+      "why": null
+    },
+    {
+      "entries": 2,
+      "findings": 2,
+      "how": "reader",
+      "id": "maps.sharing",
+      "ms": 6403,
+      "nanoError": "An unknown error occurred: kErrorUnknown",
+      "partly": false,
+      "service": "google",
+      "status": "checked",
+      "why": null
+    },
+    {
+      "entries": 1,
+      "findings": 1,
+      "how": "reader",
+      "id": "gmail.forwarding",
+      "ms": 90985,
+      "nanoError": "Gemini Nano timed out",
+      "partly": false,
+      "service": "gmail",
+      "status": "checked",
+      "why": null
+    },
+    {
+      "entries": 3,
+      "findings": 2,
+      "how": "both",
+      "id": "gmail.filters",
+      "ms": 48449,
+      "partly": false,
+      "service": "gmail",
+      "status": "checked",
+      "why": null
+    },
+    {
+      "entries": 1,
+      "findings": 1,
+      "how": "both",
+      "id": "gmail.delegates",
+      "ms": 4509,
+      "partly": false,
+      "service": "gmail",
+      "status": "checked",
+      "why": null
+    },
+    {
+      "entries": 3,
+      "findings": 2,
+      "how": "both",
+      "id": "amazon.household",
+      "ms": 8544,
+      "partly": false,
+      "service": "amazon",
+      "status": "checked",
+      "why": null
+    },
+    {
+      "entries": 3,
+      "findings": 3,
+      "how": "both",
+      "id": "amazon.devices",
+      "ms": 12610,
+      "partly": false,
+      "service": "amazon",
+      "status": "checked",
+      "why": null
+    },
+    {
+      "entries": 3,
+      "findings": 2,
+      "how": "both",
+      "id": "google.family",
+      "ms": 12526,
+      "partly": false,
+      "service": "google",
+      "status": "checked",
+      "why": null
+    },
+    {
+      "entries": 1,
+      "findings": 1,
+      "how": "both",
+      "id": "photos.sharing",
+      "ms": 5338,
+      "partly": false,
+      "service": "photos",
+      "status": "checked",
+      "why": null
+    }
+  ],
+  "findings": [
+    {
+      "check": "google.devices",
+      "code": "google.devices.other",
+      "howFound": "both",
+      "recency": "now",
+      "label": "iPhone 15 · Columbus, OH · Active now",
+      "disagree": false
+    },
+    {
+      "check": "google.devices",
+      "code": "google.devices.other",
+      "howFound": "both",
+      "recency": "today",
+      "label": "Pixel 8 · Dayton, OH · 2 hours ago",
+      "disagree": false
+    },
+    {
+      "check": "google.devices",
+      "code": "google.devices.other",
+      "howFound": "both",
+      "recency": "this_month",
+      "label": "Mac · Safari · Dayton, OH · 3 weeks ago",
+      "disagree": false
+    },
+    {
+      "check": "google.apps",
+      "code": "google.apps.read_mail",
+      "howFound": "both",
+      "recency": "older",
+      "label": "InboxPilot · Has access to Gmail · Access given 3 months ago",
+      "disagree": false
+    },
+    {
+      "check": "google.apps",
+      "code": "google.apps.location",
+      "howFound": "both",
+      "recency": "this_week",
+      "label": "TrailMate · Has access to your location · Access given 5 weeks ago",
+      "disagree": false
+    },
+    {
+      "check": "google.recovery",
+      "code": "google.recovery.phone_unconfirmed",
+      "howFound": "both",
+      "recency": "older",
+      "label": "•••-•••-0177 · Added 2 years ago",
+      "disagree": false
+    },
+    {
+      "check": "google.recovery",
+      "code": "google.recovery.email_other",
+      "howFound": "both",
+      "recency": "unknown",
+      "label": "s••••@example.net · Verified",
+      "disagree": false
+    },
+    {
+      "check": "google.2sv",
+      "code": "google.2sv.other_device",
+      "howFound": "both",
+      "recency": "unknown",
+      "label": "Google prompts · 2 devices: Pixel 8, iPhone 15",
+      "disagree": false
+    },
+    {
+      "check": "google.2sv",
+      "code": "google.2sv.other_device",
+      "howFound": "both",
+      "recency": "unknown",
+      "label": "Phone number · •••-•••-0177 · Text or voice",
+      "disagree": false
+    },
+    {
+      "check": "google.2sv",
+      "code": "google.2sv.other_device",
+      "howFound": "both",
+      "recency": "older",
+      "label": "Authenticator app · Added 2 years ago",
+      "disagree": false
+    },
+    {
+      "check": "maps.sharing",
+      "code": "maps.sharing.person",
+      "howFound": "reader",
+      "recency": "unknown",
+      "label": "Sam Porter · s••••@example.net · Sharing until you turn this off",
+      "disagree": false
+    },
+    {
+      "check": "maps.sharing",
+      "code": "maps.sharing.link",
+      "howFound": "reader",
+      "recency": "unknown",
+      "label": "Link · Anyone with this link can see your location until 9:00 PM",
+      "disagree": false
+    },
+    {
+      "check": "gmail.forwarding",
+      "code": "gmail.forwarding.external",
+      "howFound": "reader",
+      "recency": "unknown",
+      "label": "Forwards new mail to s••••@example.net",
+      "disagree": false
+    },
+    {
+      "check": "gmail.filters",
+      "code": "gmail.filter.forwards",
+      "howFound": "both",
+      "recency": "unknown",
+      "label": "Matches: from:(a••••@examplebank.com). Do this: Forward to s••••@example.net",
+      "disagree": false
+    },
+    {
+      "check": "gmail.filters",
+      "code": "gmail.filter.hides",
+      "howFound": "both",
+      "recency": "unknown",
+      "label": "Matches: subject:(appointment). Do this: Skip Inbox, Mark as read",
+      "disagree": false
+    },
+    {
+      "check": "gmail.delegates",
+      "code": "gmail.delegate",
+      "howFound": "both",
+      "recency": "unknown",
+      "label": "s••••@example.net",
+      "disagree": false
+    },
+    {
+      "check": "amazon.household",
+      "code": "amazon.household.adult",
+      "howFound": "both",
+      "recency": "unknown",
+      "label": "Sam Porter · Adult",
+      "disagree": false
+    },
+    {
+      "check": "amazon.household",
+      "code": "amazon.household.teen",
+      "howFound": "both",
+      "recency": "unknown",
+      "label": "Riley · Teen",
+      "disagree": false
+    },
+    {
+      "check": "amazon.devices",
+      "code": "amazon.device.other",
+      "howFound": "both",
+      "recency": "older",
+      "label": "Sam's Echo Dot · Registered 2023",
+      "disagree": false
+    },
+    {
+      "check": "amazon.devices",
+      "code": "amazon.device.other",
+      "howFound": "both",
+      "recency": "older",
+      "label": "Kindle Paperwhite · Registered 2022",
+      "disagree": false
+    },
+    {
+      "check": "amazon.devices",
+      "code": "amazon.device.other",
+      "howFound": "both",
+      "recency": "unknown",
+      "label": "Fire TV Stick · Living room",
+      "disagree": false
+    },
+    {
+      "check": "google.family",
+      "code": "google.family.manager_other",
+      "howFound": "both",
+      "recency": "unknown",
+      "label": "Sam Porter · Family manager",
+      "disagree": false
+    },
+    {
+      "check": "google.family",
+      "code": "google.family.member",
+      "howFound": "both",
+      "recency": "unknown",
+      "label": "Riley · Member",
+      "disagree": false
+    },
+    {
+      "check": "photos.sharing",
+      "code": "photos.partner_sharing",
+      "howFound": "both",
+      "recency": "unknown",
+      "label": "Shared with s••••@example.net",
+      "disagree": false
+    }
+  ]
+}
