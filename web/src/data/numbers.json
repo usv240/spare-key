@@ -3,7 +3,10 @@
     "found": 24,
     "of": 24,
     "falseAlarms": 0,
-    "date": "November 21, 2026"
+    "date": "November 22, 2026",
+    "nanoSeconds": 234,
+    "nanoLoadSeconds": 85,
+    "codeSeconds": 13
   },
   "privacy": {
     "requests": 20,

@@ -237,7 +237,7 @@ export function accuracyPage({ numbers, drift = null, driftFirst = null }) {
 <h1>Accuracy</h1>
 <p class="lead">Every number here comes from a test you can run from the repository, and the saved runs are in its <code>docs/evidence</code> folder. Misses and limits are reported as plainly as passes.</p>
 <h2>Practice pages: planted ways in</h2>
-${n.practice ? `<p><strong>${n.practice.found} of ${n.practice.of}</strong> planted ways in found, with <strong>${n.practice.falseAlarms}</strong> false alarms, on the 13 made-up practice pages, both with code only and with Gemini Nano. ${esc(n.practice.date)}. Tests: <code>tools/reader-test.mjs</code>, <code>tools/e2e-practice.mjs</code>.</p>` : ''}
+${n.practice ? `<p><strong>${n.practice.found} of ${n.practice.of}</strong> planted ways in found, with <strong>${n.practice.falseAlarms}</strong> false alarms, on the 13 made-up practice pages, both with code only and with Gemini Nano.${n.practice.nanoSeconds ? ` Through the real extension, code alone took ${n.practice.codeSeconds} seconds for the 12 checks; with Gemini Nano on the builder’s PC, ${n.practice.nanoSeconds} seconds, after ${n.practice.nanoLoadSeconds} seconds loading the model.` : ''} ${esc(n.practice.date)}. Tests: <code>tools/reader-test.mjs</code>, <code>tools/e2e-practice.mjs</code>.</p>` : ''}
 <p class="muted">The practice pages were written by the builder, so the readers were tuned on the same pages they are tested on. They show the whole system works end to end; they do not show how well it reads real pages.</p>
 ${driftSection(drift, driftFirst)}
 <h2>Privacy: nothing that names a person leaves</h2>
