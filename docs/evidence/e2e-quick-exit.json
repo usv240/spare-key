@@ -1,0 +1,53 @@
+{
+ "at": "2026-11-23T16:15:43.967Z",
+ "steps": [
+  {
+   "name": "button during a scan: the side panel closes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "button during a scan: the scan tab closes",
+   "ok": true,
+   "detail": [
+    "www.google.com"
+   ]
+  },
+  {
+   "name": "button during a scan: the page shows an ordinary site",
+   "ok": true,
+   "detail": "www.google.com"
+  },
+  {
+   "name": "button during a scan: nothing from this session is kept",
+   "ok": true,
+   "detail": {
+    "session": [],
+    "local": []
+   }
+  },
+  {
+   "name": "one Escape alone does not exit",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Escape twice on the results: the side panel closes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Escape twice on the results: the page shows an ordinary site",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Escape twice on the results: nothing from this session is kept",
+   "ok": true,
+   "detail": {
+    "session": [],
+    "local": []
+   }
+  }
+ ]
+}

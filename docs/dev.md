@@ -18,6 +18,7 @@ Commands run from the `spare-key` folder. Node 20 or later, Chrome, and (for the
 | Readers and rules on the practice pages, code only, no extension | `node tools/reader-test.mjs` |
 | Practice check end to end, code only | `node tools/e2e-practice.mjs` (needs the practice pages deployed; no cloud calls) |
 | Practice check end to end with Gemini Nano | `node tools/e2e-practice.mjs --nano` (add `--screens` for screenshots) |
+| Quick exit end to end (button mid-scan, one Escape, Escape twice) | `node tools/e2e-quick-exit.mjs` (8 checks; saved run in `docs/evidence/e2e-quick-exit.json`) |
 | Layout drift: the practice pages changed five ways | `node tools/drift-test.mjs` (code and the Remote Config fixes; add `--nano` for Gemini Nano; no cloud calls) |
 | Plan safety, the plan made by Gemini Nano | `node tools/plan-eval-nano.mjs` (40 situations, on this computer), then `node tools/plan-eval-score.mjs` |
 | Plan safety, rescore the saved cloud run | `node tools/plan-eval-score.mjs` (offline) |
