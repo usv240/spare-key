@@ -84,6 +84,10 @@ All from scripts in `tools/`; details and limits in [docs/accuracy.md](docs/accu
 - **Practice pages:** 24 of 24 planted ways in found, code only and with Gemini Nano, and none of the 4 entries that
   belong to the person flagged. On a real account, your own phones, authenticator and Kindle are listed too, by design,
   for you to mark "Mine": Spare Key cannot tell whose phone is whose.
+- **A real account (the builder's own, read-only):** run inside each real Google, Gmail and Amazon settings page, it
+  first got 5 of 12 checks wrong in some way (about 50 wrong app entries, a missed recovery phone, 4 extra 2-Step
+  entries, 6 false Amazon devices, 1 false household adult). After the fixes, every check it could read matches what
+  the site shows; Google Photos partner sharing sits behind a click, so it is listed as not checked.
 - **When a site changes its pages:** a script changed the 13 practice pages five ways. On the first, blind run, a
   check said it was done while missing a way in 24 times. Now 0 times, with code alone and with Gemini Nano: a page that
   cannot be read is listed under "Not checked". Nano reads what code cannot (pages changed all four ways: 8 of 24 shown
@@ -98,7 +102,8 @@ All from scripts in `tools/`; details and limits in [docs/accuracy.md](docs/accu
   Google's alert emails and codes would then reach the other person. Spare Key's rule R9 puts the mail copying first in
   7 of 7. The rule was added after these runs, and the chatbot's answers are judged by keyword position, which is rough.
 
-Limits: no survivor or advocate has tested it yet; the readers have not yet been measured on real test-account pages;
+Limits: no survivor or advocate has tested it yet; the readers have been measured on one real account, without planted
+ways in, so a missed way in on a real account is not yet measured;
 the free tier failed 10 of 40 plan situations (when the cloud does not answer, you get the plan made on your computer).
 
 ## Install

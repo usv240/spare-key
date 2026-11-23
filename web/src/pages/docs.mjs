@@ -239,6 +239,21 @@ export function accuracyPage({ numbers, drift = null, driftFirst = null }) {
 <h2>Practice pages: planted ways in</h2>
 ${n.practice ? `<p><strong>${n.practice.found} of ${n.practice.of}</strong> planted ways in found, with <strong>${n.practice.falseAlarms}</strong> false alarms, on the 13 made-up practice pages, both with code only and with Gemini Nano.${n.practice.nanoSeconds ? ` Through the real extension, code alone took ${n.practice.codeSeconds} seconds for the 12 checks; with Gemini Nano on the builder’s PC, ${n.practice.nanoSeconds} seconds, after ${n.practice.nanoLoadSeconds} seconds loading the model.` : ''} ${esc(n.practice.date)}. Tests: <code>tools/reader-test.mjs</code>, <code>tools/e2e-practice.mjs</code>.</p>` : ''}
 <p class="muted">The practice pages were written by the builder, so the readers were tuned on the same pages they are tested on. They show the whole system works end to end; they do not show how well it reads real pages.</p>
+<h2>A real account</h2>
+<p>Spare Key’s own readers and rules ran inside each real settings page of the builder’s own Google, Gmail and Amazon account, read-only and with code only. Only finding codes and counts came out of each page; no names or addresses. Google asked “Verify it’s you” on four pages, and the builder confirmed it in the same tab, as anyone using Spare Key would. November 22 and 23, 2026.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="A real account: table, scrolls sideways on small screens"><table><thead><tr><th>Check</th><th>What the site shows</th><th>First reading</th><th>After the fix</th></tr></thead>
+<tbody>
+<tr><td>Apps with access</td><td>3</td><td>Read the “Sign in with Google” list too (about 50)</td><td>3</td></tr>
+<tr><td>Devices signed in</td><td>18</td><td>18 (17 listed, 1 this computer)</td><td>No change needed</td></tr>
+<tr><td>Recovery phone</td><td>1</td><td>Missed: not written the US way</td><td>1</td></tr>
+<tr><td>Recovery email</td><td>1</td><td>1</td><td>No change needed</td></tr>
+<tr><td>2-Step Verification</td><td>3 methods</td><td>7: headings and “Add” rows counted</td><td>3</td></tr>
+<tr><td>Location sharing, Gmail forwarding, filters, delegates, family group</td><td>Nothing set up</td><td>Nothing, confirmed by each page’s own words</td><td>No change needed</td></tr>
+<tr><td>Google Photos partner sharing</td><td>Behind a click</td><td>Not checked</td><td>Not checked: Spare Key never clicks</td></tr>
+<tr><td>Amazon household</td><td>The account holder, 8 profiles, 1 child</td><td>Listed the account holder as another adult</td><td>8 profiles, for you to mark</td></tr>
+<tr><td>Amazon devices</td><td>7 device groups</td><td>6 false finds: the old page now shows books</td><td>7 groups, marked “in part”</td></tr>
+</tbody></table></div>
+<p class="muted">One account, with nothing planted on it: this shows the readers match real pages, not how many hidden ways in they would miss. That test needs planted test accounts and is next.</p>
 ${driftSection(drift, driftFirst)}
 <h2>Privacy: nothing that names a person leaves</h2>
 ${n.privacy ? `<p><strong>${n.privacy.withPrivate} of ${n.privacy.requests}</strong> requests from the extension held a name, email address, phone number, device or place, during a full practice check with every cloud step on. Every request from the service worker, the hidden page and the side panel was captured and searched in plain text, URL-encoded, base64 and JSON-escaped forms. All ${n.privacy.modelRequests} requests to the model matched “What left this computer” word for word. ${esc(n.privacy.date)}. Test: <code>tools/privacy-test.mjs</code>.</p>` : ''}
@@ -255,7 +270,7 @@ ${n.nanoPlan ? `<h3>The plan made by Gemini Nano, on this computer</h3>
 <h2>What these numbers do not show</h2>
 <ul>
   <li>No survivor or advocate has tested Spare Key yet.</li>
-  <li>The readers have not yet been measured on real settings pages from test accounts; that test is next.</li>
+  <li>The readers have been measured on one real account with nothing planted on it. How many real ways in they would miss is not measured yet; that needs planted test accounts.</li>
   <li>The plain chatbot was measured with fixed keyword lists, which are rougher than reading each answer.</li>
   <li>“0 false alarms” rests on the 4 practice entries that belong to the person. On a real account, your own phone and recovery number are listed too, by design, for you to mark “Mine”.</li>
   <li>${p ? `${p.planned - p.of} of ${p.planned}` : 'Some'} plan situations failed in the cloud on the free tier (timeouts, an overloaded model, quota). When the cloud does not answer, you get the plan made by code on your computer.</li>

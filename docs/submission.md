@@ -91,6 +91,9 @@ advocate's AI assistant can give the current steps with the warnings attached.
   alert emails would reach them. The chatbot got this order wrong in 3 of 7 situations where it applied.
 - "What they see when you change it": 22 kinds of access, 15 of them with the official help page quoted.
 - Accessibility audit: 0 violations on every page; median reading grade 4.2.
+- A real account, read-only: real Google and Amazon pages differed from what we expected in 5 of 12 checks (about 50
+  wrong app entries, a missed recovery phone, 6 false Amazon devices). After the fixes, every check Spare Key could
+  read matched what the site shows.
 
 ## What we learned
 
@@ -100,7 +103,7 @@ both more useful and more honest about what each part does.
 
 ## What's next
 
-- Run the readers on real test accounts and publish the results (every number so far is on made-up practice pages).
+- Plant known ways in on real test accounts and measure misses there (so far: one real account with nothing planted).
 - Review by advocates at tech-abuse clinics, and a Chrome Web Store listing so no Developer mode is needed.
 - More services: Apple and iCloud, Life360, phone carriers.
 
