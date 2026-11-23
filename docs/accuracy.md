@@ -47,9 +47,9 @@ using Spare Key would. "What the site shows" was counted from the page's own lin
 
 So on one real account, before these fixes, Spare Key would have shown about 50 wrong app entries, missed a recovery
 phone, counted 4 extra 2-Step entries, shown 6 false Amazon devices and 1 false household adult. After them, every
-check it could read matches what the site shows. The 2-Step and Amazon device fixes were measured with the reader's own
-selectors and rules on the live pages; the final full rerun of those two was cut short when the browser stopped
-answering, and the practice and drift tests pass with them (24 of 24, 0 silent misses). One account is one account:
+check it could read matches what the site shows. The 2-Step and Amazon device fixes were rerun on the live pages with
+the final reader (November 23: 3 of 3, and 7 groups in part), and the practice and drift tests pass with them (24 of 24,
+0 silent misses). One account is one account:
 other accounts will show other layouts, which is what the layout report and Remote Config fixes are for.
 
 **A second rule from a live run (November 22).** On the website's practice check in the builder's Chrome, Gemini Nano
