@@ -84,7 +84,11 @@ try {
   await panel.waitForSelector('#screen-results:not([hidden])', { timeout: 120000 });
   await panel.keyboard.press('Escape');
   await sleep(1500);
-  step('one Escape alone does not exit', browser.targets().some(t => t.url() === panelUrl) && await panel.evaluate(() => !!document.querySelector('#results')));
+  const oneEscape = await panel.evaluate(async () => ({
+    results: !document.getElementById('screen-results')?.hidden && !!document.querySelector('#results .finding'),
+    kept: !!(await chrome.storage.session.get('scan')).scan,
+  }));
+  step('one Escape alone does not exit: the results are still shown and kept', browser.targets().some(t => t.url() === panelUrl) && oneEscape.results && oneEscape.kept, oneEscape);
   await panel.keyboard.press('Escape');
   await sleep(200);
   await panel.keyboard.press('Escape');

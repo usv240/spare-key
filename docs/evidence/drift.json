@@ -1,5 +1,5 @@
 {
- "date": "November 22, 2026",
+ "date": "November 23, 2026",
  "results": [
   {
    "kind": "none",
@@ -14,7 +14,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.5,
+   "seconds": 0.9,
    "rows": [
     {
      "id": "google.devices",
@@ -223,7 +223,7 @@
    "notChecked": 2,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.9,
+   "seconds": 1,
    "rows": [
     {
      "id": "google.devices",
@@ -439,7 +439,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.5,
+   "seconds": 0.7,
    "rows": [
     {
      "id": "google.devices",
@@ -639,16 +639,16 @@
    "kind": "reworded",
    "label": "Headings and labels reworded",
    "mode": "code",
-   "found": 13,
-   "shown": 14,
+   "found": 11,
+   "shown": 12,
    "of": 24,
    "silentMisses": 0,
-   "toldToLook": 10,
+   "toldToLook": 12,
    "falseAlarms": 1,
-   "notChecked": 4,
+   "notChecked": 6,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 13.4,
+   "seconds": 11.6,
    "rows": [
     {
      "id": "google.devices",
@@ -671,7 +671,7 @@
      "status": "checked",
      "why": null,
      "how": "reader",
-     "partly": true,
+     "partly": false,
      "want": 2,
      "found": 1,
      "missing": [
@@ -779,18 +779,20 @@
     },
     {
      "id": "gmail.delegates",
-     "status": "checked",
-     "why": null,
+     "status": "not_checked",
+     "why": "looked_different",
      "how": "reader",
      "partly": false,
      "want": 1,
-     "found": 1,
-     "missing": [],
+     "found": 0,
+     "missing": [
+      "gmail.delegates gmail.delegate"
+     ],
      "extra": [],
-     "shown": 1,
+     "shown": 0,
      "extraCount": 0,
      "silent": 0,
-     "toldToLook": 0,
+     "toldToLook": 1,
      "nanoMs": 0
     },
     {
@@ -849,18 +851,20 @@
     },
     {
      "id": "photos.sharing",
-     "status": "checked",
-     "why": null,
+     "status": "not_checked",
+     "why": "looked_different",
      "how": "reader",
-     "partly": true,
+     "partly": false,
      "want": 1,
-     "found": 1,
-     "missing": [],
+     "found": 0,
+     "missing": [
+      "photos.sharing photos.partner_sharing"
+     ],
      "extra": [],
-     "shown": 1,
+     "shown": 0,
      "extraCount": 0,
      "silent": 0,
-     "toldToLook": 0,
+     "toldToLook": 1,
      "nanoMs": 0
     }
    ]
@@ -1303,7 +1307,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.4,
+   "seconds": 0.5,
    "rows": [
     {
      "id": "google.devices",
@@ -1721,7 +1725,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.6,
+   "seconds": 0.5,
    "rows": [
     {
      "id": "google.devices",
@@ -1921,16 +1925,16 @@
    "kind": "all",
    "label": "All four at once",
    "mode": "code",
-   "found": 8,
-   "shown": 8,
+   "found": 6,
+   "shown": 6,
    "of": 24,
    "silentMisses": 0,
-   "toldToLook": 16,
+   "toldToLook": 18,
    "falseAlarms": 0,
-   "notChecked": 7,
+   "notChecked": 9,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 13.2,
+   "seconds": 11.8,
    "rows": [
     {
      "id": "google.devices",
@@ -2064,18 +2068,20 @@
     },
     {
      "id": "gmail.delegates",
-     "status": "checked",
-     "why": null,
+     "status": "not_checked",
+     "why": "looked_different",
      "how": "reader",
      "partly": false,
      "want": 1,
-     "found": 1,
-     "missing": [],
+     "found": 0,
+     "missing": [
+      "gmail.delegates gmail.delegate"
+     ],
      "extra": [],
-     "shown": 1,
+     "shown": 0,
      "extraCount": 0,
      "silent": 0,
-     "toldToLook": 0,
+     "toldToLook": 1,
      "nanoMs": 0
     },
     {
@@ -2134,18 +2140,20 @@
     },
     {
      "id": "photos.sharing",
-     "status": "checked",
-     "why": null,
+     "status": "not_checked",
+     "why": "looked_different",
      "how": "reader",
-     "partly": true,
+     "partly": false,
      "want": 1,
-     "found": 1,
-     "missing": [],
+     "found": 0,
+     "missing": [
+      "photos.sharing photos.partner_sharing"
+     ],
      "extra": [],
-     "shown": 1,
+     "shown": 0,
      "extraCount": 0,
      "silent": 0,
-     "toldToLook": 0,
+     "toldToLook": 1,
      "nanoMs": 0
     }
    ]

@@ -45,7 +45,7 @@ export default function index({ numbers, drift = null }) {
       <p class="muted">Most of the ways in were set up in trust: a shared location, a forwarded inbox, a phone that never signed out.</p>
     </div>
     <ul class="facts">
-      <li class="fact rise"><span class="fact-n">60%</span><p>When researchers asked AI chatbots 193 real questions from survivors, 60% of the answers left out critical safety warnings, often the warning that changing a setting can alert an abuser.</p><cite><a href="https://engineering.nyu.edu/news/ai-chatbots-often-give-unsafe-or-incomplete-advice-survivors-tech-enabled-abuse-study-finds">NYU Tandon, USENIX Security 2026</a> (October 20, 2026)</cite></li>
+      <li class="fact rise"><span class="fact-n">60%</span><p>When researchers asked AI chatbots 193 real questions from survivors, 60% of the answers left out critical safety warnings.</p><cite><a href="https://engineering.nyu.edu/news/ai-chatbots-often-give-unsafe-or-incomplete-advice-survivors-tech-enabled-abuse-study-finds">NYU Tandon, USENIX Security 2026</a> (October 20, 2026)</cite></li>
       <li class="fact rise"><span class="fact-n">3</span><p>There are only three dedicated tech-abuse clinics in the US, to the researchers’ knowledge.</p><cite><a href="https://engineering.nyu.edu/news/ai-chatbots-often-give-unsafe-or-incomplete-advice-survivors-tech-enabled-abuse-study-finds">Same study</a></cite></li>
       <li class="fact rise"><span class="fact-n">57.6%</span><p>Nearly 2,400 women were killed by men in 2024. Of those who knew their killer, 57.6% were his wife or intimate partner.</p><cite><a href="https://vpc.org/press/nearly-nine-out-of-10-women-murdered-by-men-are-killed-by-someone-they-know-and-almost-two-thirds-die-by-gunfire-new-violence-policy-center-study-finds/">Violence Policy Center</a> (September 16, 2026)</cite></li>
     </ul>
@@ -214,7 +214,7 @@ export default function index({ numbers, drift = null }) {
       <details><summary>Can I use it on my phone?</summary><p>The extension runs in Chrome on a computer. The practice check on this site works on a phone.</p></details>
       <details><summary>Is it free?</summary><p>Yes. No sign-in, no account, no payment.</p></details>
       <details><summary>Who made it?</summary><p>One developer, for the #BuildHybridAI 2026 hackathon. It is open source under the Apache-2.0 license. It is not made by Google, Amazon or the National Domestic Violence Hotline.</p></details>
-      <details><summary>Why can’t a chatbot do this?</summary><p>A chatbot cannot see your settings, and pasting them into one sends the very details that are the danger. Researchers also found chatbots often leave out the warning that a change can alert the other person. Spare Key reads on your computer and builds that warning into every plan.</p></details>
+      <details><summary>Why can’t a chatbot do this?</summary><p>A chatbot cannot see your settings, and pasting them into one sends the very details that are the danger. In our test on 30 situations, a plain chatbot said to take screenshots before changing anything in only 4. Spare Key reads on your computer, and every plan starts with the screenshots and warns that a change may be noticed.</p></details>
     </div>
   </div>
 </section>

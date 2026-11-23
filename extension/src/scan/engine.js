@@ -132,6 +132,15 @@ export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = f
   let account = null;
   // A check of only some pages again continues the numbering, so its findings join the earlier ones without a clash.
   let refN = refStart;
+  // Every address the scan tab was sent to or landed on (redirects and "Verify it's you" pages too), kept in this
+  // session as the scan goes, so Quick exit can remove them from history even in the middle of a scan.
+  const note = u => {
+    if (u && /^https:/.test(u) && !visited.includes(u)) {
+      visited.push(u);
+      chrome.storage.session.set({ scanVisited: visited.slice(-200) }).catch(() => {});
+    }
+    return u;
+  };
   const pageChecks = checks.filter(c => c.pages?.length);
   const chromeChecks = checks.filter(c => c.service === 'chrome');
   const total = pageChecks.length + chromeChecks.length;
@@ -155,7 +164,8 @@ export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = f
         const url = mode === 'practice' ? new URL(page.practiceUrl, practiceOrigin).href : pageUrl(page.url, u);
         const reauthRe = new RegExp(check.reauthPattern);
         const asks = u => mode === 'real' && reauthRe.test(u || '');
-        let finalUrl = await navigate(tabId, url, { signal });
+        note(url);
+        let finalUrl = note(await navigate(tabId, url, { signal }));
         let read = null;
         let why = null;
         let verified = false;
@@ -170,7 +180,7 @@ export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = f
             if (skip) onProgress({ index, total, check, state: 'reading' });
             verified = true;
             if (!back) { why = 'needs_password'; break; }
-            finalUrl = new URL(back).pathname === new URL(url).pathname ? back : await navigate(tabId, url, { signal });
+            finalUrl = note(new URL(back).pathname === new URL(url).pathname ? back : await navigate(tabId, url, { signal }));
             continue;
           }
           let failed = null;
@@ -180,12 +190,11 @@ export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = f
           // A settings page can show its frame first and only then move on to "Verify it's you": what was read then
           // was the frame, so look at where the tab is now before trusting it.
           const now = await chrome.tabs.get(tabId).then(t => t.pendingUrl || t.url || '').catch(() => '');
-          if (asks(now)) { finalUrl = now; read = null; continue; }
+          if (asks(now)) { finalUrl = note(now); read = null; continue; }
           if (failed) why = /permission|cannot access/i.test(String(failed)) ? 'no_permission' : 'did_not_load';
           break;
         }
         if (!why && asks(finalUrl)) why = 'needs_password';
-        visited.push(finalUrl);
         if (why) { outcome.status = 'not_checked'; outcome.why = why; break; }
         if (!read || read.errorPage) { outcome.status = 'not_checked'; outcome.why = 'did_not_load'; break; }
         account ||= read.account;
@@ -227,6 +236,7 @@ export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = f
   } finally {
     if (tabId !== null) {
       await chrome.tabs.remove(tabId).catch(() => {});
+      // scanVisited stays: Quick exit may be reading it right now. The panel removes it once the scan has ended.
       await chrome.storage.session.remove('scanTabId').catch(() => {});
     }
   }

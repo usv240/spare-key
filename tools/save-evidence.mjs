@@ -19,6 +19,9 @@ const FILES = [
   ['e2e/e2e-practice-nano.json', 'The same through the real extension with Gemini Nano (tools/e2e-practice.mjs --nano), November 22 or later.'],
   ['try-live.json', 'The live practice check page in an automated browser (tools/try-live.mjs).'],
   ['try-break/report.json', '"Break the pages first" in an automated browser (tools/try-break.mjs). App Check refuses automated browsers, so Gemini was not asked there.'],
+  ['e2e-quick-exit.json', 'Quick exit through the real extension: the button mid-scan, one Escape, Escape twice (tools/e2e-quick-exit.mjs).'],
+  ['a11y.json', 'axe-core on every site page (375 and 1280 px, light and dark) and the real side panel\'s screens (tools/a11y-check.mjs).'],
+  ['reading-grade.json', 'Flesch-Kincaid grade of the site pages and the side panel (tools/reading-grade.mjs).'],
 ];
 
 let token = '';
@@ -44,13 +47,15 @@ for (const [file, about] of FILES) {
 writeFileSync('docs/evidence/README.md', `# Evidence
 
 The saved runs behind the numbers in [docs/accuracy.md](../accuracy.md), copied from \`tools/out/\` by
-\`node tools/save-evidence.mjs\`. Everything here comes from made-up practice data for a person called Jordan. Run the
+\`node tools/save-evidence.mjs\`. Everything here comes from made-up practice data for a person called Jordan, except
+real-account.json, which holds only check names, finding codes and counts from the builder's own account. Run the
 same tools to make your own.
 
 | File | What it is |
 |---|---|
 ${kept.map(([f, a]) => `| [${f}](${f}) | ${a} |`).join('\n')}
 | [try-html-live-chrome.md](try-html-live-chrome.md) | try.html in the builder's own Chrome with Gemini Nano: what the page said, word for word (written by hand). |
+| [real-account.json](real-account.json) | The builder's own account, read-only: per check, what the site shows and what the reader found before and after each fix, codes and counts only (tools/real-inpage.mjs, run by hand inside each page). |
 
 An earlier end-to-end run with Gemini Nano did not complete (the PC was out of memory) and is not kept; the run here
 is the later one that finished.

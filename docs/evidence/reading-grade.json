@@ -1,0 +1,72 @@
+{
+ "at": "2026-11-23T17:29:58.701Z",
+ "method": "Flesch-Kincaid grade of p, li, h1-h6, dd, summary, figcaption, label and button text; code, tables, nav and footer left out; vowel-group syllable count",
+ "median": 4.2,
+ "rows": [
+  {
+   "page": "web/dist/accuracy.html",
+   "words": 870,
+   "grade": 5.5
+  },
+  {
+   "page": "web/dist/api.html",
+   "words": 206,
+   "grade": 4
+  },
+  {
+   "page": "web/dist/built-with.html",
+   "words": 457,
+   "grade": 6.1
+  },
+  {
+   "page": "web/dist/how-it-works.html",
+   "words": 547,
+   "grade": 5
+  },
+  {
+   "page": "web/dist/index.html",
+   "words": 1591,
+   "grade": 4.2
+  },
+  {
+   "page": "web/dist/install.html",
+   "words": 225,
+   "grade": 4.2
+  },
+  {
+   "page": "web/dist/panel-demo.html",
+   "words": 224,
+   "grade": 3
+  },
+  {
+   "page": "web/dist/plant.html",
+   "words": 271,
+   "grade": 4.2
+  },
+  {
+   "page": "web/dist/privacy.html",
+   "words": 338,
+   "grade": 4.9
+  },
+  {
+   "page": "web/dist/safety.html",
+   "words": 175,
+   "grade": 4.7
+  },
+  {
+   "page": "web/dist/try.html",
+   "words": 138,
+   "grade": 3.6
+  },
+  {
+   "page": "web/dist/what-they-see.html",
+   "words": 215,
+   "grade": 3.1
+  },
+  {
+   "page": "extension/src/panel.html",
+   "words": 334,
+   "grade": 2.2
+  }
+ ]
+}

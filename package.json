@@ -15,6 +15,7 @@
     "firebase": "13.3.0"
   },
   "devDependencies": {
+    "axe-core": "^4.10.2",
     "puppeteer-core": "24.43.1"
   }
 }

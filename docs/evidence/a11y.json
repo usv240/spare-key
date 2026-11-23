@@ -1,0 +1,435 @@
+{
+ "at": "2026-11-23T17:31:59.898Z",
+ "axe": "4.10.2",
+ "rules": [
+  "wcag2a",
+  "wcag2aa",
+  "wcag21aa",
+  "best-practice"
+ ],
+ "sitePages": 13,
+ "runs": 60,
+ "violationNodes": 0,
+ "results": [
+  {
+   "where": "404.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "404.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "404.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "404.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "accuracy.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "accuracy.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "accuracy.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "accuracy.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "api.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "api.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "api.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "api.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "built-with.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "built-with.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "built-with.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "built-with.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "how-it-works.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "how-it-works.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "how-it-works.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "how-it-works.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "index.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "index.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "index.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "index.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "install.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "install.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "install.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "install.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel-demo.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel-demo.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel-demo.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel-demo.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "plant.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "plant.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "plant.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "plant.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "privacy.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "privacy.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "privacy.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "privacy.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "safety.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "safety.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "safety.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "safety.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "try.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "try.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "try.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "try.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "what-they-see.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "what-they-see.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "what-they-see.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "what-they-see.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel: safety",
+   "width": "side panel",
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel: safety",
+   "width": "side panel",
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel: choose",
+   "width": "side panel",
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel: choose",
+   "width": "side panel",
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel: scanning, with the confirm-it-is-you box",
+   "width": "side panel",
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel: scanning, with the confirm-it-is-you box",
+   "width": "side panel",
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel: results",
+   "width": "side panel",
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel: results",
+   "width": "side panel",
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  }
+ ]
+}

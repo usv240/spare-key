@@ -1,5 +1,5 @@
 {
- "at": "2026-11-23T16:15:43.967Z",
+ "at": "2026-11-23T17:29:07.768Z",
  "steps": [
   {
    "name": "button during a scan: the side panel closes",
@@ -27,9 +27,12 @@
    }
   },
   {
-   "name": "one Escape alone does not exit",
+   "name": "one Escape alone does not exit: the results are still shown and kept",
    "ok": true,
-   "detail": ""
+   "detail": {
+    "results": true,
+    "kept": true
+   }
   },
   {
    "name": "Escape twice on the results: the side panel closes",

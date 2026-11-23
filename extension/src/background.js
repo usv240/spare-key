@@ -33,13 +33,19 @@ function appendSent(entry) {
 }
 
 /**
- * Quick exit, in this order: forget everything from this session; close the scan tab; replace the page in the active
+ * Quick exit, in this order: forget everything from this session (and, with that extra on, the pages the scan opened
+ * from history); close the scan tab; replace the page in the active
  * tab with an ordinary one; close the side panel. Each step runs even if an earlier one fails.
  */
 async function quickExit({ windowId, url } = {}) {
   const target = /^https:\/\//.test(url || '') ? url : (await chrome.storage.local.get('quickExitUrl')).quickExitUrl || QUICK_EXIT_URL;
-  const { scanTabId } = await chrome.storage.session.get('scanTabId').catch(() => ({}));
+  const { scanTabId, scanVisited = [] } = await chrome.storage.session.get(['scanTabId', 'scanVisited']).catch(() => ({}));
   await chrome.storage.session.clear().catch(() => {});
+  // The "remove the pages Spare Key opened from history" extra, also when leaving in the middle of a scan.
+  const { extras = {} } = await chrome.storage.local.get('extras').catch(() => ({}));
+  if (extras['history-cleanup'] && chrome.history?.deleteUrl) {
+    for (const url of new Set(scanVisited)) await chrome.history.deleteUrl({ url }).catch(() => {});
+  }
   if (await chrome.offscreen.hasDocument().catch(() => false)) await chrome.offscreen.closeDocument().catch(() => {});
   if (scanTabId) await chrome.tabs.remove(scanTabId).catch(() => {});
   const [tab] = await chrome.tabs.query({ active: true, ...(windowId ? { windowId } : { lastFocusedWindow: true }) }).catch(() => []);

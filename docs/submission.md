@@ -20,7 +20,9 @@ visiting a dozen settings pages, each with its own words, and then deciding what
 because removing access can alert the other person, and that can be most dangerous right after leaving.
 
 Researchers at NYU asked AI chatbots 193 real questions from survivors; 60% of the answers left out critical safety
-warnings. There are only three dedicated tech-abuse clinics in the US. A chatbot also cannot see your settings, and
+warnings. In our own test on 30 situations, a plain chatbot said to take screenshots before changing anything in only 4,
+and when mail was copied to the other person it put an account change first in 3 of 7, so Google's alert emails would
+reach them. There are only three dedicated tech-abuse clinics in the US. A chatbot also cannot see your settings, and
 pasting them into one sends the very names and addresses that are the danger. That is the gap Spare Key fills.
 
 ## What it does
@@ -90,9 +92,11 @@ advocate's AI assistant can give the current steps with the warnings attached.
 - Rule R9: when mail is copied to someone else, stop that before changing recovery or 2-Step settings, because Google's
   alert emails would reach them. The chatbot got this order wrong in 3 of 7 situations where it applied.
 - "What they see when you change it": 22 kinds of access, 15 of them with the official help page quoted.
-- Accessibility audit: 0 violations on every page; median reading grade 4.2.
+- Accessibility: axe-core finds 0 violations in 60 runs (13 site pages at two widths in light and dark, and the side
+  panel's screens); median reading grade 4.2 (tools/a11y-check.mjs, tools/reading-grade.mjs).
 - Quick exit, tested through the real extension: the button in the middle of a check, and Escape twice, each close the
-  panel and the scan tab, show an ordinary page, and leave nothing from the session (8 of 8 checks).
+  panel and the scan tab, show an ordinary page, and leave nothing in Spare Key's storage (8 of 8 checks). With the
+  history extra on, it also removes the pages the check opened from Chrome's history (not covered by the test).
 - A real account, read-only: real Google and Amazon pages differed from what we expected in 5 of 12 checks (about 50
   wrong app entries, a missed recovery phone, 6 false Amazon devices). After the fixes, every check Spare Key could
   read matched what the site shows.

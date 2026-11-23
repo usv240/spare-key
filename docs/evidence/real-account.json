@@ -1,0 +1,21 @@
+{
+ "what": "Spare Key's reader and rules (tools/real-inpage.mjs) run inside each real settings page of the builder's own Google, Gmail and Amazon account, in the builder's own Chrome, read-only and code only (no Gemini Nano). Only these codes and counts left each page. 'siteShows' was counted in the same page from its own links and labels (for example Google's 'Access to (3)'), also as numbers only.",
+ "when": "2026-11-22 and 2026-11-23",
+ "method": "Chrome automation pasted the bundle into each page and called __sk(checkId) or __skFrame(url, checkId). This is not the extension's own scan (runScan): the permission prompt, the scan tab and the 'Verify it's you' wait in the panel were not part of it. Google asked 'Verify it's you' on the devices, recovery and 2-Step pages; the builder confirmed with a passkey in the same tab.",
+ "plantedWaysIn": 0,
+ "checks": [
+  { "check": "google.apps", "siteShows": 3, "before": { "note": "the default connections view also lists 'Sign in with Google' apps (about 50 on the first recording)" }, "after": { "status": "checked", "via": "items", "rawEntries": 3, "codes": { "google.apps.full_access": 3 } }, "liveAfterFix": "2026-11-22" },
+  { "check": "google.devices", "siteShows": 18, "after": { "status": "checked", "via": "items", "rawEntries": 18, "codes": { "google.devices.other": 17 }, "note": "1 is this computer" }, "liveAfterFix": "2026-11-22", "changed": false },
+  { "check": "google.recovery (phone)", "siteShows": 1, "before": { "status": "not_checked", "why": "looked_different", "note": "the number was not written the US way" }, "after": { "status": "checked", "via": "patterns", "rawEntries": 1, "codes": { "google.recovery.phone_unconfirmed": 1 } }, "liveAfterFix": "2026-11-23" },
+  { "check": "google.recovery (email)", "siteShows": 1, "after": { "status": "checked", "via": "patterns", "rawEntries": 1, "codes": { "google.recovery.email_other": 1 } }, "liveAfterFix": "2026-11-23", "changed": false },
+  { "check": "google.2sv", "siteShows": 3, "before": { "status": "checked", "via": "patterns", "rawEntries": 7, "codes": { "google.2sv.other_device": 7 } }, "after": { "status": "checked", "via": "items", "rawEntries": 3, "codes": { "google.2sv.other_device": 3 } }, "liveAfterFix": "2026-11-23" },
+  { "check": "maps.sharing", "siteShows": 0, "after": { "status": "checked", "rawEntries": 0, "codes": {} }, "liveAfterFix": "2026-11-22", "changed": false },
+  { "check": "google.family", "siteShows": 0, "after": { "status": "checked", "rawEntries": 0, "codes": {} }, "liveAfterFix": "2026-11-22", "changed": false },
+  { "check": "gmail.forwarding", "siteShows": 0, "after": { "status": "checked", "via": "patterns", "withinFound": true, "rawEntries": 2, "codes": {}, "note": "forwarding off; the 2 entries are the off and on options" }, "liveAfterFix": "2026-11-22", "changed": false },
+  { "check": "gmail.filters", "siteShows": 0, "after": { "status": "checked", "emptyConfirmed": true, "rawEntries": 0, "codes": {} }, "liveAfterFix": "2026-11-22", "changed": false },
+  { "check": "gmail.delegates", "siteShows": 0, "after": { "status": "checked", "withinFound": true, "rawEntries": 0, "codes": {} }, "liveAfterFix": "2026-11-22", "changed": false },
+  { "check": "photos.sharing", "siteShows": "behind a click (the 'Partner Sharing' text is in a closed section)", "after": { "status": "not_checked", "why": "looked_different" }, "note": "measured in the recording profile on 2026-11-22; in the builder's Chrome only the visibility of the section was checked" },
+  { "check": "amazon.household", "siteShows": "10 cards: the account holder, 8 profiles on the account, 1 child", "before": { "note": "the account holder card would have been listed as another adult (9)" }, "after": { "status": "checked", "via": "patterns", "rawEntries": 10, "codes": { "amazon.household.adult": 8 } }, "liveAfterFix": "2026-11-23" },
+  { "check": "amazon.devices", "siteShows": "7 device groups", "before": { "status": "checked", "via": "patterns", "rawEntries": 6, "codes": { "amazon.device.other": 6 }, "note": "the old address now opens the content library; book titles read as devices" }, "after": { "status": "checked", "via": "patterns", "rawEntries": 7, "partly": true, "codes": { "amazon.device.other": 7 } }, "liveAfterFix": "2026-11-23" }
+ ]
+}

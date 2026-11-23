@@ -2,7 +2,10 @@
 
 Measured on November 21 and 22, 2026, with extension version 0.1.0 and Chrome 158.0.8127.36 on the builder's Windows PC
 (32 GB of RAM, with other programs running and as little as 1 to 3 GB free during the runs). Every number comes from a
-script in `tools/` that anyone can run. Misses and limits are reported as plainly as passes.
+script in `tools/` that anyone can run, with two exceptions said where they appear: the real-account table (the
+script, `tools/real-inpage.mjs`, runs inside the person's own pages, so it was run there by hand and its codes-only
+output saved) and the try.html run in the builder's own Chrome (written down by hand). Misses and limits are reported
+as plainly as passes.
 
 The saved runs behind every number are in [docs/evidence/](evidence/), copied from `tools/out/` by
 `tools/save-evidence.mjs`.
@@ -28,8 +31,10 @@ system works end to end, not how well it reads real pages. The planted-access te
 
 ### Real pages: the builder's own account (November 22 and 23, 2026)
 
-Spare Key's own reader and rules ran inside each real settings page in the builder's everyday Chrome, read-only, code
-only (no Gemini Nano). Only finding codes and counts left the page; no names, addresses or page text were copied out.
+Spare Key's own reader and rules (`tools/real-inpage.mjs`) ran inside each real settings page in the builder's everyday
+Chrome, read-only, code only (no Gemini Nano); the codes-only output is `docs/evidence/real-account.json`. This is the
+reader and rules, not the extension's whole scan: the permission prompt, the scan tab and the panel's "confirm it is
+you" wait were not part of it. Only finding codes and counts left the page; no names, addresses or page text were copied out.
 Google asked "Verify it's you" on four pages, and the builder confirmed with a passkey in the same tab, as a person
 using Spare Key would. "What the site shows" was counted from the page's own links and labels, the same way.
 
@@ -47,9 +52,10 @@ using Spare Key would. "What the site shows" was counted from the page's own lin
 
 So on one real account, before these fixes, Spare Key would have shown about 50 wrong app entries, missed a recovery
 phone, counted 4 extra 2-Step entries, shown 6 false Amazon devices and 1 false household adult. After them, every
-check it could read matches what the site shows. The 2-Step and Amazon device fixes were rerun on the live pages with
-the final reader (November 23: 3 of 3, and 7 groups in part), and the practice and drift tests pass with them (24 of 24,
-0 silent misses). One account is one account:
+check it could read matches what the site shows. Every fix was rerun on the live page after it was made: apps on
+November 22, the recovery phone, 2-Step (3 of 3), household and Amazon devices (7 groups, in part) on November 23 (the
+dates are in the evidence file). The practice and drift tests pass with them (24 of 24, 0 silent misses). One account is
+one account:
 other accounts will show other layouts, which is what the layout report and Remote Config fixes are for.
 
 **A second rule from a live run (November 22).** On the website's practice check in the builder's Chrome, Gemini Nano
@@ -257,10 +263,18 @@ what a person sees, which is why both pass every measure after them.
 Speed: see section 1. On this PC, loading Gemini Nano the first time took 104 to 133 s; after that, each check took 4 to
 19 s with Nano and about 1 s with code only. The PC had little free memory during these runs, so these are slow numbers.
 
-Reading level: every string the side panel shows (257 strings from the panel code, the "i" sheets and the steps
-library) was scored with the Flesch-Kincaid grade formula on November 22. Median grade 4.3. 5 of 257 score between
-grade 8 and 9.1. They are short steps that name a menu, such as "Open Gmail settings, then Forwarding and POP/IMAP.",
-where the formula counts the menu's name as hard words.
+Reading level (`tools/reading-grade.mjs`, `docs/evidence/reading-grade.json`, November 23): the Flesch-Kincaid grade
+of the words on the 12 site pages and the side panel (paragraphs, list items, headings and buttons; code, number tables
+and menus left out). Median grade 4.2; the highest page is 6.1 ("Built with", which names the Firebase products). The
+goal is grade 6 to 8 or lower. An earlier one-off scoring of the panel's 257 strings on November 22 (not saved as a
+script) gave median 4.3, with 5 short steps that name a menu, such as "Open Gmail settings, then Forwarding and
+POP/IMAP.", between grade 8 and 9.1.
+
+Accessibility (`tools/a11y-check.mjs`, `docs/evidence/a11y.json`, November 23): axe-core 4.10.2 with the WCAG 2.0 and 2.1
+A and AA rules and best practices, on all 13 site pages at 375 and 1280 px in light and dark, and on the real side panel
+(safety, choose, scanning with the "confirm it is you" box, results) in light and dark: 60 runs, 0 violations, and no
+page scrolls sideways. axe finds only what can be checked automatically; a keyboard and screen reader pass by a person
+is still needed.
 
 ## 6. Steps freshness (TECHNICAL-DESIGN.md section 9.3)
 
