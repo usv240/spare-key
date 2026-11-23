@@ -14,7 +14,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1
+   "seconds": 0.9
   },
   {
    "kind": "none",
@@ -44,7 +44,7 @@
    "notChecked": 2,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.6
+   "seconds": 0.8
   },
   {
    "kind": "renamed",
@@ -59,7 +59,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.3
+   "seconds": 0.5
   },
   {
    "kind": "renamed",
@@ -80,16 +80,16 @@
    "kind": "reworded",
    "label": "Headings and labels reworded",
    "mode": "code",
-   "found": 13,
-   "shown": 14,
+   "found": 11,
+   "shown": 12,
    "of": 24,
    "silentMisses": 0,
-   "toldToLook": 10,
+   "toldToLook": 12,
    "falseAlarms": 1,
-   "notChecked": 4,
+   "notChecked": 6,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 13.8
+   "seconds": 11.7
   },
   {
    "kind": "reworded",
@@ -104,7 +104,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 2.7
+   "seconds": 2.1
   },
   {
    "kind": "reworded",
@@ -134,7 +134,7 @@
    "notChecked": 2,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.2
+   "seconds": 0.6
   },
   {
    "kind": "rebuilt",
@@ -149,7 +149,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.2
+   "seconds": 0.5
   },
   {
    "kind": "rebuilt",
@@ -179,7 +179,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.1
+   "seconds": 0.5
   },
   {
    "kind": "formats",
@@ -194,7 +194,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.2
+   "seconds": 0.5
   },
   {
    "kind": "formats",
@@ -215,16 +215,16 @@
    "kind": "all",
    "label": "All four at once",
    "mode": "code",
-   "found": 8,
-   "shown": 8,
+   "found": 6,
+   "shown": 6,
    "of": 24,
    "silentMisses": 0,
-   "toldToLook": 16,
+   "toldToLook": 18,
    "falseAlarms": 0,
-   "notChecked": 7,
+   "notChecked": 9,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 13.5
+   "seconds": 11.6
   },
   {
    "kind": "all",
@@ -239,7 +239,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 2.4
+   "seconds": 2.2
   },
   {
    "kind": "all",

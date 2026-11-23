@@ -55,13 +55,16 @@ export const CHECKS = [
     label: 'Apps that can use your Google account',
     progress: 'Checking which apps can use your Google account',
     pages: [{
-      url: 'https://myaccount.google.com/connections?authuser={u}', urlStatus: 'known',
+      // Recorded November 22, 2026 on a real account: the page is now "Linked apps" and lists every app that uses "Sign
+      // in with Google" (50 there). filters=3 shows only the apps with access to account data (3 there), which is
+      // what Spare Key reports; an app that only signs you in cannot read anything.
+      url: 'https://myaccount.google.com/connections?filters=3&authuser={u}', urlStatus: 'known',
       practiceUrl: '/practice/google/connections.html',
       reader: google({
-        waitFor: { text: '(third.party|apps (and|&) services|connections)' },
-        item: 'a[href*="connections/link"], a[href*="connections/overview/"], a[href*="permissions/"]',
+        waitFor: { text: '(third.party|apps (and|&) services|connections|linked apps)' },
+        item: 'a[href*="linkedapps/overview/"], a[href*="connections/link"], a[href*="connections/overview/"], a[href*="permissions/"]',
         exclude: '^(see all connections|learn more)$',
-        emptyText: '(no (third-party )?(apps|connections)|you (haven.t|have not) (given|granted|connected))',
+        emptyText: '(access to \\(0\\)|no (third-party )?(apps|connections)|you (haven.t|have not) (given|granted|connected))',
       }),
     }],
   },
@@ -109,7 +112,8 @@ export const CHECKS = [
         waitFor: { text: 'location sharing' },
         patterns: [EMAIL_SOURCE, '\\bsharing (until|for|since)\\b', 'anyone with (the|this) link'],
         exclude: '^(location sharing|learn more)$',
-        emptyText: '(you.re not sharing|not sharing your location|no one can see your location)',
+        // Real wording, November 22, 2026: "You aren't sharing real-time location with anyone on Google."
+        emptyText: '(you.re not sharing|aren.t sharing|not sharing your location|no one can see your location)',
       }),
     }],
   },
@@ -140,7 +144,8 @@ export const CHECKS = [
         main: '[role="main"]',
         waitFor: { text: '(filters|blocked addresses)' },
         patterns: ['\\bdo this:'],
-        emptyText: '(you (currently )?have no filters|no filters)',
+        // Real Gmail with no filters (November 22, 2026) shows the heading, then straight away the Select buttons.
+        emptyText: '(you (currently )?have no filters|no filters|applied to all incoming mail:\\s*select:)',
       }),
     }],
   },
@@ -156,6 +161,8 @@ export const CHECKS = [
         waitFor: { text: '(grant access to your account|send mail as)' },
         within: '^\\s*grant access to your account',
         patterns: [EMAIL_SOURCE],
+        // Real Gmail's section also holds the person's own sender options, like "Show this address only (you@...)".
+        exclude: '^(show this address|mark (the )?conversation|leave (the )?conversation|add another account|sender information)',
       }),
     }],
   },

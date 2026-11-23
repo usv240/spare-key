@@ -65,10 +65,18 @@ export function readPage(cfg, doc = document) {
     if (within) {
       const walker = doc.createTreeWalker(root, SHOW_TEXT);
       for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-        if (!within.test(node.nodeValue || '')) continue;
+        // Visible headings only: a real Google Photos page holds hidden "Partner sharing" text in a closed dialog, and
+        // reading that as the section reported nothing found on a page that shows no partner sharing at all.
+        if (!within.test(node.nodeValue || '') || !node.parentElement || !visible(node.parentElement)) continue;
         let el = node.parentElement;
+        // Without a row, section or list item around it, the smallest box around the heading that holds more than the
+        // heading is the section (a page rebuilt from plain boxes).
+        const heading = (node.nodeValue || '').trim();
+        let box = null;
+        for (let up = node.parentElement; up && up !== root; up = up.parentElement) if (textOf(up).length > heading.length + 2) { box = up; break; }
         while (el && el !== root && !/^(TR|SECTION|FIELDSET|LI)$/.test(el.tagName) && !el.matches('[role="row"], [role="region"], [data-section]')) el = el.parentElement;
         if (el && el !== root) { root = el; withinFound = true; break; }
+        if (box) { root = box; withinFound = true; break; }
       }
     }
     const errorPage = !!re(cfg.errorText || '(something went wrong|page not found|error 404|try again later|this page isn.t available)')?.test(`${doc.title}\n${mainText.slice(0, 2000)}`);
@@ -77,11 +85,15 @@ export function readPage(cfg, doc = document) {
     // The entries: by the item selector, or else by patterns.
     let via = 'none';
     let els = [];
-    if (cfg.item) {
+    // A check that names its section ("within") reads only that section. If the section is not on the page, nothing is
+    // read: reading the whole page instead picked up unrelated lines on a real Google Photos page (November 22, 2026).
+    const sectionMissing = !!within && !withinFound;
+    if (sectionMissing) via = 'section_missing';
+    else if (cfg.item) {
       try { els = [...root.querySelectorAll(cfg.item)].filter(visible); } catch { els = []; }
       if (els.length) via = 'items';
     }
-    if (!els.length && cfg.patterns?.length) {
+    if (!sectionMissing && !els.length && cfg.patterns?.length) {
       const found = new Set();
       const patterns = cfg.patterns.map(p => re(p, 'i')).filter(Boolean);
       const counters = cfg.patterns.map(p => re(p, 'gi'));
