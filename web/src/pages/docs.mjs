@@ -273,7 +273,7 @@ ${n.nanoPlan ? `<h3>The plan made by Gemini Nano, on this computer</h3>
   <li>The readers have been measured on one real account with nothing planted on it. How many real ways in they would miss is not measured yet; that needs planted test accounts.</li>
   <li>The plain chatbot was measured with fixed keyword lists, which are rougher than reading each answer.</li>
   <li>“0 false alarms” rests on the 4 practice entries that belong to the person. On a real account, your own phone and recovery number are listed too, by design, for you to mark “Mine”.</li>
-  <li>${p ? `${p.planned - p.of} of ${p.planned}` : 'Some'} plan situations failed in the cloud on the free tier (timeouts, an overloaded model, quota). When the cloud does not answer, you get the plan made by code on your computer.</li>
+  <li>On the free tier the cloud plan failed in 5 of ${p ? p.planned : 40} situations (4 timeouts at a 30-second limit, since raised to 60, and 1 quota), and the two-voice check in 5 more. When the cloud plan does not answer, you get the plan made by code on your computer; when only the voices fail, you keep the cloud plan.</li>
 </ul>`);
 }
 

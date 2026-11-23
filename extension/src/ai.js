@@ -206,7 +206,7 @@ export async function deviceStatus(inputs = TEXT_ONLY) {
 // plan safety run (November 21, 2026) 8 of 10 failures were 30-second timeouts during function calling.
 const TOOL_TIMEOUT_MS = 60000;
 
-function cloudModel({ system, schema, model, tools = null }) {
+function cloudModel({ system, schema, model, tools = null, timeoutMs = 0 }) {
   return getGenerativeModel(ai, {
     mode: InferenceMode.ONLY_IN_CLOUD,
     inCloudParams: {
@@ -216,7 +216,7 @@ function cloudModel({ system, schema, model, tools = null }) {
       // Temperature 0: the same codes should get the same plan.
       generationConfig: schema ? { responseMimeType: 'application/json', responseJsonSchema: schema, temperature: 0 } : { temperature: 0 },
     },
-  }, { timeout: tools ? TOOL_TIMEOUT_MS : CLOUD_TIMEOUT_MS });
+  }, { timeout: timeoutMs || (tools ? TOOL_TIMEOUT_MS : CLOUD_TIMEOUT_MS) });
 }
 
 // "Try the next model": busy, over quota, or a model that is no longer there.
@@ -286,7 +286,7 @@ async function askWithTool(model, text, onCall, guard, logSend, spend) {
  *   tools, onCall:  function declarations and the on-device handler for them
  * Returns { answer, model }. Throws CloudSafetyError (never sent), CloudBudgetError, or the last cloud error.
  */
-export function cloudJson({ purpose, body, system, schema, privateStrings = [], library = null, onSend = async () => {}, tools = null, onCall = null, retries = 1 }) {
+export function cloudJson({ purpose, body, system, schema, privateStrings = [], library = null, onSend = async () => {}, tools = null, onCall = null, retries = 1, timeoutMs = 0 }) {
   // Checked before queueing, so a refused body never waits in line and is never logged as sent.
   const text = checkOutgoing(purpose, body, { privateStrings, library });
   const guard = { privateStrings, library };
@@ -309,13 +309,13 @@ export function cloudJson({ purpose, body, system, schema, privateStrings = [], 
         try {
           await logSend({ kind: 'request', text });
           let r = tools && onCall
-            ? await askWithTool(cloudModel({ system, schema, model, tools }), text, onCall, guard, logSend, spend)
-            : await cloudModel({ system, schema, model, tools }).generateContent(text);
+            ? await askWithTool(cloudModel({ system, schema, model, tools, timeoutMs }), text, onCall, guard, logSend, spend)
+            : await cloudModel({ system, schema, model, tools, timeoutMs }).generateContent(text);
           // A model that keeps calling functions after being told to answer leaves no JSON: ask once more without tools.
           if (tools && onCall && schema && !/^\s*\{/.test(r.response.text() || '')) {
             await spend();
             await logSend({ kind: 'request', text, note: 'asked again without functions' });
-            r = await cloudModel({ system, schema, model }).generateContent(text);
+            r = await cloudModel({ system, schema, model, timeoutMs }).generateContent(text);
           }
           return {
             answer: schema ? JSON.parse(r.response.text()) : r.response.text(),

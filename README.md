@@ -104,7 +104,8 @@ All from scripts in `tools/`; details and limits in [docs/accuracy.md](docs/accu
 
 Limits: no survivor or advocate has tested it yet; the readers have been measured on one real account, without planted
 ways in, so a missed way in on a real account is not yet measured;
-the free tier failed 10 of 40 plan situations (when the cloud does not answer, you get the plan made on your computer).
+on the free tier the cloud plan failed in 5 of 40 situations and the two-voice check in 5 more (when the cloud does not
+answer, you get the plan made on your computer; when only the voices fail, you keep the cloud plan).
 
 ## Install
 

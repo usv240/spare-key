@@ -219,8 +219,11 @@ words (README hard rule 3). That is why R6 fires more often than the "promise" m
   in 3 of the 7 (keyword position, rough); the cloud plan got it wrong once, the two voices twice. The code plan puts the
   mail copying first by construction, and R9 fixes any model plan that does not.
 - What a person sees (E) passes every measure by construction: the rules enforce it whatever the model writes.
-- 10 of 40 situations failed in the cloud, a quarter of the run. On the free tier, the plan made by code on the
-  computer is what a person sees when the cloud does not answer, and it passes every measure.
+- What a person would have seen, by situation (`docs/evidence/plan-eval-cloud.log`): the cloud plan answered in 35 of
+  40, and the two voices then finished in 30 of those 35. In the other 5 the person keeps the cloud plan, which is
+  drawn before the voices run. In 5 of 40 the cloud plan failed (4 timeouts at the then 30-second limit, 1 quota) and
+  the person gets the plan made by code on the computer, which passes every measure. Since this run, the plan's
+  function-calling exchange and the two voices each wait up to 60 seconds; that change is not yet re-measured.
 
 **How it was measured, and its limits:** the structured plans (B to E) are read step by step by code. The plain
 chatbot's free-text answers are read with fixed keyword lists, which is rough: a warning word anywhere in a long answer

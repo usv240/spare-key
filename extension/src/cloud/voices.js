@@ -85,12 +85,17 @@ export function draftForCloud(answer) {
  * Run the three voices. `scan` is the toCloud() body, `draft` the cloud plan's answer (cloud refs).
  * Returns { answer: settled plan (cloud refs), lines: { close_the_doors, stay_hidden }, arguments, model }.
  */
+const VOICES_TIMEOUT_MS = 60000;
 export async function twoVoices({ scan, draft, privateStrings, library, onSend }) {
   const base = { scan, draft: draftForCloud(draft) };
   const codes = [...new Set((scan?.findings || []).filter(f => f.ownership !== 'mine').map(f => f.code))];
   const grounded = { means: facts(codes, library, 'what_it_means'), sees: facts(codes, library, 'what_they_see') };
   const ask = (voice, extra = {}, schema = ARGUMENT_SCHEMA) => cloudJson({
     purpose: 'voices', body: { ...base, draft: { ...base.draft, ...extra }, voice }, system: VOICES[voice](grounded), schema, privateStrings, library, onSend,
+    // The cloud plan is already on screen while the voices run, so a longer wait costs the person nothing. At 30 s, in
+    // the plan safety run (November 21, 2026), 3 of the 5 situations where the plan answered but the voices failed
+    // were timeouts (the other 2: a busy model and the quota).
+    timeoutMs: VOICES_TIMEOUT_MS,
   });
   const close = await ask('close_the_doors');
   const hidden = await ask('stay_hidden');
