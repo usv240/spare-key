@@ -23,7 +23,8 @@ export const WORDS = {
   'maps.sharing': { link: 'anyone with (the|this) link', person: '\\bsharing\\b' },
   'gmail.forwarding': { on: 'forward a copy', off: 'forwarding is (off|disabled)' },
   'gmail.filters': { forwards: '\\bforward (it )?to\\b', hides: '\\b(delete it|skip (the )?inbox|archive it|mark as read)\\b' },
-  'amazon.household': { teen: '\\bteen\\b', child: '\\b(child|kid)\\b' },
+  // Amazon marks the person's own card "Account holder" (a real account, November 22, 2026).
+  'amazon.household': { teen: '\\bteen\\b', child: '\\b(child|kid)\\b', owner: '\\baccount holder\\b' },
   'google.family': { manager: 'family manager|\\bparent\\b' },
 };
 const NEVER = /(?!)/;
@@ -77,7 +78,7 @@ export function codeClassify(checkId, entry, account, words) {
     case 'gmail.filters':
       return { ...base, kind: 'unknown', access: ['mail'] };
     case 'amazon.household':
-      return { ...base, kind: 'person', access: ['purchases', 'addresses'] };
+      return { ...base, kind: 'person', access: ['purchases', 'addresses'], is_owner: w.owner.test(text) ? 'yes' : base.is_owner };
     case 'amazon.devices':
       return { ...base, kind: 'device', access: ['purchases', 'cameras'] };
     case 'google.family':

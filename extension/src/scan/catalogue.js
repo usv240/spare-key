@@ -22,7 +22,7 @@ export const PRACTICE_ORIGIN = 'https://spare-key-app.web.app';
 
 // The page readers' version, sent in an opt-in layout report so the builder knows which readers a page broke.
 // A Remote Config catalogue override sets its own ("rc-" and a date) in its "version" field.
-export const READER_VERSION = '2026-11-22';
+export const READER_VERSION = '2026-11-23';
 export const readerVersion = (overrides = remoteOverrides()) => (typeof overrides?.version === 'string' && /^[\w.-]{1,19}$/.test(overrides.version) ? overrides.version : READER_VERSION);
 
 export const SERVICES = [
@@ -94,8 +94,12 @@ export const CHECKS = [
       practiceUrl: '/practice/google/twosv.html',
       reader: google({
         waitFor: { text: '(2-step verification|second steps)' },
+        // Each second step is one link row on the real page ("Google prompt / 3 devices"). Reading by words alone
+        // counted headings and "Add authenticator app" as steps: 7 on a page with 3 (November 22, 2026).
+        item: 'a[href*="signinoptions/passkeys"], a[href*="two-step-verification/"]',
         patterns: [PHONE_SOURCE, MASKED_PHONE_SOURCE, '\\b\\d+\\s+(devices?|phones?)\\b', '\\bauthenticator\\b', '\\b(security key|passkey)s?\\b'],
-        exclude: '^(turn off 2-step verification|backup codes)',
+        // A row that only offers to add or get something is not a way in.
+        exclude: '(^(turn off 2-step verification|backup codes)|\\n\\s*(add|set up|get)\\b)',
         emptyText: '(2-step verification is off|turn on 2-step verification)',
       }),
     }],
@@ -184,9 +188,19 @@ export const CHECKS = [
     label: 'Devices on your Amazon account',
     progress: 'Checking the devices on your Amazon account',
     pages: [{
-      url: 'https://www.amazon.com/hz/mycd/digital-console/devicelist', urlStatus: 'known',
+      // "devicelist" now opens the content library, where book titles read as devices: 6 false finds on a real
+      // account (November 22, 2026). The device list is "alldevices", shown as groups ("Echo, 1 device";
+      // "Alexa, on 3 devices"): one entry per group, and the check is "in part" since each group hides its devices.
+      url: 'https://www.amazon.com/hz/mycd/digital-console/alldevices', urlStatus: 'known',
       practiceUrl: '/practice/amazon/devicelist.html',
-      reader: { waitFor: { text: '(devices|kindle|echo|fire)' }, patterns: ['\\b(echo|kindle|fire tv|fire tablet|ring|blink|alexa)\\b'], emptyText: '(no devices (found|registered)|you (don.t|do not) have any devices)' },
+      reader: {
+        // The page's own area: the top menu's "Kindle Books" read as a device.
+        main: '.body-inner',
+        waitFor: { text: '(devices|kindle|echo|fire)' },
+        patterns: ['\\b(on )?\\d+ devices?\\b', '\\b(echo|kindle|fire tv|fire tablet|ring|blink|alexa)\\b'],
+        partlyWhen: '\\b(on )?\\d+ devices?\\b',
+        emptyText: '(no devices (found|registered)|you (don.t|do not) have any devices)',
+      },
     }],
   },
   {

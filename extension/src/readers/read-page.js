@@ -13,6 +13,7 @@
 //   more        a regular expression for "Show all" style controls that mean more entries are hidden
 //   errorText   a regular expression for an error page
 //   emptyText   a regular expression for the page's own words when there is nothing to list ("You have no filters")
+//   partlyWhen  a regular expression for words that mean the page lists groups, not each item ("on 3 devices")
 //
 // Returns { ready, timedOut, errorPage, via, entries: [{ i, text, href }], account, moreHidden, mainText, title, waitedMs,
 // withinFound, emptyConfirmed }. A page that lists nothing counts as empty only when it says so (emptyConfirmed) or the
@@ -151,7 +152,10 @@ export function readPage(cfg, doc = document) {
     }
 
     const more = re(cfg.more || '(show all|see all|view all|show more|more devices)');
-    const moreHidden = !!more && [...root.querySelectorAll('a, button, [role="button"]')].some(b => visible(b) && more.test(textOf(b)));
+    // partlyWhen: words that mean the page shows groups, not each item ("Alexa, on 3 devices"), so what is read is
+    // only part of the list.
+    const moreHidden = (!!more && [...root.querySelectorAll('a, button, [role="button"]')].some(b => visible(b) && more.test(textOf(b))))
+      || !!re(cfg.partlyWhen)?.test(mainText);
 
     return {
       ready: isReady,

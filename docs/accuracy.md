@@ -26,6 +26,32 @@ What this does not show: the builder wrote the practice pages and tuned the read
 system works end to end, not how well it reads real pages. The planted-access test on real test accounts (25 paths,
 10 controls, three modes, three runs each) has not been run yet: it needs the test accounts (`docs/test-accounts.md`).
 
+### Real pages: the builder's own account (November 22 and 23, 2026)
+
+Spare Key's own reader and rules ran inside each real settings page in the builder's everyday Chrome, read-only, code
+only (no Gemini Nano). Only finding codes and counts left the page; no names, addresses or page text were copied out.
+Google asked "Verify it's you" on four pages, and the builder confirmed with a passkey in the same tab, as a person
+using Spare Key would. "What the site shows" was counted from the page's own links and labels, the same way.
+
+| Check | What the site shows | First reading | After the fix |
+|---|---|---|---|
+| Apps with access | "Access to (3)" | Read the "Sign in with Google" list too (50 entries) | 3 found, all full access |
+| Devices signed in | 18 device rows | 18 read, 17 listed, 1 this computer | No change needed |
+| Recovery phone | 1 phone | "Looked different": the number was not written the US way | 1 found |
+| Recovery email | 1 address | 1 found, for the person to confirm | No change needed |
+| 2-Step Verification | 3 methods (passkeys, Google prompt, phone) | 7: headings and "Add authenticator app" were counted | 3 (one row each; rows that only offer to add are skipped) |
+| Location sharing, Gmail forwarding, filters, delegates, family group | Nothing set up | Nothing found, each confirmed by the page's own words | No change needed |
+| Google Photos partner sharing | Behind a click in a closed section | Not checked | Not checked, by design: Spare Key never clicks |
+| Amazon household | 10 cards: the account holder, 8 profiles, 1 child | Would list the account holder as another adult | 8 listed, for the person to mark; the account holder and the child are not |
+| Amazon devices | 7 device groups ("Echo, 1 device"; "Alexa, on 3 devices") | 6 false finds: the old address now opens the content library, and book titles read as devices | 7 groups found, marked "in part" because each group hides its devices |
+
+So on one real account, before these fixes, Spare Key would have shown about 50 wrong app entries, missed a recovery
+phone, counted 4 extra 2-Step entries, shown 6 false Amazon devices and 1 false household adult. After them, every
+check it could read matches what the site shows. The 2-Step and Amazon device fixes were measured with the reader's own
+selectors and rules on the live pages; the final full rerun of those two was cut short when the browser stopped
+answering, and the practice and drift tests pass with them (24 of 24, 0 silent misses). One account is one account:
+other accounts will show other layouts, which is what the layout report and Remote Config fixes are for.
+
 **A second rule from a live run (November 22).** On the website's practice check in the builder's Chrome, Gemini Nano
 sorted all 24 entries in one prompt and called four household and family members the person's own, Sam Porter among
 them; the rules then hid them, and the plan said 20 settings instead of 24. Now only the page's own words (like "(you)"

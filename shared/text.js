@@ -1,9 +1,13 @@
 // Text helpers used on this computer only: finding addresses and numbers in page text, masking them for display, and
 // reading how recent an entry is. Nothing here sends anything anywhere.
 
-// An email address, and a US-style phone number (with or without +1, brackets, dots, spaces or dashes).
+// An email address, and a phone number: US style (with or without +1, brackets, dots, spaces or dashes), or any other
+// run of 9 to 15 digits with at most one space, dot, dash or bracket between digits. A real account's recovery phone
+// was written "999999 99999" (November 22, 2026), which the US form alone missed, so the check looked empty.
 export const EMAIL_SOURCE = '[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}';
-export const PHONE_SOURCE = '(?:\\+?1[\\s.-]?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}\\b';
+const US_PHONE = '(?:\\+?1[\\s.-]?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}\\b';
+const ANY_PHONE = '(?<![\\d+])\\+?\\(?\\d(?:[\\s().-]?\\d){8,14}(?![\\d])';
+export const PHONE_SOURCE = `(?:${US_PHONE})|(?:${ANY_PHONE})`;
 // A phone number shown with most digits hidden, like "•••-•••-0177".
 export const MASKED_PHONE_SOURCE = '(?:[\\u2022*]{2,}[\\s.-]?){1,3}\\d{2,4}\\b';
 export const emailsIn = text => [...String(text || '').matchAll(new RegExp(EMAIL_SOURCE, 'gi'))].map(m => m[0]);

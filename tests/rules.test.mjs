@@ -35,6 +35,19 @@ test('this device and "(you)" are not findings', () => {
   assert.equal(code('google.family', 'Jordan Lee (you)\nMember'), null);
 });
 
+test('real-page layouts (November 22, 2026): Amazon "Account holder" and 2-Step rows that only offer to add', () => {
+  // Amazon marks the person's own household card "Account holder"; profiles on the account are still listed.
+  assert.equal(code('amazon.household', 'Jordan\nAccount holder\nAdult'), null);
+  assert.equal(code('amazon.household', 'Sam\nProfile on your account\nAdult'), 'amazon.household.adult');
+  // The 2-Step page reads one link row per method; a row that only offers to add one is not a way in.
+  const exclude = new RegExp(catalogue({}).find(c => c.id === 'google.2sv').pages[0].reader.exclude, 'i');
+  assert.ok(exclude.test('Authenticator\nAdd authenticator app'));
+  assert.ok(exclude.test('Backup codes\nGet backup codes'));
+  assert.ok(!exclude.test('Google prompt\n3 devices'));
+  assert.ok(!exclude.test('Phone number\n(555) 010-0177'));
+  assert.ok(!exclude.test('Passkeys and security keys\n2 passkeys'));
+});
+
 test('Sign in with Google alone is not access to anything', () => {
   assert.equal(code('google.apps', 'Recipe Box\nSign in with Google'), null);
   assert.equal(code('google.apps', 'InboxPilot\nHas access to Gmail'), 'google.apps.read_mail');
