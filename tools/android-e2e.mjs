@@ -76,11 +76,12 @@ async function tapText(t, ms) { const n = await waitFor(x => x.text === t, ms, `
 /** Scrolls to the end, gathering every line of text on the way. */
 async function readAll(until) {
   const seen = [];
-  for (let i = 0; i < 14; i++) {
+  for (let i = 0; i < 40; i++) {
     const now = texts();
     for (const t of now) if (!seen.includes(t)) seen.push(t);
     if (until && now.includes(until)) break;
-    shell('input swipe 540 1900 540 700 350');
+    // A slow, short swipe: a fast one flings past a card and the text on it is never read.
+    shell('input swipe 540 1700 540 900 900');
     await pause(700);
   }
   return seen;
@@ -111,10 +112,27 @@ shell('settings put secure accessibility_enabled 1');
 shell(`cmd notification allow_listener ${P}/${P}.Listen`);
 try { shell(`dpm set-active-admin ${P}/.Admin`); } catch (e) { if (!/already/.test(String(e.stderr || e.message))) throw e; }
 for (const perm of ['ACCESS_FINE_LOCATION', 'ACCESS_BACKGROUND_LOCATION', 'READ_SMS']) shell(`pm grant ${P} android.permission.${perm}`);
+shell(`appops set ${P} GET_USAGE_STATS allow`);
+// Android can drop a just-installed app's access while it finishes installing. Turn each one on again until it has
+// stayed on for three looks in a row, so the test starts from a phone that really has the planted access.
+for (let steady = 0, tries = 0; steady < 3 && tries < 20; tries++) {
+  await pause(2000);
+  const a11y = shell('settings get secure enabled_accessibility_services').includes(P);
+  const listen = shell('settings get secure enabled_notification_listeners').includes(P);
+  const admin = shell('dumpsys device_policy').includes(`${P}/.Admin`);
+  if (a11y && listen && admin) { steady++; continue; }
+  steady = 0;
+  if (!a11y) { shell(`settings put secure enabled_accessibility_services ${P}/${P}.Watch`); shell('settings put secure accessibility_enabled 1'); }
+  if (!listen) shell(`cmd notification allow_listener ${P}/${P}.Listen`);
+  if (!admin) try { shell(`dpm set-active-admin ${P}/.Admin`); } catch {}
+}
+// Start from nothing: no settings and no stored state from an earlier run.
+shell(`pm clear ${APP}`);
 
 try {
   // 1. The real check.
   shell(`am force-stop ${APP}`);
+  adb('logcat', '-c');
   shell(`am start -n ${APP}/.MainActivity`);
   const start = await waitFor(n => n.text === 'Check this phone', 90000, 'the first screen');
   const nanoLine = texts().find(t => /Gemini Nano/.test(t)) || '';
@@ -130,7 +148,8 @@ try {
   check('The planted app is found', iPlanted >= 0);
   check('It is listed as an app that can watch and control this phone', results[iPlanted + 1] === 'An app can watch and control this phone', results[iPlanted + 1]);
   check('It is the first finding', results.findIndex(t => /^An app can/.test(t)) === iPlanted + 1);
-  check('The card says what the app can do, in words', results.includes('Can read and control the screen') && results.includes('Is a device admin app') && results.includes('Is this yours?'));
+  check('The card says what the app can do, in words', ['Can read and control the screen', 'Is a device admin app', 'Can read notifications', 'Can read your texts or call log', 'Can see which apps you use', 'Can see your location all the time', 'Is this yours?'].every(t => results.includes(t)), ['Can read and control the screen', 'Is a device admin app', 'Can read notifications', 'Can read your texts or call log', 'Can see which apps you use', 'Can see your location all the time'].filter(t => !results.includes(t)).join(', '));
+  check('An app put on the phone outside the Play Store is said to be', results.includes('Installed from outside the Play Store.'));
   check('Apps that came with the phone are not listed', !results.includes('Android System Intelligence'));
   check('They are counted under Not checked, with the rooted-phone caution', results.some(t => /came with this phone .* rooted/s.test(t)));
   check('A caution about being noticed is on the card', results.some(t => /notice|alert|told/.test(t)));
@@ -161,6 +180,17 @@ try {
   check('The plan says to wait on removing the watching app when now is not a good time', steps.some(t => /^\d+\. Leave for a better time: An app can watch and control this phone/.test(t)), steps.join(' | '));
   check('The plan points to an advocate', steps.some(t => /Talk to an advocate/.test(t)));
   check('The hotline is on the plan', plan.some(t => /1-800-799-7233/.test(t)));
+  check('The first step says where not to keep the screenshots', plan.some(t => /^A screenshot stays on this phone/.test(t)));
+
+  // Hybrid inference with the fallback (PREFER_ON_DEVICE): a step's public instructions in simpler words.
+  await scrollTop();
+  tap(await scrollTo('Say it more simply'));
+  // The answer takes the link's place; its last line (who wrote it) can be below the edge of the screen.
+  await waitFor(n => /^(In simpler words|Spare Key could not put|Simpler words need)/.test(n.text), 150000, 'the simpler words').catch(() => null);
+  shell('input swipe 540 1500 540 900 900'); await pause(800);
+  const said = screen().find(n => /^(Put in simpler words by|Spare Key could not put|Simpler words need)/.test(n.text)) || null;
+  report.simpler = said?.text || 'no answer';
+  check('Say it more simply answers, on the phone or through the cloud fallback', /^Put in simpler words by/.test(said?.text || ''), said?.text);
 
   // 3. Under the hood: what left this phone.
   await scrollTop();
@@ -169,12 +199,22 @@ try {
   const left = hood.join('\n');
   const ledgerCount = +((left.match(/What left this phone \((\d+)\)/) || [])[1] || 0);
   report.ledgerEntries = ledgerCount;
+  report.nano = (left.match(/Gemini Nano on this phone: (\w+)/) || [])[1] || report.nano;
+  const kotlin = adb('logcat', '-d', '-s', 'SpareKey').split(/\n/).filter(l => /outgoing (checked|refused) in Kotlin/.test(l));
+  check('Every request to the cloud passed a second check in Kotlin for app names', kotlin.length >= 1 && !kotlin.some(l => /refused/.test(l)), `${kotlin.length} requests checked`);
   report.sent = hood.slice(hood.findIndex(t => /^What left this phone/.test(t)) + 1).map(t => t.length > 400 ? `${t.slice(0, 400)} ... (${t.length} characters)` : t);
   check('Under the hood lists what Spare Key did, with timings', /What Spare Key did \(\d+\)/.test(left) && /Check finished in [\d.]+ s/.test(left));
   check('It says no usage or crash reports are sent', /sends no usage or crash reports/.test(left));
   check('Under the hood says where each step runs', /Reading this phone/.test(left) && /App Check/.test(left));
   check('Nothing naming an app left this phone', !/System Update Service|com\.example|planted/i.test(left), `${ledgerCount} sent`);
   if (/^Ordered by .* from finding types only/.test(note.text)) check('The cloud plan request is in the ledger, word for word', ledgerCount >= 1 && /phone\.app\.control/.test(left));
+
+  // Google's libraries log how they are used unless stopped (seen in logcat as FIREBASE_ML_SDK events stored for
+  // upload). The manifest removes the uploader's backend; this proves nothing was stored or scheduled for upload by
+  // this app through a check and a cloud plan.
+  const pid = shell(`pidof ${APP}`).trim();
+  const queued = adb('logcat', '-d').split(/\n/).filter(l => l.includes(` ${pid} `) && /Storing event|Scheduling upload|FirebaseCrashlytics|FA-SVC/.test(l)).length;
+  check('No usage statistics or crash reports were stored or sent', pid.length > 0 && queued === 0, `${queued} log lines`);
 
   // 4. Quick exit.
   await tapText('Quick exit');

@@ -17,7 +17,7 @@ function driftItem(drift) {
 function androidProof(a) {
   if (!a || !a.passed || a.failed) return '';
   const date = new Date(a.at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York' });
-  return `<p class="result-line">${a.passed} of ${a.passed + a.failed} checks passed on an Android ${esc(a.device.android)} emulator.</p><p class="muted">We installed a test app that does nothing but hold the access a phone-watching app asks for: screen reading, device admin, notifications, texts and location all the time. Spare Key listed it first, left out the apps that came with the phone, and sent nothing that names an app. ${esc(date)}.</p>`;
+  return `<p class="result-line">${a.passed} of ${a.passed + a.failed} checks passed on an Android ${esc(a.device.android)} emulator.</p><p class="muted">We installed a test app that does nothing but hold the access a phone-watching app asks for: screen reading, device admin, notifications, texts and location all the time. Spare Key listed it first, left out the apps that came with the phone, and sent nothing that names an app. The emulator has no Gemini Nano, so Gemini Nano’s sorting on a phone is not part of this result. ${esc(date)}.</p>`;
 }
 
 export default function index({ numbers, drift = null, android = null, apk = null }) {
@@ -35,7 +35,7 @@ export default function index({ numbers, drift = null, android = null, apk = nul
         <a class="btn btn-primary" href="/install.html">Get the Chrome extension</a>
         <a class="btn btn-secondary" href="/try.html">Try the practice check</a>
       </div>
-      <p class="hero-note">Free. No sign-in. If someone may be watching this computer, a computer they never use, like a trusted friend’s, is a better place to check. ${info('shared-computer', 'About using a shared computer')}</p>
+      <p class="hero-note">Free. No sign-in. If someone may be watching this computer, a computer they never use, like a trusted friend’s, is a better place to check. Signing in to Google on a new computer sends an alert they may see. ${info('shared-computer', 'About using a shared computer')}</p>
       <p class="hero-note"><a href="#phone">Also for Android: check the phone itself</a> · <a href="#tour" id="tour-start">New here? Take the two-minute tour</a></p>
     </div>
     <figure class="panel-frame" id="panel-demo">
@@ -103,7 +103,7 @@ export default function index({ numbers, drift = null, android = null, apk = nul
     <div class="phone-text">
       <h2 id="phone-title">The phone itself, on Android</h2>
       <p class="lead">An account check cannot see an app hidden on the phone. The Android app reads the phone’s own settings and lists every app that could let someone watch it. It opens nothing and removes nothing.</p>
-      <p>It runs the same rules as the extension, the same code, inside Android’s JavaScript sandbox. Gemini Nano sorts the apps on the phone when the phone has it. The cloud orders the plan from finding types only, and never sees an app’s name. Removing a watching app goes to the top of the plan, with the warning that it may be noticed.</p>
+      <p>It runs the same rules as the extension, the same code, inside Android’s JavaScript sandbox. Gemini Nano adds a caution about an app on the phone, when the phone has it. The cloud orders the plan from finding types only, and never sees an app’s name. An app that can watch the phone is the first thing the plan deals with: screenshot it, talk to an advocate, and leave it in place until a better time if removing it may be noticed.</p>
       ${androidProof(android)}
       <p><a class="big" href="/install.html#android">${apk ? 'Get the Android app' : 'How to get the Android app'}</a></p>
     </div>
@@ -195,7 +195,7 @@ export default function index({ numbers, drift = null, android = null, apk = nul
 <section class="block" id="numbers" aria-labelledby="numbers-title">
   <div class="wrap">
     <h2 id="numbers-title">How well it works</h2>
-    <p class="muted">Measured on made-up practice pages, not yet on real accounts. What these numbers do not show is on the <a href="/accuracy.html">Accuracy</a> page.</p>
+    <p class="muted">Measured on made-up practice pages. The readers were also checked against one real account with nothing planted on it. What these numbers do not show is on the <a href="/accuracy.html">Accuracy</a> page.</p>
     <ul class="numbers">
       ${n.practice ? `<li><span class="n">${n.practice.found} of ${n.practice.of}</span><p>planted ways in found on the 13 made-up practice pages, and none of the 4 that belong to the person flagged, with code only and with Gemini Nano. ${esc(n.practice.date)}.</p></li>` : ''}
       ${n.privacy ? `<li><span class="n">${n.privacy.withPrivate} of ${n.privacy.requests}</span><p>requests from the extension held a name, email address, phone number or device, in a full practice check with every cloud step on. ${esc(n.privacy.date)}.</p></li>` : ''}
@@ -235,13 +235,14 @@ export default function index({ numbers, drift = null, android = null, apk = nul
   <div class="wrap faq">
     <div><h2 id="questions-title">Questions</h2><p class="muted">Short answers. More on the <a href="/privacy.html">Privacy</a> and <a href="/safety.html">Getting help</a> pages.</p></div>
     <div>
-      <details><summary>Will they know I checked?</summary><p>Spare Key only opens your settings pages and reads them, which changes nothing they can see. But Chrome keeps a history, and they may see that the extension is installed. If someone else uses this computer, check on another device, and remove the extension when you are done.</p></details>
+      <details><summary>Will they know I checked?</summary><p>Spare Key only opens your settings pages and reads them, which changes nothing they can see. But signing in to Google on a computer you have not used before sends a new sign-in alert to your recovery email and phone. Chrome keeps a history, and they may see that the extension is installed. If someone else uses this computer, check on another device, and remove the extension when you are done.</p></details>
       <details><summary>Does it change anything?</summary><p>No. It never clicks, removes or saves anything on a settings page. Every change is yours to make, and the plan says which ones may be noticed.</p></details>
       <details><summary>What does it send to Google?</summary><p>Plan help uses Gemini in Google’s cloud. It sees finding types, like “mail is forwarded”, and the answers you choose to share. Never names, addresses, numbers or devices. You can turn plan help off, and then nothing is sent.</p></details>
       <details><summary>What if I don’t have Gemini Nano?</summary><p>Spare Key reads the pages with code only, and says where that is less complete. Gemini Nano needs Chrome on a computer with enough memory and disk.</p></details>
       <details><summary>Can I use it on my phone?</summary><p>On Android, yes. The Android app checks the phone itself: which apps can read your screen, your notifications, your texts or your location. The extension runs in Chrome on a computer and checks your accounts. There is no iPhone app; on an iPhone, Apple’s Safety Check does a similar job. The practice check on this site works on any phone.</p></details>
       <details><summary>Is it free?</summary><p>Yes. No sign-in, no account, no payment.</p></details>
       <details><summary>Who made it?</summary><p>One developer, for the #BuildHybridAI 2026 hackathon. It is open source under the Apache-2.0 license. It is not made by Google, Amazon or the National Domestic Violence Hotline.</p></details>
+      <details><summary>How is this different from Google’s Security Checkup or Apple’s Safety Check?</summary><p>Those are made by one company for its own account, and they are built to fix things fast. Spare Key reads across Google, Gmail, Amazon, Chrome and an Android phone in one pass, and it is built around the two rules the field teaches: screenshot before you change anything, and a change can alert the other person. It tells you which changes they would be told about, and it changes nothing itself. Use them together: Spare Key to see and plan, their tools to make each change when the time is right.</p></details>
       <details><summary>Why can’t a chatbot do this?</summary><p>A chatbot cannot see your settings, and pasting them into one sends the very details that are the danger. In our test on 30 situations, a plain chatbot said to take screenshots before changing anything in only 4. Spare Key reads on your computer, and every plan starts with the screenshots and warns that a change may be noticed.</p></details>
     </div>
   </div>
@@ -253,7 +254,7 @@ export default function index({ numbers, drift = null, android = null, apk = nul
     <dl class="glossary" style="margin-top:24px">
       <dt>Gemini Nano</dt><dd>A small AI model that runs inside Chrome, on your computer.</dd>
       <dt>The cloud</dt><dd>Computers run by a company, here Google, reached over the internet.</dd>
-      <dt>Hybrid inference</dt><dd>Using the model on your computer when it is there, and the cloud when it is not. Spare Key uses it only for made-up practice data.</dd>
+      <dt>Hybrid inference</dt><dd>Using the model on your computer when it is there, and the cloud when it is not. Spare Key uses it only for text that names no one: the made-up practice check, and putting the public steps in simpler words.</dd>
       <dt>Finding type</dt><dd>A name for a kind of access, like <code>gmail.forwarding.external</code>. It never names a person.</dd>
       <dt>App Check</dt><dd>A Firebase check that only Spare Key can use its AI quota.</dd>
       <dt>Remote Config</dt><dd>Settings Spare Key reads from Firebase, so a broken page reader can be fixed without an update.</dd>

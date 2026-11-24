@@ -89,3 +89,10 @@ export const devicePlanSystem = (body, library) => `${PLAN_INTRO}
 What each finding code is, and what the other person sees if it is removed, from Spare Key's steps library:
 ${libraryFacts(body, library)}
 ${PLAN_SHAPE}`;
+
+// "Say it more simply": one steps library entry's public steps in simpler words. Hybrid inference with the fallback
+// (PREFER_ON_DEVICE) on both clients, because the text is the library's, the same for everyone, and names no one.
+export const SIMPLER_SYSTEM = `Rewrite these steps for changing one setting in very simple words, at a grade 4 reading level.
+Keep the same order, and the same number of steps or one more. Keep every button and menu name exactly as written.
+Keep every warning. Do not add names, numbers, links or advice that are not in the steps. Never say safe or secure.`;
+export const SIMPLER_SCHEMA = { type: 'object', properties: { steps: { type: 'array', items: { type: 'string', maxLength: 200 } } }, required: ['steps'] };

@@ -88,3 +88,33 @@ test('a setting finding is worded by code, so the steps library may use the same
   assert.doesNotThrow(() => checkAnswer('get_steps', answer, { privateStrings, library }));
   assert.throws(() => checkAnswer('ask_device', { answer: 'System Service' }, { privateStrings, library }));
 });
+
+test('R10: a plan a model ordered still warns on every other step, and puts the watching app first', async () => {
+  const { applyInvariants } = await import('../shared/plan/invariants.js');
+  const { findings } = phoneFindings(FACTS);
+  const all = [...findings, { ref: 'L1', code: 'google.devices.other', ownership: null }];
+  const control = findings.find(f => f.code === 'phone.app.control');
+  // What a model returns: steps in its own order, with no note (it sees codes only).
+  const model = { summary: '', actions: [
+    { action: 'document', refs: all.map(f => f.ref), why: 'x' },
+    { action: 'talk_to_advocate', refs: [], why: 'x' },
+    { action: 'wait', refs: ['L1'], why: 'x' },
+    { action: 'wait', refs: [control.ref], why: 'x' },
+  ] };
+  const { plan, fired } = applyInvariants(model, { findings: all, situation: { safe_to_change_now: 'no' }, notChecked: [], library: {} });
+  const steps = plan.actions.filter(a => ['change_now', 'wait'].includes(a.action));
+  assert.equal(steps[0].code, 'phone.app.control', 'the watching app comes before other changes');
+  const other = steps.find(a => a.code === 'google.devices.other');
+  assert.equal(other.linked, PHONE_NOTE);
+  assert.ok(fired.some(f => f.rule === 'R10'));
+});
+
+test('Gemini Nano on the phone can raise concern, never lower it', () => {
+  const nano = { 'com.example.weathernow': { kind: 'everyday', about: 'A well-known weather app' }, 'com.example.systemservice': { kind: 'monitoring', about: 'Looks like a phone tracker' } };
+  const { findings } = phoneFindings(FACTS, { nano });
+  const weather = findings.find(f => f.name === 'Weather Now');
+  assert.equal(weather.note, '', 'a reassuring note is not shown');
+  assert.ok(!/well-known/.test(weather.detail));
+  assert.equal(phoneAnswer(weather, 'app_looks_like_monitoring'), 'unknown', '"looks everyday" is not evidence');
+  assert.equal(findings.find(f => f.name === 'System Service').note, 'Looks like a phone tracker');
+});

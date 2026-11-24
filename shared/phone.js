@@ -60,7 +60,7 @@ export function phoneFindings(facts, { nano = {}, refStart = 0 } = {}) {
     const powers = ORDER.filter(k => p[k]).map(k => POWER_WORDS[k]);
     const where = app.installer === 'other' ? 'installed from outside the Play Store' : app.installer === 'play' ? 'from the Play Store' : '';
     const read = nano[app.pkg];
-    const detail = [app.label, `It ${powers.join(', ')}.`, where, read?.about ? `Gemini Nano on this phone: ${read.about}` : ''].filter(Boolean).join('\n');
+    const detail = [app.label, `It ${powers.join(', ')}.`, where, read?.about && ['monitoring', 'family_locator', 'parental_control'].includes(read.kind) ? `Gemini Nano on this phone: ${read.about}` : ''].filter(Boolean).join('\n');
     findings.push({
       ref: `P${++n}`,
       code,
@@ -82,7 +82,7 @@ export function phoneFindings(facts, { nano = {}, refStart = 0 } = {}) {
       name: app.label,
       can: powers,
       where,
-      note: read?.about || '',
+      note: read && CAUTION_KINDS.includes(read.kind) ? read.about || '' : '',
       kind: read?.kind || 'unknown',
     });
   }
@@ -107,13 +107,16 @@ export function phoneFindings(facts, { nano = {}, refStart = 0 } = {}) {
 export function phoneAnswer(f, question) {
   if (!f || f.service !== 'phone') return 'unknown';
   if (question === 'app_outside_store') return /outside the Play Store/.test(f.detail || '') ? 'yes' : /from the Play Store/.test(f.detail || '') ? 'no' : 'unknown';
-  if (question === 'app_looks_like_monitoring') return f.kind === 'monitoring' ? 'yes' : ['everyday', 'assistive'].includes(f.kind) ? 'no' : 'unknown';
+  // Gemini Nano's reading can raise concern, never lower it: "this looks everyday" is not evidence, so it is 'unknown'.
+  if (question === 'app_looks_like_monitoring') return f.kind === 'monitoring' ? 'yes' : 'unknown';
   if (question === 'app_can_see_location') return f.access?.includes('location') ? 'yes' : 'unknown';
   return 'unknown';
 }
 
 // Gemini Nano on the phone: what kind of app this seems to be, from its name, package and powers. ONLY_ON_DEVICE: the
-// list of apps on someone's phone is private. Nano can only add a note and a kind; it can never hide a finding.
+// list of apps on someone's phone is private. Nano can only add a note and a kind; it can never hide a finding, and
+// its note is shown only when it is a caution (CAUTION_KINDS): a line like "a well-known weather app" would reassure,
+// and a model's guess is not grounds for that.
 export const APP_KIND_SYSTEM = `You look at one app on a person's own Android phone: its name, its package name, where it was installed from and the
 powers it holds. Say what kind of app it most likely is:
 "monitoring" for an app made to watch someone (spyware, "phone tracker", hidden "system service"),
@@ -129,6 +132,7 @@ export const APP_KIND_SCHEMA = {
   },
   required: ['kind', 'about'],
 };
+export const CAUTION_KINDS = ['monitoring', 'family_locator', 'parental_control'];
 /** The text Gemini Nano reads for one app. */
 export function appKindText(app) {
   const p = app.powers || {};

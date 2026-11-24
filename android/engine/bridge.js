@@ -10,7 +10,7 @@ import { phoneFindings, phoneAnswer, APP_KIND_SYSTEM, APP_KIND_SCHEMA, appKindTe
 import { toCloud, checkOutgoing, checkAnswer } from '../../shared/cloud-safe.js';
 import { buildPlan } from '../../shared/plan/engine.js';
 import { applyInvariants, cleanText } from '../../shared/plan/invariants.js';
-import { PLAN_SYSTEM, PLAN_SCHEMA, PLAN_TOOLS, DEVICE_QUESTIONS, USER_QUESTIONS, devicePlanSystem } from '../../shared/plan/prompts.js';
+import { PLAN_SYSTEM, PLAN_SCHEMA, PLAN_TOOLS, DEVICE_QUESTIONS, USER_QUESTIONS, devicePlanSystem, SIMPLER_SYSTEM, SIMPLER_SCHEMA } from '../../shared/plan/prompts.js';
 import { libraryMap } from '../../shared/steps-schema.js';
 import { CODE_TEXT, GROUP_LABELS, GROUPS, SITUATION, SITUATION_DEFAULTS } from '../../shared/findings.js';
 import STEPS from '../../data/steps.json';
@@ -74,6 +74,22 @@ globalThis.SK = {
     return out(checkAnswer(name, answer, { privateStrings, library: LIBRARY }));
   },
   userQuestions() { return out(USER_QUESTIONS); },
+
+  // ---- Say it more simply (hybrid, with the fallback) ---------------------------------------------------------------
+  /** One library entry's public steps, through the same gate as everything else that may leave. Null for an unknown code. */
+  simplerPrompt(code) {
+    const entry = LIBRARY[code];
+    if (!entry) return out(null);
+    const text = checkOutgoing('simpler', { code, steps: entry.steps }, { privateStrings: privateOf(scan), library: LIBRARY });
+    return out({ system: SIMPLER_SYSTEM, schema: SIMPLER_SCHEMA, text });
+  },
+  /** A model's simpler steps, through the safety rules' text check: no reassurance, no contact details or links. */
+  simplerFrom(code, answer) {
+    const entry = LIBRARY[code];
+    if (!entry) return out([]);
+    const allowed = JSON.stringify(entry);
+    return out((Array.isArray(answer?.steps) ? answer.steps : []).slice(0, entry.steps.length + 1).map(s => cleanText(String(s).slice(0, 200), allowed).text).filter(Boolean));
+  },
   /** A model's plan (cloud refs) mapped back to findings and passed through the safety rules. */
   settle(answer, situation, notChecked) {
     const findings = scan?.findings || [];

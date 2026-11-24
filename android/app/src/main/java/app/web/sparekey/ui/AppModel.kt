@@ -101,6 +101,32 @@ class AppModel(app: Application) : AndroidViewModel(app) {
     val log = mutableStateListOf<String>()
     private fun note(line: String) { log += "${DateFormat.getTimeInstance(DateFormat.MEDIUM).format(Date())}  $line" }
     private fun secs(since: Long) = "%.1f s".format((System.currentTimeMillis() - since) / 1000.0)
+    /** Whether the two answers on the plan screen go to the cloud with the plan request. Off unless the person says. */
+    var shareAnswers by mutableStateOf(false)
+        private set
+    fun setShare(on: Boolean) { shareAnswers = on }
+
+    /** "Say it more simply", by finding code. */
+    data class Simpler(val steps: List<String> = emptyList(), val by: String = "", val state: String = "pending")
+    val simpler = mutableStateMapOf<String, Simpler>()
+
+    /**
+     * A second check, in Kotlin, at the only place text is handed to a cloud model: no app's name or package from this
+     * phone may be in it. The shared rules already check this in the sandbox (checkOutgoing); this one does not trust
+     * them. It refuses the request instead of sending it.
+     */
+    private fun checked(what: String, text: String): String {
+        val private = findings.flatMap { listOf(it.optString("name"), it.optString("pkg")) }.filter { it.length >= 3 }.distinct()
+        val hit = if (practice) null else private.firstOrNull { text.contains(it, ignoreCase = true) }
+        if (hit != null) {
+            android.util.Log.w("SpareKey", "outgoing refused in Kotlin: $what holds a private string")
+            note("Refused to send: $what held an app's name. Nothing was sent.")
+            throw IllegalStateException("refused: $what holds an app's name")
+        }
+        android.util.Log.i("SpareKey", "outgoing checked in Kotlin: $what, ${text.length} characters, ${private.size} private strings looked for, 0 found")
+        return text
+    }
+
     /** The person can stop Gemini Nano's sorting and see the results as they are. */
     private var skipSorting = false
     fun showResultsNow() { skipSorting = true }
@@ -132,7 +158,7 @@ class AppModel(app: Application) : AndroidViewModel(app) {
     fun check(practiceRun: Boolean) {
         if (!ready) return
         practice = practiceRun
-        ownership.clear(); revealed.clear(); plan = null; planNote = ""; ledger.clear()
+        ownership.clear(); revealed.clear(); plan = null; planNote = ""; ledger.clear(); simpler.clear()
         skipSorting = false
         // Plan help from the cloud needs an App Check token, which a slow phone can take 20 s to get. Start now, so it
         // is ready by the time the person asks for a plan. Not for a practice check, which never calls the cloud.
@@ -202,7 +228,9 @@ class AppModel(app: Application) : AndroidViewModel(app) {
             plan = code.getJSONObject("plan"); planSource = "code"
             note("Plan made by code on this phone: ${plan?.optJSONArray("actions")?.length() ?: 0} steps.")
             val settings = try { LiveSettings.get() } catch (_: Throwable) { null }
-            val shared = JSONObject().put("safe_to_change_now", true).put("has_advocate", true)
+            // The two answers go to the cloud only when the person says so (off by default, as in the extension).
+            // Either way Spare Key's rules use them here, on the phone.
+            val shared = JSONObject().put("safe_to_change_now", shareAnswers).put("has_advocate", shareAnswers)
             val cloud = cloudOn && settings?.cloudOn == true && !practice
             try {
                 if (cloud) {
@@ -212,7 +240,7 @@ class AppModel(app: Application) : AndroidViewModel(app) {
                     val body = Rules.obj("cloudBody", situation, shared, notChecked())
                     val sent = body.getJSONObject("body").optJSONArray("findings")
                     val types = (0 until (sent?.length() ?: 0)).map { sent!!.getJSONObject(it).optString("code") }.distinct()
-                    ledger += Sent(stamp("Plan request"), "${sent?.length() ?: 0} findings by type only (${types.joinToString(", ")}) and your answers to the two questions. No app's name.", body.getString("text"))
+                    ledger += Sent(stamp("Plan request"), "${sent?.length() ?: 0} findings by type only (${types.joinToString(", ")})" + (if (shareAnswers) " and your answers to the two questions" else "") + ". No app's name.", checked("the plan request", body.getString("text")))
                     val tc = System.currentTimeMillis()
                     val p = Rules.obj("planPrompt", body.getJSONObject("body"))
                     val decls = p.getJSONArray("tools").getJSONObject(0).getJSONArray("functionDeclarations")
@@ -227,7 +255,7 @@ class AppModel(app: Application) : AndroidViewModel(app) {
                                 "ask_device" -> "One word about one finding: ${answer.optString("answer", "unknown")}."
                                 "ask_user" -> "Your answer: ${answer.optString("answer")}."
                                 else -> "A note that the function is not known."
-                            }, answer.toString(2))
+                            }, checked("an answer to $name", answer.toString(2)))
                             answer
                         }
                     }
@@ -248,7 +276,7 @@ class AppModel(app: Application) : AndroidViewModel(app) {
                     plan = settled.getJSONObject("plan"); planSource = "cloud:${r.model}"
                     note("Plan ordered by ${r.model} in the cloud in ${secs(tc)}, with ${fns.size} functions offered and $deviceAnswers answered from this phone. Code fixed ${settled.optJSONArray("fired")?.length() ?: 0} things.")
                     planNote = "Ordered by ${r.model} from finding types only. Code checked it against the safety rules" +
-                        (if ((settled.optJSONArray("fired")?.length() ?: 0) > 0) " and made ${settled.getJSONArray("fired").length()} fixes." else ".")
+                        (if ((settled.optJSONArray("fired")?.length() ?: 0) > 0) " and made ${settled.getJSONArray("fired").length()} ${if (settled.getJSONArray("fired").length() == 1) "fix" else "fixes"}." else ".")
                 } else if (nano == "available") {
                     // 3. Plan help from the cloud is off: Gemini Nano orders it on this phone. Nothing leaves the phone.
                     planNote = "Asking Gemini Nano on this phone to order this. Nothing is sent anywhere."
@@ -277,6 +305,37 @@ class AppModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    /**
+     * "Say it more simply": a step's public instructions in simpler words. Hybrid inference with the fallback
+     * (PREFER_ON_DEVICE): Gemini Nano when this phone has it, Gemini in the cloud when it does not. The text is the
+     * steps library's, the same for everyone, so the fallback gives nothing away; it is allowed here and only here.
+     */
+    fun saySimpler(code: String) {
+        if (simpler[code]?.state == "pending" || simpler[code]?.state == "done") return
+        simpler[code] = Simpler()
+        viewModelScope.launch {
+            val t = System.currentTimeMillis()
+            try {
+                val settings = LiveSettings.get()
+                val cloudAllowed = cloudOn && settings.cloudOn
+                if (nano != "available" && !cloudAllowed) { simpler[code] = Simpler(state = "off"); return@launch }
+                val p = Rules.obj("simplerPrompt", code)
+                val text = checked("the public steps for $code", p.getString("text"))
+                // With the cloud not allowed, Gemini Nano only: hybrid inference could fall back to the cloud.
+                val mode = if (cloudAllowed) Ai.Mode.ON_DEVICE_FIRST else Ai.Mode.DEVICE_ONLY
+                val r = withTimeoutOrNull(90_000) { Ai.json(Ai.Prompt(p.getString("system"), p.getJSONObject("schema")), listOf(Ai.Text(text)), mode, settings.models) }
+                    ?: throw IllegalStateException("timed out")
+                if (!r.onDevice) ledger += Sent(stamp("Simpler words"), "The public steps for one finding type ($code), to be put in simpler words. The same text is on the website. No app's name.", text)
+                val steps = JSONArray(Rules.call("simplerFrom", code, r.json)).let { a -> (0 until a.length()).map { a.getString(it) } }
+                simpler[code] = if (steps.isEmpty()) Simpler(state = "failed") else Simpler(steps, if (r.onDevice) "device" else "cloud", "done")
+                note("Simpler words for one step by ${if (r.onDevice) "Gemini Nano on this phone" else "${r.model} in the cloud (this phone has no Gemini Nano: the fallback)"} in ${secs(t)}.")
+            } catch (e: Throwable) {
+                android.util.Log.w("SpareKey", "simpler: ${e.javaClass.simpleName}: ${e.message?.take(200)}")
+                simpler[code] = Simpler(state = "failed")
+            }
+        }
+    }
+
     private suspend fun askPerson(question: String): JSONObject {
         val wait = CompletableDeferred<String>()
         asking = question to wait
@@ -293,7 +352,7 @@ class AppModel(app: Application) : AndroidViewModel(app) {
     /** Forgets everything from this check. The activity then leaves for an ordinary page. */
     fun forgetAll() {
         findings = emptyList(); notRead = emptyList(); builtIn = 0; ownership.clear(); revealed.clear()
-        plan = null; planNote = ""; ledger.clear(); log.clear(); situation = JSONObject(); screen = Safety
+        plan = null; planNote = ""; ledger.clear(); log.clear(); simpler.clear(); shareAnswers = false; situation = JSONObject(); screen = Safety
         asking?.second?.complete("skipped"); asking = null
     }
 }

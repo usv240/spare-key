@@ -6,6 +6,13 @@ devices and apps on them that can still see your location, your mail or your acc
 order: screenshot first, talk to an advocate, and leave changes the other person may notice for a better time. It
 changes nothing on its own, and nothing that names a person ever leaves your computer.
 
+**And the phone itself.** An account check cannot see an app hidden on the phone, so there is an Android app too
+(`android/`). It reads the phone's own settings and lists every app that could let someone watch it: apps that can read
+the screen, device admin apps, apps that read notifications, texts or the call log, and apps that see your location all
+the time. It runs the extension's own rules, the same JavaScript, in Android's sandbox. Gemini Nano sorts the apps on
+the phone; the cloud orders the plan from finding types and never sees an app's name. (Gemini Nano on Android has not run yet: the test
+emulator has none. Everything else in the Android app is tested end to end.)
+
 Site: <https://spare-key-app.web.app> · Practice check in any browser: <https://spare-key-app.web.app/try.html>
 
 If you need help now: National Domestic Violence Hotline, call 1-800-799-7233 or text START to 88788. Free, 24/7.
@@ -27,10 +34,15 @@ If you need help now: National Domestic Violence Hotline, call 1-800-799-7233 or
 3. **See what left the computer.** Make the plan, then open **What left this computer**: a ledger of every request
    by destination, and every request to Gemini word for word with the fixed instructions sent with it. In the
    extension, those requests hold finding types like `gmail.forwarding.external`, never a name.
-4. **What they see when you change it.** <https://spare-key-app.web.app/what-they-see.html>: for each of the 22 kinds
+4. **What they see when you change it.** <https://spare-key-app.web.app/what-they-see.html>: for each of the 30 kinds
    of access, what the other person sees if it is removed, quoted from the official help page where one says.
 5. **On your own account (optional, 5 minutes).** Install the extension (below), plant a harmless way in with a recipe
    on <https://spare-key-app.web.app/plant.html>, run the check, then undo it.
+
+6. **The Android app (optional).** Build it (below) and choose **Try a practice phone first**: a made-up phone with a
+   hidden "System Update Service" that holds every kind of access. Or run `node tools/android-e2e.mjs` on an emulator: it
+   installs a do-nothing test app that holds the same access, turns each one on, and drives the real app. 31 of 31
+   checks passed on an Android 16 emulator ([docs/evidence/android-e2e.json](docs/evidence/android-e2e.json)).
 
 ## Where each step runs, and why
 
@@ -48,11 +60,24 @@ go to whichever tier the person chooses and the measurements favour; public text
 | Check a step still matches the official help page | Gemini in the cloud | `ONLY_IN_CLOUD`, URL context | A code and a public help page |
 | The practice check on the website | Either | `PREFER_ON_DEVICE` | Made-up data |
 
+### The same split on Android
+
+| Step | Where | Firebase AI Logic mode | Why |
+|---|---|---|---|
+| Read which apps hold special access | Code, on the phone | none | Android answers this exactly; a model would only add doubt |
+| Add a caution about what kind of app each one seems to be | Gemini Nano on the phone (AICore) | `InferenceMode.ONLY_ON_DEVICE` | The list of apps on a phone is private. It can raise concern, never lower it: a reassuring note is not shown, and it can never hide a finding. Not yet run on a phone |
+| Put a step's public instructions in simpler words | Gemini Nano on the phone if it has it, Gemini in the cloud if not | `InferenceMode.PREFER_ON_DEVICE` | The steps library is public text, the same for everyone, so the fallback is allowed here and only here |
+| Order and explain the plan | Gemini in the cloud if plan help is on; Gemini Nano if not | `InferenceMode.ONLY_IN_CLOUD` with function calling, or on device | Finding codes only. `ask_device` asks the phone "did this app come from outside the store?" and the phone answers yes, no or unknown |
+| Decide what is shown | Code, in Jetpack's JavaScript sandbox | none | The extension's own modules (`shared/`): finding codes, `toCloud()`, `checkOutgoing()`, the plan and the safety rules. One engine, so the two cannot drift apart |
+
+App Check on Android goes through the site's reCAPTCHA Enterprise page, the way the extension's does: an app installed
+from the site has no Play Integrity. Remote Config holds the same model list and cloud switch.
+
 ### What code decides, and what Gemini adds
 
 Code decides everything that keeps a person out of danger. The readers and rules find the ways in on pages they know.
 The plan made by code follows the field's advice by construction (screenshot first, an advocate before any change,
-wait when now may not be a good time), and the safety rules (R1 to R9) hold any plan a model writes to the same
+wait when now may not be a good time), and the safety rules (R1 to R10) hold any plan a model writes to the same
 advice, so a model can never make the plan less careful. The seven measures below check that advice; they are not an
 independent test of whether the advice is right, which only advocates can judge.
 
@@ -107,6 +132,17 @@ ways in, so a missed way in on a real account is not yet measured;
 on the free tier the cloud plan failed in 5 of 40 situations and the two-voice check in 5 more (when the cloud does not
 answer, you get the plan made on your computer; when only the voices fail, you keep the cloud plan).
 
+### Android: a planted test app
+
+`tools/android-e2e.mjs` installs `android/planted`, an app that does nothing but hold accessibility, device admin,
+notification, texts and background location access, turns each one on through adb, and drives the real app.
+**31 of 31 checks passed** on an Android 16 emulator: the planted app is found and listed first as "can watch
+and control this phone"; apps that came with the phone are not listed (the first run flagged Android System
+Intelligence, which is why); the plan says to leave the watching app for a better time when now is not a good time;
+the cloud plan request is in "What left this phone" word for word and names no app; Quick exit and back-twice leave no
+recent-apps entry; every button is at least 48dp. The check took 3.6 s. Also checked: an app that can see which apps you use is found; "Say it more simply" is answered through hybrid inference's cloud fallback (the emulator has no Gemini Nano); every request passes a second check for app names in Kotlin; and no usage statistics or crash reports are stored or sent. The free-tier cloud model was busy on some runs; the app then shows the plan made by its rules and says so (this happened on the saved run; a run minutes earlier was ordered by Gemini in the cloud in 7 s, with rule R10 applied by code).
+Not shown by this: real stalkerware, a rooted phone, or Gemini Nano's sorting (the emulator has no Gemini Nano).
+
 ## Install
 
 Spare Key is not in the Chrome Web Store yet.
@@ -115,6 +151,18 @@ Spare Key is not in the Chrome Web Store yet.
    (or build it, below). It holds a folder called `spare-key`.
 2. In Chrome, open `chrome://extensions`, turn on Developer mode, select **Load unpacked**, and choose `spare-key`.
 3. Click the puzzle piece in Chrome's toolbar, then the key, to open the side panel.
+
+### The Android app
+
+Not in the Play Store (an app that reads the list of installed apps needs a longer review). Build it:
+
+```
+npm ci && node build.mjs            # bundles shared/ into android/app/src/main/assets/engine.js
+cd android && ./gradlew assembleDebug
+adb install app/build/outputs/apk/debug/app-debug.apk
+```
+
+Android 8 or newer. It asks for one thing, the list of apps. It keeps nothing: the check lives in memory.
 
 ## Build and test
 
@@ -131,6 +179,8 @@ node tools/privacy-test.mjs         # the privacy test (about 7 cloud calls)
 node tools/e2e-quick-exit.mjs       # Quick exit through the real extension (no cloud)
 node tools/a11y-check.mjs           # axe-core on the site and the side panel
 node tools/reading-grade.mjs        # reading grade of the site and the panel
+node tools/android-e2e.mjs          # the Android app on an emulator, with the planted test app (about 5 cloud calls)
+node tools/android-shots.mjs        # screenshots of the Android app on the practice phone
 node tools/record-demo.mjs --nano && node tools/make-video.mjs   # the demo video, from the practice check
 ```
 
@@ -141,6 +191,10 @@ rules, are in [docs/design/](docs/design/) ([BRIEF.md](docs/design/BRIEF.md) fir
 
 The Firebase AI Logic wrapper pattern and the App Check bridge for a Chrome extension come from the author's other
 #BuildHybridAI entry, Still Recalled, with the backend changed to the free Gemini Developer API. Everything else is new.
+
+The Android shell (Firebase AI Logic wrapper for Android, the App Check bridge through a WebView, and running shared
+JavaScript in Jetpack's sandbox) also comes from Still Recalled. The phone check itself, its rules, its screens, the
+planted test app and its end-to-end test are new.
 
 ## License
 

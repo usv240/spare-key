@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-24T06:25:50.904Z",
+  "at": "2026-11-24T07:28:14.979Z",
   "device": {
     "model": "sdk_gphone64_x86_64",
     "android": "16",
@@ -28,6 +28,11 @@
     },
     {
       "name": "The card says what the app can do, in words",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "An app put on the phone outside the Play Store is said to be",
       "ok": true,
       "note": ""
     },
@@ -64,7 +69,7 @@
     {
       "name": "A plan is made",
       "ok": true,
-      "note": "Ordered by gemini-3.5-flash-lite from finding types only. Code checked it against the safety rules."
+      "note": "The cloud did not answer. This is the plan made by Spare Key's rules on this phone."
     },
     {
       "name": "The plan says to wait on removing the watching app when now is not a good time",
@@ -80,6 +85,21 @@
       "name": "The hotline is on the plan",
       "ok": true,
       "note": ""
+    },
+    {
+      "name": "The first step says where not to keep the screenshots",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "Say it more simply answers, on the phone or through the cloud fallback",
+      "ok": true,
+      "note": "Put in simpler words by Gemini in the cloud, from the public steps only. This phone has no Gemini Nano."
+    },
+    {
+      "name": "Every request to the cloud passed a second check in Kotlin for app names",
+      "ok": true,
+      "note": "4 requests checked"
     },
     {
       "name": "Under the hood lists what Spare Key did, with timings",
@@ -99,17 +119,17 @@
     {
       "name": "Nothing naming an app left this phone",
       "ok": true,
-      "note": "3 sent"
+      "note": "4 sent"
     },
     {
-      "name": "The cloud plan request is in the ledger, word for word",
+      "name": "No usage statistics or crash reports were stored or sent",
       "ok": true,
-      "note": ""
+      "note": "0 log lines"
     },
     {
       "name": "Quick exit leaves Spare Key",
       "ok": true,
-      "note": "topResumedActivity=ActivityRecord{55282643 u0 com.android.chrome/org.chromium.chrome.browser.firstrun.FirstRunActivity t"
+      "note": "topResumedActivity=ActivityRecord{187122985 u0 com.android.chrome/org.chromium.chrome.browser.firstrun.FirstRunActivity "
     },
     {
       "name": "Quick exit leaves no recent-apps entry",
@@ -142,36 +162,41 @@
       "note": ""
     }
   ],
-  "nano": "downloadable",
-  "checkSeconds": 10.3,
+  "nano": "unavailable",
+  "checkSeconds": 3.6,
   "summary": "Spare Key read 37 apps with special access and listed 2 things that could let someone watch this phone.",
-  "planSeconds": 26.2,
-  "planNote": "Ordered by gemini-3.5-flash-lite from finding types only. Code checked it against the safety rules.",
+  "planSeconds": 112.7,
+  "planNote": "The cloud did not answer. This is the plan made by Spare Key's rules on this phone.",
   "planSteps": [
     "1. Screenshot these first (2)",
     "2. Talk to an advocate",
     "3. Leave for a better time: An app can watch and control this phone",
     "4. Leave for a better time: USB debugging is on"
   ],
-  "ledgerEntries": 3,
+  "simpler": "Put in simpler words by Gemini in the cloud, from the public steps only. This phone has no Gemini Nano.",
+  "ledgerEntries": 4,
   "sent": [
-    "Plan request, 1:27 AM",
-    "2 findings by type only (phone.app.control, phone.usb_debugging) and your answers to the two questions. No app's name.",
-    "Show the exact text (314 characters)",
-    "Answer to get_steps, 1:27 AM",
+    "Plan request, 2:29 AM",
+    "2 findings by type only (phone.app.control, phone.usb_debugging). No app's name.",
+    "Show the exact text (254 characters)",
+    "Answer to get_steps, 2:29 AM",
     "The public steps for 2 finding types, from the steps library. The same text is on the website.",
     "Show the exact text (4684 characters)",
-    "Answer to ask_device, 1:27 AM",
+    "Answer to ask_device, 2:29 AM",
     "One word about one finding: unknown.",
     "Show the exact text (25 characters)",
-    "What Spare Key did (5)",
+    "Simpler words, 2:31 AM",
+    "The public steps for one finding type (phone.app.control), to be put in simpler words. The same text is on the website. No app's name.",
+    "Show the exact text (395 characters)",
+    "What Spare Key did (6)",
     "Kept in memory on this phone and forgotten with the check. Spare Key sends no usage or crash reports.",
-    "1:25:58 AM  Rules started in the sandbox in 1.8 s. Steps library version 5.",
-    "1:25:59 AM  Gemini Nano on this phone: unavailable.",
-    "1:26:16 AM  Check finished in 3.8 s: 37 apps with special access read, 2 listed, 36 that came with the phone not listed.",
-    "1:27:30 AM  Plan made by code on this phone: 4 steps.",
-    "1:27:53 AM  Plan ordered by gemini-3.5-flash-lite in the cloud in 16.2 s, with 3 functions offered and 1 answered from this phone. Code fixed 0 things."
+    "2:28:25 AM  Rules started in the sandbox in 1.0 s. Steps library version 5.",
+    "2:28:26 AM  Gemini Nano on this phone: unavailable.",
+    "2:28:40 AM  Check finished in 1.0 s: 37 apps with special access read, 2 listed, 36 that came with the phone not listed.",
+    "2:29:26 AM  Plan made by code on this phone: 4 steps.",
+    "2:31:17 AM  The model did not answer (ServerException). The plan made by code is shown.",
+    "2:31:50 AM  Simpler words for one step by gemini-3.5-flash-lite in the cloud (this phone has no Gemini Nano: the fallback) in 0.9 s."
   ],
-  "passed": 27,
+  "passed": 31,
   "failed": 0
 }

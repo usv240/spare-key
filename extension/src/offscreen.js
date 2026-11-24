@@ -4,6 +4,7 @@
 import { ledgerSummary } from './ledger.js';
 import { deviceStatus, deviceJson, cloudJson, hybridJson, liveSettings, resetCloudBudget, remoteLibrary, sendLayoutReport, TEXT_ONLY, TEXT_AND_IMAGE } from './ai.js';
 import { cleanText } from '../../shared/plan/invariants.js';
+import { SIMPLER_SYSTEM, SIMPLER_SCHEMA } from '../../shared/plan/prompts.js';
 import { validateLibrary } from '../../shared/steps-schema.js';
 import { classifyEntries, readWholePage, readScreenshot, nanoAnswer } from './classify.js';
 import { cloudPlan } from './cloud/plan.js';
@@ -73,10 +74,7 @@ async function setupCheck({ cloud = true } = {}) {
 // Gemini Nano work for the scan. Only the extension's own pages may ask (the sender check below).
 // Loading Gemini Nano takes long the first time (104 s on the builder's PC before the first check, November 21, 2026;
 // 4 to 12 s per check after). The panel asks for one tiny prompt as it opens, so the model is loaded before a scan.
-const SIMPLER_SYSTEM = `Rewrite these steps for changing one setting in very simple words, at a grade 4 reading level.
-Keep the same order, and the same number of steps or one more. Keep every button and menu name exactly as written.
-Keep every warning. Do not add names, numbers, links or advice that are not in the steps. Never say safe or secure.`;
-const SIMPLER_SCHEMA = { type: 'object', properties: { steps: { type: 'array', items: { type: 'string', maxLength: 200 } } }, required: ['steps'] };
+// SIMPLER_SYSTEM and SIMPLER_SCHEMA are in shared/plan/prompts.js: the Android app asks the same thing.
 
 let warm = null;
 const NANO = {

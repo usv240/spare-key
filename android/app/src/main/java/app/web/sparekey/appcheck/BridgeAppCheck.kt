@@ -26,7 +26,7 @@ import org.json.JSONObject
  * App Check for an app installed outside Google Play.
  *
  * Firebase AI Logic requires App Check. On Android the attestation is Play Integrity, which needs the app to come from
- * Google Play; judges and testers install this app from a GitHub release. So the app does what the Chrome extension
+ * Google Play; this app is installed from the project's site or built from source. So it does what the Chrome extension
  * does: it asks the project's own site for a token. https://spare-key-app.web.app/appcheck-bridge.html runs
  * reCAPTCHA Enterprise on the site's domain and gets an App Check token, the same protection the web page has.
  *

@@ -25,6 +25,12 @@
              Spare Key has no analytics and no crash reporting of its own. Checked in tools/android-e2e.mjs. -->
         <meta-data android:name="firebase_data_collection_default_enabled" android:value="false" />
         <meta-data android:name="firebase_ml_collection_enabled" android:value="false" />
+        <!-- The ML library logs how it is used through Google's "datatransport" uploader, whatever the switches above
+             say (seen in logcat: FIREBASE_ML_SDK events stored for upload). Taking the uploader's only backend out of
+             the app means such an event is refused when it is made: nothing is stored and nothing is sent. -->
+        <service android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery" android:exported="false" tools:node="merge">
+            <meta-data android:name="backend:com.google.android.datatransport.cct.CctBackendFactory" tools:node="remove" />
+        </service>
 
         <activity
             android:name=".MainActivity"

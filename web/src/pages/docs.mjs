@@ -36,7 +36,7 @@ export function installPage({ apk = null } = {}) {
 <h1>Get Spare Key</h1>
 <p class="lead">The Chrome extension checks your accounts, on a computer. The Android app checks the phone itself. Both are free, and neither asks you to sign in.</p>
 <h2>The Chrome extension</h2>
-<div class="note caution"><p><strong>Before you install:</strong> if someone else uses this computer, they may see that the extension is installed. A computer they never use, like a trusted friend’s, is a better place to check. Library and work computers usually do not allow installing extensions. You can remove Spare Key when you are done.</p></div>
+<div class="note caution"><p><strong>Before you install:</strong> if someone else uses this computer, they may see that the extension is installed. A computer they never use, like a trusted friend’s, is a better place to check. Signing in to Google on a computer you have not used before sends a new sign-in alert to your recovery email and phone, and the computer shows in your list of devices. If the other person can see those, they will know. If Chrome sync is on, your history, including this site, can show on every computer signed in to the same Chrome profile. Library and work computers usually do not allow installing extensions. You can remove Spare Key when you are done.</p></div>
 <h3>Install it</h3>
 <p>Spare Key is not in the Chrome Web Store yet. Until it is, install it this way:</p>
 <ol>
@@ -65,7 +65,7 @@ ${apk ? `<ol>
   <li>Open Spare Key and choose <strong>Check this phone</strong>, or <strong>Try a practice phone first</strong>.</li>
 </ol>`}
 <h3>What it asks for</h3>
-<p>One thing: to see the list of apps on the phone. It asks for no location, no contacts, no files, no camera and no microphone. It uses the internet only for plan help, which you can turn off on the first screen. It keeps nothing: the check lives in memory and is forgotten when you close the app or press Quick exit.</p>
+<p>One thing: to see the list of apps on the phone. It asks for no location, no contacts, no files, no camera and no microphone. It uses the internet for plan help, which you can turn off on the first screen, and to fetch its own settings from Firebase and show that it is the real app. None of that says anything about your phone. It keeps nothing: the check lives in memory and is forgotten when you close the app or press Quick exit.</p>
 <h3>Gemini Nano on the phone</h3>
 <p>On a phone that has Gemini Nano, it says what kind of app each one seems to be, on the phone. The list of your apps is never sent anywhere. On a phone without it, Spare Key’s rules do the whole check, and the results say so.</p>
 <h3>Remove it when you are done</h3>
@@ -106,7 +106,7 @@ export function howItWorksPage() {
   <li>Whether each one came from the Play Store or from somewhere else</li>
 </ul>
 <p>An app with several of these, or with one of them and from outside the Play Store, is listed first as “can watch and control this phone”. Apps that came with the phone are counted, not listed, and the results say that a rooted phone can hide an app among them. It never opens, changes or removes an app: “Open this app in Settings” takes you to Android’s own page for it, and every change there is yours.</p>
-<p>The plan follows the same safety rules below, plus one more: when an app can watch the phone, every other step carries a warning that the phone may show what you do on it, and removing that app is the step to talk through with an advocate first.</p>
+<p>The plan follows the safety rules below. One of them is for the phone: when an app can watch it, every other step carries a warning that the phone may show what you do on it, whether the plan was ordered by code or by Gemini. The first step warns that a screenshot stays on the phone and may back up to shared photos, so a picture taken with another phone, or a list on paper, is better there.</p>
 <h2>The safety rules every plan follows</h2>
 <p>Whether the plan came from code or from Gemini in the cloud, Spare Key checks it with these rules before you see it, and shows when a rule changed something:</p>
 <ol>
@@ -117,6 +117,8 @@ export function howItWorksPage() {
   <li>The advocate step is always there.</li>
   <li>The plan never promises that you are out of danger or that there is nothing to worry about.</li>
   <li>The plan never contains contact details or links that are not from the steps library.</li>
+  <li>While your mail is copied to someone else, stopping that comes before any change Google would email you about.</li>
+  <li>While an app can watch the phone, that app comes first, and every other step says to make the change from a device the other person never had.</li>
   <li>Everything not checked gets a “check it yourself” step.</li>
 </ol>`);
 }
@@ -133,10 +135,10 @@ export function builtWithPage({ numbers }) {
     ['Cloud Firestore', 'Google’s cloud', 'The public steps library, which the extension refreshes when it is newer. Opt-in anonymous reports when a page looked different: five fixed fields, create-only, sent only when the person presses the button.'],
     ['Firebase Hosting', 'Google’s cloud', 'This site, the practice pages and the Steps API.'],
     ['Chrome extension APIs', 'This computer', 'Side panel, the scan tab, permissions asked for per site, the extensions check, history cleanup.'],
-    ['Firebase AI Logic for Android, on device (<code>InferenceMode.ONLY_ON_DEVICE</code>)', 'The phone', 'Gemini Nano, through AICore, says what kind of app each one seems to be: monitoring, family locator, parental control, assistive, everyday. The list of apps on a phone is private, so there is no cloud fallback. It can add a note; it can never hide a finding or call one harmless.'],
+    ['Firebase AI Logic for Android, on device (<code>InferenceMode.ONLY_ON_DEVICE</code>)', 'The phone', 'Gemini Nano, through AICore, says what kind of app each one seems to be: monitoring, family locator, parental control, assistive, everyday. The list of apps on a phone is private, so there is no cloud fallback. It can add a caution to a card; a note that would reassure is never shown, and it can never hide a finding. Not yet run on a phone: the test emulator has no Gemini Nano.'],
     ['Firebase AI Logic for Android, in the cloud (<code>InferenceMode.ONLY_IN_CLOUD</code>, function calling)', 'Google’s cloud', 'Orders the phone’s plan from finding types only. <code>ask_device</code> asks the phone things like “did this app come from outside the store?”, and the phone answers yes, no or unknown.'],
     ['Jetpack JavaScriptSandbox (<code>androidx.javascriptengine</code>)', 'The phone', 'Runs the extension’s own rules on the phone, in a process with no network and no files: the finding types, the cloud gate, the plan and the safety rules. One engine, so the phone and the extension cannot drift apart.'],
-    ['App Check on Android, through the site', 'The phone', 'An app installed from this site has no Play Integrity, so it gets reCAPTCHA Enterprise tokens from the same small page the extension uses, over a channel that page accepts only from the app.'],
+    ['App Check on Android, through the site', 'The phone', 'An app installed from this site has no Play Integrity, so it gets reCAPTCHA Enterprise tokens from the same small page the extension uses, over a message channel the app adds to that page. Another Android app could load the page the same way, so this guards the model quota less well than Play Integrity would. It is what an app outside the Play Store can have.'],
     ['WebCrypto', 'This computer', 'The locked copy: PBKDF2 with 600,000 rounds and AES-GCM. Opening one beside a new check shows what is new since then.'],
     ['A wrapper around fetch', 'This computer', 'The ledger under “What left this computer”: every request by where it went and its size, and how many hold anything from the check.'],
     ['MCP server', 'The developer’s computer', 'Steps and plans for AI assistants, from finding types only.'],
@@ -160,7 +162,7 @@ export function builtWithPage({ numbers }) {
 <p>Code decides everything that keeps a person out of danger. The plan made by code, with no model, passes every safety measure on its own, and the safety rules check any plan a model writes. Gemini adds what code cannot do:</p>
 <div class="table-wrap" tabindex="0" role="region" aria-label="What Gemini adds: table, scrolls sideways on small screens"><table><thead><tr><th>What</th><th>Without Gemini</th><th>With Gemini</th></tr></thead><tbody>
 <tr><td>Read settings pages a site has changed (all four kinds of change at once)</td><td>8 of 24 ways in shown</td><td>18 of 24, by Gemini Nano on the computer</td></tr>
-<tr><td>Read a phone app’s sharing screen from a screenshot</td><td>Nothing: code cannot read a picture</td><td>3 of 3 made-up people, with “Me” left out</td></tr>
+<tr><td>Read a phone app’s sharing screen from a screenshot</td><td>Nothing: code cannot read a picture</td><td>3 of 3 made-up people, with “Me” left out, on 1 of 3 runs. One run split the names, and one could not start</td></tr>
 <tr><td>Order the plan for this situation and explain each step in plain words</td><td>One fixed order and stock sentences</td><td>Per-situation order and wording, asking the computer yes or no questions it needs</td></tr>
 <tr><td>Put a step in simpler words, on request</td><td>Not possible</td><td>Gemini Nano on the computer, or the cloud for the public steps only</td></tr>
 </tbody></table></div>
@@ -278,7 +280,7 @@ function androidSection(a) {
   const rows = a.checks.map(c => `<tr><td>${esc(c.name)}</td><td>${c.ok ? 'Passed' : 'Failed'}</td></tr>`).join('');
   return `<h2 id="android">The Android app: a planted test app</h2>
 <p><strong>${a.passed} of ${a.passed + a.failed}</strong> checks passed on an Android ${esc(a.device.android)} emulator. ${esc(date)}.</p>
-<p>The test installs a second app that does nothing but hold the access a phone-watching app asks for, turns each one on the way a person holding the phone would, and then drives the real Spare Key app: the check, the plan with Gemini in the cloud, Under the hood, Quick exit, and the practice phone. The check took ${esc(String(a.checkSeconds))} seconds and the cloud plan ${esc(String(a.planSeconds))} seconds.</p>
+<p>The test installs a second app that does nothing but hold the access a phone-watching app asks for, turns each one on the way a person holding the phone would, and then drives the real Spare Key app: the check, the plan with Gemini in the cloud, Under the hood, Quick exit, and the practice phone. The check took ${esc(String(a.checkSeconds))} seconds. ${/^Ordered by/.test(a.planNote || '') ? `Gemini in the cloud ordered the plan in ${esc(String(a.planSeconds))} seconds, and code checked it against the safety rules.` : 'On this run the cloud model was busy, so the app showed the plan made by its own rules and said so. That is what it is built to do; on other runs Gemini in the cloud ordered the plan in about 7 seconds.'} ${/in the cloud/.test(a.simpler || '') ? '“Say it more simply” was answered by Gemini in the cloud, the fallback of hybrid inference: the emulator has no Gemini Nano.' : ''}</p>
 <div class="table-wrap" tabindex="0" role="region" aria-label="Android checks: table, scrolls sideways on small screens"><table><thead><tr><th>Check</th><th>Result</th></tr></thead><tbody>${rows}</tbody></table></div>
 <p class="muted">An emulator, not a person’s phone, and a test app, not real stalkerware. Gemini Nano was not on the emulator, so the on-device sorting is not part of this run.</p>`;
 }
@@ -356,7 +358,7 @@ export function privacyPage() {
   <li><strong>What it cannot hide:</strong> that it is installed. An app that can read the screen can see Spare Key while it is open.</li>
 </ul>
 <h2>What it cannot hide</h2>
-<p>Chrome’s history shows the pages Spare Key opened, unless you turn on the cleanup. Google’s own My Activity may record the visits. Someone with access to this computer may see that the extension is installed. Remove it when you are done.</p>
+<p>Chrome’s history shows the pages Spare Key opened, unless you turn on the cleanup. If Chrome sync is on, that history can show on every computer signed in to the same Chrome profile. Signing in to Google on a computer you have not used before sends a new sign-in alert to your recovery email and phone, and the computer shows in your list of devices. Google’s own My Activity may record the visits. Someone with access to this computer may see that the extension is installed. Remove it when you are done.</p>
 <h2>How to remove everything</h2>
 <p>Press Clear everything, or Quick exit. Then remove the extension at <code>chrome://extensions</code>.</p>`);
 }
@@ -376,7 +378,7 @@ export function safetyPage() {
   <li><a href="https://www.thehotline.org/plan-for-safety/">Plan for safety</a>, from the hotline</li>
 </ul>
 <h2>Use a device they cannot see</h2>
-<p>If the other person may be watching this computer or your phone, a computer they never use, like a trusted friend’s, is a better place to check. A library computer is fine for reading this site and getting help, but usually does not allow installing extensions. Either is a better place to plan.</p>
+<p>If the other person may be watching this computer or your phone, a computer they never use, like a trusted friend’s, is a better place to check. Signing in to Google on a computer you have not used before sends a new sign-in alert to your recovery email and phone, and the computer shows in your list of devices. If the other person can see those, they will know, so a computer you are already signed in on is best, and an advocate can help you weigh it. A library computer is fine for reading this site and getting help, but usually does not allow installing extensions. Either is a better place to plan.</p>
 <h2>Remove Spare Key when you are done</h2>
 <p>Open <code>chrome://extensions</code>, find Spare Key, and select Remove.</p>`);
 }

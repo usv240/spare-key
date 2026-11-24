@@ -253,7 +253,17 @@ fun PlanScreen(m: AppModel) {
         Body("Two questions help put the steps in an order that fits you. You can skip them.")
         Question(m, "safe_to_change_now", "Is now a good time to make changes the other person might notice?", listOf("yes" to "Yes", "no" to "No", "not_sure" to "Not sure"))
         Question(m, "has_advocate", "Do you have an advocate helping you?", listOf("yes" to "Yes", "no" to "No", "prefer_not_to_say" to "Prefer not to say"))
-        Muted(if (m.cloudOn && !m.practice) "Gemini in the cloud orders the plan from finding types only. Your answers to these two questions go too. App names never do." else "Your plan is made on this phone.")
+        if (m.cloudOn && !m.practice) {
+            Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).toggleable(m.shareAnswers, role = Role.Switch) { m.setShare(it) },
+                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Column(Modifier.weight(1f)) {
+                    Text("Share these two answers with plan help", style = MaterialTheme.typography.titleSmall, color = Ink.text)
+                    Muted(if (m.shareAnswers) "On. Gemini in the cloud sees your two answers and the finding types." else "Off. Your answers stay on this phone, where Spare Key's rules use them.")
+                }
+                Switch(m.shareAnswers, null, colors = SwitchDefaults.colors(checkedTrackColor = Ink.accent, checkedThumbColor = Ink.onAccent))
+            }
+            Muted("Gemini in the cloud orders the plan from finding types only. App names never go.")
+        } else Muted("Your plan is made on this phone.")
         Primary("Make my plan", { m.makePlan() })
         Secondary("Back to what was found", { m.show(AppModel.Results) })
         return
@@ -297,6 +307,8 @@ fun PlanScreen(m: AppModel) {
             if (about.isNotEmpty() && a.optString("action") != "talk_to_advocate") Muted(about.distinct().joinToString(", "))
             Body(a.optString("why"))
             if (a.optString("linked").isNotEmpty()) Caution(a.optString("linked"))
+            // The field's advice is "screenshot first". On a phone that may be watched, say where not to keep them.
+            if (a.optString("action") == "document") Caution("A screenshot stays on this phone and may back up to shared photos. A picture taken with another phone, or a list on paper, is better.")
             if (a.optString("action") == "talk_to_advocate") Muted("Call 1-800-799-7233, or text START to 88788. Free, all day, every day.")
             entries.optJSONObject(code)?.let { e ->
                 if (wait && e.optString("if_not_safe_yet").isNotEmpty()) Body(e.optString("if_not_safe_yet"))
@@ -306,6 +318,22 @@ fun PlanScreen(m: AppModel) {
                     for ((k, s) in steps.withIndex()) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text("${k + 1}.", style = MaterialTheme.typography.bodySmall, color = Ink.muted)
                         Text(s, style = MaterialTheme.typography.bodySmall, color = Ink.text, modifier = Modifier.weight(1f))
+                    }
+                    // Hybrid inference with the fallback: Gemini Nano on the phone when it has it, the cloud when not.
+                    val said = m.simpler[code]
+                    when (said?.state) {
+                        null -> LinkButton("Say it more simply") { m.saySimpler(code) }
+                        "pending" -> Muted("Putting these steps in simpler words.", Modifier.said())
+                        "off" -> Muted("Simpler words need Gemini Nano on the phone, or plan help from the cloud. Both are off.", Modifier.said())
+                        "failed" -> { Muted("Spare Key could not put these in simpler words just now.", Modifier.said()); LinkButton("Try again") { m.saySimpler(code) } }
+                        else -> Column(Modifier.fillMaxWidth().background(Ink.tint, RoundedCornerShape(8.dp)).padding(12.dp).said(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Text("In simpler words", style = MaterialTheme.typography.titleSmall, color = Ink.text)
+                            for ((k, s) in said.steps.withIndex()) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text("${k + 1}.", style = MaterialTheme.typography.bodySmall, color = Ink.muted)
+                                Text(s, style = MaterialTheme.typography.bodySmall, color = Ink.text, modifier = Modifier.weight(1f))
+                            }
+                            Muted(if (said.by == "device") "Put in simpler words by Gemini Nano on this phone." else "Put in simpler words by Gemini in the cloud, from the public steps only. This phone has no Gemini Nano.")
+                        }
                     }
                 }
             }
@@ -340,6 +368,7 @@ fun HoodScreen(m: AppModel, appCheck: String) {
     Section {
         Where("Reading this phone", "Spare Key's rules, on this phone. The same code as the Chrome extension, run in Android's JavaScript sandbox.")
         Where("Sorting the apps", if (m.nano == "available") "Gemini Nano, on this phone (Firebase AI Logic, on-device only). The list of apps never leaves." else "Spare Key's rules, on this phone. This phone can't run Gemini Nano.")
+        Where("Simpler words for a step", if (m.nano == "available") "Gemini Nano on this phone; the cloud only if it cannot (Firebase AI Logic, prefer on device). Public steps only." else if (m.cloudOn) "Gemini in the cloud, as the fallback: this phone has no Gemini Nano (Firebase AI Logic, prefer on device). Public steps only." else "Off: this phone has no Gemini Nano and plan help is off.")
         Where("Ordering your plan", if (m.cloudOn) "Gemini in the cloud (Firebase AI Logic, cloud only), from finding types only. Code checks every plan against the safety rules." else if (m.nano == "available") "Gemini Nano, on this phone." else "Spare Key's rules, on this phone.")
         Where("Settings and switches", "Firebase Remote Config (${m.rcFrom.ifEmpty { "not yet fetched" }}).")
         Where("App Check", appCheck)

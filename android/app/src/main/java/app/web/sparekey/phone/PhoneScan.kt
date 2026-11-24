@@ -89,7 +89,9 @@ object PhoneScan {
                 .put("system", system)
                 .put("installer", when (installer) {
                     "com.android.vending" -> "play"
-                    null -> "unknown"
+                    // No installer on record: an app that came with the phone, or one put on it by a computer over USB
+                    // (adb). For an app that did not come with the phone, that is outside the Play Store.
+                    null -> if (system) "unknown" else "other"
                     else -> "other"
                 })
                 .put("first_installed", p.firstInstallTime)

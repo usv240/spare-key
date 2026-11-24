@@ -2,7 +2,7 @@
   "shared-computer": {
     "title": "If someone else uses this computer",
     "what": "Chrome can keep a list of the pages Spare Key opens. The other person may also see that Spare Key is in Chrome.",
-    "why": "Running the check where they cannot look keeps it private. A trusted friend's computer is one option. Library and work computers usually do not allow installing extensions.",
+    "why": "Running the check where they cannot look keeps it private. A computer you are already signed in on, that they never use, is best. Signing in to Google on a computer you have not used before sends a new sign-in alert to your recovery email and phone, and the computer shows in your list of devices. If the other person can see those, they will know. Library and work computers usually do not allow installing extensions.",
     "tech": "Spare Key keeps nothing after Chrome closes unless you save it. An optional cleanup removes the pages it opened from Chrome's history."
   },
   "quick-exit": {

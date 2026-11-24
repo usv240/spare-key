@@ -1,6 +1,6 @@
 # Devpost submission text
 
-Paste each section into the matching field of the Devpost form. Platform: **Web (Chrome)**. Every number here comes
+Paste each section into the matching field of the Devpost form. Platform: **Web (Chrome)** and **Android**. Every number here comes
 from `docs/accuracy.md` and the saved runs in `docs/evidence/`; check them again on the day you submit.
 
 - Project name: Spare Key
@@ -64,13 +64,32 @@ privacy-tiered routing: each step runs at the most private tier its data allows.
 
 One file, `shared/cloud-safe.js`, is the only exit to the cloud. It builds each request from an allow-list of codes and
 enums, then checks it again just before it is sent and refuses anything holding a name, address or device the scan
-found. Code, not a model, decides what keeps a person out of danger: nine safety rules check any plan a model writes.
+found. Code, not a model, decides what keeps a person out of danger: ten safety rules check any plan a model writes.
 
 Also used: **App Check** with reCAPTCHA Enterprise (the extension gets tokens from a small bridge page on the site),
 **Remote Config** (the page readers and the words the rules read, so a site change is fixed for every install with no
 store update), **Cloud Firestore** (the public steps library, and opt-in anonymous "this page looked different"
 reports), **Firebase Hosting** (the site, practice pages and a free Steps API). There is also an MCP server so an
 advocate's AI assistant can give the current steps with the warnings attached.
+
+### On Android
+
+The Android app checks the phone itself, which no account check can see. Kotlin asks Android which apps hold the access
+a phone-watching app needs (accessibility, device admin, notification access, texts, background location) and where
+each came from. Then the same split:
+
+- **Gemini Nano on the phone** (`InferenceMode.ONLY_ON_DEVICE`, through AICore) adds a caution about what kind of app
+  each one seems to be. The list of apps on a phone is private, so there is no cloud fallback. Not yet run on a phone:
+  the test emulator has no Gemini Nano.
+- **Hybrid, with the fallback** (`InferenceMode.PREFER_ON_DEVICE`): putting a step's public instructions in simpler
+  words. Gemini Nano when the phone has it, the cloud when it does not. Public text only.
+- **Gemini in the cloud** (`InferenceMode.ONLY_IN_CLOUD`, function calling) orders the plan from finding codes.
+  `ask_device` asks the phone yes or no questions; the phone answers from what it read.
+- **One rules engine.** The extension's own JavaScript (`shared/`: finding codes, the cloud gate, the plan, the safety
+  rules) is bundled and run in Jetpack's JavaScript sandbox. The phone and the extension cannot drift apart.
+- **App Check** through the site's reCAPTCHA Enterprise page, and the same **Remote Config** switches.
+
+Tested with a planted test app on an emulator: 31 of 31 checks passed (`tools/android-e2e.mjs`).
 
 ## Challenges we ran into
 
@@ -92,7 +111,7 @@ advocate's AI assistant can give the current steps with the warnings attached.
   in 30 of 30.
 - Rule R9: when mail is copied to someone else, stop that before changing recovery or 2-Step settings, because Google's
   alert emails would reach them. The chatbot got this order wrong in 3 of 7 situations where it applied.
-- "What they see when you change it": 22 kinds of access, 15 of them with the official help page quoted.
+- "What they see when you change it": 30 kinds of access, 22 of them with the official help page quoted.
 - Accessibility: axe-core finds 0 violations in 60 runs (13 site pages at two widths in light and dark, and the side
   panel's screens); median reading grade 4.2 (tools/a11y-check.mjs, tools/reading-grade.mjs).
 - Quick exit, tested through the real extension: the button in the middle of a check, and Escape twice, each close the
@@ -116,6 +135,8 @@ both more useful and more honest about what each part does.
 
 ## Built with
 
+(Android: Firebase AI Logic for Android, Gemini Nano through AICore, Jetpack Compose, Jetpack JavaScriptSandbox, Kotlin.)
+
 Firebase AI Logic, Gemini Nano (Chrome built-in AI), Gemini Developer API, Firebase App Check, reCAPTCHA Enterprise,
 Firebase Remote Config, Cloud Firestore, Firebase Hosting, Chrome Extensions (Manifest V3, side panel, offscreen
 documents), WebCrypto, Model Context Protocol, esbuild, Puppeteer, axe-core, JavaScript.
@@ -133,7 +154,14 @@ documents), WebCrypto, Model Context Protocol, esbuild, Puppeteer, axe-core, Jav
 3. **Your own account (optional):** https://spare-key-app.web.app/plant.html has three recipes to plant a harmless way
    in, run the check, and undo it.
 
+4. **The Android app (optional):** build it from `android/` (README, "The Android app") and choose **Try a practice
+   phone first**. Nothing on the phone is read in a practice check.
+
 ## Code reused from before the submission period
 
 The Firebase AI Logic wrapper pattern and the App Check bridge for a Chrome extension come from the author's other
 #BuildHybridAI entry, Still Recalled. Everything else was built during the submission period.
+
+The Android shell (the Firebase AI Logic wrapper for Android, the App Check bridge through a WebView, and running
+shared JavaScript in Jetpack's sandbox) also comes from Still Recalled. The phone check, its rules, its screens, the
+planted test app and its end-to-end test are new.
