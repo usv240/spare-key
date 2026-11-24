@@ -21,9 +21,9 @@ visiting a dozen settings pages, each with its own words, and then deciding what
 because removing access can alert the other person, and that can be most dangerous right after leaving.
 
 Researchers at NYU asked AI chatbots 193 real questions from survivors; 60% of the answers left out critical safety
-warnings. In our own test on 30 situations, a plain chatbot said to take screenshots before changing anything in only 4,
+warnings. In our own test on 30 situations, a plain chatbot (Gemini 3.5 Flash-Lite with no Spare Key instructions) said to take screenshots before changing anything in only 4,
 and when mail was copied to the other person it put an account change first in 3 of 7, so Google's alert emails would
-reach them. There are only three dedicated tech-abuse clinics in the US. A chatbot also cannot see your settings, and
+reach them. The same NYU study counts only three dedicated tech-abuse clinics in the US, to the researchers' knowledge. A chatbot also cannot see your settings, and
 pasting them into one sends the very names and addresses that are the danger. That is the gap Spare Key fills.
 
 ## What it does
@@ -96,7 +96,7 @@ advocate's AI assistant can give the current steps with the warnings attached.
 - Accessibility: axe-core finds 0 violations in 60 runs (13 site pages at two widths in light and dark, and the side
   panel's screens); median reading grade 4.2 (tools/a11y-check.mjs, tools/reading-grade.mjs).
 - Quick exit, tested through the real extension: the button in the middle of a check, and Escape twice, each close the
-  panel and the scan tab, show an ordinary page, and leave nothing in Spare Key's storage (8 of 8 checks). With the
+  panel and the scan tab, show an ordinary page, and leave nothing from the check in Spare Key's storage (8 of 8 checks; settings such as the cloud switch stay). With the
   history extra on, it also removes the pages the check opened from Chrome's history (not covered by the test).
 - A real account, read-only: real Google and Amazon pages differed from what we expected in 5 of 12 checks (about 50
   wrong app entries, a missed recovery phone, 6 false Amazon devices). After the fixes, every check Spare Key could

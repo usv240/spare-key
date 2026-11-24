@@ -95,7 +95,7 @@ All from scripts in `tools/`; details and limits in [docs/accuracy.md](docs/accu
 - **Privacy:** 0 of 20 requests from the extension held a name, email, phone number, device or place, in a full check
   with every cloud step on; all 9 model requests matched "What left this computer" word for word, and the panel's own
   ledger agreed (0 of 13). The cloud plan asked the device a yes/no question (`ask_device`) and got an enum back.
-- **Plan safety (40 situations written before any run):** a plain chatbot put screenshots before changes in 4 of 30
+- **Plan safety (40 situations written before any run):** a plain chatbot (the same Gemini 3.5 Flash-Lite, with no Spare Key instructions) put screenshots before changes in 4 of 30
   answered situations; every plan Spare Key shows does in 30 of 30, and carries the warning that a change may be noticed
   in 30 of 30. Where the person's mail was copied to someone else and an account change was also needed (7 of the 30),
   the chatbot brought up the account change (recovery, password, sign-ins) before stopping the mail copying in 3 of 7:

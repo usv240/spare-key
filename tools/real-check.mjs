@@ -21,7 +21,7 @@ for (const check of checks) {
     if (rec.reauth) { status = 'not_checked'; why = 'needs_password'; break; }
     const read = rec.reader;
     if (!read || read.errorPage) { status = 'not_checked'; why = 'did_not_load'; break; }
-    const p = await readToEntries({ check, read, account: read.account });
+    const p = await readToEntries({ check, read, account: read.account, reader: check.pages[k]?.reader });
     if (p.why) { status = 'not_checked'; why = p.why; break; }
     partly ||= p.partly;
     for (const [i, entry] of p.entries.entries()) {

@@ -14,6 +14,8 @@
 //   errorText   a regular expression for an error page
 //   emptyText   a regular expression for the page's own words when there is nothing to list ("You have no filters")
 //   partlyWhen  a regular expression for words that mean the page lists groups, not each item ("on 3 devices")
+//   nanoNeeds   (used by the scan engine, not here) what an entry Gemini Nano reads from this page must show
+//   countText   (used by the scan engine) the page's own count of entries, as a regular expression with one number
 //
 // Returns { ready, timedOut, errorPage, via, entries: [{ i, text, href }], account, moreHidden, mainText, title, waitedMs,
 // withinFound, emptyConfirmed }. A page that lists nothing counts as empty only when it says so (emptyConfirmed) or the
@@ -61,6 +63,8 @@ export function readPage(cfg, doc = document) {
     const fullText = textOf(root);
     const mainText = fullText.slice(0, 20000);
     let withinFound = false;
+    // A real row, section or region around the heading, not just the smallest box that holds it.
+    let sectionIsBlock = false;
     // within: read only the part of the page under one setting's heading ("Grant access to your account").
     const within = re(cfg.within);
     if (within) {
@@ -76,7 +80,7 @@ export function readPage(cfg, doc = document) {
         let box = null;
         for (let up = node.parentElement; up && up !== root; up = up.parentElement) if (textOf(up).length > heading.length + 2) { box = up; break; }
         while (el && el !== root && !/^(TR|SECTION|FIELDSET|LI)$/.test(el.tagName) && !el.matches('[role="row"], [role="region"], [data-section]')) el = el.parentElement;
-        if (el && el !== root) { root = el; withinFound = true; break; }
+        if (el && el !== root) { root = el; withinFound = true; sectionIsBlock = true; break; }
         if (box) { root = box; withinFound = true; break; }
       }
     }
@@ -171,6 +175,9 @@ export function readPage(cfg, doc = document) {
       withinFound,
       // More text than mainText holds: anything read from mainText alone is only part of the page.
       mainTextCut: fullText.length > mainText.length,
+      // The named section's own words, when it is a real row or section: Gemini Nano reads only these, not the rest of
+      // the page. The smallest box around a heading can leave out the entries themselves (a rebuilt page, November 23).
+      sectionText: sectionIsBlock ? textOf(root).slice(0, 8000) : '',
       emptyConfirmed: !!re(cfg.emptyText)?.test(mainText),
     };
   })();

@@ -120,6 +120,12 @@ if (debugToken) {
 }
 await writeFile('extension/build/BUILD.txt', `${release ? 'release' : 'development'} build ${new Date().toISOString()}\n`);
 
+// The Android app's rules engine: the same shared modules, one script for Jetpack's JavaScript sandbox.
+if (existsSync('android/engine/bridge.js')) {
+  await mkdir('android/app/src/main/assets', { recursive: true });
+  await build({ entryPoints: ['android/engine/bridge.js'], outfile: 'android/app/src/main/assets/engine.js', bundle: true, format: 'iife', target: 'es2020', logLevel: 'warning', legalComments: 'none' });
+}
+
 // A release build also makes the download the install page links to: the extension folder without the debug token's
 // file, checked once more for the token itself.
 if (release) {

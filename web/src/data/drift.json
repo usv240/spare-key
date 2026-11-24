@@ -14,7 +14,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.9
+   "seconds": 1
   },
   {
    "kind": "none",
@@ -29,7 +29,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 112.5
+   "seconds": 113.4
   },
   {
    "kind": "renamed",
@@ -59,7 +59,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.5
+   "seconds": 0.7
   },
   {
    "kind": "renamed",
@@ -74,7 +74,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 2,
-   "seconds": 131.1
+   "seconds": 114.9
   },
   {
    "kind": "reworded",
@@ -89,7 +89,7 @@
    "notChecked": 6,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 11.7
+   "seconds": 12.5
   },
   {
    "kind": "reworded",
@@ -104,22 +104,22 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 2.1
+   "seconds": 2.7
   },
   {
    "kind": "reworded",
    "label": "Headings and labels reworded",
    "mode": "nano",
-   "found": 16,
-   "shown": 18,
+   "found": 17,
+   "shown": 19,
    "of": 24,
    "silentMisses": 0,
-   "toldToLook": 6,
-   "falseAlarms": 4,
-   "notChecked": 2,
+   "toldToLook": 5,
+   "falseAlarms": 2,
+   "notChecked": 1,
    "checks": 12,
-   "nanoRead": 2,
-   "seconds": 213.4
+   "nanoRead": 5,
+   "seconds": 132
   },
   {
    "kind": "rebuilt",
@@ -134,7 +134,7 @@
    "notChecked": 2,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.6
+   "seconds": 1.1
   },
   {
    "kind": "rebuilt",
@@ -149,7 +149,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.5
+   "seconds": 1
   },
   {
    "kind": "rebuilt",
@@ -164,7 +164,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 2,
-   "seconds": 121.7
+   "seconds": 105.5
   },
   {
    "kind": "formats",
@@ -179,7 +179,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.5
+   "seconds": 1.3
   },
   {
    "kind": "formats",
@@ -194,7 +194,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 0.5
+   "seconds": 1.5
   },
   {
    "kind": "formats",
@@ -209,7 +209,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 95.6
+   "seconds": 118.9
   },
   {
    "kind": "all",
@@ -224,7 +224,7 @@
    "notChecked": 9,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 11.6
+   "seconds": 12.2
   },
   {
    "kind": "all",
@@ -239,23 +239,23 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 2.2
+   "seconds": 2.6
   },
   {
    "kind": "all",
    "label": "All four at once",
    "mode": "nano",
-   "found": 17,
+   "found": 16,
    "shown": 18,
    "of": 24,
    "silentMisses": 0,
    "toldToLook": 6,
-   "falseAlarms": 9,
-   "notChecked": 1,
+   "falseAlarms": 8,
+   "notChecked": 2,
    "checks": 12,
-   "nanoRead": 6,
-   "seconds": 146.1
+   "nanoRead": 7,
+   "seconds": 169.3
   }
  ],
- "nanoDate": "November 22, 2026"
+ "nanoDate": "November 23, 2026"
 }

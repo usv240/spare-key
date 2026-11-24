@@ -28,25 +28,44 @@ const read = f => JSON.parse(readFileSync(f, 'utf8'));
 const M = read(path.join(OUT, 'marks.json'));
 
 // ---- Scenes: narration, and what is on screen. "panel" footage runs from..to (seconds on the recorder's clock). ----
+// "Break the pages first", recorded by tools/record-break.mjs: the numbers in its narration are the page's own result lines.
+const B = M.break || null;
+const num = (line, re) => Number((String(line || '').match(re) || [])[1] || 0);
+const breakSay = B && (() => {
+  const w = B.lines?.without || '';
+  const code = num(w, /code reader read (\d+)/), total = num(w, /read \d+ of (\d+)/), nano = num(w, /read (\d+) more/), not = num(w, /(\d+) could not be read/);
+  return `Sites change their pages without warning. Here every practice page is changed four ways at once. The code reader still reads ${code} of ${total} checks. Gemini Nano reads ${nano} more, on this computer.${not ? ` ${not === 1 ? 'One page it cannot read is' : `The ${not} it cannot read are`} listed as not checked, never as empty.` : ''}`;
+})();
+const fixSay = B && (() => {
+  const f = B.lines?.withFix || '';
+  const code = num(f, /code reader read (\d+)/), total = num(f, /read \d+ of (\d+)/);
+  return `Then the fix: new words and places to look, fetched from Firebase Remote Config, with no update to install. The code reads ${code} of ${total} again.`;
+})();
 const scenes = [
   { key: 'hook', slide: 'hook',
-    say: 'When someone leaves an abusive partner, that person often still has a way in: a phone signed in to their Google account, mail copied to another address, a location share they forgot. Researchers asked AI chatbots 193 real questions from survivors. 60 percent of the answers left out critical safety warnings.' },
+    say: 'When someone leaves an abusive partner, that person often still has a way in: a phone signed in to their Google account, mail copied to another address, a location share they forgot. Researchers found 60 percent of AI chatbot answers to survivors left out critical safety warnings.' },
+  { key: 'gap', slide: 'gap',
+    say: 'We tested a plain chatbot on 30 situations. It said to take screenshots before changing anything in only 4. Spare Key\'s plans do in all 30.' },
   { key: 'safety', panel: [M.safety - 0.5, M.choose + 3], slide: 'side', head: 'Read-only. Quick exit on every screen.', sub: 'Spare Key is a free Chrome extension. It reads your own settings pages and changes nothing.',
-    say: 'Spare Key is a free Chrome extension. It reads your own settings pages and changes nothing. Quick exit is on every screen, and the hotline is always one tap away.' },
-  { key: 'scan', panel: [M.start - 0.3, M.results + 0.5], tab: 'tab-1', slide: 'side',
-    say: 'It opens each settings page in a tab beside the panel and reads it. These are practice pages for a made-up person called Jordan. Code reads each page. When Gemini Nano is on the computer, it sorts every entry, through Firebase AI Logic in on-device-only mode, because these pages are the private data.' },
-  { key: 'results', panel: [M.results, M['not checked'] + 1], slide: 'side', head: 'What the other person could do, and what they may notice.', sub: 'Addresses stay masked until you choose "Show details". Anything not read is listed as not checked.',
-    say: 'It lists what it found by what the other person could do, and what they may notice if you remove it, quoted from Google\'s own help pages. Anything it could not read is listed as not checked, never shown as empty.' },
-  { key: 'plan', panel: [M.questions, M['plan end']], slide: 'side', head: 'Screenshots first. Then an advocate. Then changes, in a safe order.', sub: 'Code checks every plan against nine safety rules, whoever wrote it.',
-    say: 'The plan follows the field\'s advice: screenshots first, then an advocate, and changes they may notice wait for a better time. With plan help on, Gemini in the cloud orders it, but it only ever sees finding codes. Code checks every plan with nine safety rules. One of them: if mail is copied to someone else, stop that first, or Google\'s alert emails reach them.' },
+    say: 'Spare Key is a free Chrome extension. It reads your own settings pages and changes nothing. Quick exit is on every screen.' },
+  { key: 'scan', panel: [M.start - 0.3, M.results + 0.5], tab: 'tab-1', slide: 'side', head: 'Gemini Nano sorts every entry, on this computer.', sub: 'Firebase AI Logic, on-device only: these pages are the private data. Practice pages for a made-up person, Jordan.',
+    say: 'It opens each settings page beside the panel and reads it. Code reads each page, and Gemini Nano sorts every entry through Firebase AI Logic in on-device-only mode, because these pages are the private data.' },
+  { key: 'results', panel: [M.results, M['not checked'] + 1], slide: 'side', head: 'What the other person could do, and what they may notice.', sub: 'Each card says what removing it does, from Google\'s own help pages. Anything not read is listed as not checked.',
+    say: 'It lists what it found by what the other person could do, and what they may notice if you remove it, from Google\'s own help pages. Anything it could not read is listed as not checked.' },
+  ...(B ? [
+    { key: 'break', footage: 'break', range: [B['break chosen'] - 0.5, B['break read']], slide: 'side', head: 'Sites change their pages. Gemini Nano reads what code cannot.', sub: 'Every practice page changed four ways at once.', say: breakSay },
+    { key: 'fix', footage: 'break', range: [B['fix chosen'] - 0.5, B['fix read']], slide: 'side', head: 'A fix from Remote Config. No update to install.', sub: 'Fetched by the page from Firebase Remote Config.', say: fixSay },
+  ] : []),
+  { key: 'plan', panel: [M.questions, M['plan end']], slide: 'side', head: 'Screenshots first. Then an advocate. Then changes, at a time that is right for you.', sub: 'Code checks every plan against nine safety rules, whoever wrote it.',
+    say: 'The plan follows the field\'s advice: screenshots first, then an advocate, and changes they may notice wait. Gemini in the cloud can order it, but it only ever sees finding codes, and code checks every plan with nine safety rules. One of them: if mail is copied to someone else, stop that first, or Google\'s alert emails reach them.' },
   { key: 'hybrid', slide: 'hybrid',
-    say: 'This is the hybrid split. The private pages stay on the device with Gemini Nano. The cloud gets only finding codes, and when it wants a detail it asks the device a yes or no question. Public text, like putting a step in simpler words, prefers the device and falls back to the cloud.' },
+    say: 'That is the hybrid split. The private pages stay on the device with Gemini Nano. The cloud gets only codes, and when it needs a detail it asks the device a yes-or-no question.' },
   { key: 'hood', panel: [M.hood, M.ledger + 0.5], slide: 'side', head: 'Every request to the cloud, word for word.', sub: 'A test searched every request for the made-up names and addresses: none held one.',
-    say: 'Under the hood, every request to the cloud is listed word for word, with where it went. A test searched every request for made-up names and addresses. Zero of twenty held one.' },
+    say: 'Every request to the cloud is listed word for word. A test searched every one for names and addresses. Zero of twenty held one.' },
   { key: 'results-slide', slide: 'numbers',
-    say: 'On the practice pages it finds all 24 planted ways in. When the pages are changed, a page it cannot read is listed as not checked: zero silent misses, down from 24 on the first blind run. And on a real account, read only, the fixes now match what every page shows.' },
+    say: 'It finds all 24 planted ways in, with zero silent misses when pages change. On a real account, read only, every check it could read matches the page.' },
   { key: 'close', slide: 'close',
-    say: 'Spare Key. Find out who still has a key to your accounts. Try the practice check at spare key app dot web dot app. And the hotline is always there: 1 800 799 7233.' },
+    say: 'Spare Key. Find out who still has a key to your accounts, at spare key app dot web dot app. The hotline is always there: 1 800 799 7233.' },
 ];
 
 // ---- Slides -------------------------------------------------------------------------------------------------------
@@ -72,6 +91,19 @@ h1 { font-size: 60px; }
 .frame { position: absolute; right: 120px; top: 24px; width: 456px; height: 1032px; border-radius: 18px; background: var(--surface); box-shadow: 0 18px 50px rgba(31,35,40,.16); }
 </style><div class="frame"></div><div class="slide"><div class="brand">${key}Spare Key</div><h1 style="margin-top:36px">${head || ''}</h1>${sub ? `<p class="lede">${sub}</p>` : ''}</div>`;
 const SLIDES = {
+  gap: `<style>${base}
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 64px; max-width: 1500px; }
+.c { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 38px; }
+.c.us { border: 2px solid var(--accent); }
+.n { font-size: 112px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+.c .n { color: var(--ink-2); } .c.us .n { color: var(--accent); }
+.t { font-size: 28px; line-height: 1.4; color: var(--ink-2); margin-top: 18px; }
+</style><div class="slide"><h1>Screenshots first, before any change.</h1>
+<p class="lede">The field's first rule. Our test: 30 made-up situations, the same Gemini model.</p>
+<div class="row">
+<div class="c"><div class="n">4 of 30</div><div class="t">answers from a plain chatbot said to take screenshots before changing anything.</div></div>
+<div class="c us"><div class="n">30 of 30</div><div class="t">plans Spare Key shows start with the screenshots, and warn that a change may be noticed.</div></div>
+</div></div>`,
   hook: `<style>${base}
 .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 70px; max-width: 1500px; }
 .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 34px 38px; }
@@ -174,10 +206,11 @@ for (const s of scenes) {
   const written = t => t.replace(/spare key app dot web dot app/gi, 'spare-key-app.web.app').replace(/\b1 800 799 7233\b/g, '1-800-799-7233').replace(/\byes or no\b/g, 'yes-or-no');
   for (const c of parseSrt(readFileSync(sub, 'utf8'))) srt.push({ a: clock + c.a, z: clock + c.z, text: written(c.text) });
   const clip = path.join(work, `${s.key}.mp4`);
-  if (s.panel) {
+  if (s.panel || s.range) {
     const bg = path.join(work, `slide-side-${s.key}.png`);
     const pv = path.join(work, `${s.key}-panel.mp4`);
-    const speed = footage('panel', s.panel[0], s.panel[1], D, pv);
+    const [from, to] = s.panel || s.range;
+    const speed = footage(s.panel ? 'panel' : s.footage, from, to, D, pv);
     const inputs = ['-loop', '1', '-i', bg, '-i', pv];
     // The panel sits in the white frame on the right (456 x 1032 at 1344, 24).
     let graph = `[1:v]scale=440:-2,crop=440:min(ih\\,1016):0:0[p];[0:v]format=gbrp[bg];[bg][p]overlay=1352:32:format=gbrp`;
@@ -188,7 +221,8 @@ for (const s of scenes) {
       // Above the captions, which sit at the bottom left.
       graph += `[a];[2:v]scale=1140:-2[t];[a][t]overlay=110:40:format=gbrp`;
     }
-    const label = speed >= 1.5 ? `,drawtext=fontfile='${esc(path.join(FONTS, 'AtkinsonHyperlegibleNext.ttf'))}':text='${Math.round(speed * 10) / 10}x speed':x=1352:y=1072-th:fontsize=22:fontcolor=0x4A5058` : '';
+    // Top left, clear of the panel frame and the captions.
+    const label = speed >= 1.5 ? `,drawtext=fontfile='${esc(path.join(FONTS, 'AtkinsonHyperlegibleNext.ttf'))}':text='Shown at ${Math.round(speed * 10) / 10}x speed':x=140:y=44:fontsize=24:fontcolor=0x4A5058` : '';
     ff([...inputs, '-filter_complex', `${graph}${label},${vf}`, '-t', String(D), '-an', ...ENC, clip]);
   } else {
     ff(['-loop', '1', '-i', path.join(work, `slide-${s.slide}.png`), '-vf', vf, '-t', String(D), ...ENC, clip]);

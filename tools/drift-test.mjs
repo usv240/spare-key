@@ -85,7 +85,7 @@ async function runCheck(check, reads, withNano) {
   const ask = withNano ? async (type, options) => { const t0 = Date.now(); try { return await nano(type, options); } finally { nanoMs += Date.now() - t0; } } : null;
   for (const [k, read] of reads.entries()) {
     if (!read || read.errorPage) { status = 'not_checked'; why = 'did_not_load'; break; }
-    const p = await readToEntries({ check, read, account: PRACTICE_OWNER, ask });
+    const p = await readToEntries({ check, read, account: PRACTICE_OWNER, ask, reader: check.pages[k]?.reader });
     if (p.why) { status = 'not_checked'; why = p.why; break; }
     partly ||= p.partly;
     if (p.howFound === 'nano') how = 'nano'; else if (p.items && how === 'reader') how = 'both';

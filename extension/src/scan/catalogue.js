@@ -65,6 +65,9 @@ export const CHECKS = [
         item: 'a[href*="linkedapps/overview/"], a[href*="connections/link"], a[href*="connections/overview/"], a[href*="permissions/"]',
         exclude: '^(see all connections|learn more)$',
         emptyText: '(access to \\(0\\)|no (third-party )?(apps|connections)|you (haven.t|have not) (given|granted|connected))',
+        // The page's own count of apps with access. When Gemini Nano reads the page and lists a different number, its
+        // list is not shown: on a real account showing 3, Nano listed 10 to 18 (November 23, 2026).
+        countText: 'access to \\((\\d+)\\)',
       }),
     }],
   },
@@ -134,6 +137,7 @@ export const CHECKS = [
         within: '^\\s*forwarding:?\\s*$',
         patterns: ['forward a copy of incoming mail to', 'disable forwarding'],
         emptyText: '(add a forwarding address|forwarding is (off|disabled))',
+        nanoNeeds: EMAIL_SOURCE,
       }),
     }],
   },
@@ -167,6 +171,8 @@ export const CHECKS = [
         patterns: [EMAIL_SOURCE],
         // Real Gmail's section also holds the person's own sender options, like "Show this address only (you@...)".
         exclude: '^(show this address|mark (the )?conversation|leave (the )?conversation|add another account|sender information)',
+        // Gmail names a delegate by address. What Gemini Nano finds here without one is a button or help line.
+        nanoNeeds: EMAIL_SOURCE,
       }),
     }],
   },
@@ -220,7 +226,9 @@ export const CHECKS = [
     pages: [{
       url: 'https://photos.google.com/u/{u}/settings', urlStatus: 'known',
       practiceUrl: '/practice/photos/settings.html',
-      reader: google({ waitFor: { text: '(partner sharing|sharing)' }, within: 'partner sharing', patterns: [EMAIL_SOURCE, '\\bshared with\\b'] }),
+      // A partner is shown by name and address. Without nanoNeeds, Gemini Nano reading the whole settings page called 19
+      // other lines partner sharing on a real account (November 23, 2026).
+      reader: google({ waitFor: { text: '(partner sharing|sharing)' }, within: 'partner sharing', patterns: [EMAIL_SOURCE, '\\bshared with\\b'], nanoNeeds: EMAIL_SOURCE }),
     }],
   },
 ];

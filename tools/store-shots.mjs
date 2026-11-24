@@ -16,7 +16,7 @@ const at = t => pathToFileURL(path.join(FROM, 'panel', (frames.filter(f => f.t <
 const font = pathToFileURL(path.resolve('extension/fonts/AtkinsonHyperlegibleNext-latin.woff2')).href;
 const shots = [
   ['1-results', M.finding + 0.5, 'Who can still see your location, your mail or your account', 'Spare Key reads your own settings pages, read-only, and lists every person, device and app that can still get in.'],
-  ['2-plan', M.plan + 0.5, 'A plan that follows the field\'s advice', 'Screenshots first, then an advocate, then changes in a safe order. Code checks every plan against nine safety rules.'],
+  ['2-plan', M.plan + 0.5, 'A plan that follows the field\'s advice', 'Screenshots first, then an advocate, then changes at a time that is right for you. Code checks every plan against nine safety rules.'],
   ['3-safety', M.safety + 1, 'Quick exit on every screen', 'One click, Escape twice, or Alt+Shift+X clears the session and shows an ordinary page.'],
   ['4-hood', (M.ledger || M.hood) + 0.2, 'Names never leave your computer', 'Gemini Nano sorts entries on the device. The cloud sees finding types only, and every request is shown word for word.'],
 ];

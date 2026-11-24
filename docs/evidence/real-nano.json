@@ -1,0 +1,238 @@
+{
+ "at": "2026-11-24T01:09:00.037Z",
+ "what": "Gemini Nano on the builder's own account's recorded pages (read-only recording, November 22, 2026): code only, code and Nano, and Nano alone as if the page reader had broken. Check names, statuses, codes and counts only.",
+ "rows": [
+  {
+   "page": "amazon.devices",
+   "skipped": "signed_out"
+  },
+  {
+   "page": "amazon.household",
+   "skipped": "signed_out"
+  },
+  {
+   "page": "gmail.delegates",
+   "check": "gmail.delegates",
+   "code": {
+    "status": "checked",
+    "entries": 0,
+    "how": "reader",
+    "nanoSorted": false,
+    "partly": false,
+    "codes": {},
+    "ms": 1
+   },
+   "both": {
+    "status": "checked",
+    "entries": 1,
+    "how": "nano",
+    "nanoSorted": true,
+    "partly": false,
+    "codes": {},
+    "ms": 18438
+   },
+   "nanoAlone": {
+    "status": "checked",
+    "entries": 1,
+    "how": "nano",
+    "nanoSorted": true,
+    "partly": false,
+    "codes": {},
+    "ms": 8520
+   }
+  },
+  {
+   "page": "gmail.filters",
+   "check": "gmail.filters",
+   "code": {
+    "status": "checked",
+    "entries": 0,
+    "how": "reader",
+    "nanoSorted": false,
+    "partly": false,
+    "codes": {},
+    "ms": 0
+   },
+   "both": {
+    "status": "checked",
+    "entries": 0,
+    "how": "reader",
+    "nanoSorted": false,
+    "partly": false,
+    "codes": {},
+    "ms": 0
+   },
+   "nanoAlone": {
+    "status": "checked",
+    "entries": 0,
+    "how": "reader",
+    "nanoSorted": false,
+    "partly": false,
+    "codes": {},
+    "ms": 0
+   }
+  },
+  {
+   "page": "gmail.forwarding",
+   "check": "gmail.forwarding",
+   "code": {
+    "status": "checked",
+    "entries": 2,
+    "how": "reader",
+    "nanoSorted": false,
+    "partly": false,
+    "codes": {},
+    "ms": 0
+   },
+   "both": {
+    "status": "checked",
+    "entries": 2,
+    "how": "reader",
+    "nanoSorted": true,
+    "partly": false,
+    "codes": {},
+    "ms": 7893
+   },
+   "nanoAlone": {
+    "status": "not_checked",
+    "why": "looked_different",
+    "ms": 9914
+   }
+  },
+  {
+   "page": "google.2sv",
+   "skipped": "needs_password"
+  },
+  {
+   "page": "google.apps",
+   "check": "google.apps",
+   "code": {
+    "status": "checked",
+    "entries": 3,
+    "how": "reader",
+    "nanoSorted": false,
+    "partly": false,
+    "codes": {
+     "google.apps.full_access": 3
+    },
+    "ms": 1
+   },
+   "both": {
+    "status": "checked",
+    "entries": 3,
+    "how": "reader",
+    "nanoSorted": true,
+    "partly": false,
+    "codes": {
+     "google.apps.full_access": 3
+    },
+    "ms": 11556
+   },
+   "nanoAlone": {
+    "status": "checked",
+    "entries": 18,
+    "how": "nano",
+    "nanoSorted": true,
+    "partly": false,
+    "codes": {
+     "google.apps.read_mail": 2,
+     "google.apps.full_access": 15
+    },
+    "ms": 73179
+   }
+  },
+  {
+   "page": "google.devices",
+   "skipped": "needs_password"
+  },
+  {
+   "page": "google.family",
+   "check": "google.family",
+   "code": {
+    "status": "checked",
+    "entries": 0,
+    "how": "reader",
+    "nanoSorted": false,
+    "partly": false,
+    "codes": {},
+    "ms": 1
+   },
+   "both": {
+    "status": "checked",
+    "entries": 0,
+    "how": "reader",
+    "nanoSorted": false,
+    "partly": false,
+    "codes": {},
+    "ms": 0
+   },
+   "nanoAlone": {
+    "status": "checked",
+    "entries": 0,
+    "how": "reader",
+    "nanoSorted": false,
+    "partly": false,
+    "codes": {},
+    "ms": 0
+   }
+  },
+  {
+   "page": "google.recovery.1",
+   "skipped": "needs_password"
+  },
+  {
+   "page": "google.recovery",
+   "skipped": "needs_password"
+  },
+  {
+   "page": "maps.sharing",
+   "check": "maps.sharing",
+   "code": {
+    "status": "checked",
+    "entries": 0,
+    "how": "reader",
+    "nanoSorted": false,
+    "partly": false,
+    "codes": {},
+    "ms": 0
+   },
+   "both": {
+    "status": "checked",
+    "entries": 0,
+    "how": "reader",
+    "nanoSorted": false,
+    "partly": false,
+    "codes": {},
+    "ms": 0
+   },
+   "nanoAlone": {
+    "status": "checked",
+    "entries": 0,
+    "how": "reader",
+    "nanoSorted": false,
+    "partly": false,
+    "codes": {},
+    "ms": 0
+   }
+  },
+  {
+   "page": "photos.sharing",
+   "check": "photos.sharing",
+   "code": {
+    "status": "not_checked",
+    "why": "looked_different",
+    "ms": 0
+   },
+   "both": {
+    "status": "not_checked",
+    "why": "looked_different",
+    "ms": 37663
+   },
+   "nanoAlone": {
+    "status": "not_checked",
+    "why": "looked_different",
+    "ms": 2542
+   }
+  }
+ ]
+}

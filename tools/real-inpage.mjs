@@ -33,7 +33,7 @@ globalThis.__sk = async (checkId, k = 0, doc = document) => {
   const read = await readPage(check.pages[k].reader, doc);
   const base = { checkId, k, where, via: read.via, rawEntries: read.entries.length, withinFound: read.withinFound, emptyConfirmed: read.emptyConfirmed, timedOut: read.timedOut };
   if (read.errorPage) return { ...base, status: 'not_checked', why: 'did_not_load' };
-  const p = await readToEntries({ check, read, account: read.account });
+  const p = await readToEntries({ check, read, account: read.account, reader: check.pages[k]?.reader });
   if (p.why) return { ...base, status: 'not_checked', why: p.why };
   const codes = {};
   for (const [i, entry] of p.entries.entries()) {

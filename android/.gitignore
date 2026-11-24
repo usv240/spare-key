@@ -1,0 +1,16 @@
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+captures/
+.kotlin/
+*.jks
+
+# JVM crash logs
+hs_err_pid*.log
+replay_pid*.log
+
+# Made by build.mjs from shared/ (node build.mjs)
+app/src/main/assets/engine.js
+app/google-services.json.bak

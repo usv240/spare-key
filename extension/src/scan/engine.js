@@ -11,6 +11,7 @@ import { pageUrl, PRACTICE_ORIGIN } from './catalogue.js';
 import { checkExtensions, checkSync } from './chrome-checks.js';
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+const safeTest = (source, text) => { try { return new RegExp(source, 'i').test(String(text || '')); } catch { return false; } };
 export class ScanStopped extends Error { constructor() { super('stopped'); this.name = 'ScanStopped'; } }
 
 /** Navigate the scan tab and wait until it has loaded (or left for a sign-in page). Returns the final URL. */
@@ -69,16 +70,29 @@ export async function waitForVerify(tabId, url, reauthRe, { signal, skip, minute
  *   onState  ('nano-reading' | 'classifying') for the progress line
  * Returns { why } when the check cannot say what is listed, else { entries, classes, hows, howFound, items, partly }.
  */
-export async function readToEntries({ check, read, account, ask = null, onState = () => {} }) {
+export async function readToEntries({ check, read, account, ask = null, onState = () => {}, reader = check.pages?.[0]?.reader }) {
   let partly = !!read.moreHidden;
   // The entries: from the reader, or, when it found none, from Gemini Nano reading the page's text. Nano also reads a
   // page that never showed the words the reader waits for: a reworded heading is the commonest change.
   let entries = read.entries || [];
   let howFound = 'reader';
-  if (!entries.length && ask && read.mainText) {
+  // Not when the page says in its own words that nothing is set up: on a real account (November 23, 2026), Nano then
+  // copied lines like "Add another account" as entries and showed 4 people or devices that were not there.
+  if (!entries.length && ask && read.mainText && !read.emptyConfirmed) {
     onState('nano-reading');
-    const r = await ask('sk:read-page', { description: check.label, text: read.mainText });
-    if (!r?.error && r?.entries?.length) { entries = r.entries; howFound = 'nano'; if (r.partial || read.mainTextCut) partly = true; }
+    const r = await ask('sk:read-page', { description: check.label, text: read.sectionText || read.mainText });
+    // The same "leave these out" words the page reader uses (buttons, headings, the person's own sender lines).
+    let skip = null;
+    try { skip = reader?.exclude ? new RegExp(reader.exclude, 'i') : null; } catch { skip = null; }
+    const kept = (r?.entries || []).filter(e => !(skip && skip.test(String(e.text || '').trim())))
+      .filter(e => !(reader?.emptyText && safeTest(reader.emptyText, e.text)))
+      // What an entry on this page must show (an address, for people Gmail and Photos name by address).
+      .filter(e => !reader?.nanoNeeds || safeTest(reader.nanoNeeds, e.text));
+    // A page that states its own count ("Access to (3)"): a list of another length is not trusted.
+    let stated = null;
+    try { stated = reader?.countText ? Number((String(read.mainText).match(new RegExp(reader.countText, 'i')) || [])[1]) : null; } catch { stated = null; }
+    if (!r?.error && kept.length && Number.isFinite(stated) && stated !== null && kept.length !== stated) return { why: 'looked_different' };
+    if (!r?.error && kept.length) { entries = kept.map((e, i) => ({ ...e, i })); howFound = 'nano'; if (r.partial || read.mainTextCut) partly = true; }
   }
   // A page that never showed the words the reader waits for, with nothing read from it: if it has text, it loaded and
   // looks different; trying again would not help.
@@ -103,7 +117,10 @@ export async function readToEntries({ check, read, account, ask = null, onState 
   });
   // Nano read a page the reader could not, so the page has changed; if the code rules then make nothing of what it
   // read, their words have probably changed too ("Send a copy" for "Forward a copy"). That is not "nothing found".
-  if (howFound === 'nano' && entries.length && entries.every((e, k) => !codeFor(check.id, e, classes[k], check.words))) return { why: 'looked_different' };
+  // Entries that are the person's own (their own address, "(you)") are not someone else's access, and not a sign the
+  // page changed: on a real account, Nano found only the person's own sender address on the Gmail accounts page.
+  const others = entries.map((e, k) => k).filter(k => classes[k].is_owner !== 'yes');
+  if (howFound === 'nano' && others.length && others.every(k => !codeFor(check.id, entries[k], classes[k], check.words))) return { why: 'looked_different' };
   const hows = entries.map((e, k) => (howFound === 'nano' ? 'nano' : items?.[k] ? 'both' : 'reader'));
   return { entries, classes, hows, howFound, items, partly, nanoError };
 }
@@ -199,7 +216,7 @@ export async function runScan({ checks, mode = 'real', u = 0, windowId, nano = f
         if (!read || read.errorPage) { outcome.status = 'not_checked'; outcome.why = 'did_not_load'; break; }
         account ||= read.account;
         if (read.mainText) pages.push({ check: check.id, url: finalUrl, at: new Date().toISOString(), title: read.title || '', text: read.mainText.slice(0, 20000), cut: !!read.mainTextCut });
-        const p = await readToEntries({ check, read, account, ask: nano ? offscreen : null,
+        const p = await readToEntries({ check, read, account, reader: page.reader, ask: nano ? offscreen : null,
           onState: state => onProgress({ index, total, check, state }) });
         if (p.why) { outcome.status = 'not_checked'; outcome.why = p.why; break; }
         outcome.partly ||= p.partly;

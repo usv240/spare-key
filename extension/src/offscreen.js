@@ -5,7 +5,7 @@ import { ledgerSummary } from './ledger.js';
 import { deviceStatus, deviceJson, cloudJson, hybridJson, liveSettings, resetCloudBudget, remoteLibrary, sendLayoutReport, TEXT_ONLY, TEXT_AND_IMAGE } from './ai.js';
 import { cleanText } from '../../shared/plan/invariants.js';
 import { validateLibrary } from '../../shared/steps-schema.js';
-import { classifyEntries, readWholePage, readScreenshot } from './classify.js';
+import { classifyEntries, readWholePage, readScreenshot, nanoAnswer } from './classify.js';
 import { cloudPlan } from './cloud/plan.js';
 import { devicePlan } from './device-plan.js';
 import { twoVoices } from './cloud/voices.js';
@@ -134,21 +134,31 @@ const NANO = {
   },
   // The plan on this computer (extension/src/device-plan.js): finding codes in, nothing out.
   'sk:device-plan': async ({ body, library }) => devicePlan({ body, library }),
+  // An ask_device question the code rules left unknown: Gemini Nano reads the entry's words here and answers with one
+  // word. Only that word goes back to the cloud.
+  'sk:nano-ask': async ({ question, text }) => ({
+    answer: (await deviceStatus(TEXT_ONLY)) === 'available' ? await nanoAnswer({ question, text }) : 'unknown',
+  }),
   // "Say it more simply": one steps library entry's public steps in simpler words, with hybrid inference
   // (PREFER_ON_DEVICE): Gemini Nano when this computer has it, the cloud when it does not and plan help is on. The text
   // is the library's, not the person's, so a cloud fallback exposes nothing. Every step comes back through the safety
   // rules' text check (no reassurance, no contact details or links).
-  'sk:simpler': async ({ code, library }) => {
+  'sk:simpler': async ({ code, library, personCloudOn = true }) => {
     const settings = await liveSettings();
     const onDevice = (await deviceStatus(TEXT_ONLY)) === 'available';
-    if (!onDevice && !settings.cloudOn) return { off: true };
+    // Both switches count: Remote Config's, and the person's own "plan help from the cloud".
+    const cloudAllowed = settings.cloudOn && personCloudOn !== false;
+    if (!onDevice && !cloudAllowed) return { off: true };
     const entry = library?.[code];
     if (!entry) return { error: 'unknown code' };
     try {
-      const r = await hybridJson({
-        purpose: 'simpler', body: { code, steps: entry.steps }, guard: { library }, onSend,
-        system: SIMPLER_SYSTEM, schema: SIMPLER_SCHEMA,
-      });
+      // With the cloud not allowed, Gemini Nano only (ONLY_ON_DEVICE): hybrid inference could fall back to the cloud.
+      const r = cloudAllowed
+        ? await hybridJson({
+          purpose: 'simpler', body: { code, steps: entry.steps }, guard: { library }, onSend,
+          system: SIMPLER_SYSTEM, schema: SIMPLER_SCHEMA,
+        })
+        : { answer: await deviceJson({ system: SIMPLER_SYSTEM, schema: SIMPLER_SCHEMA, text: JSON.stringify({ code, steps: entry.steps }) }), source: 'on_device', model: 'gemini-nano' };
       const allowed = JSON.stringify(entry);
       const steps = (r.answer.steps || []).slice(0, entry.steps.length + 1).map(s => cleanText(String(s).slice(0, 200), allowed).text).filter(Boolean);
       return steps.length ? { steps, source: r.source, model: r.model } : { error: 'empty' };

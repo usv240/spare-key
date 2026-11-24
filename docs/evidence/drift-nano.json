@@ -1,5 +1,5 @@
 {
- "date": "November 22, 2026",
+ "date": "November 23, 2026",
  "results": [
   {
    "kind": "none",
@@ -223,7 +223,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 112.5,
+   "seconds": 113.4,
    "rows": [
     {
      "id": "google.devices",
@@ -239,7 +239,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 16251
+     "nanoMs": 16734
     },
     {
      "id": "google.apps",
@@ -255,7 +255,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 14479
+     "nanoMs": 12145
     },
     {
      "id": "google.recovery",
@@ -271,7 +271,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 6957
+     "nanoMs": 7828
     },
     {
      "id": "google.2sv",
@@ -287,7 +287,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 8029
+     "nanoMs": 7557
     },
     {
      "id": "maps.sharing",
@@ -303,7 +303,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 7392
+     "nanoMs": 8442
     },
     {
      "id": "gmail.forwarding",
@@ -319,7 +319,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 6726
+     "nanoMs": 5406
     },
     {
      "id": "gmail.filters",
@@ -335,7 +335,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 14883
+     "nanoMs": 11053
     },
     {
      "id": "gmail.delegates",
@@ -351,7 +351,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 3600
+     "nanoMs": 3752
     },
     {
      "id": "amazon.household",
@@ -367,7 +367,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 9945
+     "nanoMs": 13603
     },
     {
      "id": "amazon.devices",
@@ -383,7 +383,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 9843
+     "nanoMs": 8711
     },
     {
      "id": "google.family",
@@ -399,7 +399,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 7822
+     "nanoMs": 12045
     },
     {
      "id": "photos.sharing",
@@ -415,7 +415,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 5253
+     "nanoMs": 4971
     }
    ]
   },
@@ -432,7 +432,7 @@
    "notChecked": 2,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.6,
+   "seconds": 0.8,
    "rows": [
     {
      "id": "google.devices",
@@ -648,7 +648,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.3,
+   "seconds": 0.7,
    "rows": [
     {
      "id": "google.devices",
@@ -857,7 +857,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 2,
-   "seconds": 131.1,
+   "seconds": 114.9,
    "rows": [
     {
      "id": "google.devices",
@@ -873,7 +873,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 42037
+     "nanoMs": 16930
     },
     {
      "id": "google.apps",
@@ -889,7 +889,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 13584
+     "nanoMs": 18918
     },
     {
      "id": "google.recovery",
@@ -905,7 +905,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 8642
+     "nanoMs": 8464
     },
     {
      "id": "google.2sv",
@@ -921,7 +921,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 8698
+     "nanoMs": 6671
     },
     {
      "id": "maps.sharing",
@@ -937,7 +937,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 5209
+     "nanoMs": 10251
     },
     {
      "id": "gmail.forwarding",
@@ -953,7 +953,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 4198
+     "nanoMs": 7822
     },
     {
      "id": "gmail.filters",
@@ -969,7 +969,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 9428
+     "nanoMs": 8796
     },
     {
      "id": "gmail.delegates",
@@ -985,7 +985,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 7147
+     "nanoMs": 4131
     },
     {
      "id": "amazon.household",
@@ -1001,7 +1001,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 9091
+     "nanoMs": 7844
     },
     {
      "id": "amazon.devices",
@@ -1017,7 +1017,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 10812
+     "nanoMs": 10470
     },
     {
      "id": "google.family",
@@ -1033,7 +1033,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 7303
+     "nanoMs": 8315
     },
     {
      "id": "photos.sharing",
@@ -1049,7 +1049,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 3687
+     "nanoMs": 5207
     }
    ]
   },
@@ -1057,16 +1057,16 @@
    "kind": "reworded",
    "label": "Headings and labels reworded",
    "mode": "code",
-   "found": 13,
-   "shown": 14,
+   "found": 11,
+   "shown": 12,
    "of": 24,
    "silentMisses": 0,
-   "toldToLook": 10,
+   "toldToLook": 12,
    "falseAlarms": 1,
-   "notChecked": 4,
+   "notChecked": 6,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 13.8,
+   "seconds": 12.5,
    "rows": [
     {
      "id": "google.devices",
@@ -1089,7 +1089,7 @@
      "status": "checked",
      "why": null,
      "how": "reader",
-     "partly": true,
+     "partly": false,
      "want": 2,
      "found": 1,
      "missing": [
@@ -1197,18 +1197,20 @@
     },
     {
      "id": "gmail.delegates",
-     "status": "checked",
-     "why": null,
+     "status": "not_checked",
+     "why": "looked_different",
      "how": "reader",
      "partly": false,
      "want": 1,
-     "found": 1,
-     "missing": [],
+     "found": 0,
+     "missing": [
+      "gmail.delegates gmail.delegate"
+     ],
      "extra": [],
-     "shown": 1,
+     "shown": 0,
      "extraCount": 0,
      "silent": 0,
-     "toldToLook": 0,
+     "toldToLook": 1,
      "nanoMs": 0
     },
     {
@@ -1267,18 +1269,20 @@
     },
     {
      "id": "photos.sharing",
-     "status": "checked",
-     "why": null,
+     "status": "not_checked",
+     "why": "looked_different",
      "how": "reader",
-     "partly": true,
+     "partly": false,
      "want": 1,
-     "found": 1,
-     "missing": [],
+     "found": 0,
+     "missing": [
+      "photos.sharing photos.partner_sharing"
+     ],
      "extra": [],
-     "shown": 1,
+     "shown": 0,
      "extraCount": 0,
      "silent": 0,
-     "toldToLook": 0,
+     "toldToLook": 1,
      "nanoMs": 0
     }
    ]
@@ -1496,16 +1500,16 @@
    "kind": "reworded",
    "label": "Headings and labels reworded",
    "mode": "nano",
-   "found": 16,
-   "shown": 18,
+   "found": 17,
+   "shown": 19,
    "of": 24,
    "silentMisses": 0,
-   "toldToLook": 6,
-   "falseAlarms": 4,
-   "notChecked": 2,
+   "toldToLook": 5,
+   "falseAlarms": 2,
+   "notChecked": 1,
    "checks": 12,
-   "nanoRead": 2,
-   "seconds": 213.4,
+   "nanoRead": 5,
+   "seconds": 132,
    "rows": [
     {
      "id": "google.devices",
@@ -1521,14 +1525,14 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 10618
+     "nanoMs": 11010
     },
     {
      "id": "google.apps",
      "status": "checked",
      "why": null,
      "how": "both",
-     "partly": true,
+     "partly": false,
      "want": 2,
      "found": 2,
      "missing": [],
@@ -1539,7 +1543,7 @@
      "extraCount": 1,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 7713
+     "nanoMs": 7852
     },
     {
      "id": "google.recovery",
@@ -1555,7 +1559,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 8817
+     "nanoMs": 8553
     },
     {
      "id": "google.2sv",
@@ -1574,7 +1578,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 2,
-     "nanoMs": 4553
+     "nanoMs": 5826
     },
     {
      "id": "maps.sharing",
@@ -1592,7 +1596,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 1,
-     "nanoMs": 6498
+     "nanoMs": 3469
     },
     {
      "id": "gmail.forwarding",
@@ -1610,32 +1614,31 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 1,
-     "nanoMs": 18790
+     "nanoMs": 6630
     },
     {
      "id": "gmail.filters",
-     "status": "not_checked",
-     "why": "looked_different",
-     "how": "reader",
-     "partly": false,
+     "status": "checked",
+     "why": null,
+     "how": "nano",
+     "partly": true,
      "want": 2,
-     "found": 0,
+     "found": 1,
      "missing": [
-      "gmail.filters gmail.filter.forwards",
-      "gmail.filters gmail.filter.hides"
+      "gmail.filters gmail.filter.forwards"
      ],
      "extra": [],
-     "shown": 0,
+     "shown": 1,
      "extraCount": 0,
      "silent": 0,
-     "toldToLook": 2,
-     "nanoMs": 90016
+     "toldToLook": 1,
+     "nanoMs": 17785
     },
     {
      "id": "gmail.delegates",
      "status": "checked",
      "why": null,
-     "how": "both",
+     "how": "nano",
      "partly": false,
      "want": 1,
      "found": 1,
@@ -1645,7 +1648,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 10418
+     "nanoMs": 6509
     },
     {
      "id": "amazon.household",
@@ -1665,7 +1668,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 11768
+     "nanoMs": 16142
     },
     {
      "id": "amazon.devices",
@@ -1681,7 +1684,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 9927
+     "nanoMs": 8302
     },
     {
      "id": "google.family",
@@ -1696,21 +1699,19 @@
      ],
      "extra": [
       "google.family google.family.member",
-      "google.family google.family.member",
-      "google.family google.family.member",
       "google.family google.family.member"
      ],
      "shown": 2,
-     "extraCount": 3,
+     "extraCount": 1,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 16947
+     "nanoMs": 17267
     },
     {
      "id": "photos.sharing",
      "status": "checked",
      "why": null,
-     "how": "both",
+     "how": "nano",
      "partly": true,
      "want": 1,
      "found": 1,
@@ -1720,7 +1721,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 3668
+     "nanoMs": 10187
     }
    ]
   },
@@ -1737,7 +1738,7 @@
    "notChecked": 2,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.2,
+   "seconds": 1.1,
    "rows": [
     {
      "id": "google.devices",
@@ -1953,7 +1954,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.2,
+   "seconds": 1,
    "rows": [
     {
      "id": "google.devices",
@@ -2162,7 +2163,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 2,
-   "seconds": 121.7,
+   "seconds": 105.5,
    "rows": [
     {
      "id": "google.devices",
@@ -2178,7 +2179,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 29305
+     "nanoMs": 12359
     },
     {
      "id": "google.apps",
@@ -2194,7 +2195,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 14189
+     "nanoMs": 22684
     },
     {
      "id": "google.recovery",
@@ -2210,7 +2211,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 7439
+     "nanoMs": 6684
     },
     {
      "id": "google.2sv",
@@ -2226,7 +2227,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 16632
+     "nanoMs": 9061
     },
     {
      "id": "maps.sharing",
@@ -2242,7 +2243,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 6030
+     "nanoMs": 6280
     },
     {
      "id": "gmail.forwarding",
@@ -2258,7 +2259,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 3486
+     "nanoMs": 5936
     },
     {
      "id": "gmail.filters",
@@ -2274,7 +2275,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 12212
+     "nanoMs": 8417
     },
     {
      "id": "gmail.delegates",
@@ -2290,7 +2291,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 6161
+     "nanoMs": 3348
     },
     {
      "id": "amazon.household",
@@ -2306,7 +2307,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 6753
+     "nanoMs": 6305
     },
     {
      "id": "amazon.devices",
@@ -2322,7 +2323,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 7230
+     "nanoMs": 9868
     },
     {
      "id": "google.family",
@@ -2338,7 +2339,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 6985
+     "nanoMs": 7845
     },
     {
      "id": "photos.sharing",
@@ -2354,7 +2355,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 4080
+     "nanoMs": 5233
     }
    ]
   },
@@ -2371,7 +2372,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.1,
+   "seconds": 1.3,
    "rows": [
     {
      "id": "google.devices",
@@ -2580,7 +2581,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 1.2,
+   "seconds": 1.5,
    "rows": [
     {
      "id": "google.devices",
@@ -2789,7 +2790,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 95.6,
+   "seconds": 118.9,
    "rows": [
     {
      "id": "google.devices",
@@ -2805,7 +2806,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 16775
+     "nanoMs": 14864
     },
     {
      "id": "google.apps",
@@ -2821,7 +2822,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 6471
+     "nanoMs": 10800
     },
     {
      "id": "google.recovery",
@@ -2837,7 +2838,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 5718
+     "nanoMs": 8813
     },
     {
      "id": "google.2sv",
@@ -2853,7 +2854,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 13181
+     "nanoMs": 8927
     },
     {
      "id": "maps.sharing",
@@ -2869,7 +2870,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 8592
+     "nanoMs": 14438
     },
     {
      "id": "gmail.forwarding",
@@ -2885,7 +2886,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 4315
+     "nanoMs": 2969
     },
     {
      "id": "gmail.filters",
@@ -2901,7 +2902,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 6598
+     "nanoMs": 7665
     },
     {
      "id": "gmail.delegates",
@@ -2917,7 +2918,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 4949
+     "nanoMs": 2929
     },
     {
      "id": "amazon.household",
@@ -2933,7 +2934,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 12284
+     "nanoMs": 8886
     },
     {
      "id": "amazon.devices",
@@ -2949,7 +2950,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 5956
+     "nanoMs": 19709
     },
     {
      "id": "google.family",
@@ -2965,7 +2966,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 6226
+     "nanoMs": 10446
     },
     {
      "id": "photos.sharing",
@@ -2981,7 +2982,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 3443
+     "nanoMs": 7329
     }
    ]
   },
@@ -2989,16 +2990,16 @@
    "kind": "all",
    "label": "All four at once",
    "mode": "code",
-   "found": 8,
-   "shown": 8,
+   "found": 6,
+   "shown": 6,
    "of": 24,
    "silentMisses": 0,
-   "toldToLook": 16,
+   "toldToLook": 18,
    "falseAlarms": 0,
-   "notChecked": 7,
+   "notChecked": 9,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 13.5,
+   "seconds": 12.2,
    "rows": [
     {
      "id": "google.devices",
@@ -3132,18 +3133,20 @@
     },
     {
      "id": "gmail.delegates",
-     "status": "checked",
-     "why": null,
+     "status": "not_checked",
+     "why": "looked_different",
      "how": "reader",
      "partly": false,
      "want": 1,
-     "found": 1,
-     "missing": [],
+     "found": 0,
+     "missing": [
+      "gmail.delegates gmail.delegate"
+     ],
      "extra": [],
-     "shown": 1,
+     "shown": 0,
      "extraCount": 0,
      "silent": 0,
-     "toldToLook": 0,
+     "toldToLook": 1,
      "nanoMs": 0
     },
     {
@@ -3202,18 +3205,20 @@
     },
     {
      "id": "photos.sharing",
-     "status": "checked",
-     "why": null,
+     "status": "not_checked",
+     "why": "looked_different",
      "how": "reader",
-     "partly": true,
+     "partly": false,
      "want": 1,
-     "found": 1,
-     "missing": [],
+     "found": 0,
+     "missing": [
+      "photos.sharing photos.partner_sharing"
+     ],
      "extra": [],
-     "shown": 1,
+     "shown": 0,
      "extraCount": 0,
      "silent": 0,
-     "toldToLook": 0,
+     "toldToLook": 1,
      "nanoMs": 0
     }
    ]
@@ -3231,7 +3236,7 @@
    "notChecked": 0,
    "checks": 12,
    "nanoRead": 0,
-   "seconds": 2.4,
+   "seconds": 2.6,
    "rows": [
     {
      "id": "google.devices",
@@ -3431,16 +3436,16 @@
    "kind": "all",
    "label": "All four at once",
    "mode": "nano",
-   "found": 17,
+   "found": 16,
    "shown": 18,
    "of": 24,
    "silentMisses": 0,
    "toldToLook": 6,
-   "falseAlarms": 9,
-   "notChecked": 1,
+   "falseAlarms": 8,
+   "notChecked": 2,
    "checks": 12,
-   "nanoRead": 6,
-   "seconds": 146.1,
+   "nanoRead": 7,
+   "seconds": 169.3,
    "rows": [
     {
      "id": "google.devices",
@@ -3462,28 +3467,25 @@
      "extraCount": 5,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 20371
+     "nanoMs": 34307
     },
     {
      "id": "google.apps",
      "status": "checked",
      "why": null,
      "how": "nano",
-     "partly": true,
+     "partly": false,
      "want": 2,
      "found": 2,
      "missing": [],
      "extra": [
-      "google.apps google.apps.read_mail",
-      "google.apps google.apps.location",
-      "google.apps google.apps.full_access",
       "google.apps google.apps.full_access"
      ],
      "shown": 2,
-     "extraCount": 4,
+     "extraCount": 1,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 30704
+     "nanoMs": 22395
     },
     {
      "id": "google.recovery",
@@ -3499,7 +3501,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 6053
+     "nanoMs": 11013
     },
     {
      "id": "google.2sv",
@@ -3518,7 +3520,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 2,
-     "nanoMs": 3407
+     "nanoMs": 4332
     },
     {
      "id": "maps.sharing",
@@ -3536,7 +3538,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 1,
-     "nanoMs": 8011
+     "nanoMs": 10780
     },
     {
      "id": "gmail.forwarding",
@@ -3554,7 +3556,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 1,
-     "nanoMs": 13546
+     "nanoMs": 3758
     },
     {
      "id": "gmail.filters",
@@ -3572,23 +3574,25 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 1,
-     "nanoMs": 10085
+     "nanoMs": 21815
     },
     {
      "id": "gmail.delegates",
-     "status": "checked",
-     "why": null,
-     "how": "both",
+     "status": "not_checked",
+     "why": "looked_different",
+     "how": "reader",
      "partly": false,
      "want": 1,
-     "found": 1,
-     "missing": [],
+     "found": 0,
+     "missing": [
+      "gmail.delegates gmail.delegate"
+     ],
      "extra": [],
-     "shown": 1,
+     "shown": 0,
      "extraCount": 0,
      "silent": 0,
-     "toldToLook": 0,
-     "nanoMs": 4694
+     "toldToLook": 1,
+     "nanoMs": 1924
     },
     {
      "id": "amazon.household",
@@ -3608,7 +3612,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 20562
+     "nanoMs": 12121
     },
     {
      "id": "amazon.devices",
@@ -3624,7 +3628,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 6460
+     "nanoMs": 15214
     },
     {
      "id": "google.family",
@@ -3637,18 +3641,22 @@
      "missing": [
       "google.family google.family.manager_other"
      ],
-     "extra": [],
-     "shown": 1,
-     "extraCount": 0,
+     "extra": [
+      "google.family google.family.member",
+      "google.family google.family.member",
+      "google.family google.family.member"
+     ],
+     "shown": 2,
+     "extraCount": 2,
      "silent": 0,
-     "toldToLook": 1,
-     "nanoMs": 5356
+     "toldToLook": 0,
+     "nanoMs": 11501
     },
     {
      "id": "photos.sharing",
      "status": "checked",
      "why": null,
-     "how": "both",
+     "how": "nano",
      "partly": true,
      "want": 1,
      "found": 1,
@@ -3658,7 +3666,7 @@
      "extraCount": 0,
      "silent": 0,
      "toldToLook": 0,
-     "nanoMs": 3405
+     "nanoMs": 6784
     }
    ]
   }

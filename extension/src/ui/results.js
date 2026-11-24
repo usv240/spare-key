@@ -123,7 +123,9 @@ function findingCard(f, { reveal, library, onAnswer, onOpen, onToggleReveal }) {
     whyLabel: 'If you remove it',
     tech: `${HOW[f.howFound] || 'Read by code'}. Finding type: ${f.code}. Only this type, and your answer below, can ever be sent to the cloud, and only if plan help is on.${entry?.notice_source ? ` Source: ${entry.notice_source.title}: “${entry.notice_source.quote}”` : ''}`,
   });
-  const meta = [serviceName(f.service), RECENCY_WORDS[f.recency]].filter(Boolean).join(' · ');
+  // Which model touched it, in the card itself: Gemini Nano works on this computer, so it can see these entries.
+  const byNano = { both: 'Sorted by Gemini Nano on this computer', nano: 'Read by Gemini Nano on this computer' }[f.howFound] || '';
+  const meta = [serviceName(f.service), RECENCY_WORDS[f.recency], byNano].filter(Boolean).join(' · ');
   const answers = [['mine', 'Mine'], ['not_mine', 'Not mine'], ['unsure', 'Not sure']];
   const text = reveal ? f.detail : f.label;
   return h('li', { class: 'finding', 'data-ref': f.ref, 'data-code': f.code },

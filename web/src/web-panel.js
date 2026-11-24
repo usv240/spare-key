@@ -13,7 +13,9 @@ import { renderQuestions, renderPlan } from '../../extension/src/ui/plan.js';
 import { readPage } from '../../extension/src/readers/read-page.js';
 import { catalogue } from '../../extension/src/scan/catalogue.js';
 import { codeClassify, codeFor, merge, toFinding } from '../../extension/src/scan/rules.js';
-import { hybridJson, hybridImageJson, deviceStatus } from '../../extension/src/ai.js';
+import { hybridJson, hybridImageJson, deviceStatus, liveSettings } from '../../extension/src/ai.js';
+// Where the reader fix came from on the last "Break the pages first" run (Remote Config, or the copy in this page).
+let fixFrom = '';
 import { CLASSIFY_SYSTEM, CLASSIFY_SCHEMA, READ_PAGE_SYSTEM, READ_PAGE_SCHEMA, pageItemText, READ_SHOT_SYSTEM, READ_SHOT_SCHEMA, shotEntries } from '../../extension/src/classify.js';
 import SHOT from '../practice/phone-sharing.json';
 import { DRIFT, driftPage, driftUrl } from '../practice/drift.mjs';
@@ -241,7 +243,7 @@ function driftSummary(kind, fix, outcomes) {
   const notRead = outcomes.filter(o => o.status !== 'checked').length;
   const ai = byAi.some(o => o.how === 'nano') ? 'Gemini Nano, on this device,' : 'Gemini in the cloud';
   return [
-    `Pages changed: ${DRIFT.find(d => d.id === kind).label.toLowerCase()}${fix ? ', with the Remote Config fix' : ''}.`,
+    `Pages changed: ${DRIFT.find(d => d.id === kind).label.toLowerCase()}${fix ? `, with the fix ${fixFrom}` : ''}.`,
     `The code reader read ${byCode} of ${total} checks.`,
     byAi.length ? `${ai} read ${byAi.length} more that the code could not.` : '',
     notRead ? `${notRead} could not be read, so ${notRead === 1 ? 'it is' : 'they are'} listed under “Not checked” rather than shown as empty.` : '',
@@ -253,7 +255,17 @@ async function runPractice() {
   sent.length = 0;
   const kind = driftKind;
   const fix = kind !== 'none' && $('apply-fix').checked;
-  const checks = catalogue(fix ? FIXES[kind] : {}).filter(c => c.pages.length);
+  // The fix comes from Remote Config, as it would for an install. If Remote Config cannot be reached, the copy inside
+  // this page is used, and the result says so.
+  let fixes = {};
+  fixFrom = '';
+  if (fix) {
+    const s = await liveSettings().catch(() => null);
+    const live = s && s.from !== 'defaults' && s.practiceFixes?.[kind];
+    fixes = live && Object.keys(live).length ? live : FIXES[kind];
+    fixFrom = live && Object.keys(live).length ? (s.from === 'remote' ? 'fetched from Remote Config' : 'from Remote Config, as fetched earlier') : 'from the copy in this page, because Remote Config was not reached';
+  }
+  const checks = catalogue(fixes).filter(c => c.pages.length);
   const raw = [];
   const outcomes = [];
   for (const [k, check] of checks.entries()) {

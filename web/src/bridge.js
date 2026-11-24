@@ -30,3 +30,23 @@ addEventListener('message', async e => {
 
 // Delivered only if the parent is the extension (a message to any other origin is dropped).
 if (parent !== window) for (const origin of EXTENSIONS) parent.postMessage({ type: 'sk-appcheck-ready' }, origin);
+
+// The Android app (android/.../BridgeAppCheck.kt) loads this page in a WebView it never shows and injects SKAndroid, a
+// message channel it accepts only from this site's origin. Play Integrity needs an app installed from Google Play; this
+// gives an app installed from the site's download the same reCAPTCHA Enterprise protection as the extension.
+// Pattern reused from the author's Still Recalled entry.
+const android = globalThis.SKAndroid;
+if (android && parent === window) {
+  android.onmessage = async e => {
+    let msg;
+    try { msg = JSON.parse(e.data); } catch { return; }
+    if (!msg || msg.type !== 'get') return;
+    try {
+      const { token } = await getToken(appCheck, false);
+      android.postMessage(JSON.stringify({ type: 'token', id: msg.id, token, expireTimeMillis: expiry(token) }));
+    } catch (err) {
+      android.postMessage(JSON.stringify({ type: 'token', id: msg.id, error: String(err && err.message || err).slice(0, 200) }));
+    }
+  };
+  android.postMessage(JSON.stringify({ type: 'ready' }));
+}

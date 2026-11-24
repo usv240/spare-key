@@ -1,6 +1,6 @@
 {
-  "version": 4,
-  "updated_at": "2026-11-22",
+  "version": 5,
+  "updated_at": "2026-11-23",
   "note": "who_can_notice is \"unknown\" unless an official help page or the builder’s own test accounts show what the other person sees; unknown is treated exactly like noticeable. notice_source quotes the official page. steps_followed is true only after the builder followed the steps on a test account.",
   "entries": [
     {
@@ -764,6 +764,336 @@
       "steps_followed": false,
       "version": 1,
       "what_they_see": "They can no longer see where you are in that app. Whether the app tells them depends on the app. Treat it as something they may notice."
+    },
+    {
+      "code": "phone.app.control",
+      "title": "An app can watch and control this phone",
+      "what_it_means": "This app has several kinds of control over the phone, or came from outside the Play Store with one. Monitoring apps are set up this way. It may see your messages, your screen and where you are.",
+      "who_can_notice": "noticeable",
+      "notice_why": "If the app stops reporting, whoever installed it may notice. Removing it also deletes it as evidence.",
+      "evidence_first": [
+        "Screenshot the app's page in Settings, then Apps, including what it can do and where it was installed from.",
+        "Write down when you first noticed it, and anything that made you think someone knew things they should not."
+      ],
+      "steps": [
+        "Do not delete the app yet. Screenshot it first.",
+        "Talk to an advocate about when to remove it.",
+        "When you are ready, open Settings, then Security and privacy, then Device admin apps, and turn the app off if it is there.",
+        "Then open Settings, then Accessibility, and turn the app off.",
+        "Then open Settings, then Apps, choose the app, and select Uninstall."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "also_check": [
+        "phone.app.accessibility",
+        "phone.app.device_admin",
+        "phone.app.notifications",
+        "phone.app.messages"
+      ],
+      "sources": [
+        {
+          "title": "NNEDV Safety Net: Spyware and stalkerware: phone surveillance",
+          "url": "https://www.techsafety.org/spyware-and-stalkerware-phone-surveillance"
+        },
+        {
+          "title": "Coalition Against Stalkerware: Detection, removal and prevention",
+          "url": "https://stopstalkerware.org/stalkerware-detection-removal-and-prevention/"
+        },
+        {
+          "title": "Android Help: Allow restricted settings and accessibility access",
+          "url": "https://support.google.com/android/answer/12623953"
+        },
+        {
+          "title": "Android Developers: Device administration overview",
+          "url": "https://developer.android.com/work/device-admin"
+        }
+      ],
+      "verified_at": "2026-11-23",
+      "verified_how": "Official help pages checked for where the setting is and what it lets an app do; steps not yet followed on a test phone",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "The app stops sending what it collects. Whoever installed it may see that it stopped, and some people react badly when that happens.",
+      "notice_source": {
+        "title": "NNEDV Safety Net: Cell phone safety plan",
+        "url": "https://www.techsafety.org/resources-survivors/cell-phone-safety-plan",
+        "quote": "CAUTION: Making changes will often alert the other person."
+      }
+    },
+    {
+      "code": "phone.app.accessibility",
+      "title": "An app can read and control your screen",
+      "what_it_means": "This app can see what is on your screen and what you type, and it can tap for you.",
+      "who_can_notice": "noticeable",
+      "notice_why": "If the app was put there to watch you, it stops sending what is on your screen when you turn it off.",
+      "evidence_first": [
+        "Screenshot the app's page in Settings, then Apps, including what it can do and where it was installed from.",
+        "Write down when you first noticed it, and anything that made you think someone knew things they should not."
+      ],
+      "steps": [
+        "Screenshot the app first.",
+        "Open Settings, then Accessibility.",
+        "Choose the app, and turn it off.",
+        "If you do not know the app, talk to an advocate before removing it."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "also_check": [
+        "phone.app.control"
+      ],
+      "sources": [
+        {
+          "title": "Android Help: Allow restricted settings and accessibility access",
+          "url": "https://support.google.com/android/answer/12623953"
+        },
+        {
+          "title": "NNEDV Safety Net: Spyware and stalkerware: phone surveillance",
+          "url": "https://www.techsafety.org/spyware-and-stalkerware-phone-surveillance"
+        }
+      ],
+      "verified_at": "2026-11-23",
+      "verified_how": "Official help pages checked for where the setting is and what it lets an app do; steps not yet followed on a test phone",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "Whatever the app sent from your screen stops. If someone set it up to watch you, they may notice it went quiet.",
+      "notice_source": {
+        "title": "NNEDV Safety Net: Cell phone safety plan",
+        "url": "https://www.techsafety.org/resources-survivors/cell-phone-safety-plan",
+        "quote": "CAUTION: Making changes will often alert the other person."
+      }
+    },
+    {
+      "code": "phone.app.device_admin",
+      "title": "An app is a device admin",
+      "what_it_means": "This app can lock or erase the phone, and it cannot be uninstalled until its admin access is turned off.",
+      "who_can_notice": "noticeable",
+      "notice_why": "Turning off device admin is a big change, and the app may tell whoever set it up.",
+      "evidence_first": [
+        "Screenshot the app's page in Settings, then Apps, including what it can do and where it was installed from.",
+        "Write down when you first noticed it, and anything that made you think someone knew things they should not."
+      ],
+      "steps": [
+        "Screenshot the app first.",
+        "Open Settings, then Security and privacy, then More security and privacy, then Device admin apps.",
+        "Choose the app and turn it off.",
+        "Then you can uninstall it from Settings, then Apps."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "also_check": [
+        "phone.app.control"
+      ],
+      "sources": [
+        {
+          "title": "Android Developers: Device administration overview",
+          "url": "https://developer.android.com/work/device-admin"
+        },
+        {
+          "title": "NNEDV Safety Net: Spyware and stalkerware: phone surveillance",
+          "url": "https://www.techsafety.org/spyware-and-stalkerware-phone-surveillance"
+        }
+      ],
+      "verified_at": "2026-11-23",
+      "verified_how": "Official help pages checked for where the setting is and what it lets an app do; steps not yet followed on a test phone",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "The app loses its admin access and can be removed. Whoever set it up may notice it stopped working.",
+      "notice_source": {
+        "title": "NNEDV Safety Net: Cell phone safety plan",
+        "url": "https://www.techsafety.org/resources-survivors/cell-phone-safety-plan",
+        "quote": "CAUTION: Making changes will often alert the other person."
+      }
+    },
+    {
+      "code": "phone.app.notifications",
+      "title": "An app can read your notifications",
+      "what_it_means": "This app can read every notification, including messages and sign-in codes.",
+      "who_can_notice": "noticeable",
+      "notice_why": "Copies of your messages stop reaching whoever reads them through this app.",
+      "evidence_first": [
+        "Screenshot the app's page in Settings, then Apps, including what it can do and where it was installed from.",
+        "Write down when you first noticed it, and anything that made you think someone knew things they should not."
+      ],
+      "steps": [
+        "Screenshot the app first.",
+        "Open Settings, then Apps, then Special app access, then Notification read, reply and control.",
+        "Choose the app and turn off notification access."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "also_check": [
+        "phone.app.control",
+        "phone.app.messages"
+      ],
+      "sources": [
+        {
+          "title": "Android Help: Control notification access for apps",
+          "url": "https://support.google.com/android/answer/15235441"
+        },
+        {
+          "title": "NNEDV Safety Net: Spyware and stalkerware: phone surveillance",
+          "url": "https://www.techsafety.org/spyware-and-stalkerware-phone-surveillance"
+        }
+      ],
+      "verified_at": "2026-11-23",
+      "verified_how": "Official help pages checked for where the setting is and what it lets an app do; steps not yet followed on a test phone",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "The app stops getting your notifications. If someone was reading your messages this way, they stop getting them.",
+      "notice_source": {
+        "title": "NNEDV Safety Net: Cell phone safety plan",
+        "url": "https://www.techsafety.org/resources-survivors/cell-phone-safety-plan",
+        "quote": "CAUTION: Making changes will often alert the other person."
+      }
+    },
+    {
+      "code": "phone.app.messages",
+      "title": "An app can read your texts or call log",
+      "what_it_means": "This app can read your text messages or the list of calls you made and got.",
+      "who_can_notice": "noticeable",
+      "notice_why": "If someone was reading your texts or calls through this app, they stop getting them.",
+      "evidence_first": [
+        "Screenshot the app's page in Settings, then Apps, including what it can do and where it was installed from.",
+        "Write down when you first noticed it, and anything that made you think someone knew things they should not."
+      ],
+      "steps": [
+        "Screenshot the app first.",
+        "Open Settings, then Security and privacy, then Privacy, then Permission manager.",
+        "Choose SMS, then the app, and select Don't allow. Do the same under Call logs."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "also_check": [
+        "phone.app.control",
+        "phone.app.notifications"
+      ],
+      "sources": [
+        {
+          "title": "Android Help: Change app permissions on your Android phone",
+          "url": "https://support.google.com/android/answer/9431959"
+        },
+        {
+          "title": "NNEDV Safety Net: Spyware and stalkerware: phone surveillance",
+          "url": "https://www.techsafety.org/spyware-and-stalkerware-phone-surveillance"
+        }
+      ],
+      "verified_at": "2026-11-23",
+      "verified_how": "Official help pages checked for where the setting is and what it lets an app do; steps not yet followed on a test phone",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "The app can no longer read your texts or calls. Whoever was reading them through it may notice they stopped.",
+      "notice_source": {
+        "title": "NNEDV Safety Net: Cell phone safety plan",
+        "url": "https://www.techsafety.org/resources-survivors/cell-phone-safety-plan",
+        "quote": "CAUTION: Making changes will often alert the other person."
+      }
+    },
+    {
+      "code": "phone.app.usage_access",
+      "title": "An app can see which apps you use",
+      "what_it_means": "This app can see which apps you open and for how long.",
+      "who_can_notice": "noticeable",
+      "notice_why": "Reports about which apps you use stop.",
+      "evidence_first": [
+        "Screenshot the app's page in Settings, then Apps, including what it can do and where it was installed from.",
+        "Write down when you first noticed it, and anything that made you think someone knew things they should not."
+      ],
+      "steps": [
+        "Screenshot the app first.",
+        "Open Settings, then Apps, then Special app access, then Usage access.",
+        "Choose the app and turn it off."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "also_check": [
+        "phone.app.control"
+      ],
+      "sources": [
+        {
+          "title": "Android Help: Change app permissions on your Android phone",
+          "url": "https://support.google.com/android/answer/9431959"
+        },
+        {
+          "title": "NNEDV Safety Net: Spyware and stalkerware: phone surveillance",
+          "url": "https://www.techsafety.org/spyware-and-stalkerware-phone-surveillance"
+        }
+      ],
+      "verified_at": "2026-11-23",
+      "verified_how": "Official help pages checked for where the setting is and what it lets an app do; steps not yet followed on a test phone",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "The app stops seeing which apps you use. Whoever reads its reports may notice they stopped.",
+      "notice_source": {
+        "title": "NNEDV Safety Net: Cell phone safety plan",
+        "url": "https://www.techsafety.org/resources-survivors/cell-phone-safety-plan",
+        "quote": "CAUTION: Making changes will often alert the other person."
+      }
+    },
+    {
+      "code": "phone.app.location_always",
+      "title": "An app can see your location all the time",
+      "what_it_means": "This app can see where you are even when you are not using it.",
+      "who_can_notice": "noticeable",
+      "notice_why": "Your place stops updating in this app. Someone who watches it may see your location stop or go stale.",
+      "evidence_first": [
+        "Screenshot the app's page in Settings, then Apps, including what it can do and where it was installed from.",
+        "Write down when you first noticed it, and anything that made you think someone knew things they should not."
+      ],
+      "steps": [
+        "Screenshot the app first.",
+        "Open Settings, then Location, then App location permissions.",
+        "Choose the app and select Allow only while using the app, or Don't allow."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "also_check": [
+        "phone.app.control"
+      ],
+      "sources": [
+        {
+          "title": "Android Help: Manage your Android device's location settings",
+          "url": "https://support.google.com/android/answer/6179507"
+        },
+        {
+          "title": "NNEDV Safety Net: Spyware and stalkerware: phone surveillance",
+          "url": "https://www.techsafety.org/spyware-and-stalkerware-phone-surveillance"
+        }
+      ],
+      "verified_at": "2026-11-23",
+      "verified_how": "Official help pages checked for where the setting is and what it lets an app do; steps not yet followed on a test phone",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "Your location stops updating in the app when you are not using it. Someone watching may see it stop.",
+      "notice_source": {
+        "title": "NNEDV Safety Net: Cell phone safety plan",
+        "url": "https://www.techsafety.org/resources-survivors/cell-phone-safety-plan",
+        "quote": "CAUTION: Making changes will often alert the other person."
+      }
+    },
+    {
+      "code": "phone.usb_debugging",
+      "title": "USB debugging is on",
+      "what_it_means": "A computer connected to this phone by cable can install and control apps on it.",
+      "who_can_notice": "unknown",
+      "notice_why": "This is a phone setting, not an app. It is not known whether anyone sees when it is turned off.",
+      "evidence_first": [
+        "Screenshot the Developer options page with USB debugging showing."
+      ],
+      "steps": [
+        "Open Settings, then System, then Developer options.",
+        "Turn off USB debugging, and Wireless debugging if it is on."
+      ],
+      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "also_check": [
+        "phone.app.control"
+      ],
+      "sources": [
+        {
+          "title": "Android Developers: Configure on-device developer options",
+          "url": "https://developer.android.com/studio/debug/dev-options"
+        },
+        {
+          "title": "NNEDV Safety Net: Spyware and stalkerware: phone surveillance",
+          "url": "https://www.techsafety.org/spyware-and-stalkerware-phone-surveillance"
+        }
+      ],
+      "verified_at": "2026-11-23",
+      "verified_how": "Official help pages checked for where the setting is and what it lets an app do; steps not yet followed on a test phone",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "A computer can no longer install or control apps on the phone over a cable or Wi-Fi."
     }
   ]
 }

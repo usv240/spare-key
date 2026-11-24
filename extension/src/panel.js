@@ -281,7 +281,7 @@ async function startScan(checks, prev = null) {
           setProgress(index, total, check.progress);
           $('scan-done').append(h('li', {}, h('span', { text: check.label }), h('span', { class: 'muted', text: outcomeWords(outcome) })));
         } else {
-          const words = state === 'nano-reading' ? `${check.progress}. Gemini Nano is reading the page on this computer.` : state === 'classifying' ? `${check.progress}. Sorting what was found, on this computer.` : check.progress;
+          const words = state === 'nano-reading' ? `${check.progress}. Gemini Nano is reading the page on this computer.` : state === 'classifying' ? `${check.progress}. Gemini Nano is sorting what was found, on this computer.` : check.progress;
           setProgress(index - 1, total, words);
         }
       },
@@ -516,7 +516,10 @@ async function makePlan() {
   // The per-scan cloud budget starts once per scan, not on every press of "Make my plan".
   const newScan = budgetScanAt !== scan.at;
   budgetScanAt = scan.at;
+  const asked = pendingAsk;
   const r = await offscreen('sk:cloud-plan', { body, privateStrings, library: LIBRARY, newScan }).catch(e => ({ error: String(e) }));
+  // How many of this computer's answers Gemini Nano gave (the code rules could not tell): shown with the plan.
+  if (r?.calls && asked?.nanoAnswered) r.calls.nano_answered = asked.nanoAnswered;
   pendingAsk = null;
   hideAsk();
   if (r?.error || !r?.answer) {
@@ -598,7 +601,9 @@ function planHelpers(scan) {
 async function onSimpler(code) {
   simpler[code] = { pending: true };
   redrawPlan(code);
-  const r = await offscreen('sk:simpler', { code, library: LIBRARY }).catch(e => ({ error: String(e) }));
+  // The person's own "plan help from the cloud" switch holds here too: off means Gemini Nano on this computer or nothing.
+  const { cloudOn = true } = await chrome.storage.local.get('cloudOn');
+  const r = await offscreen('sk:simpler', { code, library: LIBRARY, personCloudOn: cloudOn }).catch(e => ({ error: String(e) }));
   simpler[code] = r?.steps ? { steps: r.steps, source: r.source } : r?.off ? { off: true } : { error: true };
   redrawPlan(code);
 }
@@ -763,7 +768,19 @@ function hideAsk() { $('ask-user').hidden = true; $('ask-user').replaceChildren(
 chrome.runtime.onMessage.addListener((msg, sender, reply) => {
   if (msg?.type !== 'sk:ask' || sender.id !== chrome.runtime.id || !pendingAsk) return false;
   const f = pendingAsk.scan.findings.find(x => x.ref === pendingAsk.refs[msg.ref]);
-  if (msg.kind === 'device') { reply({ answer: answerDevice(f, msg.question, pendingAsk.scan) }); return false; }
+  if (msg.kind === 'device') {
+    const byCode = answerDevice(f, msg.question, pendingAsk.scan);
+    // The cloud reasons; when the code rules cannot tell, Gemini Nano reads the entry here. One word goes back.
+    if (byCode !== 'unknown' || !f || nanoStatus !== 'available') { reply({ answer: byCode }); return false; }
+    offscreen('sk:nano-ask', { question: msg.question, text: f.detail || f.label || '' })
+      .then(r => {
+        const answer = ['yes', 'no', 'unknown'].includes(r?.answer) ? r.answer : 'unknown';
+        if (answer !== 'unknown') pendingAsk.nanoAnswered = (pendingAsk.nanoAnswered || 0) + 1;
+        reply({ answer });
+      })
+      .catch(() => reply({ answer: 'unknown' }));
+    return true;
+  }
   askPerson(f, msg.question).then(answer => reply({ answer }));
   return true;
 });
@@ -777,9 +794,13 @@ async function refreshHood() {
   renderSentLog();
   try {
     const s = await offscreen('sk:settings');
-    $('where-plan').textContent = s.cloudOn ? 'Gemini in the cloud' : 'This computer only';
+    // The person's own switch first, then the one for every copy (Remote Config).
+    const { cloudOn: personOn = true } = await chrome.storage.local.get('cloudOn');
+    const on = s.cloudOn && personOn;
+    $('where-plan').textContent = on ? 'Gemini in the cloud' : 'This computer only';
     const sub = $('where-plan-sub');
-    if (s.cloudOn) {
+    if (!personOn) sub.textContent = 'You switched plan help from the cloud off. Your plan is made on this computer.';
+    else if (on) {
       // Each model name on one line: they break badly at their hyphens.
       sub.replaceChildren('Finding types only. Models: ', ...s.models.flatMap((m, i) => [
         ...(i ? [', '] : []), Object.assign(document.createElement('span'), { textContent: m, style: 'white-space:nowrap' }),

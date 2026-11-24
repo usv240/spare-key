@@ -150,3 +150,31 @@ export async function readWholePage({ description, text }) {
   }
   return { entries, partial: body.length > CHUNK * 4 };
 }
+
+// A question from the cloud plan (ask_device) that the code rules could not answer from the finding: Gemini Nano reads
+// the entry's words here, on this computer, and answers with one word. Only that word goes back to the cloud, as with
+// every other ask_device answer; the entry's words never leave.
+export const DEVICE_ASK_WORDS = {
+  filter_also_deletes: 'Does this Gmail filter delete the mail it matches?',
+  forwarding_is_only_copy: 'Is the forwarded copy the only copy, so Gmail deletes or archives its own?',
+  device_active_this_week: 'Was this device or session active in the last seven days?',
+  app_can_read_mail: 'Can this app read the person\'s email?',
+  app_can_see_location: 'Can this app see the person\'s location?',
+  more_items_hidden: 'Does the entry say there are more items not shown?',
+  shared_with_link: 'Is this shared with anyone who has a link, rather than with a named person?',
+  app_outside_store: 'Was this app installed from outside the Play Store?',
+  app_looks_like_monitoring: 'Does this look like an app made to watch someone, rather than an everyday or helper app?',
+};
+export const DEVICE_ASK_SYSTEM = `You answer one yes-or-no question about one entry from a person's own account settings page.
+Answer only from the entry's words. If the words do not say, answer "unknown". Never guess.`;
+export const DEVICE_ASK_SCHEMA = { type: 'object', properties: { answer: { type: 'string', enum: ['yes', 'no', 'unknown'] } }, required: ['answer'] };
+const DEVICE_ASK_LIMIT_MS = 20000;
+/** One question about one entry, answered by Gemini Nano: 'yes', 'no' or 'unknown' (also on any error or timeout). */
+export async function nanoAnswer({ question, text }) {
+  const words = DEVICE_ASK_WORDS[question];
+  if (!words || !String(text || '').trim()) return 'unknown';
+  try {
+    const r = await deviceJson({ system: DEVICE_ASK_SYSTEM, schema: DEVICE_ASK_SCHEMA, text: `Question: ${words}\n\nEntry:\n${String(text).slice(0, 600)}`, timeoutMs: DEVICE_ASK_LIMIT_MS });
+    return ['yes', 'no', 'unknown'].includes(r?.answer) ? r.answer : 'unknown';
+  } catch { return 'unknown'; }
+}

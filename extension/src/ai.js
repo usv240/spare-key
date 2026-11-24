@@ -70,6 +70,8 @@ export function liveSettings() {
         freshDays: num('fresh_days', 1, 365),
         quickExitUrl: /^https:\/\//.test(exit) ? exit : raw('quick_exit_url'),
         hotline: json('hotline'),
+        // Only the site's practice check reads this ("Break the pages first"); an install never does.
+        practiceFixes: (() => { try { return rc ? JSON.parse(getValue(rc, 'practice_fixes').asString() || '{}') : {}; } catch { return {}; } })(),
         from,
       };
     };

@@ -90,3 +90,14 @@ test('no "safe", "safer" or "secure" in the site\'s page text or the README', ()
     assert.ok(!m, `${f}: "${m && m[0]}"`);
   }
 });
+
+test('no "safe", "safer" or "secure" in the video, the store listing or the advocate request', () => {
+  // Words a judge, an advocate or a store visitor reads or hears: the video's narration, slides and headlines, the store
+  // screenshots' headlines, and the drafts. ffmpeg's "-safe" option and rules that quote the banned words are left out.
+  const BANNED = new RegExp(String.raw`\b(safe|safer|safest|safely|secure|securely)\b`, 'i');
+  for (const f of ['tools/make-video.mjs', 'tools/store-shots.mjs', 'docs/store-listing.md', 'docs/advocate-review.md', 'docs/video.md', 'docs/submission.md']) {
+    const text = readFileSync(f, 'utf8').split("'-safe'").join('').split('cloud-safe.js').join('').split('never says you are safe').join('').split('never says a person is safe').join('').split('It never says you are safe').join('');
+    const m = text.match(BANNED);
+    assert.ok(!m, `${f}: "${m && text.slice(Math.max(0, m.index - 40), m.index + 20)}"`);
+  }
+});

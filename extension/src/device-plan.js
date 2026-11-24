@@ -5,20 +5,8 @@
 // back passes the same safety rules as the cloud's before anyone sees it. Measured on the 40 frozen situations
 // (tools/plan-eval-nano.mjs): 35 answered within the 90-second limit, and the rules made 103 fixes.
 import { deviceJson } from './ai.js';
-import { PLAN_INTRO, PLAN_SHAPE, PLAN_SCHEMA } from './cloud/plan.js';
-
-const NOTICE = { notifies: 'they are told', noticeable: 'they may notice', unlikely: 'unlikely to be noticed', unknown: 'not known, so treat it as noticeable' };
-
-/** The library's facts for the codes in `body`, one line each. */
-export function libraryFacts(body, library) {
-  const codes = [...new Set((body?.findings || []).map(f => f.code))].filter(c => library?.[c]);
-  return codes.map(c => `- ${c}: ${library[c].title}. If removed: ${library[c].what_they_see} (${NOTICE[library[c].who_can_notice] || NOTICE.unknown}).`).join('\n');
-}
-
-export const devicePlanSystem = (body, library) => `${PLAN_INTRO}
-What each finding code is, and what the other person sees if it is removed, from Spare Key's steps library:
-${libraryFacts(body, library)}
-${PLAN_SHAPE}`;
+import { PLAN_SCHEMA, libraryFacts, devicePlanSystem } from '../../shared/plan/prompts.js';
+export { libraryFacts, devicePlanSystem };
 
 /** Ask Gemini Nano for a plan. Throws when Nano is not ready; the caller then uses the cloud or the code plan. */
 export async function devicePlan({ body, library }) {

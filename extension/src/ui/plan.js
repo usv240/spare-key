@@ -65,7 +65,7 @@ export function renderPlan(root, { plan, byRef, library, source, model, calls = 
   const [lead, base] = (WHERE[source] || WHERE.code)(model);
   const times = n => (n === 1 ? 'once' : `${n} times`);
   const tech = source === 'cloud' && calls
-    ? `${base} While ordering it, Gemini read the steps library ${times(calls.get_steps)}, asked this computer ${calls.ask_device} ${calls.ask_device === 1 ? 'question' : 'questions'} and asked you ${calls.ask_user}. Each answer was yes, no or not sure.`
+    ? `${base} While ordering it, Gemini read the steps library ${times(calls.get_steps)}, asked this computer ${calls.ask_device} ${calls.ask_device === 1 ? 'question' : 'questions'} and asked you ${calls.ask_user}. Each answer was yes, no or not sure.${calls.nano_answered ? ` Gemini Nano answered ${calls.nano_answered} of this computer's questions by reading the entry here; only its yes or no went back.` : ''}`
     : base;
   registerInfo('why-order', {
     title: 'Why this order',

@@ -17,6 +17,9 @@ export const TAKEOVER = new Set(['gmail.delegate', 'gmail.filter.hides', 'google
 // change does not happen now while the mail copying waits.
 export const MAIL_OUT = new Set(['gmail.forwarding.external', 'gmail.filter.forwards', 'gmail.delegate']);
 export const EMAILS_ABOUT = new Set(['google.recovery.email_other', 'google.recovery.phone_unconfirmed', 'google.2sv.other_device', 'google.devices.other']);
+// An app that can watch the phone sees what is done on that phone, including changes to accounts (the phone check).
+export const PHONE_WATCH = new Set(['phone.app.control', 'phone.app.accessibility', 'phone.app.device_admin', 'phone.app.notifications', 'phone.app.messages']);
+export const PHONE_NOTE = 'An app on your phone may be able to see what you do on it. Make other changes from a phone or computer the other person has never had.';
 export const LINKED_NOTE = 'Your mail is copied to someone else. Any email Google sends you about this change, like a security alert or a code, would reach them too. Deal with the mail copying first.';
 
 /** How likely a change is to be noticed, from the library. Unknown counts as noticeable. */
@@ -50,13 +53,15 @@ export function buildPlan({ findings = [], situation = {}, notChecked = [], libr
   const byCode = new Map();
   for (const f of open) byCode.set(f.code, [...(byCode.get(f.code) || []), f.ref]);
   // Mail copied elsewhere first (R9), then quiet ways into the account, then the rest.
-  const rank = code => (MAIL_OUT.has(code) ? 0 : TAKEOVER.has(code) ? 1 : 2);
+  // An app watching the phone comes before everything: whoever installed it sees every other change made on that phone.
+  const rank = code => (PHONE_WATCH.has(code) ? -1 : MAIL_OUT.has(code) ? 0 : TAKEOVER.has(code) ? 1 : 2);
   const codes = [...byCode.keys()].sort((a, b) => rank(a) - rank(b));
   const mailOut = codes.some(c => MAIL_OUT.has(c));
+  const watched = codes.some(c => PHONE_WATCH.has(c));
   for (const code of codes) {
     const refs = byCode.get(code);
     const notice = noticeOf(library, code);
-    const linked = mailOut && EMAILS_ABOUT.has(code) ? { linked: LINKED_NOTE } : {};
+    const linked = mailOut && EMAILS_ABOUT.has(code) ? { linked: LINKED_NOTE } : watched && !PHONE_WATCH.has(code) ? { linked: PHONE_NOTE } : {};
     if (notice === 'unlikely' && TAKEOVER.has(code) && goodTime) {
       actions.push({ action: 'change_now', refs, code, ...linked, why: 'This gives someone a quiet way into your account, and changing it is unlikely to be noticed.' });
     } else if (goodTime) {

@@ -3,9 +3,10 @@
 // person, an address or a device, which is why codes are the only thing about a scan that may leave the computer.
 
 // Groups, in the order the results show them: the access that matters most comes first.
-export const GROUPS = ['location', 'mail', 'account', 'purchases', 'photos', 'devices', 'browsing'];
+export const GROUPS = ['phone', 'location', 'mail', 'account', 'purchases', 'photos', 'devices', 'browsing'];
 
 export const GROUP_LABELS = {
+  phone: 'Can watch this phone',
   location: 'Can see your location',
   mail: 'Can read your mail',
   account: 'Can get into your account',
@@ -39,6 +40,15 @@ export const CODES = {
   'google.family.manager_other': { group: 'account', check: 'google.family' },
   'photos.partner_sharing': { group: 'photos', check: 'photos.sharing' },
   'screenshot.sharing.person': { group: 'location', check: 'screenshot' },
+  // The Android app's phone check (shared/phone.js).
+  'phone.app.control': { group: 'phone', check: 'phone.apps' },
+  'phone.app.accessibility': { group: 'phone', check: 'phone.apps' },
+  'phone.app.device_admin': { group: 'phone', check: 'phone.apps' },
+  'phone.app.notifications': { group: 'phone', check: 'phone.apps' },
+  'phone.app.messages': { group: 'phone', check: 'phone.apps' },
+  'phone.app.usage_access': { group: 'phone', check: 'phone.apps' },
+  'phone.app.location_always': { group: 'location', check: 'phone.apps' },
+  'phone.usb_debugging': { group: 'phone', check: 'phone.settings' },
 };
 
 // Every check id, including the services Spare Key does not check yet. A "not checked" item carries only one of
@@ -48,6 +58,7 @@ export const CHECK_IDS = [
   'gmail.forwarding', 'gmail.filters', 'gmail.delegates',
   'maps.sharing', 'chrome.extensions', 'chrome.sync',
   'amazon.household', 'amazon.devices', 'google.family', 'photos.sharing', 'screenshot',
+  'phone.apps', 'phone.settings',
 ];
 // other_services stands for every service Spare Key does not cover, as one "check it yourself" step.
 export const UNCHECKED_SERVICES = ['ring', 'life360', 'phone_carrier', 'apple', 'facebook', 'snapchat', 'your_phone', 'other_services'];
@@ -93,6 +104,14 @@ export const CODE_TEXT = {
   'google.family.manager_other': ['Someone else manages your Google family group', 'A family manager can see some of what you do and change some of your settings.'],
   'photos.partner_sharing': ['Your photos are shared with someone', 'New photos you take may be shared with this person, and photos can show where they were taken.'],
   'screenshot.sharing.person': ['Someone can see your location in another app', 'A person on this sharing screen can see where you are.'],
+  'phone.app.control': ['An app can watch and control this phone', 'This app has several kinds of control over the phone, or came from outside the Play Store with one. Monitoring apps are set up this way.'],
+  'phone.app.accessibility': ['An app can read and control your screen', 'This app can see what is on your screen, what you type, and can tap for you.'],
+  'phone.app.device_admin': ['An app is a device admin', 'This app can lock or erase the phone, and it cannot be removed until its admin access is turned off.'],
+  'phone.app.notifications': ['An app can read your notifications', 'This app can read every notification, including messages and sign-in codes.'],
+  'phone.app.messages': ['An app can read your texts or call log', 'This app can read your text messages or the list of calls you made and got.'],
+  'phone.app.usage_access': ['An app can see which apps you use', 'This app can see which apps you open and for how long.'],
+  'phone.app.location_always': ['An app can see your location all the time', 'This app can see where you are even when you are not using it.'],
+  'phone.usb_debugging': ['USB debugging is on', 'A computer connected to this phone by cable can install and control apps on it.'],
 };
 
 export const isCode = c => Object.hasOwn(CODES, c);

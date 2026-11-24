@@ -2,7 +2,7 @@
 import { CODES } from './findings.js';
 
 const NOTICE = ['notifies', 'noticeable', 'unlikely', 'unknown'];
-const OFFICIAL = /^https:\/\/(support\.google\.com|www\.amazon\.com\/gp\/help|www\.techsafety\.org|techsafety\.org|ceta\.tech\.cornell\.edu|support\.apple\.com)\//;
+const OFFICIAL = /^https:\/\/(support\.google\.com|www\.amazon\.com\/gp\/help|www\.techsafety\.org|techsafety\.org|ceta\.tech\.cornell\.edu|support\.apple\.com|developer\.android\.com|stopstalkerware\.org)\//;
 
 /** Returns a list of problems; empty when the library is valid. */
 export function validateLibrary(lib) {
