@@ -13,6 +13,7 @@ import { renderQuestions, renderPlan } from '../../extension/src/ui/plan.js';
 import { readPage } from '../../extension/src/readers/read-page.js';
 import { catalogue } from '../../extension/src/scan/catalogue.js';
 import { codeClassify, codeFor, merge, toFinding } from '../../extension/src/scan/rules.js';
+import { compareChecks } from '../../extension/src/scan/compare.js';
 import { hybridJson, hybridImageJson, deviceStatus, liveSettings } from '../../extension/src/ai.js';
 // Where the reader fix came from on the last "Break the pages first" run (Remote Config, or the copy in this page).
 let fixFrom = '';
@@ -26,7 +27,7 @@ import { toCloud } from '../../shared/cloud-safe.js';
 import { buildPlan } from '../../shared/plan/engine.js';
 import { applyInvariants, cleanText } from '../../shared/plan/invariants.js';
 import { libraryMap } from '../../shared/steps-schema.js';
-import { SITUATION, SITUATION_DEFAULTS } from '../../shared/findings.js';
+import { SITUATION, SITUATION_DEFAULTS, CODE_TEXT } from '../../shared/findings.js';
 import { QUICK_EXIT_URL } from '../../shared/config.js';
 import { PAGES, PRACTICE_OWNER } from '../practice/pages.mjs';
 import STEPS from '../../data/steps.json';
@@ -92,13 +93,30 @@ function renderSent() {
   $('sent-log').replaceChildren(...sent.slice().reverse().map(e => {
     let pretty = e.text;
     try { pretty = JSON.stringify(JSON.parse(e.text), null, 2); } catch { /* as sent */ }
-    return h('li', {}, h('div', { class: 'meta' }, h('span', { text: `${e.kind === 'function_answers' ? 'Answers to the cloud' : 'Request'}: ${e.purpose}, ${e.model}` }),
+    return h('li', {}, e.purpose === 'practice' ? h('p', { class: 'notice', text: 'Practice only. This holds made-up names because the practice data is invented. The extension never sends names, addresses or page text.' }) : null,
+      h('div', { class: 'meta' }, h('span', { text: `${e.kind === 'function_answers' ? 'Answers to the cloud' : 'Request'}: ${e.purpose}, ${e.model}` }),
       h('time', { text: new Date(e.time).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' }) })), h('pre', { text: pretty }),
       // The fixed parts sent with every request, as in the extension: the instructions, the answer format, the functions.
       e.fixed ? h('details', { class: 'fixed' }, h('summary', { text: 'The fixed instructions sent with it' }),
         h('pre', { text: [e.fixed.instructions, e.fixed.tools?.length ? `Functions offered: ${e.fixed.tools.join(', ')}` : '', e.fixed.format ? `Answer format: ${e.fixed.format}` : ''].filter(Boolean).join('\n\n') })) : null);
   }));
   $('sent-empty').hidden = sent.length > 0;
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// "Since your last check": this check next to the one before it, with the extension's own comparison.
+function showSince() {
+  const el = $('since');
+  if (!before || !afterChange) { el.replaceChildren(); el.hidden = true; return; }
+  const r = compareChecks(before, scan);
+  const gone = r.removed.map(x => `${(CODE_TEXT[x.code] || [x.code])[0]} (${String(x.label).split('\n')[0]})`);
+  el.replaceChildren(
+    h('h2', { text: 'Since your last check' }),
+    h('p', { text: gone.length ? `${gone.length === 1 ? '1 thing is' : `${gone.length} things are`} gone: ${gone.join('; ')}.` : 'Nothing is gone.' }),
+    h('p', { text: `${r.added.length ? `${r.added.length} new.` : 'Nothing new.'} ${r.same} still there.` }),
+    h('p', { class: 'muted', text: 'In the extension, a check is compared with a locked copy you saved. Something new can mean someone was given access again, or got back in.' }),
+  );
+  el.hidden = false;
 }
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -117,6 +135,9 @@ function showResults() {
   });
   $('full-check').hidden = mode === 'live';
   $('phone-shot').hidden = mode !== 'live';
+  // "After a change" is offered once, on a full check of the pages as made that found the share it turns off.
+  $('after-box').hidden = mode !== 'live' || afterChange || driftKind !== 'none' || !scan.findings.some(f => String(f.detail || f.label).includes(CHANGED.gone) && f.check === 'maps.sharing');
+  showSince();
   if (checkScreen !== 'results') show('results');
 }
 
@@ -182,11 +203,21 @@ let lastSortError = '';
 function scanFrame() {
   try { return window.parent !== window ? window.parent.document.getElementById('scan-view') : null; } catch { return null; }
 }
+// "After a change": the made-up person turns off one location share. The entry is taken off the practice page itself
+// once it has loaded, so the page beside the panel shows the change and the reader reads what is there.
+let afterChange = false;
+let before = null;
+const CHANGED = { page: 'locationsharing.html', gone: 'Sam Porter' };
+function applyChange(doc, url) {
+  if (!afterChange || !doc || !url.includes(CHANGED.page)) return doc;
+  for (const li of doc.querySelectorAll('li, [role="listitem"], tr')) if (li.textContent.includes(CHANGED.gone)) li.remove();
+  return doc;
+}
 async function loadPage(url) {
   const frame = scanFrame();
   if (frame) {
     await new Promise(resolve => { frame.onload = resolve; frame.src = url; setTimeout(resolve, 10000); });
-    return frame.contentDocument;
+    return applyChange(frame.contentDocument, url);
   }
   // No scan view beside this panel: read the page in a frame of our own, placed off the screen. It has to be a real,
   // laid-out page: the reader skips anything that is not visible, and a page that was only parsed has nothing visible.
@@ -198,7 +229,7 @@ async function loadPage(url) {
     document.body.append(own);
   }
   await new Promise(resolve => { own.onload = resolve; own.src = url; setTimeout(resolve, 10000); });
-  return own.contentDocument;
+  return applyChange(own.contentDocument, url);
 }
 
 function setProgress(done, total, words) {
@@ -324,9 +355,13 @@ async function runPractice() {
   if (!raw.length) where = 'Nothing could be read, so there was nothing to sort.';
   else try {
     const body = { task: 'classify', owner: { name: PRACTICE_OWNER.name, email: PRACTICE_OWNER.email }, entries: raw.map((r, i) => ({ i, check: r.check.id, text: r.entry.text })) };
-    const r = await hybridJson({ purpose: 'practice', body, system: `${CLASSIFY_SYSTEM}\nEach entry names the check it came from.`, schema: CLASSIFY_SCHEMA, guard: { practiceCorpus: PRACTICE_CORPUS, practiceOwner: PRACTICE_OWNER }, onSend });
-    sorted = r.answer.items || [];
-    where = r.source === 'on_device' ? 'Sorted by Gemini Nano, on this device.' : `Sorted by Gemini in the cloud (${r.model}). The practice data is made up, so this is the one place Spare Key lets the cloud read entries.`;
+    // Every entry is already read by code. Gemini only sorts them, which can take minutes on the device, so the person
+    // can stop waiting and see the results as code alone sorted them.
+    const skipped = new Promise(resolve => { $('skip-sort').onclick = () => resolve(null); });
+    $('skip-sort').hidden = !onDevice;
+    const r = await Promise.race([hybridJson({ purpose: 'practice', body, system: `${CLASSIFY_SYSTEM}\nEach entry names the check it came from.`, schema: CLASSIFY_SCHEMA, guard: { practiceCorpus: PRACTICE_CORPUS, practiceOwner: PRACTICE_OWNER }, onSend }), skipped]);
+    sorted = r ? r.answer.items || [] : null;
+    where = !r ? 'Sorted by code only: you chose not to wait for Gemini Nano. Start again to let it sort the entries on this device.' : r.source === 'on_device' ? 'Sorted by Gemini Nano, on this device.' : `Sorted by Gemini in the cloud (${r.model}). The practice data is made up, so this is the one place Spare Key lets the cloud read entries.`;
   } catch (e) {
     console.warn('Spare Key practice sorting:', String(e && e.message || e).slice(0, 300));
     lastSortError = String(e && e.message || e);
@@ -340,6 +375,7 @@ async function runPractice() {
         : 'Sorted by code only: Gemini did not answer.';
   }
   clearInterval(tick);
+  $('skip-sort').hidden = true;
   const findings = [];
   for (const [i, r] of raw.entries()) {
     const code = codeClassify(r.check.id, r.entry, PRACTICE_OWNER, r.check.words);
@@ -355,7 +391,7 @@ async function runPractice() {
   $('sorted-line').replaceChildren(where);
   // After an App Check refusal the SDK will not ask again in this page load, so the button reloads the panel instead.
   const refused = /refused/.test(where);
-  if (/code only/.test(where)) $('sorted-line').append(' ', h('button', { type: 'button', class: 'link-button', onclick: () => (refused ? location.reload() : runPractice()) }, refused ? 'Reload and try again' : 'Try again'));
+  if (/code only/.test(where) && !/chose not to wait/.test(where)) $('sorted-line').append(' ', h('button', { type: 'button', class: 'link-button', onclick: () => (refused ? location.reload() : runPractice()) }, refused ? 'Reload and try again' : 'Try again'));
   $('sorted-line').hidden = false;
   showResults();
   $('results-title')?.focus({ preventScroll: true });
@@ -369,7 +405,7 @@ Keep every warning. Do not add names, numbers, links or advice that are not in t
 const SIMPLER_SCHEMA = { type: 'object', properties: { steps: { type: 'array', items: { type: 'string', maxLength: 200 } } }, required: ['steps'] };
 
 // The plan: by code at once, then ordered by the cloud from finding types, then the two voices.
-let situation = { values: {}, share: true };
+let situation = { values: {}, share: false };
 function showQuestions() {
   const draw = () => renderQuestions($('plan-questions'), {
     values: situation.values, share: situation.share, cloudOn: true,
@@ -383,6 +419,7 @@ function showQuestions() {
   show('plan');
 }
 $('to-plan').addEventListener('click', showQuestions);
+$('after-go').addEventListener('click', () => { before = scan; afterChange = true; runPractice(); });
 $('back-results').addEventListener('click', () => show('results'));
 
 async function makePlan() {
@@ -458,6 +495,6 @@ async function makePlan() {
     : 'Gemini Nano is not in this browser, so the practice entries are sorted by Gemini in the cloud. That is acceptable here because the data is made up.';
   $('where-dot').classList.toggle('on', status === 'available');
   drawDriftChoices();
-  $('start').addEventListener('click', runPractice);
+  $('start').addEventListener('click', () => { afterChange = false; before = null; runPractice(); });
   show('start');
 })();

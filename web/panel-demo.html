@@ -52,10 +52,12 @@
       <div class="progress" role="progressbar" aria-labelledby="scan-line" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" id="scan-bar"><span id="scan-fill"></span></div>
       <p class="muted num" id="scan-count"></p>
     </div>
+    <div class="actions"><button class="btn btn-secondary btn-block" type="button" id="skip-sort" hidden>Show results now</button></div>
   </section>
 
   <section class="screen" id="screen-results" hidden>
     <p class="notice" id="drift-line" role="status" hidden></p>
+    <div class="since" id="since" role="status" hidden></div>
     <div id="results"></div>
     <p class="muted" id="sorted-line" hidden></p>
     <section class="phone-shot" id="phone-shot" aria-labelledby="phone-shot-title" hidden>
@@ -64,6 +66,11 @@
       <img src="/practice/phone-sharing.png" width="195" height="235" alt="A made-up phone screen called Location sharing, listing Sam Porter, Riley, and Me">
       <button class="btn btn-secondary btn-block" type="button" id="read-shot">Read Jordan’s screenshot</button>
       <p class="muted" id="shot-status" role="status"></p>
+    </section>
+    <section class="phone-shot" id="after-box" aria-labelledby="after-title" hidden>
+      <h2 id="after-title">After a change</h2>
+      <p>Spare Key reads; it does not change anything. But you can check again after a change, to see that it took, and later to spot anyone who got back in. Try it: on the practice page, Jordan turns off Sam Porter’s location sharing.</p>
+      <button class="btn btn-secondary btn-block" type="button" id="after-go">Make that change on the practice page, and check again</button>
     </section>
     <div class="actions">
       <button class="btn btn-primary btn-block" type="button" id="to-plan">Make my plan</button>

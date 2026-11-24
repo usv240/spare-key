@@ -26,6 +26,7 @@ export const ALERT_NOTE = 'Google sends security alerts to your recovery email a
 // An app that can watch the phone sees what is done on that phone, including changes to accounts (the phone check).
 export const PHONE_WATCH = new Set(['phone.app.control', 'phone.app.accessibility', 'phone.app.device_admin', 'phone.app.notifications', 'phone.app.messages']);
 export const PHONE_NOTE = 'An app on your phone may be able to see what you do on it. Make other changes from a phone or computer the other person has never had.';
+export const PHONE_CALL_NOTE = 'An app on this phone may be able to see your calls and texts. Call or text from another phone if you can.';
 export const LINKED_NOTE = 'Your mail is copied to someone else. Any email Google sends you about this change, like a security alert or a code, would reach them too. Deal with the mail copying first.';
 
 /** How likely a change is to be noticed, from the library. Unknown counts as noticeable. */

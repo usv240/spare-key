@@ -53,7 +53,8 @@ ${ICONS}
     <span>Talk to someone now, free, 24/7:</span>
     <a href="tel:+18007997233">Call 1-800-799-7233</a>
     <a href="sms:88788?&amp;body=START">Text START to 88788</a>
-    <span class="muted">Quick exit: press Esc twice</span>
+    <span class="muted">A call or text stays in this phone’s history.</span>
+    <span class="muted key-hint">Quick exit: press Esc twice</span>
   </div>
 </div>
 <main id="main">

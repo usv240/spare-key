@@ -1,17 +1,17 @@
 {
- "at": "2026-11-24T16:40:10.408Z",
+ "at": "2026-11-24T19:05:36.028Z",
  "method": "Flesch-Kincaid grade of p, li, h1-h6, dd, summary, figcaption, label and button text; code, tables, nav and footer left out; vowel-group syllable count",
  "median": 4.3,
  "rows": [
   {
    "page": "web/dist/accuracy.html",
-   "words": 1281,
-   "grade": 5.8
+   "words": 1522,
+   "grade": 6
   },
   {
    "page": "web/dist/advocates.html",
-   "words": 927,
-   "grade": 4.2
+   "words": 1050,
+   "grade": 4.3
   },
   {
    "page": "web/dist/api.html",
@@ -30,17 +30,17 @@
   },
   {
    "page": "web/dist/index.html",
-   "words": 1419,
+   "words": 1478,
    "grade": 4.3
   },
   {
    "page": "web/dist/install.html",
-   "words": 740,
-   "grade": 4.8
+   "words": 803,
+   "grade": 4.7
   },
   {
    "page": "web/dist/panel-demo.html",
-   "words": 224,
+   "words": 283,
    "grade": 3
   },
   {
@@ -60,8 +60,8 @@
   },
   {
    "page": "web/dist/try.html",
-   "words": 138,
-   "grade": 3.6
+   "words": 143,
+   "grade": 3.9
   },
   {
    "page": "web/dist/what-they-see.html",
@@ -70,8 +70,8 @@
   },
   {
    "page": "web/dist/why.html",
-   "words": 1125,
-   "grade": 5.1
+   "words": 1178,
+   "grade": 5
   },
   {
    "page": "extension/src/panel.html",

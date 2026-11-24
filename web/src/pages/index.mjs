@@ -15,12 +15,13 @@ export default function index({ numbers, apk = null, grade = null }) {
         <a class="btn btn-primary" href="/try.html">Try the practice check</a>
         <a class="btn btn-secondary" href="/install.html">Get Spare Key</a>
       </div>
-      <p class="hero-note">The practice check uses made-up pages and installs nothing. Spare Key is free, with no sign-in. If someone may be watching this computer, check on one you already use that they never touch. ${info('shared-computer', 'About using a shared computer')}</p>
-      <p class="hero-note hero-links"><a href="#phone">Check an Android phone</a><a href="/why.html">New here? The two-minute tour</a><a href="/advocates.html">For advocates</a></p>
+      <p class="hero-note">The practice check uses made-up pages, installs nothing and works on a phone. Checking your own accounts needs Chrome on a computer; the Android app checks the phone. This visit stays in your browser’s history unless you clear it. Spare Key is free, with no sign-in. If someone may be watching this computer, check on one you already use that they never touch. ${info('shared-computer', 'About using a shared computer')}</p>
+      <p class="hero-note hero-links"><a href="#phone">Check an Android phone</a><a href="/why.html">Judging, or curious? The two-minute tour</a><a href="/advocates.html">For advocates</a></p>
     </div>
     <figure class="panel-frame" id="panel-demo" data-ui>
       <iframe src="/panel-demo.html" title="The Spare Key side panel, showing a practice check for a made-up person" loading="eager"></iframe>
-      <figcaption>The real side panel, showing a practice check for a made-up person called Jordan. The buttons work.</figcaption>
+      <a class="panel-still" href="/try.html"><img src="/img/step-understand.png" width="720" height="800" alt="A finding in the side panel: someone can see your location, with Mine, Not mine and Not sure buttons. Opens the practice check."></a>
+      <figcaption><span class="wide-only">The real side panel, showing a practice check for a made-up person called Jordan. The buttons work.</span><span class="narrow-only">A practice check for a made-up person called Jordan. Tap it to try the practice check.</span></figcaption>
     </figure>
   </div>
 </section>
@@ -69,7 +70,7 @@ export default function index({ numbers, apk = null, grade = null }) {
     <div class="phone-text">
       <h2 id="phone-title">The phone itself, on Android</h2>
       <p class="lead">An account check cannot see an app hidden on the phone. The Android app reads the phone’s own settings and lists every app that could let someone watch it. It opens nothing and removes nothing.</p>
-      <div class="phone-more"><p>An app that can watch the phone is the first thing the plan deals with: take a picture of it with another phone, talk to an advocate, and leave it in place until a better time if removing it may be noticed.</p><p><a class="big" href="/install.html#android">${apk ? 'Get the Android app' : 'How to get the Android app'}</a></p></div>
+      <div class="phone-more"><p>An app that can watch the phone is the first thing the plan deals with: take a picture of it with another phone, talk to an advocate, and leave it in place until a better time if removing it may be noticed.</p><p><a class="big" href="/install.html#android">${apk ? 'Get the Android app' : 'Not a download yet: how to build the Android app'}</a></p><p><a href="/install.html#android-video">Watch it run on a practice phone (40 seconds)</a></p></div>
     </div>
     <div class="phones" tabindex="0" role="region" aria-label="Three screens from the Android app, on a made-up practice phone">
       <figure class="shot rise" data-ui><img src="/img/android/results.png" width="540" height="1200" alt="The Android app’s results for a made-up phone: an app called System Update Service can read and control the screen, is a device admin app, and can read notifications, texts and location." loading="lazy"><figcaption>What it found, one app to a card.</figcaption></figure>

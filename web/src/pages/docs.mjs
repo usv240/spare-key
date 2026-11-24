@@ -12,6 +12,7 @@ export function tryPage() {
   <div class="wrap try-head">
     <h1 id="try-title">The practice check</h1>
     <p class="lead">Spare Key’s check, in your browser, on made-up settings pages for a person called Jordan. Nothing of yours is opened, and no extension is needed.</p>
+    <p>Press <strong>Start the practice check</strong> in the panel. Each practice page shows beside the panel (on a phone, below it) as Spare Key reads it. When it is done, say whether each finding is yours, then make the plan.</p>
   </div>
   <div class="wrap try-grid">
     <figure class="shot try-scan">
@@ -24,7 +25,6 @@ export function tryPage() {
     </figure>
   </div>
   <div class="wrap try-notes">
-    <p>Press <strong>Start the practice check</strong> in the panel. The pages appear on the left as Spare Key reads them. When it is done, mark a finding Mine or Not mine, then make the plan.</p>
     <p class="muted">Gemini sorts the practice entries on this device if your browser has Gemini Nano, and in the cloud if it does not. That is acceptable here only because the data is made up: the extension never lets the cloud read your pages. ${info('practice', 'About the practice check')}</p>
   </div>
 </section>`;
@@ -35,6 +35,7 @@ export function installPage({ apk = null } = {}) {
   return doc('install.html', 'Get Spare Key', 'How to install Spare Key in Chrome, and on an Android phone.', `
 <h1>Get Spare Key</h1>
 <p class="lead">The Chrome extension checks your accounts, on a computer. The Android app checks the phone itself. Both are free, and neither asks you to sign in.</p>
+<div class="note"><p><strong>No computer, or does this look like a lot?</strong> Install nothing tonight. The <a href="/try.html">practice check</a> works on any phone and shows what the real check looks like. An advocate can do the real one with you: call 1-800-799-7233 or text START to 88788.</p></div>
 <h2>The Chrome extension</h2>
 <div class="note caution"><p><strong>Before you install:</strong> if someone else uses this computer, they may see that the extension is installed. The best place to check is a computer you already use that the other person never touches. A computer that is new to your account, like a friend’s, sends a new sign-in alert to your recovery email and phone, and shows in your list of devices. If the other person can see those, they will know. An advocate can help you choose. If Chrome sync is on, your history, including this site, can show on every computer signed in to the same Chrome profile. (Installed the way described below, the extension itself is not copied to other computers; an extension added from the Chrome Web Store would be.) Library and work computers usually do not allow installing extensions. You can remove Spare Key when you are done.</p></div>
 <h3>Install it</h3>
@@ -70,6 +71,9 @@ ${apk ? `<ol>
   <li>In the <code>android</code> folder, run <code>./gradlew assembleRelease</code> with your own signing key, or open the folder in Android Studio and run it on a phone.</li>
   <li>Open Spare Key and choose <strong>Check this phone</strong>, or <strong>Try a practice phone first</strong>.</li>
 </ol>`}
+<h3 id="android-video">Watch it run</h3>
+<video class="phone-video" controls muted playsinline preload="none" poster="/img/android/results.png" width="360" height="800" aria-label="The Android app checking a made-up practice phone: results, plan, and what left the phone. No sound."><source src="/img/android/practice.mp4" type="video/mp4"></video>
+<p class="muted">The app on a made-up practice phone, 40 seconds, no sound: what it found, the plan, and Under the hood.</p>
 <h3>What it asks for</h3>
 <p>One thing: to see the list of apps on the phone. It asks for no location, no contacts, no files, no camera and no microphone. It uses the internet for plan help, which you can turn off on the first screen, and to fetch its own settings from Firebase and show that it is the real app. None of that says anything about your phone. It keeps one setting, whether plan help is on. The check itself lives in memory and is forgotten when you close the app or press Quick exit.</p>
 <h3>Gemini Nano on the phone</h3>
@@ -444,6 +448,9 @@ export function advocatesPage({ numbers }) {
   <li>A list of what it did not check, every time.</li>
   <li>A printed plan to take away, with addresses hidden unless the person chooses to show them.</li>
 </ul>
+<h2>Before the session</h2>
+<p>The extension is not in the Chrome Web Store yet, so it is installed by hand: a download, then Chrome’s Developer mode. It takes about three minutes and is on the <a href="/install.html">install page</a>. Work and library computers often do not allow it, so try it on the computer you plan to use first.</p>
+<p><strong>If the person only has a phone:</strong> the account check needs Chrome on a computer. On Android, the app checks the phone itself, but it is not a download yet. On an iPhone, Apple’s Safety Check does a similar job. The practice check and “What they see when you change it” work on any phone today.</p>
 <h2>Using it in a session</h2>
 <ol>
   <li><strong>Choose the computer together.</strong> The check needs the person signed in to their account. The best place is a computer they already use that the other person never touches. A computer that is new to the account, like yours or the office’s, sends a new sign-in alert to the account’s recovery email and phone, and shows in its list of devices. If the other person holds those, they will see it. Weigh that before anyone signs in.</li>
@@ -462,7 +469,7 @@ export function advocatesPage({ numbers }) {
   <li>“What they see” comes from the companies’ help pages. None of it has been tested between two accounts yet. Where no page says, Spare Key treats the change as one they may notice.</li>
 </ul>
 <h2>What leaves the device</h2>
-<p>Names, addresses, phone numbers, devices and page text never leave it. Plan help is optional: it sends the kinds of thing found, like “mail is forwarded”, and the answers the person chose to share. It uses the free tier of Google’s Gemini API, where Google may use what it receives to improve its products. With plan help off, nothing is sent and the plan is made by Spare Key’s rules on the device. More on the <a href="/privacy.html">Privacy</a> page.</p>
+<p>Names, addresses, phone numbers, devices and page text never leave it. Plan help is on by default and can be turned off on the first screen: it sends the kinds of thing found, like “mail is forwarded”, and the answers the person chose to share. It uses the free tier of Google’s Gemini API, where Google may use what it receives to improve its products. With plan help off, nothing is sent and the plan is made by Spare Key’s rules on the device. More on the <a href="/privacy.html">Privacy</a> page.</p>
 <h2>For hotline and case software</h2>
 <p>The steps library and the plan rules are open and free, and take no personal data in. See the <a href="/api.html">Steps API and MCP server</a>.</p>
 <h2 id="review">Tell us what is wrong</h2>

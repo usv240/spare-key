@@ -21,7 +21,7 @@ function nanoAdds(drift) {
   const changed = mode => (drift?.rows || []).filter(r => r.mode === mode && r.kind !== 'none');
   const code = changed('code'), nano = changed('nano');
   if (!code.length || !nano.length) return '';
-  return `<li><span class="n">${sum(code, 'found')} to ${sum(nano, 'found')}</span><p>of ${sum(code, 'of')} planted ways in found when the practice pages were changed five ways, the way a site redesign changes them: by code alone, then with Gemini Nano reading the changed page on the computer. This is the part code cannot do. ${esc(drift.nanoDate || drift.date)}.</p></li>`;
+  return `<li><span class="n">${sum(nano, 'found')} of ${sum(nano, 'of')}</span><p>planted ways in found with Gemini Nano reading the changed page on the computer, when the practice pages were changed five ways, the way a site redesign changes them. Code alone found ${sum(code, 'found')}. This is the part code cannot do. ${esc(drift.nanoDate || drift.date)}.</p></li>`;
 }
 
 function androidProof(a) {

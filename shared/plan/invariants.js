@@ -2,7 +2,7 @@
 // for linked findings, added November 22, 2026, and R10 for a watched phone, added November 24, 2026).
 // Code enforces them whatever a model wrote, and records each time one had to change the plan, so the panel can show
 // "Spare Key added this warning" and the evaluation can count how often the cloud needed fixing.
-import { ACTIONS, noticeOf, MAIL_OUT, EMAILS_ABOUT, LINKED_NOTE, ALERTS_TO, ALERTED, ALERT_NOTE, PHONE_WATCH, PHONE_NOTE } from './engine.js';
+import { ACTIONS, noticeOf, MAIL_OUT, EMAILS_ABOUT, LINKED_NOTE, ALERTS_TO, ALERTED, ALERT_NOTE, PHONE_WATCH, PHONE_NOTE, PHONE_CALL_NOTE } from './engine.js';
 import { SITUATION_DEFAULTS } from '../findings.js';
 
 // R6: words a plan must never use.
@@ -181,6 +181,9 @@ export function applyInvariants(plan, { findings = [], situation = {}, notChecke
     let added = 0;
     for (const a of actions) if (isStep(a) && !PHONE_WATCH.has(a.code) && !a.linked) { a.linked = PHONE_NOTE; added++; }
     if (added) fired.push({ rule: 'R10', detail: `watched-phone note added to ${added} ${added === 1 ? 'step' : 'steps'}` });
+    // The advocate step gives a number to call. On a phone that may be watched, it says to call from another one.
+    const adv = actions.find(a => a.action === 'talk_to_advocate');
+    if (adv && !adv.linked) adv.linked = PHONE_CALL_NOTE;
     const firstOther = actions.findIndex(a => isStep(a) && !PHONE_WATCH.has(a.code));
     const late = firstOther < 0 ? [] : watchSteps.filter(a => actions.indexOf(a) > firstOther);
     if (late.length) {

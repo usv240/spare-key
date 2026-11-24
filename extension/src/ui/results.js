@@ -93,7 +93,7 @@ export function renderResults(root, { scan, catalogue, library = {}, reveal = ne
     scan.mode === 'practice' ? h('p', { class: 'notice', text: 'Practice check. These are made-up pages for a person called Jordan.' }) : null,
     h('div', { class: 'with-info' }, h('p', { class: 'lead', text: summary }), infoButton('results-summary', 'About these results')),
     // Which account the pages belonged to, masked, so a check of the wrong account is easy to spot.
-    scan.account?.email ? h('p', { class: 'muted account-line', text: `Account checked: ${scan.mode === 'practice' ? scan.account.email : maskEmail(scan.account.email)}. If that is not yours, choose another account and check again.` }) : null,
+    scan.account?.email ? h('p', { class: 'muted account-line', text: scan.mode === 'practice' ? `The made-up account: ${scan.account.email}.` : `Account checked: ${maskEmail(scan.account.email)}. If that is not yours, choose another account and check again.` }) : null,
     ...groups.map(({ g, items }) => h('section', { class: 'group', 'aria-labelledby': `g-${g}` },
       h('h2', { id: `g-${g}` }, `${GROUP_LABELS[g]} `, h('span', { class: 'count', text: `(${items.length})` })),
       h('ul', { class: 'findings' }, items.map(f => findingCard(f, { reveal: reveal.has(f.ref), library, onAnswer, onOpen, onToggleReveal }))),
@@ -138,7 +138,9 @@ function findingCard(f, { reveal, library, onAnswer, onOpen, onToggleReveal }) {
     f.confidence === 'check_it' ? h('p', { class: 'finding-note', text: 'Found by reading the page. Check it in the setting.' }) : null,
     f.disagree ? h('p', { class: 'finding-note', text: 'Spare Key is not sure whose this is. Your answer below decides.' }) : null,
     h('p', { class: 'caution-line' }, cautionIcon(), h('span', { text: noticeLine(entry) })),
-    h('div', { class: 'answer', role: 'group', 'aria-label': `Is this yours: ${title}` },
+    // The question is on the screen, not only said to a screen reader: "Mine" alone can be read as "my location".
+    h('p', { class: 'answer-q', 'aria-hidden': 'true', text: 'Is this yours, or did you set it up?' }),
+    h('div', { class: 'answer', role: 'group', 'aria-label': `Is this yours, or did you set it up: ${title}` },
       answers.map(([value, word]) => h('button', {
         type: 'button', 'aria-pressed': String(f.ownership === value), 'data-answer': value,
         onclick: () => onAnswer(f.ref, f.ownership === value ? null : value),

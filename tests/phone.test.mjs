@@ -150,3 +150,17 @@ test('a caution from Gemini Nano counts only when something code can check backs
   assert.equal(r.nanoSetAside, 2);
   assert.equal(r.findings.length, apps.length, 'setting a caution aside never hides the app');
 });
+
+test('R10: on a watched phone the advocate step says to call from another phone', async () => {
+  const { applyInvariants } = await import('../shared/plan/invariants.js');
+  const { PHONE_CALL_NOTE } = await import('../shared/plan/engine.js');
+  const watched = [{ ref: 'P1', code: 'phone.app.control', ownership: 'not_mine' }];
+  const ctx = { findings: watched, situation: { safe_to_change_now: 'no' }, notChecked: [], library: {} };
+  const { plan } = applyInvariants(buildPlan(ctx), ctx);
+  assert.equal(plan.actions.find(a => a.action === 'talk_to_advocate').linked, PHONE_CALL_NOTE);
+  // A model's plan gets the same note, and a phone with nothing watching it does not.
+  const model = applyInvariants({ actions: [{ action: 'wait', refs: ['P1'], why: '' }] }, ctx).plan;
+  assert.equal(model.actions.find(a => a.action === 'talk_to_advocate').linked, PHONE_CALL_NOTE);
+  const quiet = { ...ctx, findings: [{ ref: 'P1', code: 'phone.app.location_always', ownership: 'not_mine' }] };
+  assert.equal(applyInvariants(buildPlan(quiet), quiet).plan.actions.find(a => a.action === 'talk_to_advocate').linked, undefined);
+});
