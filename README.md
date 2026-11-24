@@ -10,8 +10,9 @@ changes nothing on its own, and nothing that names a person ever leaves your com
 (`android/`). It reads the phone's own settings and lists every app that could let someone watch it: apps that can read
 the screen, device admin apps, apps that read notifications, texts or the call log, and apps that see your location all
 the time. It runs the extension's own rules, the same JavaScript, in Android's sandbox. Gemini Nano sorts the apps on
-the phone; the cloud orders the plan from finding types and never sees an app's name. (Gemini Nano on Android has run on one real phone, the builder's own: 13 of 13 listed apps read on the phone in 7.5 s. The
-test emulator has none, so the end-to-end test covers everything else. See `docs/evidence/android-real.json`.)
+the phone; the cloud orders the plan from finding types and never sees an app's name. (The whole path has run on one real phone, the builder's own: Gemini Nano read 13 of 13 listed apps on the phone in 9.8 s,
+then Gemini in the cloud ordered the plan from finding types in 3.3 s and asked the phone one yes or no question. The test
+emulator has no Gemini Nano, so the automated end-to-end test covers everything else. See `docs/evidence/android-real.json`.)
 
 Site: <https://spare-key-app.web.app> · Practice check in any browser: <https://spare-key-app.web.app/try.html>
 
@@ -70,7 +71,7 @@ go to whichever tier the person chooses and the measurements favour; public text
 | Step | Where | Firebase AI Logic mode | Why |
 |---|---|---|---|
 | Read which apps hold special access | Code, on the phone | none | Android answers this exactly; a model would only add doubt |
-| Add a caution about what kind of app each one seems to be | Gemini Nano on the phone (AICore) | `InferenceMode.ONLY_ON_DEVICE` | The list of apps on a phone is private. It can raise concern, never lower it: a reassuring note is not shown, and it can never hide a finding. Run on one real phone (a Pixel on Android 17): it read all 13 listed apps on the phone in 7.5 seconds. A caution from it counts only when the app's name, its source or its powers back it up, a rule added after that first run raised a caution on 10 of 13 ordinary apps. |
+| Add a caution about what kind of app each one seems to be | Gemini Nano on the phone (AICore) | `InferenceMode.ONLY_ON_DEVICE` | The list of apps on a phone is private. It can raise concern, never lower it: a reassuring note is not shown, and it can never hide a finding. Run on one real phone (a Pixel on Android 17): it read all 13 listed apps on the phone in 9.8 seconds. A caution from it counts only when the app's name, its source or its powers back it up: its first run raised a caution on 10 of 13 ordinary apps, and with the rule 2 were kept and 6 set aside. |
 | Put a step's public instructions in simpler words | Gemini Nano on the phone if it has it, Gemini in the cloud if not | `InferenceMode.PREFER_ON_DEVICE` | The steps library is public text, the same for everyone, so the fallback is allowed here and only here |
 | Order and explain the plan | Gemini in the cloud if plan help is on; Gemini Nano if not | `InferenceMode.ONLY_IN_CLOUD` with function calling, or on device | Finding codes only. `ask_device` asks the phone "did this app come from outside the store?" and the phone answers yes, no or unknown |
 | Decide what is shown | Code, in Jetpack's JavaScript sandbox | none | The extension's own modules (`shared/`): finding codes, `toCloud()`, `checkOutgoing()`, the plan and the safety rules. One engine, so the two cannot drift apart |

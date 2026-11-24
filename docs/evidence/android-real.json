@@ -122,6 +122,70 @@
    "nanoLogLines": [],
    "quickExitLeft": true,
    "label": "With Gemini Nano on the phone, before its cautions had to be backed up"
+  },
+  {
+   "at": "2026-11-24T20:05:17.985Z",
+   "device": {
+    "model": "Pixel",
+    "android": "17",
+    "sdk": 37
+   },
+   "dark": true,
+   "fontScale": 1.15,
+   "appsInstalled": 704,
+   "appsAdded": 329,
+   "firstScreenSeconds": 3.5,
+   "nanoLine": "",
+   "hotlineOnFirstScreen": true,
+   "listedAfterSeconds": 2.2,
+   "nanoWorking": true,
+   "checkSeconds": 11.9,
+   "appsWithAccess": 72,
+   "listed": 13,
+   "sortedBy": "Gemini Nano sorted 13 apps on this phone",
+   "groups": [
+    "Can watch this phone (4)",
+    "Can see your location (3)",
+    "Apps with one kind of access (6)"
+   ],
+   "builtInLine": "59 apps that came with this phone also have some of these powers, for their own job.",
+   "nanoNotes": 2,
+   "outsidePlayStore": 0,
+   "usbDebuggingFound": false,
+   "reassuranceWords": 0,
+   "planShownSeconds": 2.2,
+   "planSeconds": 4.6,
+   "planNote": "Ordered by gemini-3.5-flash-lite from finding types only. Code checked it against the safety rules and made 1 fix.",
+   "planSteps": 7,
+   "planStepKinds": [
+    "Make a record of these first",
+    "Talk to an advocate",
+    "Leave for a better time",
+    "Check it yourself"
+   ],
+   "screenshotCaution": true,
+   "where": {
+    "reading": "Spare Key's rules, on this phone. The same code as the Chrome extension, run in Android's JavaScript sandbox.",
+    "sorting": "Gemini Nano, on this phone (Firebase AI Logic, on-device only). The list of apps never leaves.",
+    "simpler": "Gemini Nano on this phone; the cloud only if it cannot (Firebase AI Logic, prefer on device). Public steps only.",
+    "plan": "Gemini in the cloud (Firebase AI Logic, cloud only), from finding types only. Code checks every plan against the safety rules.",
+    "appCheck": "reCAPTCHA Enterprise, through the site"
+   },
+   "leftThisPhone": 3,
+   "did": [
+    "Rules started in the sandbox in 0.2 s. Steps library version 5.",
+    "Gemini Nano on this phone: available.",
+    "Gemini Nano sorted 13 of 13 apps on this phone in 9.8 s.",
+    "Gemini Nano's reading: monitoring 6, everyday 5, family_locator 2. Cautions kept: 2. Set aside, with nothing to back them up: 6.",
+    "Check finished in 10.4 s: 72 apps with special access read, 13 listed, 59 that came with the phone not listed, 1 thing not readable.",
+    "Plan made by code on this phone: 7 steps.",
+    "Plan ordered by gemini-3.5-flash-lite in the cloud in 3.3 s, with 3 functions offered and 1 answered from this phone. Code fixed 1 things."
+   ],
+   "modelErrors": [],
+   "kotlinChecks": 3,
+   "nanoLogLines": [],
+   "quickExitLeft": true,
+   "label": "With Gemini Nano, after its cautions had to be backed up"
   }
  ]
 }

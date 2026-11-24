@@ -349,3 +349,38 @@ Limits: an emulator, not a person's phone; a test app, not real stalkerware; a r
 Nano was not on the emulator, so on-device sorting was not part of the run. A capture shows where traffic went and how
 much, not the words inside, which are encrypted; the words are shown by the app's own list and checked a second time
 in Kotlin before each request.
+
+## 9. The Android app on a real phone (`tools/android-real.mjs`, `docs/evidence/android-real.json`, November 24)
+
+The builder's own phone, a Pixel on Android 17 with 703 apps (328 added by its owner), in dark mode with larger text,
+over USB and then Wi-Fi debugging. The tool plants nothing and changes no setting; what it reads from the screen stays
+in the `private/` folder, and the evidence file holds counts, timings and Spare Key's own sentences only.
+
+| Run | Apps with special access | Listed (can watch the phone, location, one kind of access) | Came with the phone, counted | Check | Gemini Nano on the phone | Plan |
+|---|---|---|---|---|---|---|
+| Rules only (Gemini Nano not yet downloaded) | 72 | 13 (3, 3, 7) | 59 | 1.0 s | none | by rules, on screen in 2.3 s; the cloud did not answer |
+| With Gemini Nano | 72 | 13 (9, 3, 1) | 59 | 8.3 s | 13 of 13 apps in 7.5 s; 10 cautions | by rules, on screen in 2.3 s; the cloud did not answer |
+| With Gemini Nano, after the caution rule | 72 | 13 (4, 3, 6) | 59 | 10.4 s | 13 of 13 apps in 9.8 s; 2 cautions kept, 6 set aside | by rules on screen in 2.2 s, then ordered by Gemini in the cloud in 3.3 s (one question asked of the phone) |
+
+What it showed:
+
+- **The app never offered Gemini Nano.** The phone reported it as downloadable and the app had no way to get it. The
+  first screen now has "Download Gemini Nano", with progress.
+- **Gemini Nano over-warned.** It raised a caution on 10 of 13 ordinary apps, mostly from their powers alone, which
+  moved six Play Store apps with one kind of access under "Can watch this phone". Asking the model to say what its
+  answer rested on did not help: on the made-up practice phone it picked the right two apps and gave "powers" as the
+  reason. So the check is in code: a caution counts only when the app came from outside the Play Store, or holds two or
+  more strong powers, or its name or package says what it is (`shared/phone.js`, `backedUp`). After the rule, on the
+  real phone: Gemini Nano read monitoring 6, everyday 5, family locator 2; 2 cautions were kept and 6 set aside,
+  and four apps were under "Can watch this phone" where nine had been. On the practice phone on the same device it
+  called "System Update Service" monitoring and "Family Finder" a family locator, and raised nothing on the other three.
+- **The whole hybrid path ran on the third run.** Gemini Nano on the phone, then Gemini in the cloud ordering the plan
+  from finding types in 3.3 s: three requests left the phone, each passed the second check in Kotlin, and one
+  was the phone's one-word answer to a question the cloud asked. Code then made one fix under the safety rules.
+- **The cloud did not answer on the first two runs** (a server error after about 45 s). The plan made by code was on
+  the screen in about 2.3 s every time. The cause is not known; the free-tier model is busy at times.
+- **USB debugging was not flagged**, though it was on: Android 17 did not let the app read that setting, so it is
+  listed under "Not checked".
+
+Not shown by this: whether a hidden phone-watching app is found (nothing was planted on this phone; the planted test
+is section 8, on an emulator). One phone, one owner: how Gemini Nano reads other people's apps is not known from this.

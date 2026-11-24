@@ -49,7 +49,7 @@ function realPhone(real) {
   const r = runs[0];
   const n = [...runs].reverse().find(x => /Gemini Nano sorted/.test(x.sortedBy || ''));
   const took = n && (n.did || []).map(t => /Gemini Nano sorted (\d+) of \d+ apps on this phone in ([\d.]+) s/.exec(t)).find(Boolean);
-  return `<li><span class="n">${r.appsWithAccess} to ${r.listed}</span><p>On a real phone with ${r.appsInstalled} apps, ${r.appsWithAccess} held some special access. Spare Key listed ${r.listed} for the person to look at and counted the ${r.appsWithAccess - r.listed} that came with the phone, in about a second, by its rules.${took ? ` Gemini Nano then read all ${took[1]} on the phone itself in ${took[2]} seconds.` : ''} Nothing was planted on it. <a href="/accuracy.html#android-real">What that run showed</a></p></li>`;
+  return `<li><span class="n">${r.appsWithAccess} to ${r.listed}</span><p>On a real phone with ${r.appsInstalled} apps, ${r.appsWithAccess} held some special access. Spare Key listed ${r.listed} for the person to look at and counted the ${r.appsWithAccess - r.listed} that came with the phone, in about a second, by its rules.${took ? ` Gemini Nano then read all ${took[1]} on the phone itself in ${took[2]} seconds${/^Ordered by/.test(n.planNote || '') ? `, and Gemini in the cloud ordered the plan from finding types ${n.planSeconds} seconds after the button was pressed` : ''}.` : ''} Nothing was planted on it. <a href="/accuracy.html#android-real">What that run showed</a></p></li>`;
 }
 
 export default function why({ numbers, drift = null, android = null, grade = null, real = null }) {

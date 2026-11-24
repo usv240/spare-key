@@ -75,9 +75,10 @@ async function readAll(until) {
 }
 async function scrollTop() { for (let i = 0; i < 14; i++) shell(`input swipe ${X} ${Math.round(H * 0.3)} ${X} ${Math.round(H * 0.85)} 150`); await pause(500); }
 
-const report = { at: new Date().toISOString(), device: { model: shell('getprop ro.product.model').trim(), android: shell('getprop ro.build.version.release').trim(), sdk: +shell('getprop ro.build.version.sdk').trim() } };
+// The family of phone only ("Pixel"), not the exact model: this is a person's own phone.
+const report = { at: new Date().toISOString(), device: { model: shell('getprop ro.product.model').trim().split(/\s+/)[0], android: shell('getprop ro.build.version.release').trim(), sdk: +shell('getprop ro.build.version.sdk').trim() } };
 const raw = { at: report.at };
-console.log(`Device: ${report.device.model}, Android ${report.device.android} (API ${report.device.sdk}), ${W}x${H}`);
+console.log(`Device: ${report.device.model} (model not recorded), Android ${report.device.android} (API ${report.device.sdk}), ${W}x${H}`);
 report.dark = /yes/.test(shell('cmd uimode night'));
 report.fontScale = +shell('settings get system font_scale').trim() || 1;
 report.appsInstalled = shell('pm list packages --user 0').split('\n').filter(l => l.startsWith('package:')).length;
