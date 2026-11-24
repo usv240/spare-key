@@ -42,7 +42,17 @@ function voicesBlock(v) {
     </div>`;
 }
 
-export default function why({ numbers, drift = null, android = null, grade = null }) {
+// The real check on a real phone, as counts (tools/android-real.mjs).
+function realPhone(real) {
+  const runs = real?.runs || [];
+  if (!runs.length) return '';
+  const r = runs[0];
+  const n = [...runs].reverse().find(x => /Gemini Nano sorted/.test(x.sortedBy || ''));
+  const took = n && (n.did || []).map(t => /Gemini Nano sorted (\d+) of \d+ apps on this phone in ([\d.]+) s/.exec(t)).find(Boolean);
+  return `<li><span class="n">${r.appsWithAccess} to ${r.listed}</span><p>On a real phone with ${r.appsInstalled} apps, ${r.appsWithAccess} held some special access. Spare Key listed ${r.listed} for the person to look at and counted the ${r.appsWithAccess - r.listed} that came with the phone, in about a second, by its rules.${took ? ` Gemini Nano then read all ${took[1]} on the phone itself in ${took[2]} seconds.` : ''} Nothing was planted on it. <a href="/accuracy.html#android-real">What that run showed</a></p></li>`;
+}
+
+export default function why({ numbers, drift = null, android = null, grade = null, real = null }) {
   const n = numbers;
   const plan = n.planSafety;
   const body = `
@@ -101,6 +111,7 @@ export default function why({ numbers, drift = null, android = null, grade = nul
       ${n.privacy ? `<li><span class="n">${n.privacy.withPrivate} of ${n.privacy.requests}</span><p>requests from the extension held a name, email address, phone number or device, in a full practice check with every cloud step on. ${esc(n.privacy.date)}.</p></li>` : ''}
       ${grade ? `<li><span class="n">${grade.totals.document_first.yes} of ${grade.of}</span><p>answers from a plain chatbot told the person to record their settings before changing anything, on ${grade.of} made-up situations. None made it the first thing to do, ${grade.totals.first_instruction.change} began with a change, and ${grade.totals.unsafe} said something risky, such as “now is the absolute best time to make changes” to a person who was not sure. It warned clearly that a change may be noticed in ${grade.totals.alert_warning.yes}. Every plan Spare Key shows starts with the record and carries the warning. Each answer was read in full against a written rubric by an AI reviewer; no person has checked the grades (<a href="https://github.com/usv240/spare-key/blob/main/docs/evidence/chatbot-hand-grade.json">the grades, with a quote for each</a>). ${esc(plan?.date || '')}.</p></li>` : ''}
       ${androidProof(android)}
+      ${realPhone(real)}
     </ul>
   </div>
 </section>

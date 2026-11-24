@@ -91,10 +91,15 @@ fun SafetyScreen(m: AppModel) {
     Section {
         Muted(when (m.nano) {
             "available" -> "Gemini Nano is ready on this phone. It sorts the apps here; the list never leaves the phone."
-            "downloading" -> "Gemini Nano is getting ready on this phone. You can check now with Spare Key's rules alone."
-            "downloadable" -> "Gemini Nano can be downloaded on this phone. Until then, Spare Key's rules check the phone alone."
+            "downloading" -> (if (m.nanoMb.second > 0) "Downloading Gemini Nano: ${m.nanoMb.first} of ${m.nanoMb.second} MB. " else "Gemini Nano is getting ready on this phone. ") + "You can check now with Spare Key's rules alone."
+            "downloadable" -> "This phone can run Gemini Nano, a small AI model that works on the phone itself. With it, Spare Key adds a note about what kind of app each one seems to be, and the list of your apps still never leaves the phone."
             else -> "This phone can't run Gemini Nano. Spare Key's rules check the phone alone, and the results say so."
-        })
+        }, Modifier.said())
+        if (m.nano == "downloadable") {
+            Secondary("Download Gemini Nano", { m.getNano() })
+            Muted("Android downloads it once. It can be large, so Wi-Fi is better. The check works without it.")
+        }
+        if (m.nanoError.isNotEmpty()) Muted(m.nanoError, Modifier.said())
         // The whole row is the switch: one large target, one thing for TalkBack to read.
         Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).toggleable(m.cloudOn, role = Role.Switch) { m.setCloud(it) },
             verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -369,8 +374,8 @@ fun HoodScreen(m: AppModel, appCheck: String) {
     Heading("Where each step runs")
     Section {
         Where("Reading this phone", "Spare Key's rules, on this phone. The same code as the Chrome extension, run in Android's JavaScript sandbox.")
-        Where("Sorting the apps", if (m.nano == "available") "Gemini Nano, on this phone (Firebase AI Logic, on-device only). The list of apps never leaves." else "Spare Key's rules, on this phone. This phone can't run Gemini Nano.")
-        Where("Simpler words for a step", if (m.nano == "available") "Gemini Nano on this phone; the cloud only if it cannot (Firebase AI Logic, prefer on device). Public steps only." else if (m.cloudOn) "Gemini in the cloud, as the fallback: this phone has no Gemini Nano (Firebase AI Logic, prefer on device). Public steps only." else "Off: this phone has no Gemini Nano and plan help is off.")
+        Where("Sorting the apps", when (m.nano) { "available" -> "Gemini Nano, on this phone (Firebase AI Logic, on-device only). The list of apps never leaves."; "downloadable" -> "Spare Key's rules, on this phone. Gemini Nano can be downloaded from the first screen."; "downloading" -> "Spare Key's rules, on this phone, while Gemini Nano downloads."; else -> "Spare Key's rules, on this phone. This phone can't run Gemini Nano." })
+        Where("Simpler words for a step", if (m.nano == "available") "Gemini Nano on this phone; the cloud only if it cannot (Firebase AI Logic, prefer on device). Public steps only." else if (m.cloudOn) "Gemini in the cloud, as the fallback: Gemini Nano is not on this phone" + (if (m.nano == "unavailable") "" else " yet") + " (Firebase AI Logic, prefer on device). Public steps only." else "Off: this phone has no Gemini Nano and plan help is off.")
         Where("Ordering your plan", if (m.practice) "Spare Key's rules, on this phone. A practice check sends nothing." else if (m.cloudOn) "Gemini in the cloud (Firebase AI Logic, cloud only), from finding types only. Code checks every plan against the safety rules." else if (m.nano == "available") "Gemini Nano, on this phone." else "Spare Key's rules, on this phone.")
         Where("Settings and switches", "Firebase Remote Config (${m.rcFrom.ifEmpty { "not yet fetched" }}).")
         Where("App Check", appCheck)

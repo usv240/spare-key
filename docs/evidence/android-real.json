@@ -1,0 +1,127 @@
+{
+ "note": "Runs of the real check on the builder's own phone over USB (tools/android-real.mjs). Counts, timings and Spare Key's own sentences only: no app name is in this file.",
+ "runs": [
+  {
+   "at": "2026-11-24T18:07:47.181Z",
+   "device": {
+    "model": "Pixel",
+    "android": "17",
+    "sdk": 37
+   },
+   "dark": true,
+   "fontScale": 1.15,
+   "appsInstalled": 703,
+   "appsAdded": 328,
+   "firstScreenSeconds": 3.7,
+   "nanoLine": "",
+   "hotlineOnFirstScreen": true,
+   "listedAfterSeconds": 2.5,
+   "checkSeconds": 2.5,
+   "appsWithAccess": 72,
+   "listed": 13,
+   "sortedBy": "Sorted by Spare Key's rules on this phone",
+   "groups": [
+    "Can watch this phone (3)",
+    "Can see your location (3)",
+    "Apps with one kind of access (7)"
+   ],
+   "builtInLine": "59 apps that came with this phone also have some of these powers, for their own job.",
+   "nanoNotes": 0,
+   "outsidePlayStore": 0,
+   "usbDebuggingFound": false,
+   "reassuranceWords": 0,
+   "planShownSeconds": 2.3,
+   "planSeconds": 42,
+   "planNote": "The cloud did not answer. This is the plan made by Spare Key's rules on this phone.",
+   "planSteps": 7,
+   "planStepKinds": [
+    "Make a record of these first",
+    "Talk to an advocate",
+    "Leave for a better time",
+    "Check it yourself"
+   ],
+   "screenshotCaution": true,
+   "where": {
+    "reading": "Spare Key's rules, on this phone. The same code as the Chrome extension, run in Android's JavaScript sandbox.",
+    "sorting": "Spare Key's rules, on this phone. This phone can't run Gemini Nano.",
+    "simpler": "Gemini in the cloud, as the fallback: this phone has no Gemini Nano (Firebase AI Logic, prefer on device). Public steps only.",
+    "plan": "Gemini in the cloud (Firebase AI Logic, cloud only), from finding types only. Code checks every plan against the safety rules.",
+    "appCheck": "reCAPTCHA Enterprise, through the site"
+   },
+   "leftThisPhone": 5,
+   "did": [
+    "Rules started in the sandbox in 0.3 s. Steps library version 5.",
+    "Gemini Nano on this phone: downloadable.",
+    "Check finished in 1.0 s: 72 apps with special access read, 13 listed, 59 that came with the phone not listed, 1 thing not readable.",
+    "Plan made by code on this phone: 7 steps.",
+    "The model did not answer (ServerException). The plan made by code is shown."
+   ],
+   "kotlinChecks": 0,
+   "nanoLogLines": [],
+   "quickExitLeft": true,
+   "label": "Rules only: Gemini Nano was not yet downloaded"
+  },
+  {
+   "at": "2026-11-24T18:23:17.249Z",
+   "device": {
+    "model": "Pixel",
+    "android": "17",
+    "sdk": 37
+   },
+   "dark": true,
+   "fontScale": 1.15,
+   "appsInstalled": 704,
+   "appsAdded": 329,
+   "firstScreenSeconds": 4.1,
+   "nanoLine": "",
+   "hotlineOnFirstScreen": true,
+   "listedAfterSeconds": 2.3,
+   "nanoWorking": true,
+   "checkSeconds": 12,
+   "appsWithAccess": 72,
+   "listed": 13,
+   "sortedBy": "Gemini Nano sorted 13 apps on this phone",
+   "groups": [
+    "Can watch this phone (9)",
+    "Can see your location (3)",
+    "Apps with one kind of access (1)"
+   ],
+   "builtInLine": "59 apps that came with this phone also have some of these powers, for their own job.",
+   "nanoNotes": 10,
+   "outsidePlayStore": 0,
+   "usbDebuggingFound": false,
+   "reassuranceWords": 0,
+   "planShownSeconds": 2.3,
+   "planSeconds": 47.4,
+   "planNote": "The cloud did not answer. This is the plan made by Spare Key's rules on this phone.",
+   "planSteps": 7,
+   "planStepKinds": [
+    "Make a record of these first",
+    "Talk to an advocate",
+    "Leave for a better time",
+    "Check it yourself"
+   ],
+   "screenshotCaution": true,
+   "where": {
+    "reading": "Spare Key's rules, on this phone. The same code as the Chrome extension, run in Android's JavaScript sandbox.",
+    "sorting": "Gemini Nano, on this phone (Firebase AI Logic, on-device only). The list of apps never leaves.",
+    "simpler": "Gemini Nano on this phone; the cloud only if it cannot (Firebase AI Logic, prefer on device). Public steps only.",
+    "plan": "Gemini in the cloud (Firebase AI Logic, cloud only), from finding types only. Code checks every plan against the safety rules.",
+    "appCheck": "reCAPTCHA Enterprise, through the site"
+   },
+   "leftThisPhone": 5,
+   "did": [
+    "Rules started in the sandbox in 0.4 s. Steps library version 5.",
+    "Gemini Nano on this phone: available.",
+    "Gemini Nano sorted 13 of 13 apps on this phone in 7.5 s.",
+    "Check finished in 8.3 s: 72 apps with special access read, 13 listed, 59 that came with the phone not listed, 1 thing not readable.",
+    "Plan made by code on this phone: 7 steps.",
+    "The model did not answer (ServerException). The plan made by code is shown."
+   ],
+   "kotlinChecks": 0,
+   "nanoLogLines": [],
+   "quickExitLeft": true,
+   "label": "With Gemini Nano on the phone, before its cautions had to be backed up"
+  }
+ ]
+}

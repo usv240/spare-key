@@ -95,6 +95,9 @@ free Steps API), and an MCP server so an advocate's AI assistant gives the curre
   access a phone-watching app asks for. The plan made by code is on the screen in 2.8 seconds, and Gemini
   reordered it 9.3 seconds after the button was pressed. When the free-tier model does not answer, the app keeps the
   plan made by code and says so. The emulator's own packet capture of the run shows no reporting host reached.
+- A real phone: on the builder's own Pixel with 703 apps, 72 held some special access; Spare Key listed 13 and counted
+  the 59 that came with the phone, in about a second. Gemini Nano's first run there raised a caution on 10 of the 13, so
+  a caution now has to be backed up by something code can check.
 - Accessibility: axe-core finds 0 violations in 74 runs across the site and the panel; median reading grade
   4.3
 - A real account, read-only: real Google and Amazon pages differed from what we expected in 5 of 12 checks. After the
@@ -109,7 +112,7 @@ product more useful and more honest about what each part does.
 ## Limits, stated plainly
 
 No survivor or advocate has tested it yet. Planted access has been found on made-up pages and a test phone, not yet on
-a real account. Gemini Nano's sorting on Android has not run on a phone: the test emulator has none. The cloud model is
+a real account. Gemini Nano on Android has run on one real phone (13 of 13 listed apps read in 7.5 seconds), not in the automated test: the emulator has none. The cloud model is
 on the free tier: in 40 test situations it failed to order the plan in 5 and failed the two-voice check in 5 more. The
 plan made by code is shown at once either way.
 

@@ -2,6 +2,7 @@ package app.web.sparekey.ai
 
 import android.graphics.Bitmap
 import com.google.firebase.Firebase
+import com.google.firebase.ai.DownloadStatus
 import com.google.firebase.ai.GenerativeModel
 import com.google.firebase.ai.InferenceMode
 import com.google.firebase.ai.InferenceSource
@@ -254,7 +255,28 @@ object Ai {
         "unavailable"
     }
 
-    fun download() = probe.onDeviceExtension?.download()
+    /**
+     * Asks Android to download Gemini Nano. Calls `progress(bytes so far, bytes in all)` as it goes; returns null when
+     * it is done, or a short reason when it failed.
+     */
+    suspend fun download(progress: (Long, Long) -> Unit): String? {
+        val flow = probe.onDeviceExtension?.download() ?: return "not offered on this phone"
+        var total = 0L
+        var failed: String? = null
+        try {
+            flow.collect { s ->
+                when (s) {
+                    is DownloadStatus.DownloadStarted -> { total = s.bytesToDownload; progress(0, total) }
+                    is DownloadStatus.DownloadInProgress -> progress(s.totalBytesDownloaded, total)
+                    is DownloadStatus.DownloadFailed -> failed = s.exception.message?.take(160) ?: "the download failed"
+                    else -> progress(total, total)
+                }
+            }
+        } catch (e: Throwable) {
+            failed = "${e.javaClass.simpleName}: ${e.message?.take(160)}"
+        }
+        return failed
+    }
 
     suspend fun deviceModelName(): String = try { probe.onDeviceExtension?.getModelName() ?: "" } catch (e: Throwable) { "" }
 

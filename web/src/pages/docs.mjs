@@ -141,7 +141,7 @@ export function builtWithPage({ numbers }) {
     ['Cloud Firestore', 'Google’s cloud', 'The public steps library, which the extension refreshes when it is newer. Opt-in anonymous reports when a page looked different: five fixed fields, create-only, sent only when the person presses the button.'],
     ['Firebase Hosting', 'Google’s cloud', 'This site, the practice pages and the Steps API.'],
     ['Chrome extension APIs', 'This computer', 'Side panel, the scan tab, permissions asked for per site, the extensions check, history cleanup.'],
-    ['Firebase AI Logic for Android, on device (<code>InferenceMode.ONLY_ON_DEVICE</code>)', 'The phone', 'Gemini Nano, through AICore, says what kind of app each one seems to be: monitoring, family locator, parental control, assistive, everyday. The list of apps on a phone is private, so there is no cloud fallback. It can add a caution to a card; a note that would reassure is never shown, and it can never hide a finding. Not yet run on a phone: the test emulator has no Gemini Nano.'],
+    ['Firebase AI Logic for Android, on device (<code>InferenceMode.ONLY_ON_DEVICE</code>)', 'The phone', 'Gemini Nano, through AICore, says what kind of app each one seems to be: monitoring, family locator, parental control, assistive, everyday. The list of apps on a phone is private, so there is no cloud fallback. It can add a caution to a card; a note that would reassure is never shown, and it can never hide a finding. Run on one real phone (a Pixel on Android 17): it read all 13 listed apps on the phone in 7.5 seconds. A caution from it counts only when the app’s name, its source or its powers back it up, a rule added after that first run raised a caution on 10 of 13 ordinary apps.'],
     ['Firebase AI Logic for Android, in the cloud (<code>InferenceMode.ONLY_IN_CLOUD</code>, function calling)', 'Google’s cloud', 'Orders the phone’s plan from finding types only. <code>ask_device</code> asks the phone things like “did this app come from outside the store?”, and the phone answers yes, no or unknown.'],
     ['Jetpack JavaScriptSandbox (<code>androidx.javascriptengine</code>)', 'The phone', 'Runs the extension’s own rules on the phone, in a process with no network and no files: the finding types, the cloud gate, the plan and the safety rules. One engine, so the phone and the extension cannot drift apart.'],
     ['App Check on Android, through the site', 'The phone', 'An app installed from this site has no Play Integrity, so it gets reCAPTCHA Enterprise tokens from the same small page the extension uses, over a message channel the app adds to that page. Another Android app could load the page the same way, so this guards the model quota less well than Play Integrity would. It is what an app outside the Play Store can have.'],
@@ -281,6 +281,22 @@ function driftSection(drift, first) {
 }
 
 // The Android app's end-to-end run (tools/android-e2e.mjs, docs/evidence/android-e2e.json): every check, as run.
+// The real check on a real phone (tools/android-real.mjs): every saved run, as counts.
+function androidRealSection(real) {
+  const runs = real?.runs || [];
+  if (!runs.length) return '';
+  const d = runs[0].device;
+  const day = new Date(runs[runs.length - 1].at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York' });
+  const nano = r => (/Gemini Nano sorted (\d+)/.exec(r.sortedBy || '') || [])[1];
+  const took = r => (r.did || []).map(t => /Gemini Nano sorted \d+ of \d+ apps on this phone in ([\d.]+ s)/.exec(t)).find(Boolean)?.[1];
+  const rows = runs.map(r => `<tr><td>${esc(r.label || 'Run')}</td><td class="num">${r.appsWithAccess}</td><td class="num">${r.listed}</td><td>${esc((r.groups || []).join(', '))}</td><td>${nano(r) ? `${nano(r)} apps${took(r) ? `, ${esc(took(r))}` : ''}; ${r.nanoNotes} cautions shown` : 'Not on the phone yet'}</td><td>${/^Ordered by/.test(r.planNote || '') ? `Ordered by Gemini, ${r.planSeconds} s` : `Made by rules (the cloud did not answer); on screen in ${r.planShownSeconds} s`}</td></tr>`).join('');
+  return `<h2 id="android-real">The Android app on a real phone</h2>
+<p>The builder’s own phone, a Pixel on Android ${esc(d.android)} with ${runs[0].appsInstalled} apps, ${runs[0].appsAdded} of them added by its owner, in dark mode with larger text. ${esc(day)}. The test plants nothing and changes no setting. This page holds counts only: no app’s name left the phone’s owner’s computer.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Runs on a real phone: table, scrolls sideways on small screens"><table><thead><tr><th>Run</th><th class="num">Apps with special access</th><th class="num">Listed</th><th>Under which headings</th><th>Gemini Nano, on the phone</th><th>The plan</th></tr></thead><tbody>${rows}</tbody></table></div>
+<p><strong>What the phone showed that the emulator could not.</strong> Of ${runs[0].appsWithAccess} apps holding some special access, ${runs[0].appsWithAccess - runs[0].listed} came with the phone and are counted, not listed, which leaves ${runs[0].listed} for a person to look at. The first time Gemini Nano ran, it raised a caution on ${runs.find(nano)?.nanoNotes ?? 'most'} of ${runs.find(nano)?.listed ?? 'them'}, mostly from the powers alone, and that put nine apps under “Can watch this phone” on an ordinary phone. A caution from Gemini Nano now counts only when something code can check backs it up: the app came from outside the Play Store, it holds two or more strong powers, or its name says what it is. On the made-up practice phone, on the same device, it then called the hidden “System Update Service” monitoring and “Family Finder” a family locator, and raised nothing on the other three. Android ${esc(d.android)} did not let the app read whether USB debugging was on, so that is listed under “Not checked”.</p>
+<p class="muted">One phone, with nothing planted on it and no known phone-watching app, so this shows how much an ordinary phone lists, not whether a hidden app is found. That is what the planted test below shows, on an emulator.</p>`;
+}
+
 // Where the Android app's traffic went, from the emulator's own packet capture (tools/android-net.mjs).
 function androidNetSection(n) {
   if (!n || !n.spareKey?.length) return '';
@@ -307,7 +323,7 @@ function androidSection(a, cloudRun = null) {
 <p class="muted">An emulator, not a person’s phone, and a test app, not real stalkerware. Gemini Nano was not on the emulator, so the on-device sorting is not part of this run.</p>`;
 }
 
-export function accuracyPage({ numbers, drift = null, driftFirst = null, android = null, androidNet = null, androidCloud = null }) {
+export function accuracyPage({ numbers, drift = null, driftFirst = null, android = null, androidNet = null, androidCloud = null, androidReal = null }) {
   const n = numbers;
   const p = n.planSafety;
   return doc('accuracy.html', 'Accuracy', 'How Spare Key is measured, the numbers, and what they do not show.', `
@@ -332,6 +348,7 @@ ${n.practice ? `<p><strong>${n.practice.found} of ${n.practice.of}</strong> plan
 </tbody></table></div>
 <p class="muted">One account, with nothing planted on it: this shows the readers match real pages, not how many hidden ways in they would miss. That test needs planted test accounts and is next.</p>
 ${driftSection(drift, driftFirst)}
+${androidRealSection(androidReal)}
 ${androidSection(android, androidCloud)}
 ${androidNetSection(androidNet)}
 <h2>Privacy: nothing that names a person leaves</h2>

@@ -36,6 +36,12 @@ const ORDER = ['accessibility', 'device_admin', 'notifications', 'messages', 'us
 // One kind of access, held by an app from the Play Store: a password manager reading the screen, a watch app reading
 // notifications. Still listed, with the same card and the same question, but under its own heading below the apps that
 // can watch the whole phone, so a long list does not bury the one that matters. Device admin never goes here.
+// A caution from Gemini Nano counts only when something code can check backs it up: the app came from outside the Play
+// Store, or holds two or more strong powers, or its name or package says what it is. Found on a real phone on
+// November 24, 2026: with no such check Gemini Nano raised a caution on 10 of 13 ordinary Play Store apps, and asking it
+// for its own reason did not help (it called the right apps "monitoring" and gave the wrong reason).
+const TELLING = /track|spy|monitor|locat|finder|family|parent|kids?|child|guardian|stealth|keylog|surveil|mirror|forward/i;
+const backedUp = app => app.installer === 'other' || COUNTS.filter(k => app.powers?.[k]).length >= 2 || TELLING.test(`${app.label} ${app.pkg}`);
 const ONE_KIND = ['phone.app.accessibility', 'phone.app.notifications', 'phone.app.messages', 'phone.app.usage_access'];
 
 /** The finding code for one app, or null when it holds nothing worth listing. */
@@ -57,13 +63,18 @@ export function phoneFindings(facts, { nano = {}, refStart = 0 } = {}) {
   const findings = [];
   const apps = facts?.apps || [];
   const builtIn = apps.filter(a => a.system).length;
+  let setAside = 0;
   for (const app of apps) {
     const code = phoneCode(app);
     if (!code) continue;
     const p = app.powers || {};
     const powers = ORDER.filter(k => p[k]).map(k => POWER_WORDS[k]);
     const where = app.installer === 'other' ? 'installed from outside the Play Store' : app.installer === 'play' ? 'from the Play Store' : '';
-    const read = nano[app.pkg];
+    const said = nano[app.pkg];
+    // Gemini Nano's reading, with a caution nothing backs up turned into "cannot tell".
+    const aside = !!said && CAUTION_KINDS.includes(said.kind) && !backedUp(app);
+    if (aside) setAside++;
+    const read = aside ? { kind: 'unknown', about: '' } : said;
     const detail = [app.label, `It ${powers.join(', ')}.`, where, read?.about && ['monitoring', 'family_locator', 'parental_control'].includes(read.kind) ? `Gemini Nano on this phone: ${read.about}` : ''].filter(Boolean).join('\n');
     findings.push({
       ref: `P${++n}`,
@@ -104,7 +115,7 @@ export function phoneFindings(facts, { nano = {}, refStart = 0 } = {}) {
   // Monitoring-looking and outside-the-store apps first, then by how much they can do.
   const rank = f => (f.kind === 'monitoring' ? 0 : 1) * 10 + Object.keys(PHONE_CODES).indexOf(f.code);
   findings.sort((a, b) => rank(a) - rank(b));
-  return { findings, outcomes, builtIn };
+  return { findings, outcomes, builtIn, nanoSetAside: setAside };
 }
 
 /** ask_device for a phone finding, answered on the phone from what it read: 'yes', 'no' or 'unknown'. */
@@ -122,19 +133,31 @@ export function phoneAnswer(f, question) {
 // its note is shown only when it is a caution (CAUTION_KINDS): a line like "a well-known weather app" would reassure,
 // and a model's guess is not grounds for that.
 export const APP_KIND_SYSTEM = `You look at one app on a person's own Android phone: its name, its package name, where it was installed from and the
-powers it holds. Say what kind of app it most likely is:
-"monitoring" for an app made to watch someone (spyware, "phone tracker", hidden "system service"),
+powers it holds. Say what kind of app it most likely is, from what it is called:
+"monitoring" for an app made to watch someone (spyware, "phone tracker", a hidden "system service" that did not come with the phone),
 "family_locator" for a family or friends location app (Life360, Find My Kids), "parental_control",
 "assistive" for screen readers, password managers and other tools that need these powers to help the person,
-"everyday" for well-known apps (maps, weather, launchers, keyboards), or "unknown" when you cannot tell.
-Then write "about": at most 15 plain words on what the app seems to be. Never say an app is safe. If unsure, say "unknown".`;
+"everyday" for well-known apps (maps, weather, launchers, keyboards, watch and earbud companions, banks, messengers),
+or "unknown" when you cannot tell.
+The powers are never a reason on their own. Many everyday apps read notifications, use accessibility or see location:
+a watch app, a password manager, a weather app. Another part of the program already counts the powers.
+In "evidence" say what your answer rests on: "name" when the app's name tells you, "package" when its package name
+tells you, "powers" when only the powers made you think so, "none" when you cannot tell. If it is "powers" or "none",
+the kind must be "unknown".
+Then write "about": at most 15 plain words on what the app seems to be. Never say an app is safe.
+Examples.
+App name: Life360. Package: com.life360.android.safetymapd. Answer: kind "family_locator", evidence "name".
+App name: Galaxy Wearable. Package: com.samsung.android.app.watchmanager. Powers: can read notifications. Answer: kind "everyday", evidence "name".
+App name: Sync Services. Package: com.sync.svc. Installed from: outside the Play Store. Powers: can read and control the screen; can read notifications. Answer: kind "monitoring", evidence "name".
+App name: Notes Plus. Package: com.example.notesplus. Powers: can read notifications. Answer: kind "unknown", evidence "none".`;
 export const APP_KIND_SCHEMA = {
   type: 'object',
   properties: {
     kind: { type: 'string', enum: ['monitoring', 'family_locator', 'parental_control', 'assistive', 'everyday', 'unknown'] },
+    evidence: { type: 'string', enum: ['name', 'package', 'powers', 'none'] },
     about: { type: 'string', maxLength: 120 },
   },
-  required: ['kind', 'about'],
+  required: ['kind', 'evidence', 'about'],
 };
 export const CAUTION_KINDS = ['monitoring', 'family_locator', 'parental_control'];
 /** The text Gemini Nano reads for one app. */
@@ -151,6 +174,7 @@ export function appKindText(app) {
 export function appKindFrom(answer) {
   const kinds = APP_KIND_SCHEMA.properties.kind.enum;
   const kind = kinds.includes(answer?.kind) ? answer.kind : 'unknown';
+
   const about = String(answer?.about || '').replace(/\b(safe|secure|harmless|nothing to worry)\b/gi, '').replace(/\s+/g, ' ').trim().slice(0, 120);
   return { kind, about };
 }

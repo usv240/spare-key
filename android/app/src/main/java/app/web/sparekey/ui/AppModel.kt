@@ -54,6 +54,32 @@ class AppModel(app: Application) : AndroidViewModel(app) {
     /** Gemini Nano on this phone: "available", "downloadable", "downloading" or "unavailable". */
     var nano by mutableStateOf("unavailable")
         private set
+    /** While Gemini Nano downloads: megabytes so far and in all (0 until Android says), and why it failed, if it did. */
+    var nanoMb by mutableStateOf(0L to 0L)
+        private set
+    var nanoError by mutableStateOf("")
+        private set
+
+    /** The person asked for Gemini Nano. Android downloads it; the check works the same in the meantime. */
+    fun getNano() {
+        if (nano != "downloadable") return
+        nano = "downloading"; nanoError = ""; nanoMb = 0L to 0L
+        note("Gemini Nano: download asked for.")
+        val t = System.currentTimeMillis()
+        viewModelScope.launch {
+            val failed = Ai.download { done, total -> nanoMb = (done shr 20) to (total shr 20) }
+            nano = Ai.deviceStatus()
+            if (failed != null && nano != "available") {
+                nanoError = "Gemini Nano could not be downloaded just now. Spare Key's rules check the phone alone."
+                android.util.Log.w("SpareKey", "nano download: $failed")
+                note("Gemini Nano download failed.")
+                if (nano == "downloading") nano = "downloadable"
+            } else {
+                note("Gemini Nano on this phone: $nano, after ${secs(t)}${if (nanoMb.second > 0) " (${nanoMb.second} MB)" else ""}.")
+                if (nano == "available") Ai.warmUp()
+            }
+        }
+    }
     /** The person's own switch for plan help from the cloud. The only setting the app keeps. */
     var cloudOn by mutableStateOf(prefs.getBoolean("cloud", true))
         private set
@@ -204,6 +230,13 @@ class AppModel(app: Application) : AndroidViewModel(app) {
             val list = result.getJSONArray("findings")
             findings = (0 until list.length()).map { list.getJSONObject(it) }
             builtIn = result.optInt("builtIn")
+            // What Gemini Nano made of them, as counts: kinds are not names. A caution is set aside when nothing code
+            // can check backs it up (the app's name, where it came from, how many powers it holds).
+            if (nanoSorted > 0) {
+                val byKind = kinds.keys().asSequence().map { kinds.getJSONObject(it).optString("kind") }.groupingBy { it }.eachCount()
+                    .entries.sortedByDescending { it.value }.joinToString(", ") { "${it.key} ${it.value}" }
+                note("Gemini Nano's reading: $byKind. Cautions kept: ${findings.count { it.optString("note").isNotEmpty() }}. Set aside, with nothing to back them up: ${result.optInt("nanoSetAside")}.")
+            }
             notRead = missed
             checkedAt = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT).format(Date())
             note((if (practiceRun) "Practice check" else "Check") + " finished in ${secs(t0)}: ${apps.length()} apps with special access read, ${findings.size} listed, $builtIn that came with the phone not listed" +

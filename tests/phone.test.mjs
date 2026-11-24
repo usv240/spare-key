@@ -134,3 +134,19 @@ test('one kind of access from the Play Store is listed under its own heading, ne
   const side = phoneFindings({ apps: [{ pkg: 'a.c', label: 'Side', system: false, installer: 'other', powers: { usage_access: true } }], device: {} }).findings;
   assert.equal(side[0].group, 'phone', 'an app from outside the Play Store is never in the lower group');
 });
+
+test('a caution from Gemini Nano counts only when something code can check backs it up', () => {
+  const play = (label, powers) => ({ pkg: `com.example.${label.toLowerCase().replace(/\W/g, '')}`, label, system: false, installer: 'play', powers });
+  const apps = [play('Notes Plus', { notifications: true }), play('Trail Buddy', { location_always: true }), play('Family Finder', { location_always: true }),
+    { ...play('Sync Services', { accessibility: true }), installer: 'other' }, play('Remote Helper', { accessibility: true, notifications: true })];
+  const nano = Object.fromEntries(apps.map(a => [a.pkg, { kind: 'monitoring', about: 'an app made to watch someone' }]));
+  const r = phoneFindings({ apps, device: {} }, { nano });
+  const of = name => r.findings.find(f => f.name === name);
+  // Play Store, one power, nothing in the name: the caution is set aside, and the app stays where the rules put it.
+  assert.equal(of('Notes Plus').note, ''); assert.equal(of('Notes Plus').group, 'phone_one'); assert.equal(of('Notes Plus').kind, 'unknown');
+  assert.equal(of('Trail Buddy').note, '');
+  // Backed up by the name, by where it came from, or by holding two strong powers: the caution stands.
+  assert.ok(of('Family Finder').note); assert.ok(of('Sync Services').note); assert.ok(of('Remote Helper').note);
+  assert.equal(r.nanoSetAside, 2);
+  assert.equal(r.findings.length, apps.length, 'setting a caution aside never hides the app');
+});

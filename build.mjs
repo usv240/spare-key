@@ -73,7 +73,7 @@ await cp('extension/icons/icon-32.png', 'web/dist/icon-32.png');
   const docs = await import('./web/src/pages/docs.mjs');
   const pages = {
     'index.html': index({ numbers, apk, grade: await readJson('docs/evidence/chatbot-hand-grade.json') }),
-    'why.html': why({ numbers, drift: { ...(await readJson('web/src/data/drift.json')), first: await readJson('web/src/data/drift-first-run.json') }, android: await readJson('docs/evidence/android-e2e.json'), grade: await readJson('docs/evidence/chatbot-hand-grade.json') }),
+    'why.html': why({ numbers, drift: { ...(await readJson('web/src/data/drift.json')), first: await readJson('web/src/data/drift-first-run.json') }, android: await readJson('docs/evidence/android-e2e.json'), grade: await readJson('docs/evidence/chatbot-hand-grade.json'), real: await readJson('docs/evidence/android-real.json') }),
     'advocates.html': docs.advocatesPage({ numbers }),
     'try.html': docs.tryPage(),
     'install.html': docs.installPage({ apk }),
@@ -81,7 +81,7 @@ await cp('extension/icons/icon-32.png', 'web/dist/icon-32.png');
     'built-with.html': docs.builtWithPage({ numbers }),
     'plant.html': docs.plantPage(),
     'api.html': docs.apiPage(),
-    'accuracy.html': docs.accuracyPage({ numbers, drift: await readJson('web/src/data/drift.json'), driftFirst: await readJson('web/src/data/drift-first-run.json'), android: await readJson('docs/evidence/android-e2e.json'), androidNet: await readJson('docs/evidence/android-net.json'), androidCloud: await readJson('docs/evidence/android-e2e-cloud.json') }),
+    'accuracy.html': docs.accuracyPage({ numbers, drift: await readJson('web/src/data/drift.json'), driftFirst: await readJson('web/src/data/drift-first-run.json'), android: await readJson('docs/evidence/android-e2e.json'), androidNet: await readJson('docs/evidence/android-net.json'), androidCloud: await readJson('docs/evidence/android-e2e-cloud.json'), androidReal: await readJson('docs/evidence/android-real.json') }),
     'what-they-see.html': docs.whatTheySeePage({ library: JSON.parse(await readFile('data/steps.json', 'utf8')) }),
     'privacy.html': docs.privacyPage(),
     'safety.html': docs.safetyPage(),

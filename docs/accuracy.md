@@ -349,3 +349,33 @@ Limits: an emulator, not a person's phone; a test app, not real stalkerware; a r
 Nano was not on the emulator, so on-device sorting was not part of the run. A capture shows where traffic went and how
 much, not the words inside, which are encrypted; the words are shown by the app's own list and checked a second time
 in Kotlin before each request.
+
+## 9. The Android app on a real phone (`tools/android-real.mjs`, `docs/evidence/android-real.json`, November 24)
+
+The builder's own phone, a Pixel on Android 17 with 703 apps (328 added by its owner), over USB. The tool plants
+nothing and changes no setting; what it reads from the screen stays in the `private/` folder, and the evidence file
+holds counts, timings and Spare Key's own sentences only.
+
+| Run | Apps with special access | Listed | Came with the phone, counted | Check | Gemini Nano on the phone | Plan |
+|---|---|---|---|---|---|---|
+| Rules only (Gemini Nano not yet downloaded) | 72 | 13 (3 can watch the phone, 3 location, 7 one kind of access) | 59 | 1.0 s | none | by rules, on screen in 2.3 s; the cloud did not answer |
+| With Gemini Nano | 72 | 13 (9, 3, 1) | 59 | 8.3 s | 13 of 13 apps in 7.5 s; 10 cautions | by rules, on screen in 2.3 s; the cloud did not answer |
+
+What it showed:
+
+- **The app never offered Gemini Nano.** The phone reported it as downloadable and the app had no way to get it. The
+  first screen now has "Download Gemini Nano", with progress.
+- **Gemini Nano over-warned.** It raised a caution on 10 of 13 ordinary apps, mostly from their powers alone, which
+  moved six Play Store apps with one kind of access under "Can watch this phone". Asking the model to say what its
+  answer rested on did not help: on the made-up practice phone it picked the right two apps and gave "powers" as the
+  reason. So the check is in code: a caution counts only when the app came from outside the Play Store, or holds two or
+  more strong powers, or its name or package says what it is (`shared/phone.js`, `backedUp`). On the practice phone on
+  the same device it then read: monitoring 1 ("System Update Service"), family locator 1 ("Family Finder"), everyday 2,
+  assistive 1; cautions kept 2, set aside 0.
+- **The cloud did not answer on either run** (a server error after about 45 s, with the plan request and four
+  follow-up answers sent). The plan made by code was on the screen in 2.3 s both times. The cause is not yet known.
+- **USB debugging was not flagged**, though it was on: Android 17 did not let the app read that setting, so it is
+  listed under "Not checked".
+
+Not shown by this: whether a hidden phone-watching app is found (nothing was planted on this phone; the planted test
+is section 8, on an emulator), and the real phone has not yet been checked again after the caution rule changed.
