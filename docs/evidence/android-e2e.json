@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-24T07:28:14.979Z",
+  "at": "2026-11-24T15:08:05.814Z",
   "device": {
     "model": "sdk_gphone64_x86_64",
     "android": "16",
@@ -67,6 +67,16 @@
       "note": ""
     },
     {
+      "name": "A plan is on the screen within 5 seconds, before any model answers",
+      "ok": true,
+      "note": "3 s"
+    },
+    {
+      "name": "The cloud gets at most a minute to reorder the plan",
+      "ok": true,
+      "note": "27.9 s"
+    },
+    {
       "name": "A plan is made",
       "ok": true,
       "note": "The cloud did not answer. This is the plan made by Spare Key's rules on this phone."
@@ -129,7 +139,7 @@
     {
       "name": "Quick exit leaves Spare Key",
       "ok": true,
-      "note": "topResumedActivity=ActivityRecord{187122985 u0 com.android.chrome/org.chromium.chrome.browser.firstrun.FirstRunActivity "
+      "note": "topResumedActivity=ActivityRecord{161424636 u0 com.android.chrome/org.chromium.chrome.browser.firstrun.FirstRunActivity "
     },
     {
       "name": "Quick exit leaves no recent-apps entry",
@@ -162,10 +172,15 @@
       "note": ""
     }
   ],
+  "window": {
+    "from": 1795532904800,
+    "to": 1795533287872
+  },
   "nano": "unavailable",
-  "checkSeconds": 3.6,
+  "checkSeconds": 10.4,
   "summary": "Spare Key read 37 apps with special access and listed 2 things that could let someone watch this phone.",
-  "planSeconds": 112.7,
+  "planShownSeconds": 3,
+  "planSeconds": 27.9,
   "planNote": "The cloud did not answer. This is the plan made by Spare Key's rules on this phone.",
   "planSteps": [
     "1. Screenshot these first (2)",
@@ -176,27 +191,32 @@
   "simpler": "Put in simpler words by Gemini in the cloud, from the public steps only. This phone has no Gemini Nano.",
   "ledgerEntries": 4,
   "sent": [
-    "Plan request, 2:29 AM",
+    "Plan request, 10:09 AM",
     "2 findings by type only (phone.app.control, phone.usb_debugging). No app's name.",
     "Show the exact text (254 characters)",
-    "Answer to get_steps, 2:29 AM",
+    "Answer to get_steps, 10:09 AM",
     "The public steps for 2 finding types, from the steps library. The same text is on the website.",
     "Show the exact text (4684 characters)",
-    "Answer to ask_device, 2:29 AM",
+    "Answer to ask_device, 10:10 AM",
     "One word about one finding: unknown.",
     "Show the exact text (25 characters)",
-    "Simpler words, 2:31 AM",
+    "Simpler words, 10:10 AM",
     "The public steps for one finding type (phone.app.control), to be put in simpler words. The same text is on the website. No app's name.",
     "Show the exact text (395 characters)",
     "What Spare Key did (6)",
     "Kept in memory on this phone and forgotten with the check. Spare Key sends no usage or crash reports.",
-    "2:28:25 AM  Rules started in the sandbox in 1.0 s. Steps library version 5.",
-    "2:28:26 AM  Gemini Nano on this phone: unavailable.",
-    "2:28:40 AM  Check finished in 1.0 s: 37 apps with special access read, 2 listed, 36 that came with the phone not listed.",
-    "2:29:26 AM  Plan made by code on this phone: 4 steps.",
-    "2:31:17 AM  The model did not answer (ServerException). The plan made by code is shown.",
-    "2:31:50 AM  Simpler words for one step by gemini-3.5-flash-lite in the cloud (this phone has no Gemini Nano: the fallback) in 0.9 s."
+    "10:08:39 AM  Rules started in the sandbox in 7.2 s. Steps library version 5.",
+    "10:08:41 AM  Gemini Nano on this phone: unavailable.",
+    "10:08:57 AM  Check finished in 4.5 s: 37 apps with special access read, 2 listed, 36 that came with the phone not listed.",
+    "10:09:51 AM  Plan made by code on this phone: 4 steps.",
+    "10:10:17 AM  The model did not answer (ServerException). The plan made by code is shown.",
+    "10:10:51 AM  Simpler words for one step by gemini-3.5-flash-lite in the cloud (this phone has no Gemini Nano: the fallback) in 1.1 s."
   ],
-  "passed": 31,
-  "failed": 0
+  "passed": 33,
+  "failed": 0,
+  "appBytes": {
+    "uid": 10217,
+    "sent": 138786,
+    "received": 1338396
+  }
 }

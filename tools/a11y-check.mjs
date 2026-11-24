@@ -73,6 +73,8 @@ try {
   await panel.click('#practice');
   await panel.waitForSelector('#start', { visible: true });
   await audit('choose');
+  // Plan help from the cloud off, so this run makes no model call in the cloud: the plan is the one made by code.
+  await panel.evaluate(() => { const s = document.getElementById('cloud-switch'); if (s && (s.checked || s.getAttribute('aria-checked') === 'true')) s.click(); });
   await panel.click('#start');
   await panel.waitForSelector('#screen-scanning:not([hidden])', { timeout: 30000 });
   // The "confirm it is you" box, with the words the panel shows (showVerify in panel.js).
@@ -85,6 +87,15 @@ try {
   await panel.evaluate(() => { document.getElementById('verify-box').hidden = true; });
   await panel.waitForSelector('#screen-results:not([hidden])', { timeout: 120000 });
   await audit('results');
+  await panel.evaluate(() => document.getElementById('to-plan').click());
+  await panel.waitForSelector('#make-plan', { visible: true, timeout: 30000 });
+  await audit('plan questions');
+  await panel.click('#make-plan');
+  await panel.waitForSelector('#plan-actions:not([hidden])', { timeout: 120000 });
+  await audit('plan');
+  await panel.click('#tab-hood');
+  await panel.waitForSelector('#screen-hood:not([hidden])', { timeout: 15000 });
+  await audit('under the hood');
 } finally {
   await browser.close().catch(() => {});
   try { rmSync(profile, { recursive: true, force: true }); } catch { /* Chrome may still hold a file */ }
@@ -94,5 +105,6 @@ const issues = results.filter(r => r.violations.length || r.overflow > 0);
 const nodes = results.reduce((n, r) => n + r.violations.reduce((m, v) => m + v.nodes, 0), 0);
 mkdirSync('tools/out', { recursive: true });
 writeFileSync('tools/out/a11y.json', JSON.stringify({ at: new Date().toISOString(), axe: JSON.parse(readFileSync(createRequire(import.meta.url).resolve('axe-core/package.json'), 'utf8')).version, rules: RULES, sitePages: pages.length, runs: results.length, violationNodes: nodes, results }, null, 1));
-console.log(`${pages.length} site pages x 4 and 4 panel screens x 2: ${results.length} runs, ${nodes} violations, ${issues.length} runs with an issue`);
+const panelRuns = results.filter(r => r.width === 'side panel').length;
+console.log(`${pages.length} site pages x 4 and ${panelRuns / 2} panel screens x 2: ${results.length} runs, ${nodes} violations, ${issues.length} runs with an issue`);
 process.exit(issues.length ? 1 : 0);

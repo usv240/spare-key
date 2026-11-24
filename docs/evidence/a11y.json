@@ -1,5 +1,5 @@
 {
- "at": "2026-11-23T18:35:26.227Z",
+ "at": "2026-11-24T15:23:37.511Z",
  "axe": "4.10.2",
  "rules": [
   "wcag2a",
@@ -7,8 +7,8 @@
   "wcag21aa",
   "best-practice"
  ],
- "sitePages": 13,
- "runs": 60,
+ "sitePages": 15,
+ "runs": 74,
  "violationNodes": 0,
  "results": [
   {
@@ -68,6 +68,34 @@
    "overflow": 0
   },
   {
+   "where": "advocates.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "advocates.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "advocates.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "advocates.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
    "where": "api.html",
    "width": 375,
    "scheme": "light",
@@ -370,6 +398,34 @@
   },
   {
    "where": "what-they-see.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "why.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "why.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "why.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "why.html",
    "width": 1280,
    "scheme": "dark",
    "violations": [],
@@ -426,6 +482,48 @@
   },
   {
    "where": "panel: results",
+   "width": "side panel",
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel: plan questions",
+   "width": "side panel",
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel: plan questions",
+   "width": "side panel",
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel: plan",
+   "width": "side panel",
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel: plan",
+   "width": "side panel",
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel: under the hood",
+   "width": "side panel",
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "panel: under the hood",
    "width": "side panel",
    "scheme": "dark",
    "violations": [],

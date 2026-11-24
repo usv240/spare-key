@@ -36,7 +36,7 @@ export function installPage({ apk = null } = {}) {
 <h1>Get Spare Key</h1>
 <p class="lead">The Chrome extension checks your accounts, on a computer. The Android app checks the phone itself. Both are free, and neither asks you to sign in.</p>
 <h2>The Chrome extension</h2>
-<div class="note caution"><p><strong>Before you install:</strong> if someone else uses this computer, they may see that the extension is installed. A computer they never use, like a trusted friend’s, is a better place to check. Signing in to Google on a computer you have not used before sends a new sign-in alert to your recovery email and phone, and the computer shows in your list of devices. If the other person can see those, they will know. If Chrome sync is on, your history, including this site, can show on every computer signed in to the same Chrome profile. Library and work computers usually do not allow installing extensions. You can remove Spare Key when you are done.</p></div>
+<div class="note caution"><p><strong>Before you install:</strong> if someone else uses this computer, they may see that the extension is installed. The best place to check is a computer you already use that the other person never touches. A computer that is new to your account, like a friend’s, sends a new sign-in alert to your recovery email and phone, and shows in your list of devices. If the other person can see those, they will know. An advocate can help you choose. If Chrome sync is on, your history, including this site, can show on every computer signed in to the same Chrome profile. Library and work computers usually do not allow installing extensions. You can remove Spare Key when you are done.</p></div>
 <h3>Install it</h3>
 <p>Spare Key is not in the Chrome Web Store yet. Until it is, install it this way:</p>
 <ol>
@@ -48,7 +48,13 @@ export function installPage({ apk = null } = {}) {
 <h3>Gemini Nano</h3>
 <p>For the best reading, Spare Key uses Gemini Nano, a small AI model inside Chrome on your computer. Chrome downloads it the first time a site or extension asks for it, when the computer has enough memory and disk. Without it, Spare Key reads pages with code only and says where that is less complete.</p>
 <h3>Remove it when you are done</h3>
-<p>Open <code>chrome://extensions</code>, find Spare Key, and select <strong>Remove</strong>. Spare Key keeps nothing after Chrome closes unless you saved a locked copy.</p>
+<ol>
+  <li>Open <code>chrome://extensions</code>, find Spare Key, and select <strong>Remove</strong>. Then turn <strong>Developer mode</strong> off again.</li>
+  <li>Delete <code>spare-key-extension.zip</code> and the <code>spare-key</code> folder, and empty the recycle bin.</li>
+  <li>Open <code>chrome://downloads</code> and remove the download from the list.</li>
+  <li>If someone else uses this computer, remove this site from Chrome’s history too: open <code>chrome://history</code>, search for <code>spare-key</code>, and delete what it finds.</li>
+</ol>
+<p>Spare Key keeps nothing after Chrome closes unless you saved a locked copy. A locked copy is a file: delete it too, or keep it where only you can reach it.</p>
 <h2 id="android">The Android app</h2>
 <p>The Android app reads the phone’s own settings and lists every app that could let someone watch it: apps that can read the screen, device admin apps, apps that read notifications, texts or the call log, and apps that see your location all the time. It needs Android 8 or newer.</p>
 <div class="note caution"><p><strong>Before you install:</strong> if an app on the phone is watching it, that app may see that Spare Key was installed and opened. A phone the other person has never had is a better place to plan. Quick exit is at the top of every screen, and pressing back twice quickly does the same.</p></div>
@@ -187,7 +193,8 @@ person: Not sure   →   { "answer": "not_sure" }</code></pre>
 export function plantPage() {
   return doc('plant.html', 'Plant a test key', 'Three ways to plant a harmless way in to your own account, watch Spare Key find it, and undo it.', `
 <h1>Plant a test key</h1>
-<p class="lead">Try Spare Key on your own account without any risk: plant a harmless way in, run the check, see whether it is found, then undo it. Mark each one “Mine” so the plan treats it as yours.</p>
+<p class="lead">For testers. Plant a harmless way in to an account of your own, run the check, see whether it is found, then undo it. Mark each one “Mine” so the plan treats it as yours.</p>
+<div class="note caution"><p><strong>Only on an account nobody else can get into.</strong> Each recipe makes a real change, and Google tells the account about some of them: the first one sends a new sign-in alert to the account’s recovery email and phone. If someone else may be watching your account, do not use these. The <a href="/try.html">practice check</a> uses made-up pages and changes nothing.</p></div>
 <div class="note"><p>These recipes have not yet been run on a real account by the builder: the readers were made on practice pages, and the real pages may look different. If Spare Key misses one, it should say the page “looked different” under Not checked. Either way, that is worth knowing.</p></div>
 <h2>1. A second signed-in device (2 minutes)</h2>
 <ol><li>Sign in to your Google account in another browser, such as Microsoft Edge, or in a Chrome guest window.</li><li>Run Spare Key. It should list the new browser under <strong>Can get into your account</strong>.</li><li><strong>Undo:</strong> open <a href="https://myaccount.google.com/device-activity">Your devices</a>, select it, and sign out.</li></ol>
@@ -274,18 +281,33 @@ function driftSection(drift, first) {
 }
 
 // The Android app's end-to-end run (tools/android-e2e.mjs, docs/evidence/android-e2e.json): every check, as run.
-function androidSection(a) {
+// Where the Android app's traffic went, from the emulator's own packet capture (tools/android-net.mjs).
+function androidNetSection(n) {
+  if (!n || !n.spareKey?.length) return '';
+  const kb = b => `${(b / 1024).toFixed(1)} KB`;
+  const rows = n.spareKey.map(r => `<tr><td><code>${esc(r.host)}</code></td><td>${esc(r.use)}</td><td class="num">${kb(r.sent)}</td><td class="num">${kb(r.received)}</td></tr>`).join('');
+  const mine = new Set(n.spareKey.map(r => r.host));
+  const others = [...new Set(n.other.flatMap(r => r.host.split(' or ')))].filter(h => !mine.has(h) && !/firebase/.test(h)).sort();
+  const sum = k => n.spareKey.reduce((a, r) => a + r[k], 0);
+  return `<h3 id="android-net">Where the traffic went</h3>
+<p>The list of what left the phone is the app’s own. This check does not ask the app: the emulator records every packet from outside Android, with Wi-Fi off so nothing can go another way. During one full run of the test above, these are the hosts Spare Key is built to reach.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Hosts reached: table, scrolls sideways on small screens"><table><thead><tr><th>Host</th><th>What for</th><th class="num">Sent</th><th class="num">Received</th></tr></thead><tbody>${rows}</tbody></table></div>
+<p>${n.forbidden.length ? `<strong>A reporting host was seen: ${esc(n.forbidden.join(', '))}.</strong>` : '<strong>No usage, crash or analytics reporting host was looked up or reached.</strong>'} ${n.appBytes ? `The hosts above add up to ${kb(sum('sent'))} sent and ${kb(sum('received'))} received. Android’s own counter for Spare Key says ${kb(n.appBytes.sent)} sent and ${kb(n.appBytes.received)} received. The small gap is traffic that hides its host name (QUIC) and went to addresses several Google hosts share, App Check among them; it is in the evidence file under those shared names. Most of what was received is the reCAPTCHA page that App Check loads.` : ''} ${others.length ? `The capture covers the whole emulator, so it also holds ${others.length} ${others.length === 1 ? 'host' : 'hosts'} that Android itself reached (Google Play services, time and connectivity checks): ${others.map(h => `<code>${esc(h)}</code>`).join(', ')}.` : ''}</p>
+<p class="muted">A capture shows where traffic went and how much, not the words inside, which are encrypted. The words are shown by the app’s own list, and checked a second time in Kotlin before each request.</p>`;
+}
+
+function androidSection(a, cloudRun = null) {
   if (!a || !a.checks) return '';
   const date = new Date(a.at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York' });
   const rows = a.checks.map(c => `<tr><td>${esc(c.name)}</td><td>${c.ok ? 'Passed' : 'Failed'}</td></tr>`).join('');
   return `<h2 id="android">The Android app: a planted test app</h2>
 <p><strong>${a.passed} of ${a.passed + a.failed}</strong> checks passed on an Android ${esc(a.device.android)} emulator. ${esc(date)}.</p>
-<p>The test installs a second app that does nothing but hold the access a phone-watching app asks for, turns each one on the way a person holding the phone would, and then drives the real Spare Key app: the check, the plan with Gemini in the cloud, Under the hood, Quick exit, and the practice phone. The check took ${esc(String(a.checkSeconds))} seconds. ${/^Ordered by/.test(a.planNote || '') ? `Gemini in the cloud ordered the plan in ${esc(String(a.planSeconds))} seconds, and code checked it against the safety rules.` : 'On this run the cloud model was busy, so the app showed the plan made by its own rules and said so. That is what it is built to do; on other runs Gemini in the cloud ordered the plan in about 7 seconds.'} ${/in the cloud/.test(a.simpler || '') ? '“Say it more simply” was answered by Gemini in the cloud, the fallback of hybrid inference: the emulator has no Gemini Nano.' : ''}</p>
+<p>The test installs a second app that does nothing but hold the access a phone-watching app asks for, turns each one on the way a person holding the phone would, and then drives the real Spare Key app: the check, the plan with Gemini in the cloud, Under the hood, Quick exit, and the practice phone. The check took ${esc(String(a.checkSeconds))} seconds. ${a.planShownSeconds ? `The plan made by code was on the screen ${esc(String(a.planShownSeconds))} seconds after the button was pressed. ` : ''}${/^Ordered by/.test(a.planNote || '') ? `Gemini in the cloud then reordered it, ${esc(String(a.planSeconds))} seconds after the button was pressed, and code checked it against the safety rules.` : `On this run the free-tier cloud model did not answer, so the app kept the plan made by its own rules and said so, ${esc(String(a.planSeconds))} seconds after the button was pressed. That is what it is built to do. ${cloudRun && /^Ordered by/.test(cloudRun.planNote || '') ? `On the run before it, saved beside this one, Gemini reordered the plan ${esc(String(cloudRun.planSeconds))} seconds after the button was pressed, and all ${cloudRun.passed} checks passed.` : ''}`} ${/in the cloud/.test(a.simpler || '') ? '“Say it more simply” was answered by Gemini in the cloud, the fallback of hybrid inference: the emulator has no Gemini Nano.' : ''}</p>
 <div class="table-wrap" tabindex="0" role="region" aria-label="Android checks: table, scrolls sideways on small screens"><table><thead><tr><th>Check</th><th>Result</th></tr></thead><tbody>${rows}</tbody></table></div>
 <p class="muted">An emulator, not a person’s phone, and a test app, not real stalkerware. Gemini Nano was not on the emulator, so the on-device sorting is not part of this run.</p>`;
 }
 
-export function accuracyPage({ numbers, drift = null, driftFirst = null, android = null }) {
+export function accuracyPage({ numbers, drift = null, driftFirst = null, android = null, androidNet = null, androidCloud = null }) {
   const n = numbers;
   const p = n.planSafety;
   return doc('accuracy.html', 'Accuracy', 'How Spare Key is measured, the numbers, and what they do not show.', `
@@ -310,7 +332,8 @@ ${n.practice ? `<p><strong>${n.practice.found} of ${n.practice.of}</strong> plan
 </tbody></table></div>
 <p class="muted">One account, with nothing planted on it: this shows the readers match real pages, not how many hidden ways in they would miss. That test needs planted test accounts and is next.</p>
 ${driftSection(drift, driftFirst)}
-${androidSection(android)}
+${androidSection(android, androidCloud)}
+${androidNetSection(androidNet)}
 <h2>Privacy: nothing that names a person leaves</h2>
 ${n.privacy ? `<p><strong>${n.privacy.withPrivate} of ${n.privacy.requests}</strong> requests from the extension held a name, email address, phone number, device or place, during a full practice check with every cloud step on. Every request from the service worker, the hidden page and the side panel was captured and searched in plain text, URL-encoded, base64 and JSON-escaped forms. All ${n.privacy.modelRequests} requests to the model matched “What left this computer” word for word. ${esc(n.privacy.date)}. Test: <code>tools/privacy-test.mjs</code>.</p>` : ''}
 <h2>Plan safety: seven measures from the field’s advice</h2>
@@ -346,7 +369,7 @@ export function privacyPage() {
   <li><strong>To check a step is still current, only when you ask:</strong> the finding type and the official help page’s address and text.</li>
   <li><strong>To Firebase, always:</strong> an App Check token, a Remote Config fetch and a read of the public steps library. These say nothing about you or your accounts.</li>
 </ul>
-<p>Spare Key uses the free tier of the Gemini API, where Google may use what it receives to improve its products. Because only finding types are sent, this is acceptable; it is also why nothing else is sent.</p>
+<p>Spare Key uses the free tier of the Gemini API, where Google may use what it receives to improve its products. That is why so little is sent: finding types, and your answers to the situation questions only if you tick the box to share them. Those answers are yes, no or not sure, with no names, but they are about your life. If you would not want Google to hold even that, leave the box unticked, or turn plan help off, and the plan is made on your device.</p>
 <h2>What it keeps</h2>
 <p>Nothing, unless you ask. Findings, your answers, the plan and the sent log live in Chrome’s session storage and are gone when Chrome closes, or when you press Clear everything or Quick exit. Settings like the theme are kept on this computer. A locked copy is saved only when you choose to, as a file only your password opens.</p>
 <h2 id="android">The Android app</h2>
@@ -360,7 +383,7 @@ export function privacyPage() {
 <h2>What it cannot hide</h2>
 <p>Chrome’s history shows the pages Spare Key opened, unless you turn on the cleanup. If Chrome sync is on, that history can show on every computer signed in to the same Chrome profile. Signing in to Google on a computer you have not used before sends a new sign-in alert to your recovery email and phone, and the computer shows in your list of devices. Google’s own My Activity may record the visits. Someone with access to this computer may see that the extension is installed. Remove it when you are done.</p>
 <h2>How to remove everything</h2>
-<p>Press Clear everything, or Quick exit. Then remove the extension at <code>chrome://extensions</code>.</p>`);
+<p>Press Clear everything, or Quick exit. Both clear the words Spare Key kept from each page, so save a locked copy first if you want that record; screenshots you took are not touched. Then follow the four steps under <a href="/install.html">Remove it when you are done</a>: the extension, the downloaded file and folder, the downloads list, and this site in Chrome’s history.</p>`);
 }
 
 export function safetyPage() {
@@ -378,9 +401,62 @@ export function safetyPage() {
   <li><a href="https://www.thehotline.org/plan-for-safety/">Plan for safety</a>, from the hotline</li>
 </ul>
 <h2>Use a device they cannot see</h2>
-<p>If the other person may be watching this computer or your phone, a computer they never use, like a trusted friend’s, is a better place to check. Signing in to Google on a computer you have not used before sends a new sign-in alert to your recovery email and phone, and the computer shows in your list of devices. If the other person can see those, they will know, so a computer you are already signed in on is best, and an advocate can help you weigh it. A library computer is fine for reading this site and getting help, but usually does not allow installing extensions. Either is a better place to plan.</p>
+<p>There are two different jobs, and they have different best places.</p>
+<ul>
+  <li><strong>Reading and planning:</strong> a library computer or a trusted friend’s phone is a good place to read this site, call the hotline and plan. Nothing there touches your account, as long as you do not sign in.</li>
+  <li><strong>Running the check:</strong> the check needs you signed in. The best place is a computer you already use that the other person never touches. A computer that is new to your account, like a friend’s, sends a new sign-in alert to your recovery email and phone, and shows in your list of devices. If the other person can see those, they will know.</li>
+</ul>
+<p>If there is no such computer, an advocate can help you weigh it. Waiting is a choice too.</p>
 <h2>Remove Spare Key when you are done</h2>
-<p>Open <code>chrome://extensions</code>, find Spare Key, and select Remove.</p>`);
+<p>Remove the extension, the downloaded file and folder, and the traces in Chrome. The four steps are under <a href="/install.html">Remove it when you are done</a>.</p>`);
+}
+
+/** For advocates: how to use Spare Key in a session, what it cannot tell you, and how to tell us what is wrong. */
+export function advocatesPage({ numbers }) {
+  const p = numbers.practice || {};
+  return doc('advocates.html', 'For advocates', 'How to use Spare Key in a session with someone, what it sends, and what it cannot tell you.', `
+<h1>For advocates</h1>
+<p class="lead">Spare Key does the first job of a technology safety check: it reads the person’s own settings pages and lists who still has a way in. You bring the judgment. It never changes anything, and it never says a list is complete.</p>
+<div class="note"><p><strong>No advocate has reviewed Spare Key yet.</strong> If you do this work, your corrections matter more than anything else on this site. The five questions at the end take about ten minutes, and nothing needs to be installed to answer them.</p></div>
+<h2>What it gives you</h2>
+<ul>
+  <li>A list, in plain words, of each person, device and app that can see the person’s location, read their mail, get into their account, or see their purchases or photos. It covers Google, Gmail, Google Photos, Amazon and Chrome, and on Android the apps on the phone that hold the access a phone-watching app needs.</li>
+  <li>For each one, whether removing it tells the other person, in the company’s own words where its help page says. All of them are on one page: <a href="/what-they-see.html">What they see when you change it</a>.</li>
+  <li>A plan in the order the field teaches: document first, talk with an advocate, change only what is unlikely to be noticed, and wait on the rest.</li>
+  <li>A list of what it did not check, every time.</li>
+  <li>A printed plan to take away, with addresses hidden unless the person chooses to show them.</li>
+</ul>
+<h2>Using it in a session</h2>
+<ol>
+  <li><strong>Choose the computer together.</strong> The check needs the person signed in to their account. The best place is a computer they already use that the other person never touches. A computer that is new to the account, like yours or the office’s, sends a new sign-in alert to the account’s recovery email and phone, and shows in its list of devices. If the other person holds those, they will see it. Weigh that before anyone signs in.</li>
+  <li><strong>Show the practice check first.</strong> The <a href="/try.html">practice check</a> runs on made-up pages for a person called Jordan. It takes about two minutes and shows what the real check will look like before anything real is read.</li>
+  <li><strong>Run the check.</strong> The person ticks the services to check. Chrome asks them to let Spare Key read exactly those sites. Each settings page opens in a tab beside the panel, where you can both watch it. ${p.codeSeconds ? `On the practice pages this took ${p.codeSeconds} seconds with code alone, and about ${Math.round(p.nanoSeconds / 60)} minutes with Gemini Nano reading each page as well.` : ''}</li>
+  <li><strong>Go through what it found.</strong> The person marks each one Mine, Not mine or Not sure. Not sure is treated like Not mine. Names and addresses are hidden until they choose to show them.</li>
+  <li><strong>Make the plan.</strong> A few optional questions shape it, such as whether now is a good time to change things. The answers stay on the computer unless the person ticks the box to share them with plan help.</li>
+  <li><strong>Print it, or save a locked copy.</strong> Print gives the plan on paper. A locked copy is a file that only their password opens. Decide together where either one can be kept. <a href="/sample-plan.pdf">A printed plan for the made-up person, Jordan (PDF)</a></li>
+  <li><strong>Clean up.</strong> Clear everything, then remove the extension, the downloaded file and the traces in Chrome. The steps are under <a href="/install.html">Remove it when you are done</a>.</li>
+</ol>
+<h2>What it cannot tell you</h2>
+<ul>
+  <li>It does not check Ring, Life360, a phone carrier, Apple or an iPhone, Facebook or Snapchat. It lists these as not checked, with guides. On an iPhone, Apple’s Safety Check does a similar job.</li>
+  <li>A short list does not mean nobody has access. A site can change a page so a reader breaks; that page is then listed as “Not checked”, never shown as empty.</li>
+  <li>The Android app was tested on an emulator with a test app, not on a phone with real stalkerware. A rooted phone can hide an app from it, and the results say so.</li>
+  <li>“What they see” comes from the companies’ help pages. None of it has been tested between two accounts yet. Where no page says, Spare Key treats the change as one they may notice.</li>
+</ul>
+<h2>What leaves the device</h2>
+<p>Names, addresses, phone numbers, devices and page text never leave it. Plan help is optional: it sends the kinds of thing found, like “mail is forwarded”, and the answers the person chose to share. It uses the free tier of Google’s Gemini API, where Google may use what it receives to improve its products. With plan help off, nothing is sent and the plan is made by Spare Key’s rules on the device. More on the <a href="/privacy.html">Privacy</a> page.</p>
+<h2>For hotline and case software</h2>
+<p>The steps library and the plan rules are open and free, and take no personal data in. See the <a href="/api.html">Steps API and MCP server</a>.</p>
+<h2 id="review">Tell us what is wrong</h2>
+<p>Everything below can be judged from the <a href="/try.html">practice check</a> and <a href="/what-they-see.html">What they see when you change it</a>.</p>
+<ol>
+  <li>Would you show this to someone you work with? Why, or why not?</li>
+  <li>Is anything in the plan unsafe, or in the wrong order?</li>
+  <li>Is anything in “What they see” wrong?</li>
+  <li>What is the most important thing it misses?</li>
+  <li>May your answers be quoted, with your name and role, as “a domestic violence advocate”, or not at all?</li>
+</ol>
+<p>Send answers as an issue on the <a href="https://github.com/usv240/spare-key/issues">project’s GitHub page</a>. Please leave out anything that could identify a person you work with.</p>`);
 }
 
 /** The page for an address that does not exist: the same header, with Quick exit, and the hotline. */

@@ -19,16 +19,17 @@ Subject: 10-minute review of a free, read-only tool for tech-enabled abuse?
 Hello [name],
 
 I built Spare Key for a hackathon: a free Chrome extension that reads a person's own Google, Gmail and Amazon
-settings pages, read-only, and lists who can still see their location, mail or account. It then gives a plan that
+settings pages, read-only, and lists who can still see their location, mail or account. An Android app does the
+same for the phone itself: which apps hold the access a phone-watching app needs. It then gives a plan that
 starts with screenshots and an advocate, and warns before any change the other person may notice. Names and
 addresses never leave the computer.
 
 Would you look at it for about 10 minutes and tell me what is wrong or missing? Everything can be tried on made-up
 pages, with no account and nothing to install:
 
+- A page written for advocates, with how it would be used in a session: https://spare-key-app.web.app/advocates.html
 - The practice check: https://spare-key-app.web.app/try.html
 - What the other person sees when each kind of access is removed: https://spare-key-app.web.app/what-they-see.html
-- The plan and how it is checked: https://spare-key-app.web.app/how-it-works.html
 
 Five questions, short answers are perfect:
 1. Would you show this to someone you work with? Why or why not?

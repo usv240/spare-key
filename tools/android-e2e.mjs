@@ -97,6 +97,20 @@ async function scrollTo(t) {
 }
 async function scrollTop() { for (let i = 0; i < 6; i++) shell('input swipe 540 700 540 2000 200'); await pause(500); }
 
+/** What Android's network counters hold for Spare Key's user id: bytes sent and received since the counters began. */
+function uidBytes() {
+  const uid = shell(`pm list packages -U ${APP}`).match(/uid:(\d+)/)?.[1];
+  let out = '';
+  try { shell('dumpsys netstats --poll >/dev/null 2>&1 || true'); out = shell('dumpsys netstats detail'); } catch {}
+  let sent = 0, received = 0, on = false, seen = false;
+  for (const line of out.split('\n')) {
+    if (/\buid=-?\d+/.test(line)) { on = new RegExp(`\\buid=${uid}\\b`).test(line) && /tag=0x0/.test(line); seen ||= on; continue; }
+    const m = on && line.match(/\brb=(\d+).*?\btb=(\d+)/);
+    if (m) { received += +m[1]; sent += +m[2]; }
+  }
+  return { uid, sent, received, seen };
+}
+
 // ---- Run ------------------------------------------------------------------------------------------------------------
 const report = { at: new Date().toISOString(), device: {}, checks };
 const devices = adb('devices').split('\n').slice(1).filter(l => /\tdevice$/.test(l));
@@ -128,6 +142,10 @@ for (let steady = 0, tries = 0; steady < 3 && tries < 20; tries++) {
 }
 // Start from nothing: no settings and no stored state from an earlier run.
 shell(`pm clear ${APP}`);
+// The bytes Android itself counts for Spare Key, before and after, and the time window of the run. With the emulator's
+// own packet capture (tools/android-net.mjs) these say where traffic went without asking the app.
+const before = uidBytes();
+report.window = { from: Date.now(), to: 0 };
 
 try {
   // 1. The real check.
@@ -170,8 +188,13 @@ try {
   const go = await scrollTo('Make my plan');
   tap(go);
   const t1 = Date.now();
-  const note = await waitFor(n => /^(Ordered by|This plan was made|Gemini Nano did not|The cloud did not|Practice check)/.test(n.text), 180000, 'the plan');
+  // The plan made by code is on the screen at once; a model may then reorder it.
+  await waitFor(n => /^\d+\. /.test(n.text), 30000, 'the first plan');
+  report.planShownSeconds = Math.round((Date.now() - t1) / 100) / 10;
+  check('A plan is on the screen within 5 seconds, before any model answers', report.planShownSeconds <= 5, `${report.planShownSeconds} s`);
+  const note = await waitFor(n => /^(Ordered by|This plan was made|Gemini Nano did not|The cloud (did not|took)|Practice check)/.test(n.text), 180000, 'the plan');
   report.planSeconds = Math.round((Date.now() - t1) / 100) / 10;
+  check('The cloud gets at most a minute to reorder the plan', report.planSeconds <= 65, `${report.planSeconds} s`);
   report.planNote = note.text;
   check('A plan is made', true, note.text);
   const plan = await readAll('Back to what was found');
@@ -258,6 +281,10 @@ const failed = checks.filter(c => !c.ok).length;
 report.passed = checks.length - failed;
 report.failed = failed;
 mkdirSync(resolve(ROOT, 'docs/evidence'), { recursive: true });
+report.window.to = Date.now();
+const after = uidBytes();
+report.appBytes = after.seen ? { uid: +after.uid, sent: after.sent - before.sent, received: after.received - before.received } : null;
+if (report.appBytes) console.log(`Android counts ${report.appBytes.sent} bytes sent and ${report.appBytes.received} received for Spare Key in this run.`);
 writeFileSync(resolve(ROOT, 'docs/evidence/android-e2e.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(`\n${report.passed} passed, ${failed} failed. Report: docs/evidence/android-e2e.json`);
 process.exit(failed ? 1 : 0);

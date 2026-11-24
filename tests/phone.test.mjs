@@ -118,3 +118,19 @@ test('Gemini Nano on the phone can raise concern, never lower it', () => {
   assert.equal(phoneAnswer(weather, 'app_looks_like_monitoring'), 'unknown', '"looks everyday" is not evidence');
   assert.equal(findings.find(f => f.name === 'System Service').note, 'Looks like a phone tracker');
 });
+
+test('one kind of access from the Play Store is listed under its own heading, never dropped', () => {
+  const { findings } = phoneFindings(PRACTICE_PHONE);
+  const group = name => findings.find(f => f.name === name)?.group;
+  assert.equal(group('System Update Service'), 'phone', 'the app with several powers from outside the store stays on top');
+  assert.equal(group('Password Keeper'), 'phone_one');
+  assert.equal(group('Notify Mirror'), 'phone_one');
+  assert.equal(findings.length, PRACTICE_PHONE_EXPECTED.length, 'every app is still listed');
+  // Gemini Nano can raise an app out of the lower group, and a device admin app never goes there.
+  const raised = phoneFindings(PRACTICE_PHONE, { nano: { 'com.example.notifymirror': { kind: 'monitoring', about: 'a notification mirroring app' } } }).findings;
+  assert.equal(raised.find(f => f.name === 'Notify Mirror').group, 'phone');
+  const admin = phoneFindings({ apps: [{ pkg: 'a.b', label: 'Admin', system: false, installer: 'play', powers: { device_admin: true } }], device: {} }).findings;
+  assert.equal(admin[0].group, 'phone');
+  const side = phoneFindings({ apps: [{ pkg: 'a.c', label: 'Side', system: false, installer: 'other', powers: { usage_access: true } }], device: {} }).findings;
+  assert.equal(side[0].group, 'phone', 'an app from outside the Play Store is never in the lower group');
+});

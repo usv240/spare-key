@@ -146,6 +146,7 @@ fun ResultsScreen(m: AppModel) {
         val items = m.findings.filter { it.optString("group") == g }
         if (items.isEmpty()) continue
         Heading("${labels.optString(g, g)} (${items.size})")
+        lib.optJSONObject("groupNotes")?.optString(g)?.takeIf { it.isNotEmpty() }?.let { Muted(it) }
         for (f in items) FindingCard(m, f, codeText, entries, onOpen = { pkg ->
             try { context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$pkg"))) } catch (_: Throwable) {}
         })

@@ -45,7 +45,7 @@ await build({
 await rm('web/dist', { recursive: true, force: true });
 await mkdir('web/dist/build', { recursive: true });
 const site = { ...common, define: { __APPCHECK_DEBUG_TOKEN__: '""', __BRIDGE_URL__: '""' }, format: 'esm', outdir: 'web/dist/build', splitting: true };
-await build({ ...site, entryPoints: { bridge: 'web/src/bridge.js', site: 'web/src/site.js', tour: 'web/src/tour.js', 'web-panel': 'web/src/web-panel.js' } });
+await build({ ...site, entryPoints: { bridge: 'web/src/bridge.js', site: 'web/src/site.js', 'web-panel': 'web/src/web-panel.js' } });
 for (const f of await readdir('web')) if (f.endsWith('.html')) await cp(`web/${f}`, `web/dist/${f}`);
 if (existsSync('web/public')) await cp('web/public', 'web/dist', { recursive: true });
 await cp('web/src/site.css', 'web/dist/build/site.css');
@@ -69,16 +69,19 @@ await cp('extension/icons/icon-32.png', 'web/dist/icon-32.png');
     console.log(`Android app on the site: ${apk.mb} MB, version ${apk.version}`);
   }
   const { default: index } = await import('./web/src/pages/index.mjs');
+  const { default: why } = await import('./web/src/pages/why.mjs');
   const docs = await import('./web/src/pages/docs.mjs');
   const pages = {
-    'index.html': index({ numbers, drift: { ...(await readJson('web/src/data/drift.json')), first: await readJson('web/src/data/drift-first-run.json') }, android: await readJson('docs/evidence/android-e2e.json'), apk }),
+    'index.html': index({ numbers, apk }),
+    'why.html': why({ numbers, drift: { ...(await readJson('web/src/data/drift.json')), first: await readJson('web/src/data/drift-first-run.json') }, android: await readJson('docs/evidence/android-e2e.json') }),
+    'advocates.html': docs.advocatesPage({ numbers }),
     'try.html': docs.tryPage(),
     'install.html': docs.installPage({ apk }),
     'how-it-works.html': docs.howItWorksPage(),
     'built-with.html': docs.builtWithPage({ numbers }),
     'plant.html': docs.plantPage(),
     'api.html': docs.apiPage(),
-    'accuracy.html': docs.accuracyPage({ numbers, drift: await readJson('web/src/data/drift.json'), driftFirst: await readJson('web/src/data/drift-first-run.json'), android: await readJson('docs/evidence/android-e2e.json') }),
+    'accuracy.html': docs.accuracyPage({ numbers, drift: await readJson('web/src/data/drift.json'), driftFirst: await readJson('web/src/data/drift-first-run.json'), android: await readJson('docs/evidence/android-e2e.json'), androidNet: await readJson('docs/evidence/android-net.json'), androidCloud: await readJson('docs/evidence/android-e2e-cloud.json') }),
     'what-they-see.html': docs.whatTheySeePage({ library: JSON.parse(await readFile('data/steps.json', 'utf8')) }),
     'privacy.html': docs.privacyPage(),
     'safety.html': docs.safetyPage(),

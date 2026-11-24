@@ -2,13 +2,13 @@
   "shared-computer": {
     "title": "If someone else uses this computer",
     "what": "Chrome can keep a list of the pages Spare Key opens. The other person may also see that Spare Key is in Chrome.",
-    "why": "Running the check where they cannot look keeps it private. A computer you are already signed in on, that they never use, is best. Signing in to Google on a computer you have not used before sends a new sign-in alert to your recovery email and phone, and the computer shows in your list of devices. If the other person can see those, they will know. Library and work computers usually do not allow installing extensions.",
+    "why": "Running the check where they cannot look keeps it private. The best place is a computer you already use that the other person never touches. A computer that is new to your account, like a friend's, sends a new sign-in alert to your recovery email and phone, and shows in your list of devices. If the other person can see those, they will know. An advocate can help you choose. Library and work computers usually do not allow installing extensions.",
     "tech": "Spare Key keeps nothing after Chrome closes unless you save it. An optional cleanup removes the pages it opened from Chrome's history."
   },
   "quick-exit": {
     "title": "Quick exit",
     "what": "Quick exit closes Spare Key at once and shows a weather search instead.",
-    "why": "If someone walks in, one press hides what you were doing. Everything from this check is cleared from this computer.",
+    "why": "If someone walks in, one press hides what you were doing. Everything from this check is cleared from this computer, including the words Spare Key kept from each page. Screenshots you took are not touched. If you want to keep the record, save a locked copy first.",
     "tech": "Press Esc twice, press Alt+Shift+X, or use the Quick exit button. It clears session storage, closes the tab Spare Key opened, replaces the page you were on, and closes this panel."
   },
   "hotline": {

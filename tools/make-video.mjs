@@ -41,13 +41,14 @@ const fixSay = B && (() => {
   const code = num(f, /code reader read (\d+)/), total = num(f, /read \d+ of (\d+)/);
   return `Then the fix: new words and places to look, fetched from Firebase Remote Config, with no update to install. The code reads ${code} of ${total} again.`;
 })();
+const PHONE_CLIP = path.join(OUT, 'android-practice.mp4');
 const scenes = [
   { key: 'hook', slide: 'hook',
     say: 'When someone leaves an abusive partner, that person often still has a way in: a phone signed in to their Google account, mail copied to another address, a location share they forgot. Researchers found 60 percent of AI chatbot answers to survivors left out critical safety warnings.' },
   { key: 'gap', slide: 'gap',
     say: 'We tested a plain chatbot on 30 situations. It said to take screenshots before changing anything in only 4. Spare Key\'s plans do in all 30.' },
   { key: 'safety', panel: [M.safety - 0.5, M.choose + 3], slide: 'side', head: 'Read-only. Quick exit on every screen.', sub: 'Spare Key is a free Chrome extension. It reads your own settings pages and changes nothing.',
-    say: 'Spare Key is a free Chrome extension. It reads your own settings pages and changes nothing. Quick exit is on every screen.' },
+    say: 'Spare Key is a free Chrome extension and Android app. It reads your own settings pages and changes nothing. Quick exit is on every screen.' },
   { key: 'scan', panel: [M.start - 0.3, M.results + 0.5], tab: 'tab-1', slide: 'side', head: 'Gemini Nano sorts every entry, on this computer.', sub: 'Firebase AI Logic, on-device only: these pages are the private data. Practice pages for a made-up person, Jordan.',
     say: 'It opens each settings page beside the panel and reads it. Code reads each page, and Gemini Nano sorts every entry through Firebase AI Logic in on-device-only mode, because these pages are the private data.' },
   { key: 'results', panel: [M.results, M['not checked'] + 1], slide: 'side', head: 'What the other person could do, and what they may notice.', sub: 'Each card says what removing it does, from Google\'s own help pages. Anything not read is listed as not checked.',
@@ -56,8 +57,11 @@ const scenes = [
     { key: 'break', footage: 'break', range: [B['break chosen'] - 0.5, B['break read']], slide: 'side', head: 'Sites change their pages. Gemini Nano reads what code cannot.', sub: 'Every practice page changed four ways at once.', say: breakSay },
     { key: 'fix', footage: 'break', range: [B['fix chosen'] - 0.5, B['fix read']], slide: 'side', head: 'A fix from Remote Config. No update to install.', sub: 'Fetched by the page from Firebase Remote Config.', say: fixSay },
   ] : []),
-  { key: 'plan', panel: [M.questions, M['plan end']], slide: 'side', head: 'Screenshots first. Then an advocate. Then changes, at a time that is right for you.', sub: 'Code checks every plan against nine safety rules, whoever wrote it.',
-    say: 'The plan follows the field\'s advice: screenshots first, then an advocate, and changes they may notice wait. Gemini in the cloud can order it, but it only ever sees finding codes, and code checks every plan with nine safety rules. One of them: if mail is copied to someone else, stop that first, or Google\'s alert emails reach them.' },
+  { key: 'plan', panel: [M.questions, M['plan end']], slide: 'side', head: 'Screenshots first. Then an advocate. Then changes, at a time that is right for you.', sub: 'Code checks every plan against ten safety rules, whoever wrote it.',
+    say: 'The plan follows the field\'s advice: screenshots first, then an advocate, and changes they may notice wait. Gemini in the cloud can order it, but it only ever sees finding codes, and code checks every plan with ten safety rules. One of them: if mail is copied to someone else, stop that first, or Google\'s alert emails reach them.' },
+  // The Android app on a made-up practice phone, recorded from the emulator's screen (adb screenrecord).
+  ...(existsSync(PHONE_CLIP) ? [{ key: 'android', clip: PHONE_CLIP, range: [6, 100], slide: 'side', head: 'And the phone itself, on Android.', sub: 'The same rules, the same code, in Android\'s sandbox. A made-up practice phone.',
+    say: 'An account check cannot see an app hidden on the phone. So there is an Android app too. It lists every app that could let someone watch the phone, and gives the same plan. The cloud never sees an app\'s name.' }] : []),
   { key: 'hybrid', slide: 'hybrid',
     say: 'That is the hybrid split. The private pages stay on the device with Gemini Nano. The cloud gets only codes, and when it needs a detail it asks the device a yes-or-no question.' },
   { key: 'hood', panel: [M.hood, M.ledger + 0.5], slide: 'side', head: 'Every request to the cloud, word for word.', sub: 'A test searched every request for the made-up names and addresses: none held one.',
@@ -210,7 +214,12 @@ for (const s of scenes) {
     const bg = path.join(work, `slide-side-${s.key}.png`);
     const pv = path.join(work, `${s.key}-panel.mp4`);
     const [from, to] = s.panel || s.range;
-    const speed = footage(s.panel ? 'panel' : s.footage, from, to, D, pv);
+    let speed;
+    if (s.clip) {
+      // A recorded clip, squeezed to the narration's length.
+      speed = Math.max(1, (to - from) / D);
+      ff(['-ss', String(from), '-t', String(to - from), '-i', s.clip, '-vf', `setpts=PTS/${speed.toFixed(4)},${vf}`, '-t', String(D), '-an', ...ENC, pv]);
+    } else speed = footage(s.panel ? 'panel' : s.footage, from, to, D, pv);
     const inputs = ['-loop', '1', '-i', bg, '-i', pv];
     // The panel sits in the white frame on the right (456 x 1032 at 1344, 24).
     let graph = `[1:v]scale=440:-2,crop=440:min(ih\\,1016):0:0[p];[0:v]format=gbrp[bg];[bg][p]overlay=1352:32:format=gbrp`;

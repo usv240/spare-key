@@ -3,17 +3,23 @@
 // person, an address or a device, which is why codes are the only thing about a scan that may leave the computer.
 
 // Groups, in the order the results show them: the access that matters most comes first.
-export const GROUPS = ['phone', 'location', 'mail', 'account', 'purchases', 'photos', 'devices', 'browsing'];
+export const GROUPS = ['phone', 'location', 'phone_one', 'mail', 'account', 'purchases', 'photos', 'devices', 'browsing'];
 
 export const GROUP_LABELS = {
   phone: 'Can watch this phone',
   location: 'Can see your location',
+  phone_one: 'Apps with one kind of access',
   mail: 'Can read your mail',
   account: 'Can get into your account',
   purchases: 'Can see your purchases and addresses',
   photos: 'Can see your photos',
   devices: 'Devices linked to your account',
   browsing: 'Can see what you do in Chrome',
+};
+
+// A line under a group's heading, where the heading alone could mislead. Never a reassurance.
+export const GROUP_NOTES = {
+  phone_one: 'These came from the Play Store and hold one kind of access. Many everyday apps do, and some are used to watch people. Check that you know each one.',
 };
 
 // Every code the product can produce: its group and the check that finds it.

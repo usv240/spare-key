@@ -37,6 +37,8 @@ export function renderQuestions(root, { values, share, cloudOn, onChange, onMake
   shareBox.disabled = !cloudOn;
   shareBox.addEventListener('change', () => onChange(values, shareBox.checked));
   put(root,
+    // Every screen has one main heading, so a screen reader can say where it is.
+    h('h1', { text: 'Your plan' }),
     h('div', { class: 'with-info' }, h('h2', { class: 'plan-q-title', text: 'Want the plan ordered for your situation? These answers are optional.' }), infoButton('situation', 'About these questions')),
     ...fieldsets,
     h('label', { class: 'share-line' }, shareBox, h('span', { text: cloudOn ? 'Let plan help in the cloud see my choices' : 'Plan help from the cloud is off, so your choices stay here' })),
@@ -143,7 +145,7 @@ function screenshotSection(docs, { byRef }) {
     h('strong', { text: `${(CODE_TEXT[code] || [code])[0]}${fs.length > 1 ? ` (${fs.length})` : ''}` }),
     ...fs.map(f => h('span', { class: 'muted', text: f.label })))));
   return section('document', `Screenshot these first (${items.length})`,
-    h('p', { text: 'A record of what is set up now helps you and an advocate, and it is gone once a setting changes. Keep the screenshots where the other person cannot see them, like an email to an account only you use. If your photos back up to an account they can see, or Google Photos partner sharing is on, write the list on paper or take a picture with another phone instead.' }),
+    h('p', { text: 'A record of what is set up now helps you and an advocate, and it is gone once a setting changes. Keep the screenshots where the other person cannot see them. Do not mail them from this account: a copy stays in Sent, where anyone who can read this mail can see it. If your photos back up to an account they can see, or Google Photos partner sharing is on, write the list on paper or take a picture with another phone instead.' }),
     h('p', { class: 'muted', text: 'Spare Key also kept the words on each page it read, with the date and time. They are under "What we found", and in a locked copy if you save one. Screenshots are still the stronger record.' }),
     // A short list stays open; a long one folds, so the plan's next steps stay in view.
     byCode.size > 4 ? h('details', { class: 'later shot-list' }, h('summary', { text: `See all ${items.length}, in ${byCode.size} kinds` }), list) : list);

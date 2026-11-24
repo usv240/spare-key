@@ -266,16 +266,16 @@ what a person sees, which is why both pass every measure after them.
 Speed: see section 1. On this PC, loading Gemini Nano the first time took 104 to 133 s; after that, each check took 4 to
 19 s with Nano and about 1 s with code only. The PC had little free memory during these runs, so these are slow numbers.
 
-Reading level (`tools/reading-grade.mjs`, `docs/evidence/reading-grade.json`, November 23): the Flesch-Kincaid grade
-of the words on the 12 site pages and the side panel (paragraphs, list items, headings and buttons; code, number tables
-and menus left out). Median grade 4.2; the highest page is 6.1 ("Built with", which names the Firebase products). The
+Reading level (`tools/reading-grade.mjs`, `docs/evidence/reading-grade.json`, November 24): the Flesch-Kincaid grade
+of the words on the 14 site pages and the side panel (paragraphs, list items, headings and buttons; code, number tables
+and menus left out). Median grade 4.2; the highest page is 6.5 (`built-with.html`). The
 goal is grade 6 to 8 or lower. An earlier one-off scoring of the panel's 257 strings on November 22 (not saved as a
 script) gave median 4.3, with 5 short steps that name a menu, such as "Open Gmail settings, then Forwarding and
 POP/IMAP.", between grade 8 and 9.1.
 
-Accessibility (`tools/a11y-check.mjs`, `docs/evidence/a11y.json`, November 23): axe-core 4.10.2 with the WCAG 2.0 and 2.1
-A and AA rules and best practices, on all 13 site pages at 375 and 1280 px in light and dark, and on the real side panel
-(safety, choose, scanning with the "confirm it is you" box, results) in light and dark: 60 runs, 0 violations, and no
+Accessibility (`tools/a11y-check.mjs`, `docs/evidence/a11y.json`, November 24): axe-core 4.10.2 with the WCAG 2.0 and 2.1
+A and AA rules and best practices, on all 15 site pages at 375 and 1280 px in light and dark, and on the real side panel
+(safety, choose, scanning with the "confirm it is you" box, results, the plan questions, the plan, and Under the hood) in light and dark: 74 runs, 0 violations, and no
 page scrolls sideways. axe finds only what can be checked automatically; a keyboard and screen reader pass by a person
 is still needed.
 
@@ -306,3 +306,34 @@ different"; then "Read Jordan's screenshot" added Sam Porter and Riley, read by 
 "Me". Headless Chrome cannot run this on the live site: App Check's reCAPTCHA refuses automated browsers.
 
 Limits: one made-up screen in no real app's look. Real Life360 or Find My screens have not been tried.
+
+## 8. The Android app (`tools/android-e2e.mjs`, `docs/evidence/android-e2e.json`, November 24)
+
+The test installs a second app that does nothing but hold the access a phone-watching app asks for (screen reading,
+device admin, notifications, texts, location all the time, usage access), turns each one on through adb, and drives
+the real app on an Android 16 emulator: **33 of 33 checks passed**. The check took 10.4 s.
+The plan made by code was on the screen 3 s after the button was pressed. On the saved run the free-tier cloud model did not answer, so the app kept the plan made by its rules and said so (27.9 s after the button was pressed; it gives the cloud at most 45 s). On the run before it ([docs/evidence/android-e2e-cloud.json](docs/evidence/android-e2e-cloud.json), 34 of 34 checks) Gemini reordered the plan 9.6 s after the button was pressed, with rule R10 applied by code.
+
+Where the traffic went (`tools/android-net.mjs`, `docs/evidence/android-net.json`): the emulator records every packet
+from outside Android, and Wi-Fi is turned off for the run so nothing can go another way. The hosts Spare Key is built
+to reach were:
+
+| Host | What for | Sent | Received |
+|---|---|---|---|
+| `firebasevertexai.googleapis.com` | Gemini through Firebase AI Logic (the plan, from finding types) | 53.1 KB | 11.4 KB |
+| `www.google.com` | reCAPTCHA Enterprise (for App Check) | 40.0 KB | 74.8 KB |
+| `www.gstatic.com` | reCAPTCHA Enterprise (for App Check) | 19.7 KB | 1157.4 KB |
+| `spare-key-app.web.app` | Spare Key site (the App Check bridge page) | 12.0 KB | 43.1 KB |
+| `firebaseremoteconfig.googleapis.com` | Remote Config and its install id (settings) | 2.6 KB | 7.2 KB |
+| `firebaseinstallations.googleapis.com` | Remote Config and its install id (settings) | 1.8 KB | 5.3 KB |
+
+These add up to 129.1 KB sent and 1299.2 KB received; Android's own counter for the app says 135.5 KB
+sent and 1307.0 KB received. The gap is traffic that hides its host name (QUIC) and went to addresses several Google
+hosts share, App Check among them. No usage, crash or analytics host was looked up or reached. The capture also holds
+the hosts Android itself reached in that time (Google Play services, time and connectivity checks); they are listed in
+the evidence file.
+
+Limits: an emulator, not a person's phone; a test app, not real stalkerware; a rooted phone can hide an app. Gemini
+Nano was not on the emulator, so on-device sorting was not part of the run. A capture shows where traffic went and how
+much, not the words inside, which are encrypted; the words are shown by the app's own list and checked a second time
+in Kotlin before each request.

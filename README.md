@@ -15,6 +15,9 @@ emulator has none. Everything else in the Android app is tested end to end.)
 
 Site: <https://spare-key-app.web.app> · Practice check in any browser: <https://spare-key-app.web.app/try.html>
 
+The case and the test results on one page: <https://spare-key-app.web.app/why.html> · For advocates:
+<https://spare-key-app.web.app/advocates.html>
+
 If you need help now: National Domestic Violence Hotline, call 1-800-799-7233 or text START to 88788. Free, 24/7.
 
 ## Judge's tour
@@ -36,12 +39,13 @@ If you need help now: National Domestic Violence Hotline, call 1-800-799-7233 or
    extension, those requests hold finding types like `gmail.forwarding.external`, never a name.
 4. **What they see when you change it.** <https://spare-key-app.web.app/what-they-see.html>: for each of the 30 kinds
    of access, what the other person sees if it is removed, quoted from the official help page where one says.
-5. **On your own account (optional, 5 minutes).** Install the extension (below), plant a harmless way in with a recipe
-   on <https://spare-key-app.web.app/plant.html>, run the check, then undo it.
+5. **On your own account (optional, 5 minutes).** Install the extension (below) and run the check. The recipes on
+   <https://spare-key-app.web.app/plant.html> plant a harmless way in to find; the builder has not yet run them on a
+   real account, so a miss there is new information, and the first one sends a new sign-in alert to the account.
 
 6. **The Android app (optional).** Build it (below) and choose **Try a practice phone first**: a made-up phone with a
    hidden "System Update Service" that holds every kind of access. Or run `node tools/android-e2e.mjs` on an emulator: it
-   installs a do-nothing test app that holds the same access, turns each one on, and drives the real app. 31 of 31
+   installs a do-nothing test app that holds the same access, turns each one on, and drives the real app. 33 of 33
    checks passed on an Android 16 emulator ([docs/evidence/android-e2e.json](docs/evidence/android-e2e.json)).
 
 ## Where each step runs, and why
@@ -54,10 +58,10 @@ go to whichever tier the person chooses and the measurements favour; public text
 |---|---|---|---|
 | Read the settings pages and sort each entry | Gemini Nano | `ONLY_ON_DEVICE` | The pages name the other person. Sending them anywhere is the harm, so there is no cloud fallback, on purpose |
 | Read a page the code reader cannot (a site changed it) | Gemini Nano | `ONLY_ON_DEVICE` | Same |
-| Read a screenshot of a phone location app (Life360, Find My) | Gemini Nano, image input | `ONLY_ON_DEVICE` | A screenshot shows names |
+| Read a screenshot of a phone location app | Gemini Nano, image input | `ONLY_ON_DEVICE` | A screenshot shows names. Tried on one made-up screen, read on 1 of 3 runs; no real Life360 or Find My screen has been tried |
 | Order and explain the plan | Gemini in the cloud if plan help is on; Gemini Nano if the person turned it off | `ONLY_IN_CLOUD` with function calling, or `ONLY_ON_DEVICE` | Finding codes only. The cloud asks the device yes/no questions (`ask_device`), the person (`ask_user`), and reads the public steps (`get_steps`). Code's safety rules decide what is shown either way (below) |
 | Two voices ("close the doors" against "stay hidden", then settle) | Gemini in the cloud | `ONLY_IN_CLOUD` | Codes only; each voice argues from the steps library's facts |
-| Check a step still matches the official help page | Gemini in the cloud | `ONLY_IN_CLOUD`, URL context | A code and a public help page |
+| Check a step still matches the official help page | Gemini in the cloud | `ONLY_IN_CLOUD`, URL context | A code and a public help page. The tool could not fetch Google's or Amazon's help pages; given the page text fetched on the computer, it confirmed Gmail's forwarding steps |
 | The practice check on the website | Either | `PREFER_ON_DEVICE` | Made-up data |
 
 ### The same split on Android
@@ -136,11 +140,11 @@ answer, you get the plan made on your computer; when only the voices fail, you k
 
 `tools/android-e2e.mjs` installs `android/planted`, an app that does nothing but hold accessibility, device admin,
 notification, texts and background location access, turns each one on through adb, and drives the real app.
-**31 of 31 checks passed** on an Android 16 emulator: the planted app is found and listed first as "can watch
+**33 of 33 checks passed** on an Android 16 emulator: the planted app is found and listed first as "can watch
 and control this phone"; apps that came with the phone are not listed (the first run flagged Android System
 Intelligence, which is why); the plan says to leave the watching app for a better time when now is not a good time;
 the cloud plan request is in "What left this phone" word for word and names no app; Quick exit and back-twice leave no
-recent-apps entry; every button is at least 48dp. The check took 3.6 s. Also checked: an app that can see which apps you use is found; "Say it more simply" is answered through hybrid inference's cloud fallback (the emulator has no Gemini Nano); every request passes a second check for app names in Kotlin; and no usage statistics or crash reports are stored or sent. The free-tier cloud model was busy on some runs; the app then shows the plan made by its rules and says so (this happened on the saved run; a run minutes earlier was ordered by Gemini in the cloud in 7 s, with rule R10 applied by code).
+recent-apps entry; every button is at least 48dp. The check took 10.4 s. The plan made by code was on the screen 3 s after the button was pressed. On the saved run the free-tier cloud model did not answer, so the app kept the plan made by its rules and said so (27.9 s after the button was pressed; it gives the cloud at most 45 s). On the run before it ([docs/evidence/android-e2e-cloud.json](docs/evidence/android-e2e-cloud.json), 34 of 34 checks) Gemini reordered the plan 9.6 s after the button was pressed, with rule R10 applied by code. Also checked: an app that can see which apps you use is found; "Say it more simply" is answered through hybrid inference's cloud fallback (the emulator has no Gemini Nano); every request passes a second check for app names in Kotlin; and no usage statistics or crash reports are stored or sent. The emulator's own packet capture of that run, with Wi-Fi off so nothing could go another way, shows Spare Key reaching only Firebase AI Logic, App Check with reCAPTCHA, Remote Config and its own site (129.1 KB sent by host name; Android's counter for the app says 135.5 KB in all), and no usage, crash or analytics host looked up or reached (`tools/android-net.mjs`, `docs/evidence/android-net.json`).
 Not shown by this: real stalkerware, a rooted phone, or Gemini Nano's sorting (the emulator has no Gemini Nano).
 
 ## Install

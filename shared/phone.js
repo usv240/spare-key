@@ -33,6 +33,10 @@ const POWER_WORDS = {
 // launcher, Android System Intelligence reading notifications. Another person cannot put an app there without rooting
 // the phone, so they are counted, not listed, and the results say a rooted phone can hide an app there.
 const ORDER = ['accessibility', 'device_admin', 'notifications', 'messages', 'usage_access', 'location_always'];
+// One kind of access, held by an app from the Play Store: a password manager reading the screen, a watch app reading
+// notifications. Still listed, with the same card and the same question, but under its own heading below the apps that
+// can watch the whole phone, so a long list does not bury the one that matters. Device admin never goes here.
+const ONE_KIND = ['phone.app.accessibility', 'phone.app.notifications', 'phone.app.messages', 'phone.app.usage_access'];
 
 /** The finding code for one app, or null when it holds nothing worth listing. */
 export function phoneCode(app) {
@@ -66,7 +70,7 @@ export function phoneFindings(facts, { nano = {}, refStart = 0 } = {}) {
       code,
       check: 'phone.apps',
       service: 'phone',
-      group: PHONE_CODES[code].group,
+      group: app.installer === 'play' && ONE_KIND.includes(code) && !(read && CAUTION_KINDS.includes(read.kind)) ? 'phone_one' : PHONE_CODES[code].group,
       label: shortLabel([app.label, where].filter(Boolean).join('\n')),
       detail,
       howFound: read ? 'both' : 'reader',

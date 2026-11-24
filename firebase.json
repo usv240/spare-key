@@ -64,6 +64,128 @@
           }
         ]
       }
+    ],
+    "redirects": [
+      {
+        "source": "/try",
+        "destination": "/try.html",
+        "type": 301
+      },
+      {
+        "source": "/try/",
+        "destination": "/try.html",
+        "type": 301
+      },
+      {
+        "source": "/install",
+        "destination": "/install.html",
+        "type": 301
+      },
+      {
+        "source": "/install/",
+        "destination": "/install.html",
+        "type": 301
+      },
+      {
+        "source": "/how-it-works",
+        "destination": "/how-it-works.html",
+        "type": 301
+      },
+      {
+        "source": "/how-it-works/",
+        "destination": "/how-it-works.html",
+        "type": 301
+      },
+      {
+        "source": "/built-with",
+        "destination": "/built-with.html",
+        "type": 301
+      },
+      {
+        "source": "/built-with/",
+        "destination": "/built-with.html",
+        "type": 301
+      },
+      {
+        "source": "/plant",
+        "destination": "/plant.html",
+        "type": 301
+      },
+      {
+        "source": "/plant/",
+        "destination": "/plant.html",
+        "type": 301
+      },
+      {
+        "source": "/api",
+        "destination": "/api.html",
+        "type": 301
+      },
+      {
+        "source": "/api/",
+        "destination": "/api.html",
+        "type": 301
+      },
+      {
+        "source": "/accuracy",
+        "destination": "/accuracy.html",
+        "type": 301
+      },
+      {
+        "source": "/accuracy/",
+        "destination": "/accuracy.html",
+        "type": 301
+      },
+      {
+        "source": "/what-they-see",
+        "destination": "/what-they-see.html",
+        "type": 301
+      },
+      {
+        "source": "/what-they-see/",
+        "destination": "/what-they-see.html",
+        "type": 301
+      },
+      {
+        "source": "/privacy",
+        "destination": "/privacy.html",
+        "type": 301
+      },
+      {
+        "source": "/privacy/",
+        "destination": "/privacy.html",
+        "type": 301
+      },
+      {
+        "source": "/safety",
+        "destination": "/safety.html",
+        "type": 301
+      },
+      {
+        "source": "/safety/",
+        "destination": "/safety.html",
+        "type": 301
+      },
+      {
+        "source": "/why",
+        "destination": "/why.html",
+        "type": 301
+      },
+      {
+        "source": "/why/",
+        "destination": "/why.html",
+        "type": 301
+      },
+      {
+        "source": "/advocates",
+        "destination": "/advocates.html",
+        "type": 301
+      },
+      {
+        "source": "/advocates/",
+        "destination": "/advocates.html",
+        "type": 301
+      }
     ]
   },
   "remoteconfig": {

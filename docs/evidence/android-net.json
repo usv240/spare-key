@@ -1,0 +1,173 @@
+{
+ "at": "2026-11-24T15:15:26.927Z",
+ "capture": "sk-capture.pcap",
+ "packets": 3730,
+ "inWindow": 3237,
+ "window": {
+  "from": "2026-11-24T15:08:24.800Z",
+  "to": "2026-11-24T15:14:47.872Z"
+ },
+ "clockFixHours": 5,
+ "note": "Every host the whole emulator reached in the window: Spare Key and Android itself (Google Play services, time and connectivity checks). The capture cannot tell apps apart; the bytes the system counts for Spare Key alone are in appBytes when given.",
+ "appBytes": {
+  "sent": 138786,
+  "received": 1338396
+ },
+ "spareKey": [
+  {
+   "host": "firebasevertexai.googleapis.com",
+   "sent": 54332,
+   "received": 11684,
+   "connections": 1,
+   "first": "2026-11-24T15:09:49.122Z",
+   "use": "Gemini through Firebase AI Logic (the plan, from finding types)"
+  },
+  {
+   "host": "www.google.com",
+   "sent": 40916,
+   "received": 76566,
+   "connections": 4,
+   "first": "2026-11-24T15:08:50.081Z",
+   "use": "reCAPTCHA Enterprise (for App Check)"
+  },
+  {
+   "host": "www.gstatic.com",
+   "sent": 20128,
+   "received": 1185221,
+   "connections": 4,
+   "first": "2026-11-24T15:08:55.950Z",
+   "use": "reCAPTCHA Enterprise (for App Check)"
+  },
+  {
+   "host": "spare-key-app.web.app",
+   "sent": 12304,
+   "received": 44156,
+   "connections": 4,
+   "first": "2026-11-24T15:08:53.604Z",
+   "use": "Spare Key site (the App Check bridge page)"
+  },
+  {
+   "host": "firebaseremoteconfig.googleapis.com",
+   "sent": 2709,
+   "received": 7345,
+   "connections": 1,
+   "first": "2026-11-24T15:08:37.933Z",
+   "use": "Remote Config and its install id (settings)"
+  },
+  {
+   "host": "firebaseinstallations.googleapis.com",
+   "sent": 1854,
+   "received": 5429,
+   "connections": 1,
+   "first": "2026-11-24T15:08:37.689Z",
+   "use": "Remote Config and its install id (settings)"
+  }
+ ],
+ "other": [
+  {
+   "host": "android.googleapis.com or content-autofill.googleapis.com or content-firebaseappcheck.googleapis.com or digitalassetlinks.googleapis.com or firebaseinstallations.googleapis.com or firebaseremoteconfig.googleapis.com or firebasevertexai.googleapis.com or geomobileservices-pa.googleapis.com or phonedeviceverification-pa.googleapis.com or play.googleapis.com or playstoregatewayadapter-pa.googleapis.com or prod-lt-playstoregatewayadapter-pa.googleapis.com or remoteprovisioning.googleapis.com or voilatile-pa.googleapis.com or www.googleapis.com",
+   "sent": 247936,
+   "received": 497505,
+   "connections": 3,
+   "first": "2026-11-24T15:08:36.841Z",
+   "use": null
+  },
+  {
+   "host": "play-fe.googleapis.com",
+   "sent": 60242,
+   "received": 18748,
+   "connections": 2,
+   "first": "2026-11-24T15:08:38.601Z",
+   "use": null
+  },
+  {
+   "host": "android.googleapis.com",
+   "sent": 14684,
+   "received": 7555,
+   "connections": 1,
+   "first": "2026-11-24T15:08:37.352Z",
+   "use": null
+  },
+  {
+   "host": "update.googleapis.com",
+   "sent": 10092,
+   "received": 8577,
+   "connections": 3,
+   "first": "2026-11-24T15:14:47.058Z",
+   "use": null
+  },
+  {
+   "host": "accounts.google.com",
+   "sent": 7356,
+   "received": 15509,
+   "connections": 3,
+   "first": "2026-11-24T15:13:47.092Z",
+   "use": null
+  },
+  {
+   "host": "content-autofill.googleapis.com",
+   "sent": 6584,
+   "received": 8487,
+   "connections": 1,
+   "first": "2026-11-24T15:08:57.040Z",
+   "use": null
+  },
+  {
+   "host": "play.googleapis.com",
+   "sent": 6577,
+   "received": 12160,
+   "connections": 2,
+   "first": "2026-11-24T15:13:46.267Z",
+   "use": null
+  },
+  {
+   "host": "connectivitycheck.gstatic.com",
+   "sent": 4742,
+   "received": 10193,
+   "connections": 4,
+   "first": "2026-11-24T15:08:35.037Z",
+   "use": null
+  },
+  {
+   "host": "android.clients.google.com or update.googleapis.com",
+   "sent": 2614,
+   "received": 2774,
+   "connections": 1,
+   "first": "2026-11-24T15:14:47.619Z",
+   "use": null
+  },
+  {
+   "host": "edgedl.me.gvt1.com",
+   "sent": 964,
+   "received": 35838,
+   "connections": 3,
+   "first": "2026-11-24T15:14:47.465Z",
+   "use": null
+  }
+ ],
+ "lookedUp": [
+  "accounts.google.com",
+  "android.clients.google.com",
+  "content-autofill.googleapis.com",
+  "content-firebaseappcheck.googleapis.com",
+  "digitalassetlinks.googleapis.com",
+  "edgedl.me.gvt1.com",
+  "firebaseinstallations.googleapis.com",
+  "firebaseremoteconfig.googleapis.com",
+  "firebasevertexai.googleapis.com",
+  "geomobileservices-pa.googleapis.com",
+  "i.ytimg.com",
+  "play-fe.googleapis.com",
+  "play-lh.googleusercontent.com",
+  "play.googleapis.com",
+  "playstoregatewayadapter-pa.googleapis.com",
+  "prod-lt-playstoregatewayadapter-pa.googleapis.com",
+  "spare-key-app.web.app",
+  "update.googleapis.com",
+  "voilatile-pa.googleapis.com",
+  "www.googleapis.com",
+  "www.gstatic.com"
+ ],
+ "forbidden": [],
+ "quicPackets": 735
+}

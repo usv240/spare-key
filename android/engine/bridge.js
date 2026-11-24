@@ -12,7 +12,7 @@ import { buildPlan } from '../../shared/plan/engine.js';
 import { applyInvariants, cleanText } from '../../shared/plan/invariants.js';
 import { PLAN_SYSTEM, PLAN_SCHEMA, PLAN_TOOLS, DEVICE_QUESTIONS, USER_QUESTIONS, devicePlanSystem, SIMPLER_SYSTEM, SIMPLER_SCHEMA } from '../../shared/plan/prompts.js';
 import { libraryMap } from '../../shared/steps-schema.js';
-import { CODE_TEXT, GROUP_LABELS, GROUPS, SITUATION, SITUATION_DEFAULTS } from '../../shared/findings.js';
+import { CODE_TEXT, GROUP_LABELS, GROUP_NOTES, GROUPS, SITUATION, SITUATION_DEFAULTS } from '../../shared/findings.js';
 import STEPS from '../../data/steps.json';
 import { PRACTICE_PHONE } from '../../shared/phone-practice.js';
 
@@ -27,7 +27,7 @@ let refs = {};        // cloud ref (f1) -> finding ref (P1), for the last toClou
 const privateOf = s => (s?.findings || []).filter(f => f.pkg).flatMap(f => [f.label, f.detail, f.pkg, f.detail.split('\n')[0]]).filter(Boolean);
 
 globalThis.SK = {
-  library() { return out({ version: STEPS.version, updated_at: STEPS.updated_at, entries: LIBRARY, codeText: CODE_TEXT, groups: GROUPS, groupLabels: GROUP_LABELS, situation: SITUATION }); },
+  library() { return out({ version: STEPS.version, updated_at: STEPS.updated_at, entries: LIBRARY, codeText: CODE_TEXT, groups: GROUPS, groupLabels: GROUP_LABELS, groupNotes: GROUP_NOTES, situation: SITUATION }); },
 
   /** The made-up phone for the practice check (Jordan's). */
   practiceFacts() { return out(PRACTICE_PHONE); },

@@ -17,6 +17,8 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeoutOrNull
 import org.json.JSONArray
 import org.json.JSONObject
@@ -28,6 +30,9 @@ import java.util.Date
  * rules in the sandbox (Rules, assets/engine.js); every model call goes through Firebase AI Logic (Ai). Nothing from
  * the check is written to storage: it lives in memory, and Quick exit or closing the app forgets it.
  */
+/** How long the cloud may take to order a plan that is already on the screen. */
+private const val CLOUD_WAIT_MS = 45_000L
+
 class AppModel(app: Application) : AndroidViewModel(app) {
     sealed interface Screen
     data object Safety : Screen
@@ -236,7 +241,7 @@ class AppModel(app: Application) : AndroidViewModel(app) {
                 if (cloud) {
                     // 2. The cloud orders it from codes only. toCloud() and checkOutgoing() run in the sandbox: the same gate
                     // as the extension's.
-                    planNote = "Asking Gemini in the cloud to order this. It sees finding types only, never an app's name."
+                    planNote = "You can use this plan now. Gemini in the cloud is also ordering it, from finding types only, never an app's name."
                     val body = Rules.obj("cloudBody", situation, shared, notChecked())
                     val sent = body.getJSONObject("body").optJSONArray("findings")
                     val types = (0 until (sent?.length() ?: 0)).map { sent!!.getJSONObject(it).optString("code") }.distinct()
@@ -244,9 +249,11 @@ class AppModel(app: Application) : AndroidViewModel(app) {
                     val tc = System.currentTimeMillis()
                     val p = Rules.obj("planPrompt", body.getJSONObject("body"))
                     val decls = p.getJSONArray("tools").getJSONObject(0).getJSONArray("functionDeclarations")
+                    var live = true
                     val fns = (0 until decls.length()).map { i ->
                         val d = decls.getJSONObject(i)
                         Ai.Function(d) { args ->
+                            if (!live) throw kotlinx.coroutines.CancellationException("the plan was already shown")
                             val name = d.getString("name")
                             val answer = if (name == "ask_user") askPerson(args.optString("question")) else JSONObject(Rules.call("answerCall", name, args))
                             if (name == "ask_device") deviceAnswers++
@@ -263,14 +270,31 @@ class AppModel(app: Application) : AndroidViewModel(app) {
                         Ai.jsonWithFunctions(Ai.Prompt(p.getString("system"), p.getJSONObject("schema")),
                             listOf(Ai.Text(body.getString("text"))), settings!!.models, fns)
                     }
-                    val r = try { ask() } catch (e: Throwable) {
-                        // The App Check token was not ready in time (the SDK waits about 10 s; a slow phone needs more).
-                        // Wait for it, then ask once more. The request is the same one already shown in the ledger.
-                        if (!e.toString().contains("App Check", ignoreCase = true)) throw e
-                        note("App Check token was not ready. Waiting for it, then asking once more.")
-                        val ready = (getApplication<Application>() as? app.web.sparekey.SpareKeyApp)?.awaitAppCheck(40_000) ?: false
-                        if (!ready) throw e
-                        ask()
+                    // The plan made by code is already on the screen, so the cloud gets a fixed time to improve it and no
+                    // more. Time the person spends answering a question the cloud asked does not count.
+                    // The call is not a child of this block: a network call that is slow to notice it was cancelled must not
+                    // hold the screen. When time is up it is cancelled and left behind, and `live` stops it from asking the
+                    // person anything or adding to the list of what was sent.
+                    val r = run {
+                        val job = viewModelScope.async {
+                            try { ask() } catch (e: Throwable) {
+                                // The App Check token was not ready in time (the SDK waits about 10 s; a slow phone needs
+                                // more). Wait for it, then ask once more. The request is the one already in the ledger.
+                                if (!e.toString().contains("App Check", ignoreCase = true)) throw e
+                                note("App Check token was not ready. Waiting for it, then asking once more.")
+                                val ready = (getApplication<Application>() as? app.web.sparekey.SpareKeyApp)?.awaitAppCheck(40_000) ?: false
+                                if (!ready) throw e
+                                ask()
+                            }
+                        }
+                        var spent = 0L
+                        while (job.isActive && spent < CLOUD_WAIT_MS) { delay(250); if (asking == null) spent += 250 }
+                        if (job.isActive) { live = false; job.cancel(); null } else job.await()
+                    }
+                    if (r == null) {
+                        note("The cloud did not answer in ${CLOUD_WAIT_MS / 1000} s. The plan made by code is shown.")
+                        planNote = "The cloud took too long to answer. This is the plan made by Spare Key's rules on this phone."
+                        return@launch
                     }
                     val settled = Rules.obj("settle", r.json, situation, notChecked())
                     plan = settled.getJSONObject("plan"); planSource = "cloud:${r.model}"

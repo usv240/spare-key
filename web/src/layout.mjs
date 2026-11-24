@@ -13,9 +13,9 @@ export const ICONS = `<svg width="0" height="0" style="position:absolute" aria-h
 export const info = (id, about) => `<button class="info" type="button" data-info="${esc(id)}" aria-label="${esc(about)}"><svg aria-hidden="true"><use href="#i-info"/></svg></button>`;
 
 const NAV = [
-  ['index.html', 'Home'],
   ['how-it-works.html', 'How it works'],
   ['try.html', 'Try it'],
+  ['why.html', 'Why Spare Key'],
   ['built-with.html', 'How it’s built'],
   ['accuracy.html', 'Accuracy'],
   ['privacy.html', 'Privacy'],
@@ -68,9 +68,9 @@ ${body}
       </div>
       <div><h2 class="visually-hidden">The product</h2><ul>
         <li><a href="/how-it-works.html">How it works</a></li><li><a href="/try.html">Try the practice check</a></li>
-        <li><a href="/plant.html">Plant a test key</a></li><li><a href="/what-they-see.html">What they see when you change it</a></li><li><a href="/accuracy.html">Accuracy</a></li></ul></div>
+        <li><a href="/why.html">Why Spare Key</a></li><li><a href="/advocates.html">For advocates</a></li><li><a href="/what-they-see.html">What they see when you change it</a></li><li><a href="/accuracy.html">Accuracy</a></li></ul></div>
       <div><h2 class="visually-hidden">For builders</h2><ul>
-        <li><a href="/built-with.html">How it’s built</a></li><li><a href="/api.html">Steps API and MCP server</a></li>
+        <li><a href="/built-with.html">How it’s built</a></li><li><a href="/api.html">Steps API and MCP server</a></li><li><a href="/plant.html">Plant a test key (for testers)</a></li>
         <li><a href="https://github.com/usv240/spare-key">Source code (Apache-2.0)</a></li></ul></div>
       <div><h2 class="visually-hidden">Safety and privacy</h2><ul>
         <li><a href="/safety.html">Getting help</a></li><li><a href="/privacy.html">Privacy</a></li>

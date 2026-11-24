@@ -1,12 +1,13 @@
 // Screenshots of the plan screen from the demo panel (the code plan, no cloud calls), light and dark, 360 and 500 px.
-// Usage: node build.mjs && node tools/plan-shots.mjs [out-dir]
+// Usage: node build.mjs && node tools/plan-shots.mjs [out-dir] [--sample]
+//   --sample also writes web/public/sample-plan.pdf: the made-up person's plan as the panel prints it.
 import puppeteer from 'puppeteer-core';
 import path from 'node:path';
 import { mkdirSync } from 'node:fs';
 import { CHROME } from './chrome-args.mjs';
 import { serve } from './serve.mjs';
 
-const out = process.argv[2] || 'shots';
+const out = process.argv.slice(2).find(a => !a.startsWith('--')) || 'shots';
 mkdirSync(out, { recursive: true });
 const srv = await serve(0);
 const browser = await puppeteer.launch({ executablePath: CHROME, headless: 'new', args: ['--no-first-run'] });
@@ -37,6 +38,22 @@ try {
     }));
     console.log(scheme, now, width, JSON.stringify(info));
     await page.screenshot({ path: path.join(out, `plan-${now}-${width}-${scheme}.png`), fullPage: true });
+  }
+  // The plan as it prints, for the advocates page: the made-up person's plan, every folded block open, on paper sizes.
+  // It is the panel's own print layout (panel.css, @media print), not a drawing of it.
+  if (process.argv.includes('--sample')) {
+    await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'light' }]);
+    await page.setViewport({ width: 500, height: 900 });
+    await page.goto(`${srv.url}/panel-demo.html?mode=demo`, { waitUntil: 'networkidle0' });
+    await page.waitForSelector('#to-plan', { visible: true });
+    await page.click('#to-plan');
+    await page.waitForSelector('#make-plan', { visible: true });
+    await page.click('input[name="q-safe_to_change_now"][value="no"]');
+    await page.click('#make-plan');
+    await page.waitForSelector('#plan ol.plan');
+    await page.evaluate(() => { for (const d of document.querySelectorAll('#plan details')) d.open = true; });
+    await page.pdf({ path: 'web/public/sample-plan.pdf', format: 'Letter', printBackground: false, margin: { top: '0.6in', bottom: '0.6in', left: '0.7in', right: '0.7in' } });
+    console.log('wrote web/public/sample-plan.pdf');
   }
 } finally {
   await browser.close();

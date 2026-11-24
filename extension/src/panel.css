@@ -282,7 +282,14 @@ kbd {
 .ask p { margin: 0 0 10px; font-weight: 600; }
 .ask .answer { margin-top: 0; grid-template-columns: repeat(4, 1fr); }
 @media print {
-  .bar, .tabs, .actions, .info, .finding-actions, #plan-questions, .ask { display: none !important; }
+  /* Paper is white whatever the screen's theme: without this a dark screen prints pale text on white, or black text
+     on dark cards. Every colour token is set to an ink that reads on paper. */
+  :root, :root[data-theme="dark"], :root:not([data-theme="light"]) {
+    color-scheme: light;
+    --bg: #FFFFFF; --surface: #FFFFFF; --ink: #000000; --ink-2: #33373D; --line: #999999; --control: #666666;
+    --accent: #1F4A3F; --on-accent: #FFFFFF; --accent-tint: #FFFFFF; --caution: #6B4000; --caution-bg: #FFFFFF;
+  }
+  .bar, .tabs, .actions, .info, .finding-actions, #plan-questions, .ask, .simpler-button { display: none !important; }
   body { background: #fff; color: #000; }
   .step, .plan-summary { break-inside: avoid; border-color: #999; }
   .later { display: block; }
