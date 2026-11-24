@@ -131,6 +131,7 @@ export default function why({ numbers, drift = null, android = null, grade = nul
         <tr><td>Hybrid inference (prefer on device)</td><td>Either</td><td>Only text that names no one: the practice check on this site, and putting a public step in simpler words</td></tr>
         <tr><td>Firebase AI Logic on Android (Gemini Nano on device, Gemini in the cloud)</td><td>The phone, and Google’s cloud</td><td>Gemini Nano says what kind of app each one seems to be, on the phone. The cloud orders the plan from finding types and asks the phone yes or no questions</td></tr>
         <tr><td>One rules engine for both</td><td>Computer and phone</td><td>The extension’s own JavaScript runs in Android’s sandbox, so the finding types, the cloud gate and the safety rules cannot drift apart</td></tr>
+        <tr><td>Server prompt templates (Firebase AI Logic)</td><td>Firebase’s server</td><td>The plan’s instructions and functions stay on the server; apps send only the template’s id and finding codes, and the server refuses anything that is not a code</td></tr>
         <tr><td>App Check, Remote Config, Cloud Firestore, Hosting</td><td>Firebase</td><td>Only Spare Key spends its model quota; page readers and the words they read, fixed without an update; the public steps library; this site and the Steps API</td></tr>
       </tbody>
     </table></div>

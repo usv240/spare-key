@@ -108,6 +108,17 @@ Also used: App Check (reCAPTCHA Enterprise; the extension gets tokens from a bri
 (the page readers and the words the code rules read, models and switches: a fix reaches every install the next time it
 fetches, at most once an hour, with no store update), Cloud Firestore (the public steps library), Firebase Hosting (site, practice pages, Steps API).
 
+
+**The prompt lives on Firebase's server, and the server checks the codes too.** The plan is asked through a Firebase AI
+Logic server prompt template (`shared/plan/template.js`, created by `tools/templates.mjs` from the same shared code).
+Its instructions, answer format and the three functions stay on Firebase's server; the extension, the website and
+the Android app send only the template's id and the codes. The template's input schema is the same allow-list as
+`cloud-safe.js`, so the server is a second gate: a request with a name where a code goes, a name as a ref, or an
+address in an answer was refused with HTTP 400 before any model saw it. Backups: a second template on a second
+model, then the direct call through the same gate; which templates to use is a Remote Config key. On Android, which
+on-device model to use is a Remote Config list too: Gemini Nano 4 Fast and Full (previews built on Gemma 4) first,
+then the Gemini Nano a phone ships with.
+
 ## Results
 
 All from scripts in `tools/`; details and limits in [docs/accuracy.md](docs/accuracy.md), and the saved runs in

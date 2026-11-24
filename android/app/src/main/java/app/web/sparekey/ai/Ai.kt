@@ -7,6 +7,7 @@ import com.google.firebase.ai.GenerativeModel
 import com.google.firebase.ai.InferenceMode
 import com.google.firebase.ai.InferenceSource
 import com.google.firebase.ai.OnDeviceConfig
+import com.google.firebase.ai.OnDeviceModelOption
 import com.google.firebase.ai.OnDeviceModelStatus
 import com.google.firebase.ai.ai
 import com.google.firebase.ai.type.FunctionDeclaration
@@ -58,7 +59,7 @@ object Ai {
     private val models = HashMap<String, GenerativeModel>()
 
     private fun model(prompt: Prompt, mode: Mode, cloudModel: String, maxOut: Int = 400): GenerativeModel {
-        val key = "${mode.name}|$cloudModel|$maxOut|${prompt.system.hashCode()}"
+        val key = "${mode.name}|$cloudModel|$maxOut|${deviceOption}|${prompt.system.hashCode()}"
         return synchronized(models) {
             models.getOrPut(key) {
                 ai.generativeModel(
@@ -71,8 +72,8 @@ object Ai {
                     systemInstruction = content { text(prompt.system + "\n\n" + jsonInstruction(prompt.schema)) },
                     requestOptions = options,
                     onDeviceConfig = when (mode) {
-                        Mode.ON_DEVICE_FIRST -> OnDeviceConfig(mode = InferenceMode.PREFER_ON_DEVICE, maxOutputTokens = maxOut, temperature = 0f)
-                        Mode.DEVICE_ONLY -> OnDeviceConfig(mode = InferenceMode.ONLY_ON_DEVICE, maxOutputTokens = maxOut, temperature = 0f)
+                        Mode.ON_DEVICE_FIRST -> onDevice(InferenceMode.PREFER_ON_DEVICE, maxOut)
+                        Mode.DEVICE_ONLY -> onDevice(InferenceMode.ONLY_ON_DEVICE, maxOut)
                         Mode.CLOUD_ONLY -> OnDeviceConfig(mode = InferenceMode.ONLY_IN_CLOUD)
                     },
                 )
@@ -203,6 +204,55 @@ object Ai {
         throw last ?: IllegalStateException("no model answered")
     }
 
+    /** org.json values as plain Kotlin maps and lists, the way a template's variables are sent. */
+    private fun plain(v: Any?): Any? = when (v) {
+        is JSONObject -> v.keys().asSequence().associateWith { plain(v.get(it)) }
+        is JSONArray -> (0 until v.length()).map { plain(v.get(it)) }
+        JSONObject.NULL -> null
+        else -> v
+    }
+
+    /**
+     * The cloud plan through a Firebase AI Logic server prompt template: the instructions, answer format and functions
+     * live on Firebase's server (shared/plan/template.js); the phone sends the template's id and `vars` (the codes and
+     * chosen answers), which the server checks again against the template's input schema. Templates are tried in order.
+     */
+    suspend fun templateJsonWithFunctions(templateIds: List<String>, vars: JSONObject, fns: List<Function>): Answer {
+        val byName = fns.associateBy { it.declaration.getString("name") }
+        @Suppress("UNCHECKED_CAST") val variables = plain(vars) as Map<String, Any?>
+        var last: Throwable? = null
+        for (id in templateIds) {
+            val started = System.currentTimeMillis()
+            try {
+                val text = withTimeout(90_000) {
+                    val chat = ai.templateGenerativeModel(options).startChat(id, variables.filterValues { it != null } as Map<String, Any>, emptyList())
+                    var response = chat.sendMessage("Order the plan.")
+                    var round = 0
+                    while (response.functionCalls.isNotEmpty() && round < 3) {
+                        val answers = response.functionCalls.take(4).map { call ->
+                            val args = JSONObject()
+                            for ((k, v) in call.args) args.put(k, (v as? JsonPrimitive)?.content ?: JSONTokenerValue(v.toString()))
+                            val fn = byName[call.name]
+                            val result = if (round < 2 && fn != null) fn.run(args) else JSONObject().put("note", if (fn == null) "Unknown function." else "No more lookups. Answer now.")
+                            FunctionResponsePart(call.name, Json.parseToJsonElement(result.toString()).jsonObject)
+                        }
+                        android.util.Log.i("SpareKey", "template function call: ${response.functionCalls.first().name}, answered on this phone")
+                        response = chat.sendMessage(content("user") { for (a in answers) part(a) })
+                        round++
+                    }
+                    response.text ?: ""
+                }
+                android.util.Log.i("SpareKey", "template call: $id, ${System.currentTimeMillis() - started} ms")
+                return Answer(parseJson(text), false, "template $id")
+            } catch (e: Throwable) {
+                if (e is kotlinx.coroutines.CancellationException && e !is kotlinx.coroutines.TimeoutCancellationException) throw e
+                android.util.Log.w("SpareKey", "template $id: ${e.javaClass.simpleName}: ${e.message?.take(200)}")
+                last = e
+            }
+        }
+        throw last ?: IllegalStateException("no template answered")
+    }
+
     /** A function argument that is an array or object (get_steps' list of codes) as org.json, so the rules can read it. */
     private fun JSONTokenerValue(text: String): Any = try { org.json.JSONTokener(text).nextValue() } catch (e: Exception) { text }
 
@@ -266,13 +316,31 @@ object Ai {
     }
 
     // ---- The on-device model ---------------------------------------------------------------------------------------
-    private val probe by lazy {
-        ai.generativeModel(modelName = "gemini-3.5-flash-lite", onDeviceConfig = OnDeviceConfig(mode = InferenceMode.PREFER_ON_DEVICE))
-    }
+    // Which on-device model, in order of preference, from Remote Config (device_models): "preview" is Gemini Nano 4
+    // Full and "preview_fast" Gemini Nano 4 Fast (both built on Gemma 4; a phone needs the AICore developer preview for
+    // them today), "stable" the Gemini Nano a phone ships with. The first one this phone has is used; the next ones are
+    // the backups. Null means the SDK's default.
+    @Volatile var deviceOption: OnDeviceModelOption? = null
+        private set
+    @Volatile var deviceOptionName = "default"
+        private set
+    private val OPTIONS = mapOf("preview" to OnDeviceModelOption.PREVIEW, "preview_fast" to OnDeviceModelOption.PREVIEW_FAST, "stable" to OnDeviceModelOption.STABLE)
 
-    /** "available", "downloadable", "downloading" or "unavailable". */
-    suspend fun deviceStatus(): String = try {
-        when (probe.onDeviceExtension?.checkStatus()) {
+    private fun onDevice(mode: InferenceMode, maxOut: Int) =
+        deviceOption?.let { OnDeviceConfig(mode = mode, maxOutputTokens = maxOut, temperature = 0f, modelOption = it) }
+            ?: OnDeviceConfig(mode = mode, maxOutputTokens = maxOut, temperature = 0f)
+
+    private val probes = HashMap<String, GenerativeModel>()
+    private fun probeFor(name: String): GenerativeModel = synchronized(probes) {
+        probes.getOrPut(name) {
+            val opt = OPTIONS[name]
+            ai.generativeModel(modelName = "gemini-3.5-flash-lite", onDeviceConfig = opt?.let { OnDeviceConfig(mode = InferenceMode.PREFER_ON_DEVICE, modelOption = it) } ?: OnDeviceConfig(mode = InferenceMode.PREFER_ON_DEVICE))
+        }
+    }
+    private val probe get() = probeFor(deviceOptionName)
+
+    private suspend fun statusOf(name: String): String = try {
+        when (probeFor(name).onDeviceExtension?.checkStatus()) {
             OnDeviceModelStatus.AVAILABLE -> "available"
             OnDeviceModelStatus.DOWNLOADABLE -> "downloadable"
             OnDeviceModelStatus.DOWNLOADING -> "downloading"
@@ -280,6 +348,19 @@ object Ai {
         }
     } catch (e: Throwable) {
         "unavailable"
+    }
+
+    /**
+     * "available", "downloadable", "downloading" or "unavailable", for the first model in `order` this phone has, which
+     * then becomes the one every on-device call uses. `tried` gets each model's status, for Under the hood.
+     */
+    suspend fun deviceStatus(order: List<String> = listOf("stable"), tried: (String, String) -> Unit = { _, _ -> }): String {
+        val names = order.filter { it in OPTIONS }.ifEmpty { listOf("stable") }
+        val seen = names.map { it to statusOf(it).also { s -> tried(it, s) } }
+        val pick = seen.firstOrNull { it.second == "available" } ?: seen.firstOrNull { it.second == "downloading" }
+            ?: seen.firstOrNull { it.second == "downloadable" }
+        if (pick != null) { deviceOptionName = pick.first; deviceOption = OPTIONS[pick.first]; synchronized(models) { models.clear() } }
+        return pick?.second ?: "unavailable"
     }
 
     /**

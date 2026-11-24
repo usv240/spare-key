@@ -34,6 +34,7 @@ At most 120 words.
 ${COMMON}`,
   stay_hidden: codes => `You are one of two advisers. Argue for staying hidden until it is a better time.
 Say which changes the other person could notice, what could happen if they notice, and what to screenshot or delay.
+Never promise that the other person will not notice or find out: nobody can know that.
 What the other person sees if each is removed, from Spare Key's steps library (use only these facts, and do not add others):
 ${codes.sees}
 At most 120 words.
@@ -42,7 +43,7 @@ ${COMMON}`,
 Read the draft and both arguments, then return a revised plan in the same shape as the draft:
 one "document" step with every finding that is not "mine", one "talk_to_advocate" step, one step per finding code ("change_now" or "wait"), and one "check_manually" step per item in not_checked.
 When safe_to_change_now is not "yes", anything the other person could notice waits.
-Also return one short line summing up each adviser, and for each finding code in the draft, what each adviser said about it in at most 15 words.
+Also return one short line summing up each adviser (never a promise that anyone will not notice), and for each finding code in the draft, what each adviser said about it in at most 15 words.
 ${COMMON}`,
 };
 
@@ -111,7 +112,12 @@ export async function twoVoices({ scan, draft, privateStrings, library, onSend }
     .map(row => ({ code: row.code, close_the_doors: line(row.close_the_doors), stay_hidden: line(row.stay_hidden) }));
   return {
     answer: { actions: settled.answer.actions, summary: settled.answer.summary },
-    lines: { close_the_doors: settled.answer.close_the_doors_line, stay_hidden: settled.answer.stay_hidden_line },
+    // A summary line the safety rules would remove (a promise that nobody will notice) is replaced by the first
+    // sentence of that voice's own argument, which has passed the same rules.
+    lines: Object.fromEntries(['close_the_doors', 'stay_hidden'].map(k => {
+      const said = cleanText(String(settled.answer[`${k}_line`] || '')).text;
+      return [k, said || (args[k].match(/^[^.!?]*[.!?]/) || [''])[0]];
+    })),
     arguments: args,
     table,
     model: settled.model,

@@ -3,7 +3,7 @@
 // gets a yes / no / unknown about one finding from this computer, and ask_user asks the person a yes / no / not sure
 // question in the panel. Every answer is an enum or public library text, checked by shared/cloud-safe.js before it goes.
 // The plan that comes back still passes the safety rules (shared/plan/invariants.js) before anyone sees it.
-import { cloudJson } from '../ai.js';
+import { cloudJson, templateJson, liveSettings } from '../ai.js';
 
 // The instructions, answer format and functions live in shared/plan/prompts.js, so the extension, the website and the
 // Android app's sandbox order plans with the same words.
@@ -31,6 +31,19 @@ export async function cloudPlan({ body, library, privateStrings, ask, onSend }) 
     }
     return { note: 'Unknown function.' };
   };
-  const r = await cloudJson({ purpose: 'plan', body, system: PLAN_SYSTEM, schema: PLAN_SCHEMA, tools: PLAN_TOOLS, onCall, privateStrings, library, onSend });
+  // First through the server prompt template (the instructions and functions stay on Firebase's server, and the
+  // server checks the codes again); if no template answers, the same request directly. Either way the body is the same.
+  // Which templates, and whether to use one at all, comes from Remote Config (plan_templates).
+  const { templates } = await liveSettings();
+  let r;
+  try {
+    if (!templates?.length) throw new Error('no templates');
+    r = await templateJson({ purpose: 'plan', templateIds: templates, body, privateStrings, library, onSend, onCall });
+    r = { ...r, model: `Firebase prompt template ${r.template}` };
+  } catch (e) {
+    if (/CloudSafetyError|CloudBudgetError|cloud_off/.test(`${e?.name} ${e?.message}`)) throw e;
+    r = await cloudJson({ purpose: 'plan', body, system: PLAN_SYSTEM, schema: PLAN_SCHEMA, tools: PLAN_TOOLS, onCall, privateStrings, library, onSend });
+    r = { ...r, templateFailed: String(e?.message || e).slice(0, 120) };
+  }
   return { ...r, calls };
 }

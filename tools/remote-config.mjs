@@ -18,15 +18,23 @@ console.log(`remoteconfig.template.json: ${Object.keys(template.parameters).leng
 
 if (process.argv.includes('--publish')) {
   const token = execSync('gcloud auth print-access-token', { encoding: 'utf8' }).trim();
-  const res = await fetch(`https://firebaseremoteconfig.googleapis.com/v1/projects/${PROJECT}/remoteConfig`, {
+  const url = `https://firebaseremoteconfig.googleapis.com/v1/projects/${PROJECT}/remoteConfig`;
+  // Merge into the live template, so keys published by other tools (practice_fixes) are kept, and publish against its
+  // ETag, so a change made meanwhile in the console is not overwritten.
+  const live = await fetch(url, { headers: { Authorization: `Bearer ${token}`, 'x-goog-user-project': PROJECT } });
+  const etag = live.headers.get('etag');
+  const current = await live.json();
+  const merged = { ...current, parameters: { ...(current.parameters || {}), ...template.parameters } };
+  delete merged.version;
+  const res = await fetch(url, {
     method: 'PUT',
     headers: {
       Authorization: `Bearer ${token}`,
       'x-goog-user-project': PROJECT,
       'Content-Type': 'application/json; UTF-8',
-      'If-Match': '*',
+      'If-Match': etag || '*',
     },
-    body: JSON.stringify(template),
+    body: JSON.stringify(merged),
   });
   const text = await res.text();
   if (!res.ok) { console.error(`Publish failed: HTTP ${res.status} ${text.slice(0, 400)}`); process.exit(1); }

@@ -7,7 +7,7 @@
 //     computer" before it is sent, and every function-call answer passes checkAnswer().
 import { initializeApp } from 'firebase/app';
 import { initializeAppCheck, CustomProvider, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
-import { getAI, getGenerativeModel, GoogleAIBackend, InferenceMode } from 'firebase/ai';
+import { getAI, getGenerativeModel, getTemplateGenerativeModel, GoogleAIBackend, InferenceMode } from 'firebase/ai';
 import { getRemoteConfig, fetchAndActivate, getValue } from 'firebase/remote-config';
 import { firebaseConfig, recaptchaSiteKey, appCheckBridgeUrl } from './firebase-config.js';
 import { CLOUD_MODELS, REMOTE_DEFAULTS, remoteDefaultConfig } from '../../shared/config.js';
@@ -70,6 +70,7 @@ export function liveSettings() {
         freshDays: num('fresh_days', 1, 365),
         quickExitUrl: /^https:\/\//.test(exit) ? exit : raw('quick_exit_url'),
         hotline: json('hotline'),
+        templates: get('plan_templates').split(',').map(t => t.trim()).filter(t => /^[a-z][a-z0-9-]{0,62}$/.test(t)),
         // Only the site's practice check reads this ("Break the pages first"); an install never does.
         practiceFixes: (() => { try { return rc ? JSON.parse(getValue(rc, 'practice_fixes').asString() || '{}') : {}; } catch { return {}; } })(),
         from,
@@ -258,7 +259,9 @@ export class CloudBudgetError extends Error {
  * logged before it goes back. At most three rounds, then the model is told to answer.
  */
 async function askWithTool(model, text, onCall, guard, logSend, spend) {
-  const chat = model.startChat();
+  return askInChat(model.startChat(), text, onCall, guard, logSend, spend);
+}
+async function askInChat(chat, text, onCall, guard, logSend, spend) {
   let r = await chat.sendMessage(text);
   for (let round = 0; round < 3; round++) {
     const calls = (r.response.functionCalls && r.response.functionCalls()) || [];
@@ -337,6 +340,45 @@ export function cloudJson({ purpose, body, system, schema, privateStrings = [], 
       // One retry on 429 or 503, then the caller uses the plan built on this computer.
       if (attempt < retries && /\b(429|503)\b|RESOURCE_EXHAUSTED|UNAVAILABLE|quota/i.test(String(last))) await sleep(retryDelay(last, attempt));
       else break;
+    }
+    throw last;
+  });
+}
+
+/**
+ * The same cloud call through a Firebase AI Logic server prompt template. The instructions, answer format and functions
+ * live on Firebase's server (shared/plan/template.js, made by tools/templates.mjs); this sends only the template's id
+ * and `body` as its variables. The body passes the same checkOutgoing() first, and the server checks it a second time
+ * against the template's input schema, which allows only codes and answers. Templates are tried in order; any failure
+ * other than the safety check throws, and the caller then makes the direct call. Returns { answer, model, template }.
+ */
+export function templateJson({ purpose, templateIds, body, privateStrings = [], library = null, onSend = async () => {}, onCall, timeoutMs = 0 }) {
+  const text = checkOutgoing(purpose, body, { privateStrings, library });
+  const guard = { privateStrings, library };
+  return oneAtATime(async () => {
+    const settings = await liveSettings();
+    if (!settings.cloudOn) throw new Error('cloud_off');
+    const spend = () => {
+      if (callsThisScan >= settings.maxCloudCalls) throw new CloudBudgetError();
+      callsThisScan++;
+      return paced();
+    };
+    const model = getTemplateGenerativeModel(ai, { timeout: timeoutMs || TOOL_TIMEOUT_MS });
+    let last;
+    for (const templateId of templateIds) {
+      await spend();
+      const logSend = entry => onSend({ time: new Date().toISOString(), purpose, model: `template ${templateId}`, ...(entry.kind === 'request' ? { fixed: { instructions: `Kept on Firebase's server in the prompt template "${templateId}". Only the template's id and the codes below were sent.`, format: '', tools: ['get_steps', 'ask_device', 'ask_user'] } } : {}), ...entry });
+      try {
+        await logSend({ kind: 'request', text });
+        const chat = model.startChat({ templateId, templateVariables: JSON.parse(text) });
+        const r = await askInChat(chat, 'Order the plan.', onCall, guard, logSend, spend);
+        const out = r.response.text() || '';
+        if (!/^\s*\{/.test(out)) throw new Error('template gave no JSON');
+        return { answer: JSON.parse(out), model: templateId, template: templateId };
+      } catch (e) {
+        if (e instanceof CloudSafetyError || e instanceof CloudBudgetError) throw e;
+        last = e;
+      }
     }
     throw last;
   });

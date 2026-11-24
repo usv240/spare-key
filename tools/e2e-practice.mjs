@@ -157,6 +157,11 @@ try {
     const b64 = s => Buffer.from(s).toString('base64');
     const leaks = CANARIES.filter(c => text.toLowerCase().includes(c.toLowerCase()) || text.includes(encodeURIComponent(c)) || text.includes(b64(c)));
     step('what left this computer holds no name, address, number or device', sent.length > 0 && !leaks.length, leaks.length ? leaks : `${sent.length} entries checked`);
+    // Which way the plan went: through the server prompt template (instructions kept on Firebase's server), or direct.
+    const via = sent.filter(e => e.purpose === 'plan' && e.kind === 'request').map(e => e.model);
+    report.planVia = via;
+    log('plan requests, in order:', via.join(' -> '));
+    step('the plan was asked through the server prompt template first', /^template /.test(via[0] || ''), via.join(' -> '));
     if (screens) await panel.screenshot({ path: path.join(out, `plan${nano ? '-nano' : ''}.png`), fullPage: true });
 
     // The locked copy: save it, clear everything, open it with a wrong password, then the right one.

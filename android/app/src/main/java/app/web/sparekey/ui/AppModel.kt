@@ -61,6 +61,14 @@ class AppModel(app: Application) : AndroidViewModel(app) {
         private set
 
     /** The person asked for Gemini Nano. Android downloads it; the check works the same in the meantime. */
+    /** The on-device model, in words, for Under the hood. */
+    fun modelWords(option: String) = when (option) {
+        "preview" -> "Gemini Nano 4 Full (preview)"
+        "preview_fast" -> "Gemini Nano 4 Fast (preview)"
+        "stable" -> "stable Gemini Nano"
+        else -> "default"
+    }
+
     fun getNano() {
         if (nano != "downloadable") return
         nano = "downloading"; nanoError = ""; nanoMb = 0L to 0L
@@ -68,7 +76,7 @@ class AppModel(app: Application) : AndroidViewModel(app) {
         val t = System.currentTimeMillis()
         viewModelScope.launch {
             val failed = Ai.download { done, total -> nanoMb = (done shr 20) to (total shr 20) }
-            nano = Ai.deviceStatus()
+            nano = Ai.deviceStatus(listOf(Ai.deviceOptionName))
             if (failed != null && nano != "available") {
                 nanoError = "Gemini Nano could not be downloaded just now. Spare Key's rules check the phone alone."
                 android.util.Log.w("SpareKey", "nano download: $failed")
@@ -175,8 +183,11 @@ class AppModel(app: Application) : AndroidViewModel(app) {
                 startError = "Spare Key's rules could not start on this phone. Update Android System WebView in the Play Store, then open Spare Key again."
                 note("Rules did not start: ${e.javaClass.simpleName}.")
             }
-            nano = Ai.deviceStatus()
-            note("Gemini Nano on this phone: $nano.")
+            // The on-device models Remote Config names, in order (Gemini Nano 4 first); the first this phone has is used.
+            val order = try { LiveSettings.get().deviceModels } catch (_: Throwable) { LiveSettings.DEFAULT_DEVICE_MODELS }
+            val tried = mutableListOf<String>()
+            nano = Ai.deviceStatus(order) { name, status -> tried += "$name $status" }
+            note("Gemini Nano on this phone: $nano" + (if (nano != "unavailable") ", the ${modelWords(Ai.deviceOptionName)} model" else "") + ". Asked for, in order: ${tried.joinToString(", ")}.")
             if (nano == "available") Ai.warmUp()
             rcFrom = try { LiveSettings.get().from } catch (_: Throwable) { "defaults" }
         }
@@ -299,9 +310,18 @@ class AppModel(app: Application) : AndroidViewModel(app) {
                             answer
                         }
                     }
+                    // First through the server prompt template (the instructions and functions stay on Firebase's
+                    // server, which checks the codes again), then the same request directly if no template answers.
                     val ask: suspend () -> Ai.Answer = {
-                        Ai.jsonWithFunctions(Ai.Prompt(p.getString("system"), p.getJSONObject("schema")),
-                            listOf(Ai.Text(body.getString("text"))), settings!!.models, fns)
+                        try {
+                            if (settings!!.templates.isEmpty()) throw IllegalStateException("no templates")
+                            Ai.templateJsonWithFunctions(settings.templates, body.getJSONObject("body"), fns)
+                        } catch (e: Throwable) {
+                            if (e is kotlinx.coroutines.CancellationException && e !is kotlinx.coroutines.TimeoutCancellationException) throw e
+                            note("No prompt template answered (${e.javaClass.simpleName}). Asking directly, with the same request.")
+                            Ai.jsonWithFunctions(Ai.Prompt(p.getString("system"), p.getJSONObject("schema")),
+                                listOf(Ai.Text(body.getString("text"))), settings!!.models, fns)
+                        }
                     }
                     // The plan made by code is already on the screen, so the cloud gets a fixed time to improve it and no
                     // more. Time the person spends answering a question the cloud asked does not count.
@@ -332,7 +352,7 @@ class AppModel(app: Application) : AndroidViewModel(app) {
                     val settled = Rules.obj("settle", r.json, situation, notChecked())
                     plan = settled.getJSONObject("plan"); planSource = "cloud:${r.model}"
                     note("Plan ordered by ${r.model} in the cloud in ${secs(tc)}, with ${fns.size} functions offered and $deviceAnswers answered from this phone. Code fixed ${settled.optJSONArray("fired")?.length() ?: 0} things.")
-                    planNote = "Ordered by ${r.model} from finding types only. Code checked it against the safety rules" +
+                    planNote = (if (r.model.startsWith("template ")) "Ordered by Gemini in the cloud, with instructions kept on Firebase's server (${r.model.removePrefix("template ")}), from finding types only. Code checked it against the safety rules" else "Ordered by ${r.model} from finding types only. Code checked it against the safety rules") +
                         (if ((settled.optJSONArray("fired")?.length() ?: 0) > 0) " and made ${settled.getJSONArray("fired").length()} ${if (settled.getJSONArray("fired").length() == 1) "fix" else "fixes"}." else ".")
                 } else if (nano == "available") {
                     // 3. Plan help from the cloud is off: Gemini Nano orders it on this phone. Nothing leaves the phone.

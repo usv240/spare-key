@@ -31,6 +31,8 @@ export const REMOTE_DEFAULTS = {
   max_cloud_calls: { type: 'NUMBER', value: '12', about: 'Most cloud calls one scan may make.' },
   fresh_days: { type: 'NUMBER', value: '45', about: 'Days after which a steps library entry counts as stale.' },
   quick_exit_url: { type: 'STRING', value: QUICK_EXIT_URL, about: 'Where Quick exit goes.' },
+  plan_templates: { type: 'STRING', value: 'spare-key-plan-v1,spare-key-plan-b-v1', about: 'Firebase AI Logic server prompt templates the cloud plan is asked through, in order. Empty: the direct call only. The direct call is always the last backup.' },
+  device_models: { type: 'STRING', value: 'preview_fast,preview,stable', about: 'Android on-device models in order: preview_fast (Gemini Nano 4 Fast), preview (Gemini Nano 4 Full), stable (the Gemini Nano a phone ships with). The first one the phone has is used.' },
   hotline: { type: 'JSON', value: JSON.stringify({ call: HOTLINE.call, text: HOTLINE.text, web: HOTLINE.web }), about: 'The hotline shown on every screen.' },
 };
 

@@ -63,12 +63,24 @@ each request from an allow-list of codes and enums, and checks it again before i
 check any plan a model writes. Gemini Nano's plans needed 103 fixes on 35 situations and the cloud's 43 on 30, so the
 rules, not the model, decide what a person in danger is told.
 
+**The prompt lives on Firebase's server, and the server checks the codes too.** The plan is asked through a Firebase AI
+Logic server prompt template (`shared/plan/template.js`, created by `tools/templates.mjs` from the same shared code).
+Its instructions, answer format and the three functions stay on Firebase's server; the extension, the website and
+the Android app send only the template's id and the codes. The template's input schema is the same allow-list as
+`cloud-safe.js`, so the server is a second gate: a request with a name where a code goes, a name as a ref, or an
+address in an answer was refused with HTTP 400 before any model saw it. Backups: a second template on a second
+model, then the direct call through the same gate; which templates to use is a Remote Config key. On Android, which
+on-device model to use is a Remote Config list too: Gemini Nano 4 Fast and Full (previews built on Gemma 4) first,
+then the Gemini Nano a phone ships with.
+
 **One rules engine, two platforms.** The extension's own JavaScript (finding codes, the cloud gate, the plan, the
 safety rules) runs unchanged inside Jetpack's JavaScript sandbox on Android, so the two cannot drift apart.
 
 Also used: **App Check** with reCAPTCHA Enterprise, **Remote Config** (page readers fixed for every install without a
-store update), **Cloud Firestore** (the public steps library), **Firebase Hosting** (the site, the practice pages and a
+store update, the templates and the on-device model order), **Cloud Firestore** (the public steps library), **Firebase Hosting** (the site, the practice pages and a
 free Steps API), and an MCP server so an advocate's AI assistant gives the current steps with the warnings attached.
+Not used, on purpose: **Firebase Authentication**. An account is a record that ties a person to a safety check, and a
+sign-in can send an alert; Spare Key works with no account. App Check guards the quota instead.
 
 ## Challenges we ran into
 
@@ -92,8 +104,8 @@ free Steps API), and an MCP server so an advocate's AI assistant gives the curre
   situations where it applied.
 - "What they see when you change it": 30 kinds of access, 22 with the official help page quoted.
 - Android: 34 of 34 end-to-end checks on an Android 16 emulator, with a test app that holds the
-  access a phone-watching app asks for. The plan made by code is on the screen in 2.8 seconds, and Gemini
-  reordered it 9.3 seconds after the button was pressed. When the free-tier model does not answer, the app keeps the
+  access a phone-watching app asks for. The plan made by code is on the screen in 3 seconds, and Gemini, through the
+  server prompt template, reordered it 9.8 seconds after the button was pressed. When the free-tier model does not answer, the app keeps the
   plan made by code and says so. The emulator's own packet capture of the run shows no reporting host reached.
 - The whole hybrid path on a real phone: on the builder's own Pixel with 703 apps, 72 held some special access; Spare
   Key listed 13 and counted the 59 that came with the phone. Gemini Nano read all 13 on the phone in 9.8 seconds, and
@@ -129,9 +141,10 @@ plan made by code is shown at once either way.
 
 ## Built with
 
-Firebase AI Logic (web and Android), Gemini Nano (Chrome built-in AI and AICore), Gemini Developer API, Firebase App
-Check with reCAPTCHA Enterprise, Firebase Remote Config, Cloud Firestore, Firebase Hosting, Chrome Extensions
-(Manifest V3, side panel), Kotlin with Jetpack Compose and JavaScriptSandbox, Model Context Protocol.
+Firebase AI Logic (web and Android, hybrid inference and server prompt templates), Gemini Nano (Chrome built-in AI and
+AICore), Gemini Developer API, Firebase App Check with reCAPTCHA Enterprise, Firebase Remote Config, Cloud Firestore, Firebase Hosting, Chrome Extensions
+(Manifest V3, side panel), Kotlin with Jetpack Compose and JavaScriptSandbox, Model Context Protocol. Built with Claude
+Code and Firebase Agent Skills.
 
 ## Testing instructions (for judges)
 
