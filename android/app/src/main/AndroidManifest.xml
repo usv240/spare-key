@@ -21,6 +21,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SpareKey"
         tools:targetApi="36">
+        <!-- No usage statistics: Firebase's libraries (the AI and ML ones log how they are used) keep theirs off.
+             Spare Key has no analytics and no crash reporting of its own. Checked in tools/android-e2e.mjs. -->
+        <meta-data android:name="firebase_data_collection_default_enabled" android:value="false" />
+        <meta-data android:name="firebase_ml_collection_enabled" android:value="false" />
 
         <activity
             android:name=".MainActivity"

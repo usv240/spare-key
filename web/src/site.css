@@ -127,6 +127,15 @@ section.block { padding-block: clamp(56px, 6vw, 104px); }
 .shot img { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
 .shot figcaption { margin-top: 8px; font-size: 15px; color: var(--ink-2); }
 .step-text h3 { display: flex; align-items: center; gap: 8px; }
+
+/* ---------- The Android app: words on one side, three of its own screens stepping down on the other ---------- */
+.phone-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 56px; align-items: start; }
+.phone-text > * + * { margin-top: 16px; }
+.phone-text .result-line { margin-top: 28px; }
+.phones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.phones .shot:nth-child(2) { margin-top: 48px; }
+.phones .shot:nth-child(3) { margin-top: 96px; }
+.phones .shot img { border-radius: 22px; width: 100%; height: auto; }
 .step-text p { margin-top: 8px; }
 
 /* ---------- What it checks ---------- */
@@ -161,7 +170,7 @@ section.block { padding-block: clamp(56px, 6vw, 104px); }
 /* ---------- Try it, numbers, lists ---------- */
 .try-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 40px; margin: 0; padding: 0; list-style: none; }
 .try-list li { padding-top: 20px; border-top: 1px solid var(--line); }
-.try-list a.big { display: inline-block; margin-top: 10px; font-weight: 700; font-size: 19px; }
+.try-list a.big, .phone-text a.big { display: inline-block; margin-top: 10px; font-weight: 700; font-size: 19px; }
 .numbers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin: 0; padding: 0; list-style: none; }
 .numbers .n { display: block; font-size: clamp(36px, 3vw + 8px, 56px); line-height: 1.05; font-weight: 700; letter-spacing: -0.02em; }
 .numbers p { margin-top: 10px; }
@@ -255,6 +264,11 @@ dl.glossary dd { margin: 0; color: var(--ink-2); }
   .step-b .shot { width: 82%; margin-left: auto; }
   .step-c .shot { width: 82%; }
   .voices-grid, .try-list, .numbers, .help-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .phone-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  /* On a narrow screen the three phone screens sit in one row that scrolls sideways, each wide enough to read. */
+  .phones { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x proximity; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scroll-padding-inline: var(--gutter); padding-bottom: 8px; }
+  .phones .shot { flex: 0 0 min(64vw, 280px); scroll-snap-align: start; }
+  .phones .shot:nth-child(2), .phones .shot:nth-child(3) { margin-top: 0; }
   .foot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 720px) {

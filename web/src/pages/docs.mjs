@@ -31,12 +31,13 @@ export function tryPage() {
   return page({ file: 'try.html', title: 'Try it | Spare Key', description: 'Run Spare Key’s practice check in your browser, on made-up settings pages.', body });
 }
 
-export function installPage() {
-  return doc('install.html', 'Get the Chrome extension', 'How to install Spare Key in Chrome.', `
-<h1>Get the Chrome extension</h1>
-<p class="lead">Spare Key runs in Chrome on a computer. It is free, and it does not ask you to sign in.</p>
+export function installPage({ apk = null } = {}) {
+  return doc('install.html', 'Get Spare Key', 'How to install Spare Key in Chrome, and on an Android phone.', `
+<h1>Get Spare Key</h1>
+<p class="lead">The Chrome extension checks your accounts, on a computer. The Android app checks the phone itself. Both are free, and neither asks you to sign in.</p>
+<h2>The Chrome extension</h2>
 <div class="note caution"><p><strong>Before you install:</strong> if someone else uses this computer, they may see that the extension is installed. A computer they never use, like a trusted friend’s, is a better place to check. Library and work computers usually do not allow installing extensions. You can remove Spare Key when you are done.</p></div>
-<h2>Install it</h2>
+<h3>Install it</h3>
 <p>Spare Key is not in the Chrome Web Store yet. Until it is, install it this way:</p>
 <ol>
   <li>Download <a href="/downloads/spare-key-extension.zip" download><strong>spare-key-extension.zip</strong></a> and unzip it. It holds a folder called <code>spare-key</code>.</li>
@@ -44,10 +45,31 @@ export function installPage() {
   <li>Select <strong>Load unpacked</strong> and choose the <code>spare-key</code> folder.</li>
   <li>Click the puzzle piece in Chrome’s toolbar, then the key, to open Spare Key beside the page.</li>
 </ol>
-<h2>Gemini Nano</h2>
+<h3>Gemini Nano</h3>
 <p>For the best reading, Spare Key uses Gemini Nano, a small AI model inside Chrome on your computer. Chrome downloads it the first time a site or extension asks for it, when the computer has enough memory and disk. Without it, Spare Key reads pages with code only and says where that is less complete.</p>
-<h2>Remove it when you are done</h2>
-<p>Open <code>chrome://extensions</code>, find Spare Key, and select <strong>Remove</strong>. Spare Key keeps nothing after Chrome closes unless you saved a locked copy.</p>`);
+<h3>Remove it when you are done</h3>
+<p>Open <code>chrome://extensions</code>, find Spare Key, and select <strong>Remove</strong>. Spare Key keeps nothing after Chrome closes unless you saved a locked copy.</p>
+<h2 id="android">The Android app</h2>
+<p>The Android app reads the phone’s own settings and lists every app that could let someone watch it: apps that can read the screen, device admin apps, apps that read notifications, texts or the call log, and apps that see your location all the time. It needs Android 8 or newer.</p>
+<div class="note caution"><p><strong>Before you install:</strong> if an app on the phone is watching it, that app may see that Spare Key was installed and opened. A phone the other person has never had is a better place to plan. Quick exit is at the top of every screen, and pressing back twice quickly does the same.</p></div>
+<h3>Install it</h3>
+${apk ? `<ol>
+  <li>On the phone, download <a href="/downloads/spare-key-android.apk" download><strong>spare-key-android.apk</strong></a> (${apk.mb} MB, version ${apk.version}).</li>
+  <li>Open the file. Android asks whether to allow installing from your browser: allow it for this one file.</li>
+  <li>Open Spare Key and choose <strong>Check this phone</strong>, or <strong>Try a practice phone first</strong>.</li>
+</ol>
+<p class="muted">It is not in the Play Store yet. An app that reads the list of installed apps needs a review there that takes longer than this hackathon.</p>` : `<p>The app is not in the Play Store yet, and a signed download is on its way. Until then it can be built from the source:</p>
+<ol>
+  <li>Get the code from the <a href="https://github.com/usv240/spare-key">repository</a> and run <code>npm ci</code>, then <code>node build.mjs</code>. This bundles the shared rules for the phone.</li>
+  <li>In the <code>android</code> folder, run <code>./gradlew assembleRelease</code> with your own signing key, or open the folder in Android Studio and run it on a phone.</li>
+  <li>Open Spare Key and choose <strong>Check this phone</strong>, or <strong>Try a practice phone first</strong>.</li>
+</ol>`}
+<h3>What it asks for</h3>
+<p>One thing: to see the list of apps on the phone. It asks for no location, no contacts, no files, no camera and no microphone. It uses the internet only for plan help, which you can turn off on the first screen. It keeps nothing: the check lives in memory and is forgotten when you close the app or press Quick exit.</p>
+<h3>Gemini Nano on the phone</h3>
+<p>On a phone that has Gemini Nano, it says what kind of app each one seems to be, on the phone. The list of your apps is never sent anywhere. On a phone without it, Spare Key’s rules do the whole check, and the results say so.</p>
+<h3>Remove it when you are done</h3>
+<p>Press and hold the Spare Key icon and choose <strong>Uninstall</strong>.</p>`);
 }
 
 export function howItWorksPage() {
@@ -73,6 +95,18 @@ export function howItWorksPage() {
   <li><strong>Check it yourself</strong>: everything Spare Key did not check, with trusted guides.</li>
 </ol>
 <p>This order follows the two rules the field teaches: document before you change anything, and changing something can alert the other person. See the <a href="https://www.techsafety.org/resources-survivors">Safety Net project’s survivor guides</a> and the <a href="https://ceta.tech.cornell.edu/resources">Cornell Clinic to End Tech Abuse</a>.</p>
+<h2 id="android">On an Android phone</h2>
+<p>An account check cannot see an app hidden on the phone, so the Android app checks the phone itself. It works in the same five steps, with one difference: instead of opening settings pages, it asks Android which apps hold the kinds of access a phone-watching app needs.</p>
+<ul>
+  <li>Apps that can read and control the screen (accessibility services that are turned on)</li>
+  <li>Device admin apps</li>
+  <li>Apps that can read your notifications, your texts or your call log</li>
+  <li>Apps that can see your location all the time</li>
+  <li>Apps that can see which apps you use</li>
+  <li>Whether each one came from the Play Store or from somewhere else</li>
+</ul>
+<p>An app with several of these, or with one of them and from outside the Play Store, is listed first as “can watch and control this phone”. Apps that came with the phone are counted, not listed, and the results say that a rooted phone can hide an app among them. It never opens, changes or removes an app: “Open this app in Settings” takes you to Android’s own page for it, and every change there is yours.</p>
+<p>The plan follows the same safety rules below, plus one more: when an app can watch the phone, every other step carries a warning that the phone may show what you do on it, and removing that app is the step to talk through with an advocate first.</p>
 <h2>The safety rules every plan follows</h2>
 <p>Whether the plan came from code or from Gemini in the cloud, Spare Key checks it with these rules before you see it, and shows when a rule changed something:</p>
 <ol>
@@ -99,6 +133,10 @@ export function builtWithPage({ numbers }) {
     ['Cloud Firestore', 'Google’s cloud', 'The public steps library, which the extension refreshes when it is newer. Opt-in anonymous reports when a page looked different: five fixed fields, create-only, sent only when the person presses the button.'],
     ['Firebase Hosting', 'Google’s cloud', 'This site, the practice pages and the Steps API.'],
     ['Chrome extension APIs', 'This computer', 'Side panel, the scan tab, permissions asked for per site, the extensions check, history cleanup.'],
+    ['Firebase AI Logic for Android, on device (<code>InferenceMode.ONLY_ON_DEVICE</code>)', 'The phone', 'Gemini Nano, through AICore, says what kind of app each one seems to be: monitoring, family locator, parental control, assistive, everyday. The list of apps on a phone is private, so there is no cloud fallback. It can add a note; it can never hide a finding or call one harmless.'],
+    ['Firebase AI Logic for Android, in the cloud (<code>InferenceMode.ONLY_IN_CLOUD</code>, function calling)', 'Google’s cloud', 'Orders the phone’s plan from finding types only. <code>ask_device</code> asks the phone things like “did this app come from outside the store?”, and the phone answers yes, no or unknown.'],
+    ['Jetpack JavaScriptSandbox (<code>androidx.javascriptengine</code>)', 'The phone', 'Runs the extension’s own rules on the phone, in a process with no network and no files: the finding types, the cloud gate, the plan and the safety rules. One engine, so the phone and the extension cannot drift apart.'],
+    ['App Check on Android, through the site', 'The phone', 'An app installed from this site has no Play Integrity, so it gets reCAPTCHA Enterprise tokens from the same small page the extension uses, over a channel that page accepts only from the app.'],
     ['WebCrypto', 'This computer', 'The locked copy: PBKDF2 with 600,000 rounds and AES-GCM. Opening one beside a new check shows what is new since then.'],
     ['A wrapper around fetch', 'This computer', 'The ledger under “What left this computer”: every request by where it went and its size, and how many hold anything from the check.'],
     ['MCP server', 'The developer’s computer', 'Steps and plans for AI assistants, from finding types only.'],
@@ -135,6 +173,9 @@ cloud:  ask_user({ ref: "f1", question: "set_up_by_you" })
 person: Not sure   →   { "answer": "not_sure" }</code></pre>
 <p>How often each function was called in the measured runs is on the <a href="accuracy.html">accuracy page</a>.</p>
 <p>Every request and every answer passes one check, <code>checkOutgoing()</code>, which accepts only finding codes and fixed answers, and refuses any request holding a name, address or device this check found. Every request is shown word for word under “What left this computer”, with the fixed instructions sent with it.</p>
+<h2 id="one-engine">One rules engine, two platforms</h2>
+<p>The extension’s rules are plain JavaScript modules with no browser in them: finding types, <code>toCloud()</code> and <code>checkOutgoing()</code> (the only way anything leaves), the plan, and the safety rules. The build bundles the same files for the Android app, which runs them in Jetpack’s JavaScript sandbox. Kotlin reads the phone and makes the model calls; everything that decides runs in the shared code.</p>
+<p>That is why the phone found its first real bug in the gate, not around it: on the emulator, the gate refused its own answer because a setting’s label matched a line in the public steps library. The fix and its test are in the shared code, so the extension has them too.</p>
 <h2>Authentication only for developers</h2>
 <p>Survivors never sign in, and the extension has no sign-in at all: an account would be one more thing to find. The Steps API needs no key.</p>
 <h2>Reused code</h2>
@@ -230,7 +271,19 @@ function driftSection(drift, first) {
 <p class="muted">The first run was blind: nothing was changed after seeing these pages. The fixes since then are general (an empty-looking page is not called empty; lists built from plain boxes count as lists; masked phone numbers count), and the Remote Config fixes were written after seeing what broke, so the last column shows the fix path works, not how well a first guess reads a new page. ${esc(drift.date)}${drift.nanoDate ? `; Gemini Nano run ${esc(drift.nanoDate)}` : ''}. Test: <code>tools/drift-test.mjs</code>. You can try it on <a href="try.html">the practice check</a>: open “Break the pages first”.</p>`;
 }
 
-export function accuracyPage({ numbers, drift = null, driftFirst = null }) {
+// The Android app's end-to-end run (tools/android-e2e.mjs, docs/evidence/android-e2e.json): every check, as run.
+function androidSection(a) {
+  if (!a || !a.checks) return '';
+  const date = new Date(a.at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York' });
+  const rows = a.checks.map(c => `<tr><td>${esc(c.name)}</td><td>${c.ok ? 'Passed' : 'Failed'}</td></tr>`).join('');
+  return `<h2 id="android">The Android app: a planted test app</h2>
+<p><strong>${a.passed} of ${a.passed + a.failed}</strong> checks passed on an Android ${esc(a.device.android)} emulator. ${esc(date)}.</p>
+<p>The test installs a second app that does nothing but hold the access a phone-watching app asks for, turns each one on the way a person holding the phone would, and then drives the real Spare Key app: the check, the plan with Gemini in the cloud, Under the hood, Quick exit, and the practice phone. The check took ${esc(String(a.checkSeconds))} seconds and the cloud plan ${esc(String(a.planSeconds))} seconds.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Android checks: table, scrolls sideways on small screens"><table><thead><tr><th>Check</th><th>Result</th></tr></thead><tbody>${rows}</tbody></table></div>
+<p class="muted">An emulator, not a person’s phone, and a test app, not real stalkerware. Gemini Nano was not on the emulator, so the on-device sorting is not part of this run.</p>`;
+}
+
+export function accuracyPage({ numbers, drift = null, driftFirst = null, android = null }) {
   const n = numbers;
   const p = n.planSafety;
   return doc('accuracy.html', 'Accuracy', 'How Spare Key is measured, the numbers, and what they do not show.', `
@@ -255,6 +308,7 @@ ${n.practice ? `<p><strong>${n.practice.found} of ${n.practice.of}</strong> plan
 </tbody></table></div>
 <p class="muted">One account, with nothing planted on it: this shows the readers match real pages, not how many hidden ways in they would miss. That test needs planted test accounts and is next.</p>
 ${driftSection(drift, driftFirst)}
+${androidSection(android)}
 <h2>Privacy: nothing that names a person leaves</h2>
 ${n.privacy ? `<p><strong>${n.privacy.withPrivate} of ${n.privacy.requests}</strong> requests from the extension held a name, email address, phone number, device or place, during a full practice check with every cloud step on. Every request from the service worker, the hidden page and the side panel was captured and searched in plain text, URL-encoded, base64 and JSON-escaped forms. All ${n.privacy.modelRequests} requests to the model matched “What left this computer” word for word. ${esc(n.privacy.date)}. Test: <code>tools/privacy-test.mjs</code>.</p>` : ''}
 <h2>Plan safety: seven measures from the field’s advice</h2>
@@ -270,6 +324,7 @@ ${n.nanoPlan ? `<h3>The plan made by Gemini Nano, on this computer</h3>
 <h2>What these numbers do not show</h2>
 <ul>
   <li>No survivor or advocate has tested Spare Key yet.</li>
+  <li>The Android app has been tested on an emulator with a planted test app. It has not met real stalkerware, and Gemini Nano’s sorting on a phone has not been measured.</li>
   <li>The readers have been measured on one real account with nothing planted on it. How many real ways in they would miss is not measured yet; that needs planted test accounts.</li>
   <li>The plain chatbot was measured with fixed keyword lists, which are rougher than reading each answer.</li>
   <li>“0 false alarms” rests on the 4 practice entries that belong to the person. On a real account, your own phone and recovery number are listed too, by design, for you to mark “Mine”.</li>
@@ -292,6 +347,14 @@ export function privacyPage() {
 <p>Spare Key uses the free tier of the Gemini API, where Google may use what it receives to improve its products. Because only finding types are sent, this is acceptable; it is also why nothing else is sent.</p>
 <h2>What it keeps</h2>
 <p>Nothing, unless you ask. Findings, your answers, the plan and the sent log live in Chrome’s session storage and are gone when Chrome closes, or when you press Clear everything or Quick exit. Settings like the theme are kept on this computer. A locked copy is saved only when you choose to, as a file only your password opens.</p>
+<h2 id="android">The Android app</h2>
+<ul>
+  <li><strong>What it reads:</strong> the list of apps on the phone and which of them hold special access. It asks Android for one permission, to see that list. It reads no messages, no photos, no location and no contacts.</li>
+  <li><strong>What it sends, only if plan help is on:</strong> finding types, like <code>phone.app.accessibility</code>, your answer for each (mine, not mine, not sure) and your answers to two questions. Never an app’s name or package. Every request is under “What left this phone”, in a sentence and word for word.</li>
+  <li><strong>What it keeps:</strong> one setting, whether plan help is on. The check lives in memory and is gone when you close the app or press Quick exit, which also removes Spare Key from the recent apps list.</li>
+  <li><strong>No usage or crash reports.</strong> The list of what the app did, with timings, stays on the phone under “Under the hood”.</li>
+  <li><strong>What it cannot hide:</strong> that it is installed. An app that can read the screen can see Spare Key while it is open.</li>
+</ul>
 <h2>What it cannot hide</h2>
 <p>Chrome’s history shows the pages Spare Key opened, unless you turn on the cleanup. Google’s own My Activity may record the visits. Someone with access to this computer may see that the extension is installed. Remove it when you are done.</p>
 <h2>How to remove everything</h2>

@@ -13,7 +13,14 @@ function driftItem(drift) {
   return `<li><span class="n">${silent}</span><p>times a check said it was done while missing a way in, when the practice pages were changed five ways (${ways} planted ways in). A page Spare Key cannot read is listed as “Not checked” instead. On the first, blind run, this was ${first}. ${esc(drift.date)}.</p></li>`;
 }
 
-export default function index({ numbers, drift = null }) {
+// The Android app's end-to-end run on an emulator (tools/android-e2e.mjs writes docs/evidence/android-e2e.json).
+function androidProof(a) {
+  if (!a || !a.passed || a.failed) return '';
+  const date = new Date(a.at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York' });
+  return `<p class="result-line">${a.passed} of ${a.passed + a.failed} checks passed on an Android ${esc(a.device.android)} emulator.</p><p class="muted">We installed a test app that does nothing but hold the access a phone-watching app asks for: screen reading, device admin, notifications, texts and location all the time. Spare Key listed it first, left out the apps that came with the phone, and sent nothing that names an app. ${esc(date)}.</p>`;
+}
+
+export default function index({ numbers, drift = null, android = null, apk = null }) {
   const n = numbers;
   const plan = n.planSafety;
   const sentSample = n.sentSample || '';
@@ -23,13 +30,13 @@ export default function index({ numbers, drift = null }) {
   <div class="wrap">
     <div>
       <h1 id="hero-title">Who still has a key to your accounts?</h1>
-      <p class="lead">Spare Key checks your Google, Gmail, location sharing, Amazon and Chrome settings in a few minutes. It shows the people, devices and apps on those pages that can still see your location, your mail or your account, and says plainly which pages it could not read. Read-only. Names never leave your computer.</p>
+      <p class="lead">Spare Key checks your Google, Gmail, location sharing, Amazon and Chrome settings in a few minutes, and an Android phone itself. It shows the people, devices and apps that can still see your location, your mail or your account, and says plainly what it could not read. Read-only. Names never leave your device.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="/install.html">Get the Chrome extension</a>
         <a class="btn btn-secondary" href="/try.html">Try the practice check</a>
       </div>
       <p class="hero-note">Free. No sign-in. If someone may be watching this computer, a computer they never use, like a trusted friend’s, is a better place to check. ${info('shared-computer', 'About using a shared computer')}</p>
-      <p class="hero-note"><a href="#tour" id="tour-start">New here? Take the two-minute tour</a></p>
+      <p class="hero-note"><a href="#phone">Also for Android: check the phone itself</a> · <a href="#tour" id="tour-start">New here? Take the two-minute tour</a></p>
     </div>
     <figure class="panel-frame" id="panel-demo">
       <iframe src="/panel-demo.html" title="The Spare Key side panel, showing a practice check for a made-up person" loading="eager"></iframe>
@@ -82,10 +89,28 @@ export default function index({ numbers, drift = null }) {
       <li><h3>Google Photos</h3><ul><li>Partner sharing</li></ul></li>
       <li><h3>Amazon</h3><ul><li>People in your Amazon household</li><li>Devices on your account, like Echo, Kindle and Fire TV</li></ul></li>
       <li><h3>This Chrome browser</h3><ul><li>Extensions that can read every page you visit</li><li>Whether Chrome sends your history to another account</li></ul></li>
+      <li><h3>An Android phone, with the Android app</h3><ul><li>Apps that can read and control the screen</li><li>Device admin apps</li><li>Apps that can read your notifications, texts or call log</li><li>Apps that can see your location all the time</li><li>Apps with these powers that came from outside the Play Store</li></ul></li>
     </ul>
     <div class="not-yet">
       <h3>Not checked yet</h3>
-      <p>Ring, Life360, your phone carrier, Apple, Facebook, Snapchat, and your phone itself. Spare Key always lists these as not checked, with a guide to check each one yourself: <a href="https://www.techsafety.org/resources-survivors">Safety Net (NNEDV)</a>, <a href="https://support.apple.com/guide/personal-safety/welcome/web">Apple’s Personal Safety User Guide</a> and the <a href="https://ceta.tech.cornell.edu/resources">Cornell Clinic to End Tech Abuse</a>.</p>
+      <p>Ring, Life360, your phone carrier, Apple and iPhone, Facebook and Snapchat. Spare Key always lists these as not checked, with a guide to check each one yourself: <a href="https://www.techsafety.org/resources-survivors">Safety Net (NNEDV)</a>, <a href="https://support.apple.com/guide/personal-safety/welcome/web">Apple’s Personal Safety User Guide</a> and the <a href="https://ceta.tech.cornell.edu/resources">Cornell Clinic to End Tech Abuse</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="phone" aria-labelledby="phone-title">
+  <div class="wrap phone-grid">
+    <div class="phone-text">
+      <h2 id="phone-title">The phone itself, on Android</h2>
+      <p class="lead">An account check cannot see an app hidden on the phone. The Android app reads the phone’s own settings and lists every app that could let someone watch it. It opens nothing and removes nothing.</p>
+      <p>It runs the same rules as the extension, the same code, inside Android’s JavaScript sandbox. Gemini Nano sorts the apps on the phone when the phone has it. The cloud orders the plan from finding types only, and never sees an app’s name. Removing a watching app goes to the top of the plan, with the warning that it may be noticed.</p>
+      ${androidProof(android)}
+      <p><a class="big" href="/install.html#android">${apk ? 'Get the Android app' : 'How to get the Android app'}</a></p>
+    </div>
+    <div class="phones" tabindex="0" role="region" aria-label="Three screens from the Android app, on a made-up practice phone">
+      <figure class="shot rise"><img src="/img/android/results.png" width="540" height="1200" alt="The Android app’s results for a made-up phone: an app called System Update Service can read and control the screen, is a device admin app, and can read notifications, texts and location." loading="lazy"><figcaption>What it found, one app to a card.</figcaption></figure>
+      <figure class="shot rise"><img src="/img/android/plan.png" width="540" height="1200" alt="The plan on the phone: screenshot these first, talk to an advocate, then leave the watching app for a better time." loading="lazy"><figcaption>The same safety-first plan.</figcaption></figure>
+      <figure class="shot rise"><img src="/img/android/hood.png" width="540" height="1200" alt="Under the hood on the phone: where each step runs, what left this phone, and what Spare Key did." loading="lazy"><figcaption>What ran where, and what left the phone.</figcaption></figure>
     </div>
   </div>
 </section>
@@ -158,6 +183,8 @@ export default function index({ numbers, drift = null }) {
         <tr><td>Gemini Nano through Firebase AI Logic (only on device)</td><td>This computer</td><td>Reads and sorts the private settings pages, reads a page a site has changed, reads a screenshot of a phone location app, and orders the plan when plan help from the cloud is off</td></tr>
         <tr><td>Gemini through Firebase AI Logic (only in the cloud, function calling)</td><td>Google’s cloud</td><td>Orders the plan from finding types only, and asks the device yes or no questions</td></tr>
         <tr><td>Hybrid inference (prefer on device)</td><td>Either</td><td>The practice check on this site, which holds no personal data</td></tr>
+        <tr><td>Firebase AI Logic on Android (Gemini Nano on device, Gemini in the cloud)</td><td>The phone, and Google’s cloud</td><td>Gemini Nano says what kind of app each one seems to be, on the phone. The cloud orders the plan from finding types and asks the phone yes or no questions</td></tr>
+        <tr><td>One rules engine for both</td><td>Computer and phone</td><td>The extension’s own JavaScript runs in Android’s sandbox, so the finding types, the cloud gate and the safety rules cannot drift apart</td></tr>
         <tr><td>App Check, Remote Config, Cloud Firestore, Hosting</td><td>Firebase</td><td>Only Spare Key spends its model quota; page readers and the words they read, fixed without an update; the public steps library; this site and the Steps API</td></tr>
       </tbody>
     </table></div>
@@ -186,7 +213,8 @@ export default function index({ numbers, drift = null }) {
       <li>It covers the services listed above, and nothing else.</li>
       <li>Websites change their pages, and a page reader can break. When it does, the result says so: the page is listed under “Not checked”, never shown as empty.</li>
       <li>Gemini Nano is needed for the best reading. Without it, pages are read by code only.</li>
-      <li>It cannot see your phone itself. For a location app on it, you can give it a screenshot, which Gemini Nano reads on this computer.</li>
+      <li>The extension cannot see your phone. The Android app checks an Android phone; there is no iPhone app. For a location app on any phone, you can give the extension a screenshot, which Gemini Nano reads on this computer.</li>
+      <li>The Android app was tested on an emulator with a planted test app, not on a phone with real stalkerware. An app hidden on a rooted phone can escape it, and the results say so.</li>
       <li>It reads; it does not fix. Every change is yours to make, when the time is right.</li>
     </ul>
   </div>
@@ -211,7 +239,7 @@ export default function index({ numbers, drift = null }) {
       <details><summary>Does it change anything?</summary><p>No. It never clicks, removes or saves anything on a settings page. Every change is yours to make, and the plan says which ones may be noticed.</p></details>
       <details><summary>What does it send to Google?</summary><p>Plan help uses Gemini in Google’s cloud. It sees finding types, like “mail is forwarded”, and the answers you choose to share. Never names, addresses, numbers or devices. You can turn plan help off, and then nothing is sent.</p></details>
       <details><summary>What if I don’t have Gemini Nano?</summary><p>Spare Key reads the pages with code only, and says where that is less complete. Gemini Nano needs Chrome on a computer with enough memory and disk.</p></details>
-      <details><summary>Can I use it on my phone?</summary><p>The extension runs in Chrome on a computer. The practice check on this site works on a phone.</p></details>
+      <details><summary>Can I use it on my phone?</summary><p>On Android, yes. The Android app checks the phone itself: which apps can read your screen, your notifications, your texts or your location. The extension runs in Chrome on a computer and checks your accounts. There is no iPhone app; on an iPhone, Apple’s Safety Check does a similar job. The practice check on this site works on any phone.</p></details>
       <details><summary>Is it free?</summary><p>Yes. No sign-in, no account, no payment.</p></details>
       <details><summary>Who made it?</summary><p>One developer, for the #BuildHybridAI 2026 hackathon. It is open source under the Apache-2.0 license. It is not made by Google, Amazon or the National Domestic Violence Hotline.</p></details>
       <details><summary>Why can’t a chatbot do this?</summary><p>A chatbot cannot see your settings, and pasting them into one sends the very details that are the danger. In our test on 30 situations, a plain chatbot said to take screenshots before changing anything in only 4. Spare Key reads on your computer, and every plan starts with the screenshots and warns that a change may be noticed.</p></details>
@@ -237,7 +265,7 @@ export default function index({ numbers, drift = null }) {
   return page({
     file: 'index.html',
     title: 'Spare Key',
-    description: 'Find out who still has a key to your accounts. A free, read-only Chrome extension. Names never leave your computer.',
+    description: 'Find out who still has a key to your accounts and your phone. A free, read-only Chrome extension and Android app. Names never leave your device.',
     body,
     scripts: ['/build/tour.js'],
   });

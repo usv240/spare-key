@@ -2,7 +2,7 @@
 //   RELEASE=1          leaves the App Check debug token out of every bundle (anything published must be built this way)
 //   BRIDGE_URL=<url>   points the extension at a local App Check bridge (tools/serve.mjs) instead of the site's
 import { build } from 'esbuild';
-import { readFile, mkdir, cp, rm, readdir, writeFile } from 'node:fs/promises';
+import { readFile, mkdir, cp, rm, readdir, writeFile, stat } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 
 const release = process.env.RELEASE === '1';
@@ -57,17 +57,28 @@ await cp('extension/icons/icon-32.png', 'web/dist/icon-32.png');
 {
   const numbers = JSON.parse(await readFile('web/src/data/numbers.json', 'utf8'));
   const readJson = async f => { try { return JSON.parse(await readFile(f, 'utf8')); } catch { return null; } };
+  // The Android app's download is offered only when a signed release build is there to offer. A debug build is never
+  // put on the site: it can be read by any computer the phone is plugged into.
+  let apk = null;
+  const RELEASE_APK = 'android/app/build/outputs/apk/release/app-release.apk';
+  if (existsSync(RELEASE_APK)) {
+    await mkdir('web/dist/downloads', { recursive: true });
+    await cp(RELEASE_APK, 'web/dist/downloads/spare-key-android.apk');
+    const gradle = await readFile('android/app/build.gradle.kts', 'utf8');
+    apk = { mb: Math.round((await stat(RELEASE_APK)).size / 1e6), version: (gradle.match(/versionName = "([^"]+)"/) || [])[1] || '' };
+    console.log(`Android app on the site: ${apk.mb} MB, version ${apk.version}`);
+  }
   const { default: index } = await import('./web/src/pages/index.mjs');
   const docs = await import('./web/src/pages/docs.mjs');
   const pages = {
-    'index.html': index({ numbers, drift: { ...(await readJson('web/src/data/drift.json')), first: await readJson('web/src/data/drift-first-run.json') } }),
+    'index.html': index({ numbers, drift: { ...(await readJson('web/src/data/drift.json')), first: await readJson('web/src/data/drift-first-run.json') }, android: await readJson('docs/evidence/android-e2e.json'), apk }),
     'try.html': docs.tryPage(),
-    'install.html': docs.installPage(),
+    'install.html': docs.installPage({ apk }),
     'how-it-works.html': docs.howItWorksPage(),
     'built-with.html': docs.builtWithPage({ numbers }),
     'plant.html': docs.plantPage(),
     'api.html': docs.apiPage(),
-    'accuracy.html': docs.accuracyPage({ numbers, drift: await readJson('web/src/data/drift.json'), driftFirst: await readJson('web/src/data/drift-first-run.json') }),
+    'accuracy.html': docs.accuracyPage({ numbers, drift: await readJson('web/src/data/drift.json'), driftFirst: await readJson('web/src/data/drift-first-run.json'), android: await readJson('docs/evidence/android-e2e.json') }),
     'what-they-see.html': docs.whatTheySeePage({ library: JSON.parse(await readFile('data/steps.json', 'utf8')) }),
     'privacy.html': docs.privacyPage(),
     'safety.html': docs.safetyPage(),
