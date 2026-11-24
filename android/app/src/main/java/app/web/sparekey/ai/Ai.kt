@@ -50,14 +50,15 @@ object Ai {
     data class Image(val bitmap: Bitmap) : Part
 
     data class Prompt(val system: String, val schema: JSONObject)
-    data class Answer(val json: JSONObject, val onDevice: Boolean, val model: String)
+    /** `cut` is true when the model's answer stopped partway and only the items it finished were kept. */
+    data class Answer(val json: JSONObject, val onDevice: Boolean, val model: String, val cut: Boolean = false)
 
     private val ai by lazy { Firebase.ai(backend = GenerativeBackend.googleAI()) }
     private val options = RequestOptions(timeoutInMillis = 40_000)
     private val models = HashMap<String, GenerativeModel>()
 
-    private fun model(prompt: Prompt, mode: Mode, cloudModel: String): GenerativeModel {
-        val key = "${mode.name}|$cloudModel|${prompt.system.hashCode()}"
+    private fun model(prompt: Prompt, mode: Mode, cloudModel: String, maxOut: Int = 400): GenerativeModel {
+        val key = "${mode.name}|$cloudModel|$maxOut|${prompt.system.hashCode()}"
         return synchronized(models) {
             models.getOrPut(key) {
                 ai.generativeModel(
@@ -70,8 +71,8 @@ object Ai {
                     systemInstruction = content { text(prompt.system + "\n\n" + jsonInstruction(prompt.schema)) },
                     requestOptions = options,
                     onDeviceConfig = when (mode) {
-                        Mode.ON_DEVICE_FIRST -> OnDeviceConfig(mode = InferenceMode.PREFER_ON_DEVICE, maxOutputTokens = 400, temperature = 0f)
-                        Mode.DEVICE_ONLY -> OnDeviceConfig(mode = InferenceMode.ONLY_ON_DEVICE, maxOutputTokens = 400, temperature = 0f)
+                        Mode.ON_DEVICE_FIRST -> OnDeviceConfig(mode = InferenceMode.PREFER_ON_DEVICE, maxOutputTokens = maxOut, temperature = 0f)
+                        Mode.DEVICE_ONLY -> OnDeviceConfig(mode = InferenceMode.ONLY_ON_DEVICE, maxOutputTokens = maxOut, temperature = 0f)
                         Mode.CLOUD_ONLY -> OnDeviceConfig(mode = InferenceMode.ONLY_IN_CLOUD)
                     },
                 )
@@ -86,14 +87,14 @@ object Ai {
      * One JSON answer. Tries the cloud models in order when one is busy; when all are over quota, waits and tries
      * again (twice).
      */
-    suspend fun json(prompt: Prompt, parts: List<Part>, mode: Mode, cloudModels: List<String>): Answer {
+    suspend fun json(prompt: Prompt, parts: List<Part>, mode: Mode, cloudModels: List<String>, maxOut: Int = 400): Answer {
         var last: Throwable? = null
         for (attempt in 0..2) {
             for (name in cloudModels) {
                 val started = System.currentTimeMillis()
                 try {
                     val response = withTimeout(60_000) {
-                        model(prompt, mode, name).generateContent(content {
+                        model(prompt, mode, name, maxOut).generateContent(content {
                             for (p in parts) when (p) {
                                 is Text -> text(p.text)
                                 is Image -> image(p.bitmap)
@@ -102,7 +103,9 @@ object Ai {
                     }
                     val onDevice = response.inferenceSource == InferenceSource.ON_DEVICE
                     android.util.Log.i("SpareKey", "model call: ${if (onDevice) "on device" else name}, ${System.currentTimeMillis() - started} ms")
-                    return Answer(parseJson(response.text ?: ""), onDevice, if (onDevice) "Gemini Nano" else name)
+                    val (parsed, cut) = parseOrSalvage(response.text ?: "")
+                    if (cut) android.util.Log.i("SpareKey", "model answer was cut short; the finished items were kept")
+                    return Answer(parsed, onDevice, if (onDevice) "Gemini Nano" else name, cut)
                 } catch (e: Throwable) {
                     last = e
                     if (!RETRYABLE.containsMatchIn(e.toString()) && e !is kotlinx.coroutines.TimeoutCancellationException) throw e
@@ -202,6 +205,30 @@ object Ai {
 
     /** A function argument that is an array or object (get_steps' list of codes) as org.json, so the rules can read it. */
     private fun JSONTokenerValue(text: String): Any = try { org.json.JSONTokener(text).nextValue() } catch (e: Exception) { text }
+
+    /**
+     * A small model on the phone can run out of room and stop in the middle of a list. Then the items it finished are
+     * kept: the text is cut after the last complete item of the first list and closed. Returns the object and whether
+     * it had to be cut. What is missing is for the caller to make up (the plan's safety rules add every finding a
+     * model left out).
+     */
+    fun parseOrSalvage(text: String): Pair<JSONObject, Boolean> {
+        try { return parseJson(text) to false } catch (_: Exception) {}
+        val start = text.indexOf('{')
+        require(start >= 0) { "no JSON in the answer" }
+        var depth = 0; var inString = false; var escaped = false; var lastItem = -1
+        for (i in start until text.length) {
+            val c = text[i]
+            if (inString) { if (escaped) escaped = false else if (c == '\\') escaped = true else if (c == '"') inString = false; continue }
+            when (c) {
+                '"' -> inString = true
+                '{', '[' -> depth++
+                '}', ']' -> { depth--; if (depth == 2 && c == '}') lastItem = i }
+            }
+        }
+        require(lastItem > 0) { "no complete item in the answer" }
+        return JSONObject(text.substring(start, lastItem + 1) + "]}") to true
+    }
 
     /** The answer's JSON object, also when a model wraps it in a code fence or adds a sentence. */
     fun parseJson(text: String): JSONObject {

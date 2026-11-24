@@ -97,7 +97,8 @@ free Steps API), and an MCP server so an advocate's AI assistant gives the curre
   plan made by code and says so. The emulator's own packet capture of the run shows no reporting host reached.
 - The whole hybrid path on a real phone: on the builder's own Pixel with 703 apps, 72 held some special access; Spare
   Key listed 13 and counted the 59 that came with the phone. Gemini Nano read all 13 on the phone in 9.8 seconds, and
-  Gemini in the cloud ordered the plan from finding types in 3.3 seconds, asking the phone one yes or no question.
+  Gemini in the cloud ordered the plan from finding types in 3.3 seconds, asking the phone one yes or no question (on 1 of
+  4 runs: on the others the free-tier model did not answer in time, and the plan made by code stayed on screen).
   Gemini Nano's first run there raised a caution on 10 of the 13, so a caution now has to be backed up by something
   code can check: 2 were kept and 6 set aside.
 - Accessibility: axe-core finds 0 violations in 74 runs across the site and the panel; median reading grade

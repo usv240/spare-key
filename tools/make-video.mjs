@@ -60,8 +60,8 @@ const scenes = [
   { key: 'plan', panel: [M.questions, M['plan end']], slide: 'side', head: 'Screenshots first. Then an advocate. Then changes, at a time that is right for you.', sub: 'Code checks every plan against ten safety rules, whoever wrote it.',
     say: 'The plan follows the field\'s advice: screenshots first, then an advocate, and changes they may notice wait. Gemini in the cloud can order it from finding codes, and code checks every plan with ten safety rules. One of them: if mail is copied to someone else, stop that first, or Google\'s alert emails reach them.' },
   // The Android app on a made-up practice phone, recorded from the emulator's screen (adb screenrecord).
-  ...(existsSync(PHONE_CLIP) ? [{ key: 'android', clip: PHONE_CLIP, range: [6, 100], slide: 'side', head: 'And the phone itself, on Android.', sub: 'The same rules, the same code, in Android\'s sandbox. A made-up practice phone.',
-    say: 'An account check cannot see an app hidden on the phone. So there is an Android app too. It lists every app that could let someone watch the phone, and gives the same plan. The cloud never sees an app\'s name.' }] : []),
+  ...(existsSync(PHONE_CLIP) ? [{ key: 'android', clip: PHONE_CLIP, range: [41, 100], slide: 'side', head: 'And the phone itself, on Android.', sub: 'A real Pixel, with Gemini Nano on the phone. A made-up practice phone, so no real app is shown.',
+    say: 'An account check cannot see an app hidden on the phone. So there is an Android app too, here on a real phone. Gemini Nano sorts the apps on the phone itself, and the plan follows the same rules. The cloud never sees an app\'s name.' }] : []),
   { key: 'hood', panel: [M.hood, M.ledger + 0.5], slide: 'side', head: 'Every request to the cloud, word for word.', sub: 'A test searched every request for the made-up names and addresses: none held one.',
     say: 'Every request to the cloud is listed word for word. A test searched every one for names and addresses. Zero of twenty held one.' },
   { key: 'gap', slide: 'gap',

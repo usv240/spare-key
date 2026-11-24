@@ -360,8 +360,7 @@ in the `private/` folder, and the evidence file holds counts, timings and Spare 
 |---|---|---|---|---|---|---|
 | Rules only (Gemini Nano not yet downloaded) | 72 | 13 (3, 3, 7) | 59 | 1.0 s | none | by rules, on screen in 2.3 s; the cloud did not answer |
 | With Gemini Nano | 72 | 13 (9, 3, 1) | 59 | 8.3 s | 13 of 13 apps in 7.5 s; 10 cautions | by rules, on screen in 2.3 s; the cloud did not answer |
-| With Gemini Nano, after the caution rule | 72 | 13 (4, 3, 6) | 59 | 10.4 s | 13 of 13 apps in 9.8 s; 2 cautions kept, 6 set aside | by rules on screen in 2.2 s, then ordered by Gemini in the cloud in 3.3 s (one question asked of the phone) |
-
+\1| The same again, recording why the cloud failed | 72 | 13 (4, 3, 6) | 59 | 10.0 s | 13 of 13 apps in 9.5 s; 2 cautions kept, 6 set aside | by rules on screen in 2.3 s; the cloud took longer than the 45 s the app allows |\n
 What it showed:
 
 - **The app never offered Gemini Nano.** The phone reported it as downloadable and the app had no way to get it. The
@@ -377,8 +376,14 @@ What it showed:
 - **The whole hybrid path ran on the third run.** Gemini Nano on the phone, then Gemini in the cloud ordering the plan
   from finding types in 3.3 s: three requests left the phone, each passed the second check in Kotlin, and one
   was the phone's one-word answer to a question the cloud asked. Code then made one fix under the safety rules.
-- **The cloud did not answer on the first two runs** (a server error after about 45 s). The plan made by code was on
-  the screen in about 2.3 s every time. The cause is not known; the free-tier model is busy at times.
+- **The cloud ordered the plan on 1 of 4 runs.** On the first two it returned a server error after about 45 s; on the
+  fourth it took longer than the 45 s the app allows, so the app stopped waiting. The plan made by code was on the screen
+  in about 2.3 s every time. The app now records the server's short reason (a status code and a few words, nothing from
+  the phone) when a call fails, so the next failure can be told apart; the two server errors were before that.
+- **Gemini Nano also ordered the plan on the phone.** With the cloud left out (the practice phone), its first answer
+  stopped partway, at the 400-token limit for on-device answers, and could not be read, so the plan made by code was
+  shown. With room for 900 tokens and a request for short reasons it answered in about 6 s, and code made one fix. If an
+  answer is still cut short, the steps it finished are kept and the safety rules add the ones it did not reach.
 - **USB debugging was not flagged**, though it was on: Android 17 did not let the app read that setting, so it is
   listed under "Not checked".
 

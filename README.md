@@ -11,7 +11,8 @@ changes nothing on its own, and nothing that names a person ever leaves your com
 the screen, device admin apps, apps that read notifications, texts or the call log, and apps that see your location all
 the time. It runs the extension's own rules, the same JavaScript, in Android's sandbox. Gemini Nano sorts the apps on
 the phone; the cloud orders the plan from finding types and never sees an app's name. (The whole path has run on one real phone, the builder's own: Gemini Nano read 13 of 13 listed apps on the phone in 9.8 s,
-then Gemini in the cloud ordered the plan from finding types in 3.3 s and asked the phone one yes or no question. The test
+then Gemini in the cloud ordered the plan from finding types in 3.3 s and asked the phone one yes or no question. The
+free-tier cloud model did that on 1 of 4 runs; on the others the plan made by code stayed on screen. The test
 emulator has no Gemini Nano, so the automated end-to-end test covers everything else. See `docs/evidence/android-real.json`.)
 
 Site: <https://spare-key-app.web.app> · Practice check in any browser: <https://spare-key-app.web.app/try.html>

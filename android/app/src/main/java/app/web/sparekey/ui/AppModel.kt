@@ -340,21 +340,31 @@ class AppModel(app: Application) : AndroidViewModel(app) {
                     val body = Rules.obj("cloudBody", situation, shared, notChecked())
                     val p = Rules.obj("planPrompt", body.getJSONObject("body"))
                     val r = withTimeoutOrNull(90_000) {
-                        Ai.json(Ai.Prompt(p.getString("deviceSystem"), p.getJSONObject("schema")), listOf(Ai.Text(body.getString("text"))),
-                            Ai.Mode.DEVICE_ONLY, LiveSettings.DEFAULT_MODELS)
+                        // A small model has little room to answer: ask for short reasons and give it more room.
+                        Ai.json(Ai.Prompt(p.getString("deviceSystem") + "\nKeep each \"why\" under 12 words.", p.getJSONObject("schema")), listOf(Ai.Text(body.getString("text"))),
+                            Ai.Mode.DEVICE_ONLY, LiveSettings.DEFAULT_MODELS, maxOut = 900)
                     }
                     if (r != null && r.onDevice) {
                         val settled = Rules.obj("settle", r.json, situation, notChecked())
                         plan = settled.getJSONObject("plan"); planSource = "device"
-                        planNote = "Ordered by Gemini Nano on this phone. Code checked it against the safety rules."
+                        val fixes = settled.optJSONArray("fired")?.length() ?: 0
+                        note("Plan ordered by Gemini Nano on this phone" + (if (r.cut) ", its answer cut short" else "") + ". Code fixed $fixes things.")
+                        planNote = "Ordered by Gemini Nano on this phone. Nothing was sent anywhere. " +
+                            (if (r.cut) "Its answer was cut short, so code added the steps it did not reach" else "Code checked it against the safety rules") +
+                            (if (fixes > 0) " and made $fixes ${if (fixes == 1) "fix" else "fixes"}." else ".")
                     } else planNote = "Gemini Nano did not answer in time. This is the plan made by Spare Key's rules on this phone."
                 } else {
                     planNote = if (practice) "Practice check: this plan was made by Spare Key's rules on this phone." else "This plan was made by Spare Key's rules on this phone."
                 }
             } catch (e: Throwable) {
                 android.util.Log.w("SpareKey", "plan: ${e.javaClass.simpleName}: ${e.message?.take(300)}")
-                note("The model did not answer (${e.javaClass.simpleName}). The plan made by code is shown.")
-                planNote = "The cloud did not answer. This is the plan made by Spare Key's rules on this phone."
+                // Which model was asked, and the server's own short reason (a status and a few words, never anything
+                // from this phone), so a failure can be told apart later.
+                val asked = if (cloud) "The cloud" else "Gemini Nano"
+                val reason = Regex("""(4\d\d|5\d\d)|high demand|overloaded|quota|RESOURCE_EXHAUSTED|UNAVAILABLE|timed? ?out|App Check|too (long|large)|token|not supported|busy""", RegexOption.IGNORE_CASE)
+                    .findAll(e.message ?: "").map { it.value.lowercase() }.distinct().take(3).joinToString(", ")
+                note("$asked did not answer (${e.javaClass.simpleName}${if (reason.isNotEmpty()) ": $reason" else ""}). The plan made by code is shown.")
+                planNote = "$asked did not answer. This is the plan made by Spare Key's rules on this phone."
             } finally {
                 planBusy = false
                 asking = null
