@@ -203,7 +203,7 @@ try {
   check('The plan says to wait on removing the watching app when now is not a good time', steps.some(t => /^\d+\. Leave for a better time: An app can watch and control this phone/.test(t)), steps.join(' | '));
   check('The plan points to an advocate', steps.some(t => /Talk to an advocate/.test(t)));
   check('The hotline is on the plan', plan.some(t => /1-800-799-7233/.test(t)));
-  check('The first step says where not to keep the screenshots', plan.some(t => /^A screenshot stays on this phone/.test(t)));
+  check('The first step says where not to keep the screenshots', plan.some(t => /^On this phone, do not use a screenshot/.test(t)) && !steps.some(t => /Screenshot it/.test(t)));
 
   // Hybrid inference with the fallback (PREFER_ON_DEVICE): a step's public instructions in simpler words.
   await scrollTop();

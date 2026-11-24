@@ -71,7 +71,7 @@ ${apk ? `<ol>
   <li>Open Spare Key and choose <strong>Check this phone</strong>, or <strong>Try a practice phone first</strong>.</li>
 </ol>`}
 <h3>What it asks for</h3>
-<p>One thing: to see the list of apps on the phone. It asks for no location, no contacts, no files, no camera and no microphone. It uses the internet for plan help, which you can turn off on the first screen, and to fetch its own settings from Firebase and show that it is the real app. None of that says anything about your phone. It keeps nothing: the check lives in memory and is forgotten when you close the app or press Quick exit.</p>
+<p>One thing: to see the list of apps on the phone. It asks for no location, no contacts, no files, no camera and no microphone. It uses the internet for plan help, which you can turn off on the first screen, and to fetch its own settings from Firebase and show that it is the real app. None of that says anything about your phone. It keeps one setting, whether plan help is on. The check itself lives in memory and is forgotten when you close the app or press Quick exit.</p>
 <h3>Gemini Nano on the phone</h3>
 <p>On a phone that has Gemini Nano, it says what kind of app each one seems to be, on the phone. The list of your apps is never sent anywhere. On a phone without it, Spare Key’s rules do the whole check, and the results say so.</p>
 <h3>Remove it when you are done</h3>
@@ -123,9 +123,9 @@ export function howItWorksPage() {
   <li>The advocate step is always there.</li>
   <li>The plan never promises that you are out of danger or that there is nothing to worry about.</li>
   <li>The plan never contains contact details or links that are not from the steps library.</li>
-  <li>While your mail is copied to someone else, stopping that comes before any change Google would email you about.</li>
-  <li>While an app can watch the phone, that app comes first, and every other step says to make the change from a device the other person never had.</li>
   <li>Everything not checked gets a “check it yourself” step.</li>
+  <li>While your mail is copied to someone else, or someone else may hold your recovery email or phone, that is dealt with before any change Google would tell them about.</li>
+  <li>While an app can watch the phone, that app comes first, and every other step says to make the change from a device the other person never had.</li>
 </ol>`);
 }
 
@@ -167,7 +167,7 @@ export function builtWithPage({ numbers }) {
 <h2>What code decides, and what Gemini adds</h2>
 <p>Code decides everything that keeps a person out of danger. The plan made by code, with no model, passes every safety measure on its own, and the safety rules check any plan a model writes. Gemini adds what code cannot do:</p>
 <div class="table-wrap" tabindex="0" role="region" aria-label="What Gemini adds: table, scrolls sideways on small screens"><table><thead><tr><th>What</th><th>Without Gemini</th><th>With Gemini</th></tr></thead><tbody>
-<tr><td>Read settings pages a site has changed (all four kinds of change at once)</td><td>8 of 24 ways in shown</td><td>18 of 24, by Gemini Nano on the computer</td></tr>
+<tr><td>Read settings pages a site has changed (all four kinds of change at once)</td><td>6 of 24 ways in shown</td><td>18 of 24, by Gemini Nano on the computer</td></tr>
 <tr><td>Read a phone app’s sharing screen from a screenshot</td><td>Nothing: code cannot read a picture</td><td>3 of 3 made-up people, with “Me” left out, on 1 of 3 runs. One run split the names, and one could not start</td></tr>
 <tr><td>Order the plan for this situation and explain each step in plain words</td><td>One fixed order and stock sentences</td><td>Per-situation order and wording, asking the computer yes or no questions it needs</td></tr>
 <tr><td>Put a step in simpler words, on request</td><td>Not possible</td><td>Gemini Nano on the computer, or the cloud for the public steps only</td></tr>
@@ -418,11 +418,12 @@ export function advocatesPage({ numbers }) {
 <h1>For advocates</h1>
 <p class="lead">Spare Key does the first job of a technology safety check: it reads the person’s own settings pages and lists who still has a way in. You bring the judgment. It never changes anything, and it never says a list is complete.</p>
 <div class="note"><p><strong>No advocate has reviewed Spare Key yet.</strong> If you do this work, your corrections matter more than anything else on this site. The five questions at the end take about ten minutes, and nothing needs to be installed to answer them.</p></div>
+<figure class="shot paper" data-ui><img src="/img/printed-plan.png" width="816" height="1056" alt="The first page of a printed plan for the made-up person, Jordan: start here, then the settings to screenshot first, each with its masked address." loading="lazy"><figcaption>The printed plan for the made-up person, Jordan. <a href="/sample-plan.pdf">Open all of it (PDF)</a></figcaption></figure>
 <h2>What it gives you</h2>
 <ul>
   <li>A list, in plain words, of each person, device and app that can see the person’s location, read their mail, get into their account, or see their purchases or photos. It covers Google, Gmail, Google Photos, Amazon and Chrome, and on Android the apps on the phone that hold the access a phone-watching app needs.</li>
   <li>For each one, whether removing it tells the other person, in the company’s own words where its help page says. All of them are on one page: <a href="/what-they-see.html">What they see when you change it</a>.</li>
-  <li>A plan in the order the field teaches: document first, talk with an advocate, change only what is unlikely to be noticed, and wait on the rest.</li>
+  <li>A plan in the order the field teaches: document first, then talk with an advocate, then each change with what the other person will see. Changes they may notice wait, unless the person says now is a good time to make them.</li>
   <li>A list of what it did not check, every time.</li>
   <li>A printed plan to take away, with addresses hidden unless the person chooses to show them.</li>
 </ul>

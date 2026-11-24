@@ -108,23 +108,22 @@ the dangerous kind, because "nothing found" reads as "nobody has access".
 
 | Change | Code only: shown (right kind) | Silent misses | Code and Gemini Nano: shown (right kind) | Silent misses | After the Remote Config fix |
 |---|---|---|---|---|---|
-| None | 24 (24) | 0 | 24 (24) | 0 | |
+| None | 24 (24) | 0 | 24 (24) | 0 |  |
 | Renamed | 19 (19) | 0 | 24 (24) | 0 | 24 (24) |
-| Reworded | 14 (13) | 0 | 18 (16) | 0 | 24 (24) |
+| Reworded | 12 (11) | 0 | 19 (17) | 0 | 24 (24) |
 | Rebuilt | 19 (19) | 0 | 24 (24) | 0 | 24 (24) |
 | New formats | 24 (24) | 0 | 24 (24) | 0 | 24 (24) |
-| All four | 8 (8) | 0 | 18 (17) | 0 | 24 (24) |
+| All four | 6 (6) | 0 | 18 (16) | 0 | 24 (24) |
 
 With code alone and with Gemini Nano, every way in that is not shown is on a check marked "Not checked" or "checked in
 part", which tells the
 person to look for themselves.
 
 Entries listed that are not planted ways in: code alone listed 1 (on the reworded copy, an app whose access the page
-no longer said, listed as "can use your Google account" rather than dropped); Gemini Nano listed 13 (4 on the reworded
-copy, 9 on the all-four copy), mostly one device or person split into two entries. Each is shown for the person to mark
+no longer said, listed as "can use your Google account" rather than dropped); Gemini Nano listed 10 (2 on the reworded copy, 8 on the all-four copy), mostly one device or person split into two entries. Each is shown for the person to mark
 "Mine" or "Not mine". This went up from 3 when Nano lost the power to call an entry the person's own (above): an extra
-entry costs a tap, a hidden one can cost the person's safety. These Nano numbers are from the run with that rule, on
-November 22.
+entry costs a tap, a hidden one can cost the person's safety. These Nano numbers are from the saved run with that rule, on
+November 23 (`docs/evidence/drift-nano.json`).
 
 **When a real page looks different.** A check that could not read a page offers, in the results, "Tell Spare Key
 (anonymous)": one document per page to Cloud Firestore with five fields (the check's name, the reason, the readers'
@@ -261,6 +260,18 @@ against 27 for the cloud's 30).
 person turns plan help off, so that nothing leaves the computer. In both cases the safety rules, not the model, decide
 what a person sees, which is why both pass every measure after them.
 
+**Read in full, not by keywords (`docs/evidence/chatbot-hand-grade.json`, November 24).** A reviewer said a keyword count was
+too weak a judge, so each of the 30 chatbot answers was read in full against a written rubric by an AI reviewer (Claude),
+with a quote saved for every grade. No person has checked the grades. Told the person to record their settings before
+changing anything: yes in 7, partly in 3, no in 20 (the keyword count said 4, and only 3 of those were the same answers).
+Warned clearly that a change may be noticed: yes in 24, a hint in 4, nothing in 2 (the keyword count said 30 of 30, which
+overstated it). Pointed to an advocate before any change: 18; the other 12 named a hotline only as a resource at the end.
+The first thing the answer told the person to do: an advocate in 13, a change in 5, something else in 12, the record in 0.
+10 answers said something that could raise risk, mostly "now is the right time" to a person who had said they were not
+sure; one gave a wrong hotline number. Six of the 7 "yes" answers gave no change steps at all, so the record came first
+only by default; read strictly, one answer said "before you change them" outright. The site and the submission now quote
+these numbers, not the keyword ones.
+
 ## 5. Speed and readability (EVALUATION.md section 5)
 
 Speed: see section 1. On this PC, loading Gemini Nano the first time took 104 to 133 s; after that, each check took 4 to
@@ -302,7 +313,8 @@ November 22, 2026, three runs:
 
 On the website (try.html, the builder's own Chrome with Gemini Nano, November 22): the practice check with the pages
 changed all four ways read 5 checks by code, Gemini Nano on the device read 6 more, and the last was listed as "looked
-different"; then "Read Jordan's screenshot" added Sam Porter and Riley, read by Gemini Nano on the device, and left out
+different" (on November 24, after the reader was made stricter: 3 by code, 8 more by Gemini Nano, 1 not checked, and 12 of
+12 by code with the Remote Config fix; `docs/evidence/try-html-live-chrome.md`); then "Read Jordan's screenshot" added Sam Porter and Riley, read by Gemini Nano on the device, and left out
 "Me". Headless Chrome cannot run this on the live site: App Check's reCAPTCHA refuses automated browsers.
 
 Limits: one made-up screen in no real app's look. Real Life360 or Find My screens have not been tried.
@@ -311,8 +323,8 @@ Limits: one made-up screen in no real app's look. Real Life360 or Find My screen
 
 The test installs a second app that does nothing but hold the access a phone-watching app asks for (screen reading,
 device admin, notifications, texts, location all the time, usage access), turns each one on through adb, and drives
-the real app on an Android 16 emulator: **33 of 33 checks passed**. The check took 10.4 s.
-The plan made by code was on the screen 3 s after the button was pressed. On the saved run the free-tier cloud model did not answer, so the app kept the plan made by its rules and said so (27.9 s after the button was pressed; it gives the cloud at most 45 s). On the run before it ([docs/evidence/android-e2e-cloud.json](docs/evidence/android-e2e-cloud.json), 34 of 34 checks) Gemini reordered the plan 9.6 s after the button was pressed, with rule R10 applied by code.
+the real app on an Android 16 emulator: **34 of 34 checks passed**. The check took 8.7 s.
+The plan made by code was on the screen 2.8 s after the button was pressed, and Gemini in the cloud reordered it 9.3 s after the button was pressed, with rule R10 applied by code.
 
 Where the traffic went (`tools/android-net.mjs`, `docs/evidence/android-net.json`): the emulator records every packet
 from outside Android, and Wi-Fi is turned off for the run so nothing can go another way. The hosts Spare Key is built
@@ -320,15 +332,15 @@ to reach were:
 
 | Host | What for | Sent | Received |
 |---|---|---|---|
-| `firebasevertexai.googleapis.com` | Gemini through Firebase AI Logic (the plan, from finding types) | 53.1 KB | 11.4 KB |
-| `www.google.com` | reCAPTCHA Enterprise (for App Check) | 40.0 KB | 74.8 KB |
-| `www.gstatic.com` | reCAPTCHA Enterprise (for App Check) | 19.7 KB | 1157.4 KB |
-| `spare-key-app.web.app` | Spare Key site (the App Check bridge page) | 12.0 KB | 43.1 KB |
-| `firebaseremoteconfig.googleapis.com` | Remote Config and its install id (settings) | 2.6 KB | 7.2 KB |
+| `firebasevertexai.googleapis.com` | Gemini through Firebase AI Logic (the plan, from finding types) | 46.1 KB | 11.0 KB |
+| `www.google.com` | reCAPTCHA Enterprise (for App Check) | 38.4 KB | 73.4 KB |
+| `www.gstatic.com` | reCAPTCHA Enterprise (for App Check) | 16.2 KB | 1154.3 KB |
+| `spare-key-app.web.app` | Spare Key site (the App Check bridge page) | 10.9 KB | 48.0 KB |
+| `firebaseremoteconfig.googleapis.com` | Remote Config and its install id (settings) | 2.7 KB | 7.4 KB |
 | `firebaseinstallations.googleapis.com` | Remote Config and its install id (settings) | 1.8 KB | 5.3 KB |
 
-These add up to 129.1 KB sent and 1299.2 KB received; Android's own counter for the app says 135.5 KB
-sent and 1307.0 KB received. The gap is traffic that hides its host name (QUIC) and went to addresses several Google
+These add up to 116.1 KB sent and 1299.3 KB received; Android's own counter for the app says 125.7 KB
+sent and 1310.0 KB received. The gap is traffic that hides its host name (QUIC) and went to addresses several Google
 hosts share, App Check among them. No usage, crash or analytics host was looked up or reached. The capture also holds
 the hosts Android itself reached in that time (Google Play services, time and connectivity checks); they are listed in
 the evidence file.

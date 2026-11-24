@@ -72,8 +72,8 @@ await cp('extension/icons/icon-32.png', 'web/dist/icon-32.png');
   const { default: why } = await import('./web/src/pages/why.mjs');
   const docs = await import('./web/src/pages/docs.mjs');
   const pages = {
-    'index.html': index({ numbers, apk }),
-    'why.html': why({ numbers, drift: { ...(await readJson('web/src/data/drift.json')), first: await readJson('web/src/data/drift-first-run.json') }, android: await readJson('docs/evidence/android-e2e.json') }),
+    'index.html': index({ numbers, apk, grade: await readJson('docs/evidence/chatbot-hand-grade.json') }),
+    'why.html': why({ numbers, drift: { ...(await readJson('web/src/data/drift.json')), first: await readJson('web/src/data/drift-first-run.json') }, android: await readJson('docs/evidence/android-e2e.json'), grade: await readJson('docs/evidence/chatbot-hand-grade.json') }),
     'advocates.html': docs.advocatesPage({ numbers }),
     'try.html': docs.tryPage(),
     'install.html': docs.installPage({ apk }),

@@ -30,3 +30,18 @@ reCAPTCHA refuses them (see `try-break-report.json`), so this is the only record
 **What run 2 found wrong:** the plan said 20 settings, not 24. Gemini Nano had sorted all 24 entries in one prompt and
 called four household and family members the person's own, so they were hidden. The fix, the same day: Gemini Nano may
 say an entry is not the person's, never that it is (`extension/src/scan/rules.js` merge; `tests/rules.test.mjs`).
+
+## November 24, 2026: recorded again for the video (`tools/record-break.mjs`, Chrome with Gemini Nano)
+
+The reader was made stricter on November 23 (it skips anything on a page that is not visible), so code alone now reads
+fewer of the changed pages than on November 22. The page's own result lines, all four changes at once:
+
+- Without the fix: "Pages changed: all four at once. The code reader read 3 of 12 checks. Gemini Nano, on this device,
+  read 8 more that the code could not. 1 could not be read, so it is listed under “Not checked” rather than shown as
+  empty." This run took about 5 minutes: Gemini Nano read nine pages on this computer.
+- With the fix: "Pages changed: all four at once, with the fix fetched from Remote Config. The code reader read 12 of
+  12 checks." About 2 minutes.
+
+The same day, the panel opened on its own address (not inside try.html) was found to read 0 of 12 pages: with no scan
+view beside it, it only parsed each page, and the reader skips what is not laid out. It now reads them in a frame of
+its own. The Try page was not affected.

@@ -34,7 +34,7 @@ const num = (line, re) => Number((String(line || '').match(re) || [])[1] || 0);
 const breakSay = B && (() => {
   const w = B.lines?.without || '';
   const code = num(w, /code reader read (\d+)/), total = num(w, /read \d+ of (\d+)/), nano = num(w, /read (\d+) more/), not = num(w, /(\d+) could not be read/);
-  return `Sites change their pages without warning. Here every practice page is changed four ways at once. The code reader still reads ${code} of ${total} checks. Gemini Nano reads ${nano} more, on this computer.${not ? ` ${not === 1 ? 'One page it cannot read is' : `The ${not} it cannot read are`} listed as not checked, never as empty.` : ''}`;
+  return `Sites change their pages. Here every practice page is changed four ways at once. The code reader still reads ${code} of ${total} checks. Gemini Nano reads ${nano} more, on this computer.${not ? ` ${not === 1 ? 'One page it cannot read is' : `The ${not} it cannot read are`} listed as not checked, never as empty.` : ''}`;
 })();
 const fixSay = B && (() => {
   const f = B.lines?.withFix || '';
@@ -44,13 +44,13 @@ const fixSay = B && (() => {
 const PHONE_CLIP = path.join(OUT, 'android-practice.mp4');
 const scenes = [
   { key: 'hook', slide: 'hook',
-    say: 'When someone leaves an abusive partner, that person often still has a way in: a phone signed in to their Google account, mail copied to another address, a location share they forgot. Researchers found 60 percent of AI chatbot answers to survivors left out critical safety warnings.' },
-  { key: 'gap', slide: 'gap',
-    say: 'We tested a plain chatbot on 30 situations. It said to take screenshots before changing anything in only 4. Spare Key\'s plans do in all 30.' },
+    say: 'When someone leaves an abusive partner, that person often still has a way in: a signed-in phone, mail copied to another address, a shared location. And 60 percent of AI chatbot answers to survivors left out critical safety warnings.' },
+  { key: 'hybrid', slide: 'hybrid',
+    say: 'Here is the idea. The settings pages name the other person, so Gemini Nano reads them on the device, with no cloud fallback, on purpose. The cloud gets only codes, and asks the device yes-or-no questions.' },
   { key: 'safety', panel: [M.safety - 0.5, M.choose + 3], slide: 'side', head: 'Read-only. Quick exit on every screen.', sub: 'Spare Key is a free Chrome extension. It reads your own settings pages and changes nothing.',
     say: 'Spare Key is a free Chrome extension and Android app. It reads your own settings pages and changes nothing. Quick exit is on every screen.' },
   { key: 'scan', panel: [M.start - 0.3, M.results + 0.5], tab: 'tab-1', slide: 'side', head: 'Gemini Nano sorts every entry, on this computer.', sub: 'Firebase AI Logic, on-device only: these pages are the private data. Practice pages for a made-up person, Jordan.',
-    say: 'It opens each settings page beside the panel and reads it. Code reads each page, and Gemini Nano sorts every entry through Firebase AI Logic in on-device-only mode, because these pages are the private data.' },
+    say: 'It opens each settings page beside the panel. Code reads it, and Gemini Nano sorts every entry through Firebase AI Logic, in on-device-only mode.' },
   { key: 'results', panel: [M.results, M['not checked'] + 1], slide: 'side', head: 'What the other person could do, and what they may notice.', sub: 'Each card says what removing it does, from Google\'s own help pages. Anything not read is listed as not checked.',
     say: 'It lists what it found by what the other person could do, and what they may notice if you remove it, from Google\'s own help pages. Anything it could not read is listed as not checked.' },
   ...(B ? [
@@ -58,16 +58,16 @@ const scenes = [
     { key: 'fix', footage: 'break', range: [B['fix chosen'] - 0.5, B['fix read']], slide: 'side', head: 'A fix from Remote Config. No update to install.', sub: 'Fetched by the page from Firebase Remote Config.', say: fixSay },
   ] : []),
   { key: 'plan', panel: [M.questions, M['plan end']], slide: 'side', head: 'Screenshots first. Then an advocate. Then changes, at a time that is right for you.', sub: 'Code checks every plan against ten safety rules, whoever wrote it.',
-    say: 'The plan follows the field\'s advice: screenshots first, then an advocate, and changes they may notice wait. Gemini in the cloud can order it, but it only ever sees finding codes, and code checks every plan with ten safety rules. One of them: if mail is copied to someone else, stop that first, or Google\'s alert emails reach them.' },
+    say: 'The plan follows the field\'s advice: screenshots first, then an advocate, and changes they may notice wait. Gemini in the cloud can order it from finding codes, and code checks every plan with ten safety rules. One of them: if mail is copied to someone else, stop that first, or Google\'s alert emails reach them.' },
   // The Android app on a made-up practice phone, recorded from the emulator's screen (adb screenrecord).
   ...(existsSync(PHONE_CLIP) ? [{ key: 'android', clip: PHONE_CLIP, range: [6, 100], slide: 'side', head: 'And the phone itself, on Android.', sub: 'The same rules, the same code, in Android\'s sandbox. A made-up practice phone.',
     say: 'An account check cannot see an app hidden on the phone. So there is an Android app too. It lists every app that could let someone watch the phone, and gives the same plan. The cloud never sees an app\'s name.' }] : []),
-  { key: 'hybrid', slide: 'hybrid',
-    say: 'That is the hybrid split. The private pages stay on the device with Gemini Nano. The cloud gets only codes, and when it needs a detail it asks the device a yes-or-no question.' },
   { key: 'hood', panel: [M.hood, M.ledger + 0.5], slide: 'side', head: 'Every request to the cloud, word for word.', sub: 'A test searched every request for the made-up names and addresses: none held one.',
     say: 'Every request to the cloud is listed word for word. A test searched every one for names and addresses. Zero of twenty held one.' },
+  { key: 'gap', slide: 'gap',
+    say: 'We asked a plain chatbot about 30 situations and read every answer. Only 7 said to record the settings before changing anything. Spare Key\'s plans do in all 30.' },
   { key: 'results-slide', slide: 'numbers',
-    say: 'It finds all 24 planted ways in, with zero silent misses when pages change. On a real account, read only, every check it could read matches the page.' },
+    say: 'It finds all 24 planted ways in, with zero silent misses when pages change.' },
   { key: 'close', slide: 'close',
     say: 'Spare Key. Find out who still has a key to your accounts, at spare key app dot web dot app. The hotline is always there: 1 800 799 7233.' },
 ];
@@ -105,7 +105,7 @@ const SLIDES = {
 </style><div class="slide"><h1>Screenshots first, before any change.</h1>
 <p class="lede">The field's first rule. Our test: 30 made-up situations, the same Gemini model.</p>
 <div class="row">
-<div class="c"><div class="n">4 of 30</div><div class="t">answers from a plain chatbot said to take screenshots before changing anything.</div></div>
+<div class="c"><div class="n">7 of 30</div><div class="t">answers from a plain chatbot said to record the settings before changing anything. 10 said something risky.</div></div>
 <div class="c us"><div class="n">30 of 30</div><div class="t">plans Spare Key shows start with the screenshots, and warn that a change may be noticed.</div></div>
 </div></div>`,
   hook: `<style>${base}

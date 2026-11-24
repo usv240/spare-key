@@ -55,7 +55,7 @@ pages and the result says so. The cloud only ever sees the kind of thing that wa
 
 **What Gemini does that code cannot.** Sites redesign their pages. When we changed the 13 practice pages five ways by
 script, code alone found 79 of 120 planted ways in; with Gemini Nano reading the changed page on the device, 105. With
-four changes at once it was 8 of 24 by code and 18 with Gemini Nano, and a Remote Config fix restored all 24 with no
+four changes at once it was 6 of 24 by code and 18 with Gemini Nano, and a Remote Config fix restored all 24 with no
 update.
 
 **What code does that a model must not.** One file, `shared/cloud-safe.js`, is the only exit to the cloud: it builds
@@ -84,15 +84,19 @@ free Steps API), and an MCP server so an advocate's AI assistant gives the curre
 
 ## Accomplishments that we're proud of
 
-- A plain chatbot said "screenshot before changing anything" in 4 of 30 situations (judged by keywords); every plan
-  Spare Key shows does in 30 of 30.
-- Rule R9: when mail is copied to someone else, stop that before changing recovery or 2-Step settings, because Google's
-  alert emails would reach them. The chatbot got this order wrong in 3 of 7 situations where it applied.
+- A plain chatbot told the person to record their settings before changing anything in 7 of 30 answers, each read in full
+  against a written rubric; none made it the first step and 10 said something risky, like urging changes at once on someone who was
+  not sure. Every plan Spare Key shows starts with the record, in 30 of 30.
+- Rule R9: when mail is copied to someone else, or someone else may hold the recovery email or phone, deal with that
+  before any change Google would tell them about. By keyword position, the chatbot got the mail order wrong in 3 of 7
+  situations where it applied.
 - "What they see when you change it": 30 kinds of access, 22 with the official help page quoted.
-- Android: 33 of 33 end-to-end checks on an Android 16 emulator, with a test app that holds the
-  access a phone-watching app asks for. The plan made by code is on the screen in 3 seconds; Gemini reordered it 9.6 seconds after the button was pressed on one saved run and did not answer on the next, where the app kept the plan made by code and said so.
+- Android: 34 of 34 end-to-end checks on an Android 16 emulator, with a test app that holds the
+  access a phone-watching app asks for. The plan made by code is on the screen in 2.8 seconds, and Gemini
+  reordered it 9.3 seconds after the button was pressed. When the free-tier model does not answer, the app keeps the
+  plan made by code and says so. The emulator's own packet capture of the run shows no reporting host reached.
 - Accessibility: axe-core finds 0 violations in 74 runs across the site and the panel; median reading grade
-  4.2
+  4.3
 - A real account, read-only: real Google and Amazon pages differed from what we expected in 5 of 12 checks. After the
   fixes, every check Spare Key could read matched what the site shows.
 

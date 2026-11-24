@@ -3,6 +3,7 @@
 // needs the check; this page is for the reader who wants the reasons and the proof. Every number comes from
 // web/src/data (written from the test results); a number that has not been measured is not shown.
 import { page, info, esc } from '../layout.mjs';
+import { cleanText } from '../../../shared/plan/invariants.js';
 
 const sum = (rows, key) => rows.reduce((a, r) => a + (r[key] || 0), 0);
 
@@ -29,16 +30,28 @@ function androidProof(a) {
   return `<li><span class="n">${a.passed} of ${a.passed + a.failed}</span><p>checks passed by the Android app on an Android ${esc(a.device.android)} emulator, with a test app that does nothing but hold the access a phone-watching app asks for. The emulator has no Gemini Nano, so Gemini Nano’s sorting on a phone is not part of this. ${esc(date)}.</p></li>`;
 }
 
-export default function why({ numbers, drift = null, android = null }) {
+// The optional two-voice step: two model voices argue the plan, a third settles it. It runs after the plan made by
+// code is already on the screen, and every line passes the same text rule as a plan (rule 6), shown here on a real run.
+function voicesBlock(v) {
+  if (!v) return '';
+  const line = (label, text) => { const c = cleanText(text); return `<div><dt>${label}</dt><dd>${c.text ? esc(c.text) : `<span class="muted">Removed by rule 6. The model wrote: “${esc(text)}” A plan cannot promise that.</span>`}</dd></div>`; };
+  return `<div class="voices-note" id="voices">
+      <h3>An optional second look: two voices</h3>
+      <p>Closing a door fast and staying hidden pull against each other. When plan help is on, one model voice argues for each and a third settles it, from finding types only. The plan made by code is already on the screen, and the ten rules check whatever the voices write. From the practice check for Jordan, ${esc(v.date)}:</p>
+      <dl class="voices-lines">${line('Close the doors', v.close)}${line('Stay hidden', v.hidden)}${line('How they settled it', v.settled)}</dl>
+    </div>`;
+}
+
+export default function why({ numbers, drift = null, android = null, grade = null }) {
   const n = numbers;
   const plan = n.planSafety;
   const body = `
 <section class="block why-top" aria-labelledby="why-title">
   <div class="wrap">
     <h1 id="why-title">Why Spare Key</h1>
-    <p class="lead">The problem, what Spare Key does about it, and the proof. About two minutes.</p>
+    <p class="lead">The problem, the idea, and the proof. About two minutes.</p>
     <nav class="jump" aria-label="On this page">
-      <a href="#problem">The problem</a><a href="#stays">What leaves the device</a><a href="#voices">Two voices</a><a href="#numbers">How well it works</a><a href="#built">How it’s built</a><a href="#builders">For advocates and developers</a>
+      <a href="#problem">The problem</a><a href="#stays">What leaves the device</a><a href="#numbers">How well it works</a><a href="#built">How it’s built</a><a href="#builders">For advocates and developers</a>
     </nav>
   </div>
 </section>
@@ -77,28 +90,16 @@ export default function why({ numbers, drift = null, android = null }) {
   </div>
 </section>
 
-<section class="block" id="voices" aria-labelledby="voices-title">
-  <div class="wrap">
-    <h2 id="voices-title">Two voices, one plan</h2>
-    <p class="lead">Closing a door fast and staying hidden pull against each other, and which one is right depends on the person. So two AI voices argue over the plan, a third settles it, and Spare Key’s own rules make sure every warning is there.</p>
-    ${n.voices ? `<div class="voices-grid">
-      <div class="voice close rise"><h3>Close the doors</h3><p>${esc(n.voices.close)}</p></div>
-      <div class="voice hidden rise"><h3>Stay hidden</h3><p>${esc(n.voices.hidden)}</p></div>
-      <div class="voice rise"><h3>How they settled it</h3><p>${esc(n.voices.settled)}</p></div>
-    </div><p class="muted">From the practice check for Jordan, ${esc(n.voices.date)}. The voices see finding types only. Ten safety rules, in code, check the plan whoever wrote it. <a href="/how-it-works.html">The ten rules</a></p>` : ''}
-  </div>
-</section>
-
 <section class="block" id="numbers" aria-labelledby="numbers-title">
   <div class="wrap">
     <h2 id="numbers-title">How well it works</h2>
     <p class="muted">Measured on made-up practice pages and a made-up phone. The readers were also checked against one real account with nothing planted on it. What these numbers do not show is on the <a href="/accuracy.html">Accuracy</a> page.</p>
-    <ul class="numbers">
+    <ul class="ledger">
       ${n.practice ? `<li><span class="n">${n.practice.found} of ${n.practice.of}</span><p>planted ways in found on the 13 made-up practice pages, and none of the 4 that belong to the person flagged, with code only and with Gemini Nano. ${esc(n.practice.date)}.</p></li>` : ''}
       ${nanoAdds(drift)}
       ${driftItem(drift)}
       ${n.privacy ? `<li><span class="n">${n.privacy.withPrivate} of ${n.privacy.requests}</span><p>requests from the extension held a name, email address, phone number or device, in a full practice check with every cloud step on. ${esc(n.privacy.date)}.</p></li>` : ''}
-      ${plan ? `<li><span class="n">${plan.chatbot.document_first} of ${plan.of}</span><p>answers from a plain chatbot said to screenshot before changing anything, on ${plan.of} made-up situations, judged by keywords. It did warn that a change may be noticed in ${plan.chatbot.alert_warning}. Every plan Spare Key shows does both. ${esc(plan.date)}.</p></li>` : ''}
+      ${grade ? `<li><span class="n">${grade.totals.document_first.yes} of ${grade.of}</span><p>answers from a plain chatbot told the person to record their settings before changing anything, on ${grade.of} made-up situations. None made it the first thing to do, ${grade.totals.first_instruction.change} began with a change, and ${grade.totals.unsafe} said something risky, such as “now is the absolute best time to make changes” to a person who was not sure. It warned clearly that a change may be noticed in ${grade.totals.alert_warning.yes}. Every plan Spare Key shows starts with the record and carries the warning. Each answer was read in full against a written rubric by an AI reviewer; no person has checked the grades (<a href="https://github.com/usv240/spare-key/blob/main/docs/evidence/chatbot-hand-grade.json">the grades, with a quote for each</a>). ${esc(plan?.date || '')}.</p></li>` : ''}
       ${androidProof(android)}
     </ul>
   </div>
@@ -120,6 +121,7 @@ export default function why({ numbers, drift = null, android = null }) {
       </tbody>
     </table></div>
     <p style="margin-top:20px"><a href="/built-with.html">The full stack, and why each piece is there</a></p>
+    ${voicesBlock(n.voices)}
   </div>
 </section>
 

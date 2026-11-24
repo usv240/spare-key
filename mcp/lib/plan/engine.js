@@ -17,6 +17,12 @@ export const TAKEOVER = new Set(['gmail.delegate', 'gmail.filter.hides', 'google
 // change does not happen now while the mail copying waits.
 export const MAIL_OUT = new Set(['gmail.forwarding.external', 'gmail.filter.forwards', 'gmail.delegate']);
 export const EMAILS_ABOUT = new Set(['google.recovery.email_other', 'google.recovery.phone_unconfirmed', 'google.2sv.other_device', 'google.devices.other']);
+// The second half of R9. Google also sends its security alerts to the recovery email and phone. While one of those may
+// belong to someone else, signing a device out or changing 2-Step Verification would tell them, so the recovery email
+// and phone are dealt with first, and those changes do not happen now while the recovery ones wait.
+export const ALERTS_TO = new Set(['google.recovery.email_other', 'google.recovery.phone_unconfirmed']);
+export const ALERTED = new Set(['google.2sv.other_device', 'google.devices.other']);
+export const ALERT_NOTE = 'Google sends security alerts to your recovery email and phone. Someone else may hold one of yours, so they could be told about this change. Deal with the recovery email and phone first.';
 // An app that can watch the phone sees what is done on that phone, including changes to accounts (the phone check).
 export const PHONE_WATCH = new Set(['phone.app.control', 'phone.app.accessibility', 'phone.app.device_admin', 'phone.app.notifications', 'phone.app.messages']);
 export const PHONE_NOTE = 'An app on your phone may be able to see what you do on it. Make other changes from a phone or computer the other person has never had.';
@@ -54,22 +60,25 @@ export function buildPlan({ findings = [], situation = {}, notChecked = [], libr
   for (const f of open) byCode.set(f.code, [...(byCode.get(f.code) || []), f.ref]);
   // Mail copied elsewhere first (R9), then quiet ways into the account, then the rest.
   // An app watching the phone comes before everything: whoever installed it sees every other change made on that phone.
-  const rank = code => (PHONE_WATCH.has(code) ? -1 : MAIL_OUT.has(code) ? 0 : TAKEOVER.has(code) ? 1 : 2);
+  const rank = code => (PHONE_WATCH.has(code) ? -1 : MAIL_OUT.has(code) ? 0 : ALERTS_TO.has(code) ? 1 : TAKEOVER.has(code) ? 2 : 3);
   const codes = [...byCode.keys()].sort((a, b) => rank(a) - rank(b));
   const mailOut = codes.some(c => MAIL_OUT.has(c));
   const watched = codes.some(c => PHONE_WATCH.has(c));
+  const alertsTo = codes.some(c => ALERTS_TO.has(c));
+  // On a phone that may be watched a screenshot is the wrong record: it stays on the phone and may back up.
+  const record = code => (code.startsWith('phone.') ? 'Take a picture of it with another phone, or write it down,' : 'Screenshot it');
   for (const code of codes) {
     const refs = byCode.get(code);
     const notice = noticeOf(library, code);
-    const linked = mailOut && EMAILS_ABOUT.has(code) ? { linked: LINKED_NOTE } : watched && !PHONE_WATCH.has(code) ? { linked: PHONE_NOTE } : {};
+    const linked = mailOut && EMAILS_ABOUT.has(code) ? { linked: LINKED_NOTE } : alertsTo && ALERTED.has(code) ? { linked: ALERT_NOTE } : watched && !PHONE_WATCH.has(code) ? { linked: PHONE_NOTE } : {};
     if (notice === 'unlikely' && TAKEOVER.has(code) && goodTime) {
       actions.push({ action: 'change_now', refs, code, ...linked, why: 'This gives someone a quiet way into your account, and changing it is unlikely to be noticed.' });
     } else if (goodTime) {
       actions.push({ action: 'change_now', refs, code, ...linked, why: 'You said now is a good time. Removing this may be noticed, so read the warning first.' });
     } else {
       actions.push({ action: 'wait', refs, code, ...linked, why: notice === 'unlikely'
-        ? 'Changing this is unlikely to be noticed, but you said now may not be a good time. Screenshot it and come back to it.'
-        : 'Removing this may be noticed. Screenshot it and leave it until a better time, after talking to an advocate.' });
+        ? `Changing this is unlikely to be noticed, but you said now may not be a good time. ${record(code)} and come back to it.`
+        : `Removing this may be noticed. ${record(code)} and leave it until a better time, after talking to an advocate.` });
     }
   }
 

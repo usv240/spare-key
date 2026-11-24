@@ -2,7 +2,7 @@
 // the test results; a number that has not been measured is not shown.
 import { page, info } from '../layout.mjs';
 
-export default function index({ numbers, apk = null }) {
+export default function index({ numbers, apk = null, grade = null }) {
   const n = numbers;
 
   const body = `
@@ -12,13 +12,13 @@ export default function index({ numbers, apk = null }) {
       <h1 id="hero-title">Who still has a key to your accounts?</h1>
       <p class="lead">Spare Key reads your own Google, Gmail, Amazon and Chrome settings, and an Android phone itself. It lists who can still see your location, your mail or your account, then gives you a plan that starts with screenshots. It changes nothing. Names never leave your device.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="/install.html">Get the Chrome extension</a>
-        <a class="btn btn-secondary" href="/try.html">Try the practice check</a>
+        <a class="btn btn-primary" href="/try.html">Try the practice check</a>
+        <a class="btn btn-secondary" href="/install.html">Get Spare Key</a>
       </div>
-      <p class="hero-note">Free. No sign-in. If someone may be watching this computer, check on one you already use that they never touch. ${info('shared-computer', 'About using a shared computer')}</p>
+      <p class="hero-note">The practice check uses made-up pages and installs nothing. Spare Key is free, with no sign-in. If someone may be watching this computer, check on one you already use that they never touch. ${info('shared-computer', 'About using a shared computer')}</p>
       <p class="hero-note hero-links"><a href="#phone">Check an Android phone</a><a href="/why.html">New here? The two-minute tour</a><a href="/advocates.html">For advocates</a></p>
     </div>
-    <figure class="panel-frame" id="panel-demo">
+    <figure class="panel-frame" id="panel-demo" data-ui>
       <iframe src="/panel-demo.html" title="The Spare Key side panel, showing a practice check for a made-up person" loading="eager"></iframe>
       <figcaption>The real side panel, showing a practice check for a made-up person called Jordan. The buttons work.</figcaption>
     </figure>
@@ -30,15 +30,15 @@ export default function index({ numbers, apk = null }) {
     <h2 id="how-title">How it works</h2>
     <div class="steps">
       <div class="step-a rise">
-        <figure class="shot"><img src="/img/step-check.png" width="1104" height="600" alt="A practice recovery phone page open in a tab beside the Spare Key panel, which says it is checking the phone and email that can get back into the account." loading="lazy"><figcaption>The scan tab beside the panel. You watch each page it opens.</figcaption></figure>
+        <figure class="shot" data-ui><img src="/img/step-check.png" width="1104" height="600" alt="A practice recovery phone page open in a tab beside the Spare Key panel, which says it is checking the phone and email that can get back into the account." loading="lazy"><figcaption>The scan tab beside the panel. You watch each page it opens.</figcaption></figure>
         <div class="step-text"><h3>Check ${info('how-check', 'About the check')}</h3><p>Spare Key opens each settings page and reads it. It never clicks or changes anything.</p></div>
       </div>
       <div class="step-b rise">
-        <figure class="shot"><img src="/img/step-understand.png" width="720" height="800" alt="A finding in the panel: someone can see your location, with Mine, Not mine and Not sure buttons." loading="lazy"><figcaption>Each finding, in plain words.</figcaption></figure>
+        <figure class="shot" data-ui><img src="/img/step-understand.png" width="720" height="800" alt="A finding in the panel: someone can see your location, with Mine, Not mine and Not sure buttons." loading="lazy"><figcaption>Each finding, in plain words.</figcaption></figure>
         <div class="step-text"><h3>Understand ${info('how-understand', 'About the results')}</h3><p>Each person, device and app is explained in plain words, with what removing it would do.</p></div>
       </div>
       <div class="step-c rise">
-        <figure class="shot"><img src="/img/step-plan.png" width="720" height="800" alt="The plan in the panel: screenshot first, talk to an advocate, then steps to wait on." loading="lazy"><figcaption>A plan in a safety-first order.</figcaption></figure>
+        <figure class="shot" data-ui><img src="/img/step-plan.png" width="720" height="800" alt="The plan in the panel: screenshot first, talk to an advocate, then steps to wait on." loading="lazy"><figcaption>A plan in a safety-first order.</figcaption></figure>
         <div class="step-text"><h3>Plan ${info('how-plan', 'About the plan')}</h3><p>You get an order to deal with them in: what to screenshot, what can change now, and what to leave for a better time.</p></div>
       </div>
     </div>
@@ -69,13 +69,12 @@ export default function index({ numbers, apk = null }) {
     <div class="phone-text">
       <h2 id="phone-title">The phone itself, on Android</h2>
       <p class="lead">An account check cannot see an app hidden on the phone. The Android app reads the phone’s own settings and lists every app that could let someone watch it. It opens nothing and removes nothing.</p>
-      <p>An app that can watch the phone is the first thing the plan deals with: take a picture of it with another phone, talk to an advocate, and leave it in place until a better time if removing it may be noticed.</p>
-      <p><a class="big" href="/install.html#android">${apk ? 'Get the Android app' : 'How to get the Android app'}</a></p>
+      <div class="phone-more"><p>An app that can watch the phone is the first thing the plan deals with: take a picture of it with another phone, talk to an advocate, and leave it in place until a better time if removing it may be noticed.</p><p><a class="big" href="/install.html#android">${apk ? 'Get the Android app' : 'How to get the Android app'}</a></p></div>
     </div>
     <div class="phones" tabindex="0" role="region" aria-label="Three screens from the Android app, on a made-up practice phone">
-      <figure class="shot rise"><img src="/img/android/results.png" width="540" height="1200" alt="The Android app’s results for a made-up phone: an app called System Update Service can read and control the screen, is a device admin app, and can read notifications, texts and location." loading="lazy"><figcaption>What it found, one app to a card.</figcaption></figure>
-      <figure class="shot rise"><img src="/img/android/plan.png" width="540" height="1200" alt="The plan on the phone: screenshot these first, talk to an advocate, then leave the watching app for a better time." loading="lazy"><figcaption>The same safety-first plan.</figcaption></figure>
-      <figure class="shot rise"><img src="/img/android/hood.png" width="540" height="1200" alt="Under the hood on the phone: where each step runs, what left this phone, and what Spare Key did." loading="lazy"><figcaption>What ran where, and what left the phone.</figcaption></figure>
+      <figure class="shot rise" data-ui><img src="/img/android/results.png" width="540" height="1200" alt="The Android app’s results for a made-up phone: an app called System Update Service can read and control the screen, is a device admin app, and can read notifications, texts and location." loading="lazy"><figcaption>What it found, one app to a card.</figcaption></figure>
+      <figure class="shot rise" data-ui><img src="/img/android/plan.png" width="540" height="1200" alt="The plan on the phone: screenshot these first, talk to an advocate, then leave the watching app for a better time." loading="lazy"><figcaption>The same safety-first plan.</figcaption></figure>
+      <figure class="shot rise" data-ui><img src="/img/android/hood.png" width="540" height="1200" alt="Under the hood on the phone: where each step runs, what left this phone, and what Spare Key did." loading="lazy"><figcaption>What ran where, and what left the phone.</figcaption></figure>
     </div>
   </div>
 </section>
@@ -84,8 +83,8 @@ export default function index({ numbers, apk = null }) {
   <div class="wrap">
     <div class="block-head"><h2 id="stays-title">What stays on your device</h2>${info('sent-log', 'About what left this computer')}</div>
     <div class="split">
-      <div><h3>On your device</h3><ul><li>The settings pages Spare Key reads</li><li>Names, email addresses and phone numbers</li><li>Devices and apps</li><li>Your answers, like “Not mine”</li></ul><p class="muted">Gemini Nano reads the pages here, with no cloud fallback.</p></div>
-      <div><h3>Sent to Gemini in the cloud</h3><ul><li>Finding types, like <code>gmail.forwarding.external</code></li><li>Your optional choices, like “not sure”</li><li>Nothing at all, if you turn plan help off</li></ul><p class="muted">Every request is shown word for word under “What left this computer”, with the fixed instructions sent with it.</p></div>
+      <div class="rise"><h3>On your device</h3><ul><li>The settings pages Spare Key reads</li><li>Names, email addresses and phone numbers</li><li>Devices and apps</li><li>Your answers, like “Not mine”</li></ul><p class="muted">Gemini Nano reads the pages here, with no cloud fallback.</p></div>
+      <div class="rise"><h3>Sent to Gemini in the cloud</h3><ul><li>Finding types, like <code>gmail.forwarding.external</code></li><li>Your optional choices, like “not sure”</li><li>Nothing at all, if you turn plan help off</li></ul><p class="muted">Every request is shown word for word under “What left this computer”, with the fixed instructions sent with it.</p></div>
     </div>
     ${n.privacy ? `<p class="stays-proof"><strong>In our test, ${n.privacy.withPrivate} of ${n.privacy.requests} requests held a name, email address, phone number or device.</strong> <a href="/why.html#stays">See a real request, word for word</a> · <a href="/privacy.html">Exactly what is read, sent and kept</a></p>` : ''}
   </div>
@@ -110,9 +109,9 @@ export default function index({ numbers, apk = null }) {
   <div class="wrap">
     <h2 id="help-title">Get help now</h2>
     <div class="help-grid" style="margin-top:24px">
-      <div><h3>National Domestic Violence Hotline</h3><a class="call" href="tel:+18007997233">1-800-799-7233</a><p>Text START to 88788, or chat at <a href="https://www.thehotline.org">thehotline.org</a>. Free, 24/7.</p></div>
-      <div><h3>Safety Net (NNEDV)</h3><p>Guides on technology safety for survivors, app by app.</p><a href="https://www.techsafety.org/resources-survivors">techsafety.org</a></div>
-      <div><h3>Cornell Clinic to End Tech Abuse</h3><p>Resources from a clinic that helps survivors find out who has access.</p><a href="https://ceta.tech.cornell.edu/resources">ceta.tech.cornell.edu</a></div>
+      <div class="rise"><h3>National Domestic Violence Hotline</h3><a class="call" href="tel:+18007997233">1-800-799-7233</a><p>Text START to 88788, or chat at <a href="https://www.thehotline.org">thehotline.org</a>. Free, 24/7.</p></div>
+      <div class="rise"><h3>Safety Net (NNEDV)</h3><p>Guides on technology safety for survivors, app by app.</p><a href="https://www.techsafety.org/resources-survivors">techsafety.org</a></div>
+      <div class="rise"><h3>Cornell Clinic to End Tech Abuse</h3><p>Resources from a clinic that helps survivors find out who has access.</p><a href="https://ceta.tech.cornell.edu/resources">ceta.tech.cornell.edu</a></div>
     </div>
   </div>
 </section>
@@ -121,9 +120,9 @@ export default function index({ numbers, apk = null }) {
   <div class="wrap">
     <h2 id="next-title">See it before you use it</h2>
     <ul class="try-list">
-      <li><h3>Practice check</h3><p>A made-up person’s settings pages, start to finish, in about two minutes. Nothing of yours is used, and nothing is installed.</p><a class="big" href="/try.html">Start the practice check</a></li>
-      <li><h3>Why Spare Key</h3><p>The problem, what leaves the device, how well it works and how it is built, with the test results.</p><a class="big" href="/why.html">Take the two-minute tour</a></li>
-      <li><h3>For advocates</h3><p>How to use it in a session with someone, what it sends, and what it cannot tell you.</p><a class="big" href="/advocates.html">Read the advocate guide</a></li>
+      <li class="rise"><h3>Practice check</h3><p>A made-up person’s settings pages, start to finish, in about two minutes. Nothing of yours is used, and nothing is installed.</p><a class="big" href="/try.html">Start the practice check</a></li>
+      <li class="rise"><h3>Why Spare Key</h3><p>The problem, what leaves the device, how well it works and how it is built, with the test results.</p><a class="big" href="/why.html">Take the two-minute tour</a></li>
+      <li class="rise"><h3>For advocates</h3><p>How to use it in a session with someone, what it sends, and what it cannot tell you.</p><a class="big" href="/advocates.html">Read the advocate guide</a></li>
     </ul>
   </div>
 </section>
@@ -132,7 +131,7 @@ export default function index({ numbers, apk = null }) {
   <div class="wrap faq">
     <div><h2 id="questions-title">Questions</h2><p class="muted">Short answers. More on the <a href="/privacy.html">Privacy</a> and <a href="/safety.html">Getting help</a> pages.</p></div>
     <div>
-      <details><summary>Will they know I checked?</summary><p>Spare Key only opens your settings pages and reads them, which changes nothing they can see. But signing in to Google on a computer you have not used before sends a new sign-in alert to your recovery email and phone. Chrome keeps a history, and they may see that the extension is installed. If someone else uses this computer, check on another device, and remove the extension when you are done.</p></details>
+      <details><summary>Will they know I checked?</summary><p>Spare Key only opens your settings pages and reads them. That changes no setting and sends no alert. It can still leave traces: Google’s My Activity may record the visits, Chrome keeps a history, and they may see that the extension is installed. Signing in to Google on a computer you have not used before also sends a new sign-in alert to your recovery email and phone. If someone else uses this computer, check on one you already use that they never touch, and remove the extension when you are done.</p></details>
       <details><summary>Does it change anything?</summary><p>No. It never clicks, removes or saves anything on a settings page. Every change is yours to make, and the plan says which ones may be noticed.</p></details>
       <details><summary>What does it send to Google?</summary><p>Plan help uses Gemini in Google’s cloud. It sees finding types, like “mail is forwarded”, and the answers you choose to share. Never names, addresses, numbers or devices. You can turn plan help off, and then nothing is sent.</p></details>
       <details><summary>What if I don’t have Gemini Nano?</summary><p>Spare Key reads the pages with code only, and says where that is less complete. Gemini Nano needs Chrome on a computer with enough memory and disk.</p></details>
@@ -140,7 +139,7 @@ export default function index({ numbers, apk = null }) {
       <details><summary>Is it free?</summary><p>Yes. No sign-in, no account, no payment.</p></details>
       <details><summary>Who made it?</summary><p>One developer, for the #BuildHybridAI 2026 hackathon. It is open source under the Apache-2.0 license. It is not made by Google, Amazon or the National Domestic Violence Hotline.</p></details>
       <details><summary>How is this different from Google’s Security Checkup or Apple’s Safety Check?</summary><p>Those are made by one company for its own account, and they are built to fix things fast. Spare Key reads across Google, Gmail, Amazon, Chrome and an Android phone in one pass, and it is built around the two rules the field teaches: screenshot before you change anything, and a change can alert the other person. It tells you which changes they would be told about, and it changes nothing itself. Use them together: Spare Key to see and plan, their tools to make each change when the time is right.</p></details>
-      <details><summary>Why can’t a chatbot do this?</summary><p>A chatbot cannot see your settings, and pasting them into one sends the very details that are the danger. In our test on 30 situations, a plain chatbot said to take screenshots before changing anything in only 4. Spare Key reads on your computer, and every plan starts with the screenshots and warns that a change may be noticed.</p></details>
+      <details><summary>Why can’t a chatbot do this?</summary><p>A chatbot cannot see your settings, and pasting them into one sends the very details that are the danger. We asked a plain chatbot about 30 made-up situations and read every answer: ${grade ? `${grade.totals.document_first.yes} told the person to record their settings before changing anything, and ${grade.totals.unsafe} said something risky, like urging changes right away on someone who was not sure` : 'most did not say to record the settings first'}. Spare Key reads on your device, and every plan starts with the record and warns that a change may be noticed.</p></details>
     </div>
   </div>
 </section>

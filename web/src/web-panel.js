@@ -188,9 +188,17 @@ async function loadPage(url) {
     await new Promise(resolve => { frame.onload = resolve; frame.src = url; setTimeout(resolve, 10000); });
     return frame.contentDocument;
   }
-  // No scan view beside this panel: read the page without showing it.
-  const html = await (await fetch(url)).text();
-  return new DOMParser().parseFromString(html, 'text/html');
+  // No scan view beside this panel: read the page in a frame of our own, placed off the screen. It has to be a real,
+  // laid-out page: the reader skips anything that is not visible, and a page that was only parsed has nothing visible.
+  let own = document.getElementById('own-scan-view');
+  if (!own) {
+    own = Object.assign(document.createElement('iframe'), { id: 'own-scan-view', title: 'The practice settings page being read', tabIndex: -1 });
+    own.setAttribute('aria-hidden', 'true');
+    Object.assign(own.style, { position: 'fixed', left: '-10000px', top: '0', width: '1024px', height: '768px', border: '0' });
+    document.body.append(own);
+  }
+  await new Promise(resolve => { own.onload = resolve; own.src = url; setTimeout(resolve, 10000); });
+  return own.contentDocument;
 }
 
 function setProgress(done, total, words) {

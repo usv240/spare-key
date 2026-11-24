@@ -2,11 +2,12 @@
 // for linked findings, added November 22, 2026, and R10 for a watched phone, added November 24, 2026).
 // Code enforces them whatever a model wrote, and records each time one had to change the plan, so the panel can show
 // "Spare Key added this warning" and the evaluation can count how often the cloud needed fixing.
-import { ACTIONS, noticeOf, MAIL_OUT, EMAILS_ABOUT, LINKED_NOTE, PHONE_WATCH, PHONE_NOTE } from './engine.js';
+import { ACTIONS, noticeOf, MAIL_OUT, EMAILS_ABOUT, LINKED_NOTE, ALERTS_TO, ALERTED, ALERT_NOTE, PHONE_WATCH, PHONE_NOTE } from './engine.js';
 import { SITUATION_DEFAULTS } from '../findings.js';
 
 // R6: words a plan must never use.
-const REASSURE = /\b(safe|safely|secure|securely|all clear|nothing to worry|no need to worry|you'?re fine|you are fine|you'?re ok|perfectly fine|harmless)\b/i;
+// A promise that the other person will not find out is a reassurance too: no plan can know that.
+const REASSURE = /\b(safe|safely|secure|securely|all clear|nothing to worry|no need to worry|you'?re fine|you are fine|you'?re ok|perfectly fine|harmless|nobody (?:will )?notices?|no one (?:will )?notices?|won'?t (?:notice|know|find out)|will not (?:notice|know|find out)|will never (?:notice|know|find out)|without (?:them|him|her|anyone) (?:knowing|noticing|finding out))\b/i;
 // R7: contact details and links.
 const EMAIL = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
 const PHONE = /(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\b/;
@@ -149,6 +150,29 @@ export function applyInvariants(plan, { findings = [], situation = {}, notChecke
     }
   }
 
+  // R9, second half: a recovery email or phone someone else may hold gets Google's security alerts. It comes before any
+  // change Google would alert about, each such change carries the note saying why, and none happens now while it waits.
+  const alertSteps = actions.filter(a => isStep(a) && ALERTS_TO.has(a.code));
+  if (alertSteps.length) {
+    const told = actions.filter(a => isStep(a) && ALERTED.has(a.code));
+    for (const a of told) {
+      if (!a.linked) a.linked = ALERT_NOTE;
+      if (a.action === 'change_now' && alertSteps.some(m => m.action === 'wait')) {
+        a.action = 'wait';
+        a.why = 'Spare Key moved this to wait: the recovery email or phone waits, and Google’s alerts about this change could reach the other person.';
+        fired.push({ rule: 'R9', ref: a.refs[0], detail: 'account change moved to wait while the recovery address waits' });
+      }
+    }
+    const last = Math.max(...alertSteps.map(m => actions.indexOf(m)));
+    const early = told.filter(a => actions.indexOf(a) < last);
+    if (early.length) {
+      const rest = actions.filter(a => !early.includes(a));
+      const at = rest.indexOf(actions[last]) + 1;
+      actions = [...rest.slice(0, at), ...early, ...rest.slice(at)];
+      fired.push({ rule: 'R9', ref: early[0].refs[0], detail: `${early.length} account ${early.length === 1 ? 'change' : 'changes'} moved after the recovery email and phone` });
+    }
+  }
+
   // R10: a watched phone. While an app can watch the phone, that app's step comes before every other step, and every
   // other step carries the note saying to make the change from a device the other person never had. A model sees only
   // codes and writes no such note, so without this a cloud-ordered plan would lose the warning the code plan has.
@@ -216,6 +240,12 @@ export function planPasses(plan, { findings = [], situation = {}, library = {} }
   const linkedOrder = !mail.length || !later.length || (
     later.every(a => acts.indexOf(a) > Math.max(...mail.map(m => acts.indexOf(m))))
     && !(mail.some(m => m.action === 'wait') && later.some(a => a.action === 'change_now')));
+  // The same measure for a recovery email or phone someone else may hold, and the changes Google alerts it about.
+  const alertTo = steps.filter(a => ALERTS_TO.has(a.code));
+  const told = steps.filter(a => ALERTED.has(a.code));
+  const alertOrder = !alertTo.length || !told.length || (
+    told.every(a => acts.indexOf(a) > Math.max(...alertTo.map(m => acts.indexOf(m))))
+    && !(alertTo.some(m => m.action === 'wait') && told.some(a => a.action === 'change_now')));
   return {
     alert_warning: warned,
     document_first: !open.length || (doc >= 0 && (firstChange < 0 || doc < firstChange)),
@@ -223,6 +253,6 @@ export function planPasses(plan, { findings = [], situation = {}, library = {} }
     no_false_reassurance: !REASSURE.test(words),
     coverage: covered,
     order,
-    linked_order: linkedOrder,
+    linked_order: linkedOrder && alertOrder,
   };
 }

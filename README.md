@@ -30,8 +30,9 @@ If you need help now: National Domestic Violence Hotline, call 1-800-799-7233 or
    lists, all four at once). The code readers fail on some pages; watch Gemini read those pages instead, and see every
    page it cannot read listed under "Not checked" instead of shown as empty. Then tick **Apply the fix sent through
    Remote Config** and run it again: the code readers read every page again. After either run, **Read Jordan's
-   screenshot** reads a made-up phone sharing screen. (Checked in Chrome with Gemini Nano on November 22: code read 5 of
-   12 checks, Gemini Nano read 6 more, 1 was listed as "looked different", and the screenshot added both made-up people
+   screenshot** reads a made-up phone sharing screen. (Checked in Chrome with Gemini Nano on November 24, all four changes at once: code read 3 of
+   12 checks, Gemini Nano read 8 more on the device, 1 was listed as not checked, and with the Remote Config fix code
+   read 12 of 12. On November 22 the screenshot added both made-up people
    on it, Sam Porter and Riley, leaving out "Me"; recorded in [docs/evidence/try-html-live-chrome.md](docs/evidence/try-html-live-chrome.md). Automated
    browsers are refused by App Check's reCAPTCHA, so there Gemini is not asked and the page says so.)
 3. **See what left the computer.** Make the plan, then open **What left this computer**: a ledger of every request
@@ -45,7 +46,7 @@ If you need help now: National Domestic Violence Hotline, call 1-800-799-7233 or
 
 6. **The Android app (optional).** Build it (below) and choose **Try a practice phone first**: a made-up phone with a
    hidden "System Update Service" that holds every kind of access. Or run `node tools/android-e2e.mjs` on an emulator: it
-   installs a do-nothing test app that holds the same access, turns each one on, and drives the real app. 33 of 33
+   installs a do-nothing test app that holds the same access, turns each one on, and drives the real app. 34 of 34
    checks passed on an Android 16 emulator ([docs/evidence/android-e2e.json](docs/evidence/android-e2e.json)).
 
 ## Where each step runs, and why
@@ -89,7 +90,7 @@ Gemini adds what code cannot do, measured:
 
 | What | Without Gemini | With Gemini |
 |---|---|---|
-| Read settings pages a site has changed (all four kinds of change at once) | 8 of 24 ways in shown | 18 of 24 with Gemini Nano on the computer |
+| Read settings pages a site has changed (all four kinds of change at once) | 6 of 24 ways in shown | 18 of 24 with Gemini Nano on the computer |
 | Read a phone app's sharing screen from a screenshot | nothing (code cannot read a picture) | all made-up people, with "Me" left out, in 1 of 3 runs of the test screen and in the run on the website; the other two runs split lines or could not start Nano ([details](docs/accuracy.md)) |
 | Order the plan and say why each step comes where it does, in plain words | one fixed order and stock sentences | an order and wording for the answers the person chose to share (none by default); Gemini asks the computer yes/no questions it needs |
 
@@ -119,14 +120,15 @@ All from scripts in `tools/`; details and limits in [docs/accuracy.md](docs/accu
   the site shows; Google Photos partner sharing sits behind a click, so it is listed as not checked.
 - **When a site changes its pages:** a script changed the 13 practice pages five ways. On the first, blind run, a
   check said it was done while missing a way in 24 times. Now 0 times, with code alone and with Gemini Nano: a page that
-  cannot be read is listed under "Not checked". Nano reads what code cannot (pages changed all four ways: 8 of 24 shown
+  cannot be read is listed under "Not checked". Nano reads what code cannot (pages changed all four ways: 6 of 24 shown
   by code, 18 with Nano, 24 after the Remote Config fix).
 - **Privacy:** 0 of 20 requests from the extension held a name, email, phone number, device or place, in a full check
   with every cloud step on; all 9 model requests matched "What left this computer" word for word, and the panel's own
   ledger agreed (0 of 13). The cloud plan asked the device a yes/no question (`ask_device`) and got an enum back.
-- **Plan safety (40 situations written before any run):** a plain chatbot (the same Gemini 3.5 Flash-Lite, with no Spare Key instructions) put screenshots before changes in 4 of 30
-  answered situations; every plan Spare Key shows does in 30 of 30, and carries the warning that a change may be noticed
-  in 30 of 30. Where the person's mail was copied to someone else and an account change was also needed (7 of the 30),
+- **Plan safety (40 situations written before any run):** a plain chatbot (the same Gemini 3.5 Flash-Lite, with no Spare Key instructions) told the person to record their settings before changing anything in 7 of 30 answers,
+  read in full against a written rubric by an AI reviewer (4 of 30 by the first, keyword count; none made it the first thing to do, and 10 said
+  something risky). It warned clearly that a change may be noticed in 24. Every plan Spare Key shows starts with the record and carries the
+  warning, in 30 of 30 ([docs/evidence/chatbot-hand-grade.json](docs/evidence/chatbot-hand-grade.json)). Where the person's mail was copied to someone else and an account change was also needed (7 of the 30),
   the chatbot brought up the account change (recovery, password, sign-ins) before stopping the mail copying in 3 of 7:
   Google's alert emails and codes would then reach the other person. Spare Key's rule R9 puts the mail copying first in
   7 of 7. The rule was added after these runs, and the chatbot's answers are judged by keyword position, which is rough.
@@ -140,11 +142,11 @@ answer, you get the plan made on your computer; when only the voices fail, you k
 
 `tools/android-e2e.mjs` installs `android/planted`, an app that does nothing but hold accessibility, device admin,
 notification, texts and background location access, turns each one on through adb, and drives the real app.
-**33 of 33 checks passed** on an Android 16 emulator: the planted app is found and listed first as "can watch
+**34 of 34 checks passed** on an Android 16 emulator: the planted app is found and listed first as "can watch
 and control this phone"; apps that came with the phone are not listed (the first run flagged Android System
 Intelligence, which is why); the plan says to leave the watching app for a better time when now is not a good time;
 the cloud plan request is in "What left this phone" word for word and names no app; Quick exit and back-twice leave no
-recent-apps entry; every button is at least 48dp. The check took 10.4 s. The plan made by code was on the screen 3 s after the button was pressed. On the saved run the free-tier cloud model did not answer, so the app kept the plan made by its rules and said so (27.9 s after the button was pressed; it gives the cloud at most 45 s). On the run before it ([docs/evidence/android-e2e-cloud.json](docs/evidence/android-e2e-cloud.json), 34 of 34 checks) Gemini reordered the plan 9.6 s after the button was pressed, with rule R10 applied by code. Also checked: an app that can see which apps you use is found; "Say it more simply" is answered through hybrid inference's cloud fallback (the emulator has no Gemini Nano); every request passes a second check for app names in Kotlin; and no usage statistics or crash reports are stored or sent. The emulator's own packet capture of that run, with Wi-Fi off so nothing could go another way, shows Spare Key reaching only Firebase AI Logic, App Check with reCAPTCHA, Remote Config and its own site (129.1 KB sent by host name; Android's counter for the app says 135.5 KB in all), and no usage, crash or analytics host looked up or reached (`tools/android-net.mjs`, `docs/evidence/android-net.json`).
+recent-apps entry; every button is at least 48dp. The check took 8.7 s. The plan made by code was on the screen 2.8 s after the button was pressed, and Gemini in the cloud reordered it 9.3 s after the button was pressed, with rule R10 applied by code. Also checked: an app that can see which apps you use is found; "Say it more simply" is answered through hybrid inference's cloud fallback (the emulator has no Gemini Nano); every request passes a second check for app names in Kotlin; and no usage statistics or crash reports are stored or sent. The emulator's own packet capture of that run, with Wi-Fi off so nothing could go another way, shows Spare Key reaching only Firebase AI Logic, App Check with reCAPTCHA, Remote Config and its own site (116.1 KB sent by host name; Android's counter for the app says 125.7 KB in all), and no usage, crash or analytics host looked up or reached (`tools/android-net.mjs`, `docs/evidence/android-net.json`).
 Not shown by this: real stalkerware, a rooted phone, or Gemini Nano's sorting (the emulator has no Gemini Nano).
 
 ## Install

@@ -29,7 +29,9 @@ try {
     await panel.waitForSelector('#start', { visible: true });
     await panel.click('#start');
     await panel.waitForFunction(() => /devices|apps/.test(document.getElementById('scan-line').textContent), { timeout: 20000 });
-    await sleep(900);
+    // The scan view is blank for a moment between pages: wait until it shows one.
+    await page.waitForFunction(() => { const f = document.querySelector('#scan-view iframe, iframe#scan-view'); try { return (f?.contentDocument?.body?.innerText || '').length > 120; } catch { return false; } }, { timeout: 20000 }).catch(() => console.log('scan view stayed blank'));
+    await sleep(400);
     const scanBox = await page.$eval('#scan-view', el => { const r = el.getBoundingClientRect(); return { x: r.left, y: r.top + scrollY, w: r.width, h: r.height }; });
     const panelBox = await page.$eval('#panel-demo iframe', el => { const r = el.getBoundingClientRect(); return { x: r.left, y: r.top + scrollY, w: r.width, h: r.height }; });
     await page.screenshot({ path: path.join(out, 'step-check.png'), clip: { x: scanBox.x, y: Math.min(scanBox.y, panelBox.y), width: panelBox.x + panelBox.w - scanBox.x, height: 600 } });

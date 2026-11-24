@@ -16,7 +16,7 @@ const NAV = [
   ['how-it-works.html', 'How it works'],
   ['try.html', 'Try it'],
   ['why.html', 'Why Spare Key'],
-  ['built-with.html', 'How it’s built'],
+  ['advocates.html', 'For advocates'],
   ['accuracy.html', 'Accuracy'],
   ['privacy.html', 'Privacy'],
 ];

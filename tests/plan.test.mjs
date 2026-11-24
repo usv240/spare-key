@@ -141,3 +141,38 @@ test('model text is tidied: a phrase said twice in a row is said once', async ()
   assert.equal(cleanText('Screenshot it first, then talk to an advocate.').text, 'Screenshot it first, then talk to an advocate.');
   assert.equal(cleanText('It had had access.').text, 'It had access.');
 });
+
+test('R9, second half: a recovery email someone else may hold comes before changes Google would alert it about', async () => {
+  const { buildPlan, ALERT_NOTE } = await import('../shared/plan/engine.js');
+  const { applyInvariants: apply, planPasses: passes, cleanText: clean } = await import('../shared/plan/invariants.js');
+  const found = [
+    { ref: 'F1', code: 'google.devices.other', ownership: 'not_mine' },
+    { ref: 'F2', code: 'google.recovery.email_other', ownership: 'unsure' },
+  ];
+  const lib = { 'google.devices.other': { who_can_notice: 'noticeable' }, 'google.recovery.email_other': { who_can_notice: 'noticeable' } };
+  const at = (plan, code) => plan.actions.findIndex(a => a.code === code);
+  // The plan made by code: the recovery email first, and the sign-out carries the note.
+  for (const now of ['yes', 'no']) {
+    const ctx = { findings: found, situation: { safe_to_change_now: now }, notChecked: [], library: lib };
+    const { plan } = apply(buildPlan(ctx), ctx);
+    assert.ok(at(plan, 'google.recovery.email_other') < at(plan, 'google.devices.other'), `recovery first when now is ${now}`);
+    assert.equal(plan.actions.find(a => a.code === 'google.devices.other').linked, ALERT_NOTE);
+    assert.equal(passes(plan, ctx).linked_order, true);
+  }
+  // A model that signs the device out now while the recovery email waits: code moves it after, and to wait.
+  const ctx = { findings: found, situation: { safe_to_change_now: 'yes' }, notChecked: [], library: lib };
+  const model = { actions: [
+    { action: 'document', refs: ['F1', 'F2'], why: '' }, { action: 'talk_to_advocate', refs: [], why: '' },
+    { action: 'change_now', refs: ['F1'], why: 'Sign this device out.' }, { action: 'wait', refs: ['F2'], why: 'Leave the recovery email.' },
+  ] };
+  const { plan, fired } = apply(model, ctx);
+  const signOut = plan.actions.find(a => a.code === 'google.devices.other');
+  assert.equal(signOut.action, 'wait');
+  assert.equal(signOut.linked, ALERT_NOTE);
+  assert.ok(at(plan, 'google.recovery.email_other') < at(plan, 'google.devices.other'));
+  assert.ok(fired.some(f => f.rule === 'R9' && /recovery/.test(f.detail)));
+  // Rule 6: a promise that the other person will not find out is removed like any other reassurance.
+  assert.equal(clean('Document findings and wait on most changes so nobody notices.').text, '');
+  assert.equal(clean('Do this quietly and he will never know. Talk to an advocate first.').text, 'Talk to an advocate first.');
+  assert.equal(clean('Removing this may be noticed.').text, 'Removing this may be noticed.');
+});

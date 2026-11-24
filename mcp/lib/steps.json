@@ -772,17 +772,17 @@
       "who_can_notice": "noticeable",
       "notice_why": "If the app stops reporting, whoever installed it may notice. Removing it also deletes it as evidence.",
       "evidence_first": [
-        "Screenshot the app's page in Settings, then Apps, including what it can do and where it was installed from.",
+        "With another phone, take a picture of the app’s page in Settings, then Apps, including what it can do and where it was installed from.",
         "Write down when you first noticed it, and anything that made you think someone knew things they should not."
       ],
       "steps": [
-        "Do not delete the app yet. Screenshot it first.",
+        "Do not delete the app yet. Take a picture of it with another phone, or write it down first.",
         "Talk to an advocate about when to remove it.",
         "When you are ready, open Settings, then Security and privacy, then Device admin apps, and turn the app off if it is there.",
         "Then open Settings, then Accessibility, and turn the app off.",
         "Then open Settings, then Apps, choose the app, and select Uninstall."
       ],
-      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "if_not_safe_yet": "Leave it for now. Take a picture of it with another phone, or write it down. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
       "also_check": [
         "phone.app.accessibility",
         "phone.app.device_admin",
@@ -825,16 +825,16 @@
       "who_can_notice": "noticeable",
       "notice_why": "If the app was put there to watch you, it stops sending what is on your screen when you turn it off.",
       "evidence_first": [
-        "Screenshot the app's page in Settings, then Apps, including what it can do and where it was installed from.",
+        "With another phone, take a picture of the app’s page in Settings, then Apps, including what it can do and where it was installed from.",
         "Write down when you first noticed it, and anything that made you think someone knew things they should not."
       ],
       "steps": [
-        "Screenshot the app first.",
+        "Take a picture of it with another phone, or write it down first.",
         "Open Settings, then Accessibility.",
         "Choose the app, and turn it off.",
         "If you do not know the app, talk to an advocate before removing it."
       ],
-      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "if_not_safe_yet": "Leave it for now. Take a picture of it with another phone, or write it down. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
       "also_check": [
         "phone.app.control"
       ],
@@ -866,16 +866,16 @@
       "who_can_notice": "noticeable",
       "notice_why": "Turning off device admin is a big change, and the app may tell whoever set it up.",
       "evidence_first": [
-        "Screenshot the app's page in Settings, then Apps, including what it can do and where it was installed from.",
+        "With another phone, take a picture of the app’s page in Settings, then Apps, including what it can do and where it was installed from.",
         "Write down when you first noticed it, and anything that made you think someone knew things they should not."
       ],
       "steps": [
-        "Screenshot the app first.",
+        "Take a picture of it with another phone, or write it down first.",
         "Open Settings, then Security and privacy, then More security and privacy, then Device admin apps.",
         "Choose the app and turn it off.",
         "Then you can uninstall it from Settings, then Apps."
       ],
-      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "if_not_safe_yet": "Leave it for now. Take a picture of it with another phone, or write it down. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
       "also_check": [
         "phone.app.control"
       ],
@@ -907,15 +907,15 @@
       "who_can_notice": "noticeable",
       "notice_why": "Copies of your messages stop reaching whoever reads them through this app.",
       "evidence_first": [
-        "Screenshot the app's page in Settings, then Apps, including what it can do and where it was installed from.",
+        "With another phone, take a picture of the app’s page in Settings, then Apps, including what it can do and where it was installed from.",
         "Write down when you first noticed it, and anything that made you think someone knew things they should not."
       ],
       "steps": [
-        "Screenshot the app first.",
+        "Take a picture of it with another phone, or write it down first.",
         "Open Settings, then Apps, then Special app access, then Notification read, reply and control.",
         "Choose the app and turn off notification access."
       ],
-      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "if_not_safe_yet": "Leave it for now. Take a picture of it with another phone, or write it down. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
       "also_check": [
         "phone.app.control",
         "phone.app.messages"
@@ -948,15 +948,15 @@
       "who_can_notice": "noticeable",
       "notice_why": "If someone was reading your texts or calls through this app, they stop getting them.",
       "evidence_first": [
-        "Screenshot the app's page in Settings, then Apps, including what it can do and where it was installed from.",
+        "With another phone, take a picture of the app’s page in Settings, then Apps, including what it can do and where it was installed from.",
         "Write down when you first noticed it, and anything that made you think someone knew things they should not."
       ],
       "steps": [
-        "Screenshot the app first.",
+        "Take a picture of it with another phone, or write it down first.",
         "Open Settings, then Security and privacy, then Privacy, then Permission manager.",
         "Choose SMS, then the app, and select Don't allow. Do the same under Call logs."
       ],
-      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "if_not_safe_yet": "Leave it for now. Take a picture of it with another phone, or write it down. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
       "also_check": [
         "phone.app.control",
         "phone.app.notifications"
@@ -989,15 +989,15 @@
       "who_can_notice": "noticeable",
       "notice_why": "Reports about which apps you use stop.",
       "evidence_first": [
-        "Screenshot the app's page in Settings, then Apps, including what it can do and where it was installed from.",
+        "With another phone, take a picture of the app’s page in Settings, then Apps, including what it can do and where it was installed from.",
         "Write down when you first noticed it, and anything that made you think someone knew things they should not."
       ],
       "steps": [
-        "Screenshot the app first.",
+        "Take a picture of it with another phone, or write it down first.",
         "Open Settings, then Apps, then Special app access, then Usage access.",
         "Choose the app and turn it off."
       ],
-      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "if_not_safe_yet": "Leave it for now. Take a picture of it with another phone, or write it down. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
       "also_check": [
         "phone.app.control"
       ],
@@ -1029,15 +1029,15 @@
       "who_can_notice": "noticeable",
       "notice_why": "Your place stops updating in this app. Someone who watches it may see your location stop or go stale.",
       "evidence_first": [
-        "Screenshot the app's page in Settings, then Apps, including what it can do and where it was installed from.",
+        "With another phone, take a picture of the app’s page in Settings, then Apps, including what it can do and where it was installed from.",
         "Write down when you first noticed it, and anything that made you think someone knew things they should not."
       ],
       "steps": [
-        "Screenshot the app first.",
+        "Take a picture of it with another phone, or write it down first.",
         "Open Settings, then Location, then App location permissions.",
         "Choose the app and select Allow only while using the app, or Don't allow."
       ],
-      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "if_not_safe_yet": "Leave it for now. Take a picture of it with another phone, or write it down. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
       "also_check": [
         "phone.app.control"
       ],
@@ -1069,13 +1069,13 @@
       "who_can_notice": "unknown",
       "notice_why": "This is a phone setting, not an app. It is not known whether anyone sees when it is turned off.",
       "evidence_first": [
-        "Screenshot the Developer options page with USB debugging showing."
+        "With another phone, take a picture of the Developer options page with USB debugging showing."
       ],
       "steps": [
         "Open Settings, then System, then Developer options.",
         "Turn off USB debugging, and Wireless debugging if it is on."
       ],
-      "if_not_safe_yet": "Leave it for now and screenshot it. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "if_not_safe_yet": "Leave it for now. Take a picture of it with another phone, or write it down. Use a phone or computer the other person has never had for anything private, including this plan. Talk to an advocate about when to change it.",
       "also_check": [
         "phone.app.control"
       ],

@@ -124,8 +124,9 @@ section.block { padding-block: clamp(56px, 6vw, 104px); }
 .steps { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 32px; row-gap: 72px; margin-top: 40px; }
 .step-a, .step-b, .step-c { display: grid; gap: 20px; align-content: start; }
 .step-a { grid-column: 1 / -1; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); align-items: center; gap: 40px; }
-.step-b { grid-column: 1 / span 6; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: end; gap: 28px; }
-.step-c { grid-column: 7 / span 6; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: end; gap: 28px; margin-top: 120px; }
+.step-b { grid-column: 1 / span 6; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: start; gap: 28px; }
+.step-c { grid-column: 7 / span 6; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: start; gap: 28px; }
+.step-b .step-text, .step-c .step-text { padding-top: 8px; }
 .step-b .shot, .step-c .shot { max-width: 360px; }
 .shot { margin: 0; }
 .shot img { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
@@ -133,12 +134,12 @@ section.block { padding-block: clamp(56px, 6vw, 104px); }
 .step-text h3 { display: flex; align-items: center; gap: 8px; }
 
 /* ---------- The Android app: words on one side, three of its own screens stepping down on the other ---------- */
-.phone-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 56px; align-items: start; }
-.phone-text > * + * { margin-top: 16px; }
-.phone-text .result-line { margin-top: 28px; }
-.phones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: start; }
-.phones .shot:nth-child(2) { margin-top: 48px; }
-.phones .shot:nth-child(3) { margin-top: 96px; }
+.phone-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+.phone-text { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 0 56px; align-items: start; }
+.phone-text h2 { grid-column: 1 / -1; margin-bottom: 16px; }
+.phone-text .lead { margin: 0; }
+.phone-text .phone-more > * { margin: 0 0 12px; }
+.phones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; align-items: start; }
 .phones .shot img { border-radius: 22px; width: 100%; height: auto; }
 .step-text p { margin-top: 8px; }
 
@@ -195,7 +196,19 @@ td.num, th.num { text-align: right; white-space: nowrap; }
 .why-top + .block { padding-top: clamp(40px, 4vw, 64px); }
 .jump { display: flex; flex-wrap: wrap; gap: 4px 28px; margin-top: 20px; }
 .jump a { padding-block: 10px; font-weight: 600; }
-.numbers { row-gap: 48px; }
+/* The results as a ledger: the figure, then what it measures. Not a second row of big numbers. */
+.ledger { margin: 32px 0 0; padding: 0; list-style: none; }
+.ledger li { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: 8px 32px; padding: 20px 0; border-top: 1px solid var(--line); align-items: baseline; }
+.ledger .n { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; white-space: nowrap; }
+.ledger p { margin: 0; max-width: 64ch; }
+.voices-note { margin-top: 56px; padding: 28px; background: var(--surface); border-radius: 12px; }
+.voices-note h3 { margin-bottom: 10px; }
+.voices-lines { display: grid; gap: 12px; margin: 16px 0 0; }
+.voices-lines div { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: 4px 32px; }
+.voices-lines dt { font-weight: 700; }
+.voices-lines dd { margin: 0; }
+.paper { margin: 28px 0 8px; max-width: 420px; }
+.paper img { border-radius: 4px; }
 
 /* ---------- Help ---------- */
 .help-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
@@ -252,6 +265,9 @@ dl.glossary dd { margin: 0; color: var(--ink-2); }
 /* ---------- Entrances: content is visible by default; motion only adds the rise ---------- */
 @media (prefers-reduced-motion: no-preference) {
   .rise { animation: rise 600ms var(--ease-out) both; animation-timeline: view(); animation-range: entry 0% entry 40%; }
+  /* Neighbours in a row arrive one after another, not as one block. */
+  .rise:nth-child(2) { animation-range: entry 8% entry 48%; }
+  .rise:nth-child(3) { animation-range: entry 16% entry 56%; }
   @keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -272,11 +288,11 @@ dl.glossary dd { margin: 0; color: var(--ink-2); }
   .step-b .shot { width: 82%; margin-left: auto; }
   .step-c .shot { width: 82%; }
   .voices-grid, .try-list, .numbers, .help-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
-  .phone-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .phone-text { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .ledger li, .voices-lines div { grid-template-columns: minmax(0, 1fr); }
   /* On a narrow screen the three phone screens sit in one row that scrolls sideways, each wide enough to read. */
   .phones { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x proximity; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scroll-padding-inline: var(--gutter); padding-bottom: 8px; }
   .phones .shot { flex: 0 0 min(64vw, 280px); scroll-snap-align: start; }
-  .phones .shot:nth-child(2), .phones .shot:nth-child(3) { margin-top: 0; }
   .foot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 720px) {

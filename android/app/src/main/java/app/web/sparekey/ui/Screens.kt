@@ -189,10 +189,10 @@ private fun FindingCard(m: AppModel, f: JSONObject, codeText: JSONObject, entrie
     val name = f.optString("name").ifEmpty { f.optString("label") }
     val can = f.strings("can")
     val notice = when (entries.optJSONObject(code)?.optString("who_can_notice")) {
-        "notifies" -> "If you remove it, they are told."
-        "unlikely" -> "Removing it is unlikely to be noticed."
-        "noticeable" -> "If you remove it, they may notice."
-        else -> "Removing it may alert them."
+        "notifies" -> if (pkg.isEmpty()) "If you turn it off, they are told." else "If you remove it, they are told."
+        "unlikely" -> if (pkg.isEmpty()) "Turning it off is unlikely to be noticed." else "Removing it is unlikely to be noticed."
+        // No official page says: treated the same as a change they may notice, in the same words.
+        else -> if (pkg.isEmpty()) "If you turn it off, they may notice." else "If you remove it, they may notice."
     }
     Section {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -209,15 +209,16 @@ private fun FindingCard(m: AppModel, f: JSONObject, codeText: JSONObject, entrie
                 Body(power.replaceFirstChar { it.uppercase() }, Modifier.weight(1f))
             }
         }
-        if (pkg.isEmpty()) Body(f.optString("detail").removePrefix(f.optString("label")).trim().trimStart('.').trim())
         val where = f.optString("where")
         if (where.isNotEmpty()) Body(where.replaceFirstChar { it.uppercase() } + ".")
         if (f.optString("note").isNotEmpty()) Muted("Gemini Nano on this phone: ${f.optString("note")}")
-        if (means.isNotEmpty()) Muted(means)
+        // A setting has no list of powers, so what it means is its main line.
+        if (means.isNotEmpty()) { if (pkg.isEmpty()) Body(means) else Muted(means) }
         Caution(notice)
-        Text("Is this yours?", style = MaterialTheme.typography.titleSmall, color = Ink.text)
+        // An app can be yours. A setting is something someone turned on, so it is asked that way.
+        Text(if (pkg.isEmpty()) "Did you turn this on?" else "Is this yours?", style = MaterialTheme.typography.titleSmall, color = Ink.text)
         Choice(
-            listOf("mine" to "Mine", "not_mine" to "Not mine", "unsure" to "Not sure"), m.ownership[ref],
+            if (pkg.isEmpty()) listOf("mine" to "I did", "not_mine" to "I did not", "unsure" to "Not sure") else listOf("mine" to "Mine", "not_mine" to "Not mine", "unsure" to "Not sure"), m.ownership[ref],
             describe = { "$it: $name" }, onPick = { m.answer(ref, it) },
         )
         if (!m.practice && pkg.isNotEmpty()) LinkButton("Open this app in Settings") { onOpen(pkg) }
@@ -293,7 +294,7 @@ fun PlanScreen(m: AppModel) {
         val title = codeText.optJSONArray(code)?.optString(0) ?: ""
         val wait = a.optString("action") == "wait"
         val head = when (a.optString("action")) {
-            "document" -> "Screenshot these first (${a.optJSONArray("refs")?.length() ?: 0})"
+            "document" -> "Make a record of these first (${a.optJSONArray("refs")?.length() ?: 0})"
             "talk_to_advocate" -> "Talk to an advocate"
             "change_now" -> "Change now: $title"
             "wait" -> "Leave for a better time: $title"
@@ -309,7 +310,7 @@ fun PlanScreen(m: AppModel) {
             Body(a.optString("why"))
             if (a.optString("linked").isNotEmpty()) Caution(a.optString("linked"))
             // The field's advice is "screenshot first". On a phone that may be watched, say where not to keep them.
-            if (a.optString("action") == "document") Caution("A screenshot stays on this phone and may back up to shared photos. A picture taken with another phone, or a list on paper, is better.")
+            if (a.optString("action") == "document") Caution("On this phone, do not use a screenshot: it stays here and may back up to shared photos. Take a picture with another phone, or write a list on paper.")
             if (a.optString("action") == "talk_to_advocate") Muted("Call 1-800-799-7233, or text START to 88788. Free, all day, every day.")
             entries.optJSONObject(code)?.let { e ->
                 if (wait && e.optString("if_not_safe_yet").isNotEmpty()) Body(e.optString("if_not_safe_yet"))
@@ -370,7 +371,7 @@ fun HoodScreen(m: AppModel, appCheck: String) {
         Where("Reading this phone", "Spare Key's rules, on this phone. The same code as the Chrome extension, run in Android's JavaScript sandbox.")
         Where("Sorting the apps", if (m.nano == "available") "Gemini Nano, on this phone (Firebase AI Logic, on-device only). The list of apps never leaves." else "Spare Key's rules, on this phone. This phone can't run Gemini Nano.")
         Where("Simpler words for a step", if (m.nano == "available") "Gemini Nano on this phone; the cloud only if it cannot (Firebase AI Logic, prefer on device). Public steps only." else if (m.cloudOn) "Gemini in the cloud, as the fallback: this phone has no Gemini Nano (Firebase AI Logic, prefer on device). Public steps only." else "Off: this phone has no Gemini Nano and plan help is off.")
-        Where("Ordering your plan", if (m.cloudOn) "Gemini in the cloud (Firebase AI Logic, cloud only), from finding types only. Code checks every plan against the safety rules." else if (m.nano == "available") "Gemini Nano, on this phone." else "Spare Key's rules, on this phone.")
+        Where("Ordering your plan", if (m.practice) "Spare Key's rules, on this phone. A practice check sends nothing." else if (m.cloudOn) "Gemini in the cloud (Firebase AI Logic, cloud only), from finding types only. Code checks every plan against the safety rules." else if (m.nano == "available") "Gemini Nano, on this phone." else "Spare Key's rules, on this phone.")
         Where("Settings and switches", "Firebase Remote Config (${m.rcFrom.ifEmpty { "not yet fetched" }}).")
         Where("App Check", appCheck)
     }

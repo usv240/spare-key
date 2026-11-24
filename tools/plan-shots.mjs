@@ -54,6 +54,13 @@ try {
     await page.evaluate(() => { for (const d of document.querySelectorAll('#plan details')) d.open = true; });
     await page.pdf({ path: 'web/public/sample-plan.pdf', format: 'Letter', printBackground: false, margin: { top: '0.6in', bottom: '0.6in', left: '0.7in', right: '0.7in' } });
     console.log('wrote web/public/sample-plan.pdf');
+    // The first page as a picture, for the advocates page: the same print layout at Letter size (816 x 1056 CSS px).
+    await page.emulateMediaType('print');
+    await page.setViewport({ width: 816, height: 1056, deviceScaleFactor: 2 });
+    await page.addStyleTag({ content: 'body { padding: 48px 56px !important; }' });
+    await page.screenshot({ path: 'web/public/img/printed-plan.png', clip: { x: 0, y: 0, width: 816, height: 1056 } });
+    await page.emulateMediaType('screen');
+    console.log('wrote web/public/img/printed-plan.png');
   }
 } finally {
   await browser.close();
