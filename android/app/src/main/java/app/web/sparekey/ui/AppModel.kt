@@ -1,222 +1,299 @@
 package app.web.sparekey.ui
 
 import android.app.Application
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import app.web.sparekey.SpareKeyApp
 import app.web.sparekey.ai.Ai
 import app.web.sparekey.ai.LiveSettings
-import app.web.sparekey.data.LiveRecalls
-import app.web.sparekey.engine.Checker
 import app.web.sparekey.engine.Rules
-import com.google.firebase.ai.DownloadStatus
-import com.google.firebase.ai.type.PublicPreviewAPI
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.first
+import app.web.sparekey.phone.PhoneScan
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import org.json.JSONArray
 import org.json.JSONObject
+import java.text.DateFormat
+import java.util.Date
 
-/** The app's state: the engine, the on-device model, the check in progress and the watch list. */
-@OptIn(PublicPreviewAPI::class)
+/**
+ * The phone check, start to finish. Reading the phone happens here (PhoneScan); every decision is made by the shared
+ * rules in the sandbox (Rules, assets/engine.js); every model call goes through Firebase AI Logic (Ai). Nothing from
+ * the check is written to storage: it lives in memory, and Quick exit or closing the app forgets it.
+ */
 class AppModel(app: Application) : AndroidViewModel(app) {
-    val store = (app as SpareKeyApp).store
-    private val checker = Checker { store.cloudCheck }
-
-    // Engine and model.
-    var engine by mutableStateOf("starting")        // "starting", "ready", or an error message
-        private set
-    var model by mutableStateOf("checking")         // Ai.deviceStatus()
-        private set
-    var modelName by mutableStateOf("")
-        private set
-    var download by mutableStateOf<Float?>(null)
-        private set
-    var recent by mutableStateOf(JSONArray())
-        private set
-    var settings by mutableStateOf<LiveSettings.Values?>(null)
-        private set
-
-    // The check.
     sealed interface Screen
-    data object Home : Screen
-    data class Checking(val photo: Bitmap?, val text: String?, val example: Boolean) : Screen
-    var screen by mutableStateOf<Screen>(Home)
-        private set
-    val steps = mutableStateListOf<Checker.Step>()
-    var outcome by mutableStateOf<Checker.Outcome?>(null)
+    data object Safety : Screen
+    data class Checking(val line: String, val done: Int, val total: Int) : Screen
+    data object Results : Screen
+    data object Plan : Screen
+    data object Hood : Screen
 
-    /** Who is checking: a buyer, or the item's owner. The check is the same; the words after it are not. */
-    var owner by mutableStateOf(store.owner)
-        private set
-    fun chooseOwner(v: Boolean) { owner = v; store.owner = v }
-    /** The result said to the owner (shared/present.mjs ownerView): { verdict, foundBy, action, heading, lines }. */
-    var ownerInfo by mutableStateOf<org.json.JSONObject?>(null)
-        private set
-    var error by mutableStateOf<String?>(null)
-        private set
-    var label by mutableStateOf<Checker.LabelOutcome?>(null)
-        private set
-    var labelBusy by mutableStateOf(false)
-        private set
-    var labelError by mutableStateOf<String?>(null)
-        private set
-    private var job: Job? = null
+    private val prefs = app.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
-    /** Shown on the start screen when a share held only a link: ask for a screenshot instead. */
-    var shareNote by mutableStateOf<String?>(null)
+    var screen by mutableStateOf<Screen>(Safety)
         private set
-    fun shareOnlyLink() {
-        home()
-        shareNote = "This share only had a link, and Still Recalled can't open Facebook or OfferUp links. Take a screenshot of the listing (with its title and photo) and share the screenshot instead."
-    }
-    fun dismissShareNote() { shareNote = null }
-    fun watchOwnHint() {
-        home()
-        shareNote = "To watch something you own: take a photo of it (the label too, if you can), share a screenshot of the listing you bought it from, or type its brand and name. Then choose Watch for recalls on the result."
-    }
+    var practice by mutableStateOf(false)
+        private set
+    var ready by mutableStateOf(false)
+        private set
+    var startError by mutableStateOf<String?>(null)
+        private set
+    /** Gemini Nano on this phone: "available", "downloadable", "downloading" or "unavailable". */
+    var nano by mutableStateOf("unavailable")
+        private set
+    /** The person's own switch for plan help from the cloud. The only setting the app keeps. */
+    var cloudOn by mutableStateOf(prefs.getBoolean("cloud", true))
+        private set
+    var rcFrom by mutableStateOf("")
+        private set
 
-    // Live recalls.
-    var refreshing by mutableStateOf(false)
+    var library by mutableStateOf(JSONObject())
         private set
-    var refreshNote by mutableStateOf<String?>(null)
+    var findings by mutableStateOf<List<JSONObject>>(emptyList())
         private set
+    var notRead by mutableStateOf<List<String>>(emptyList())
+        private set
+    var appsSeen by mutableStateOf(0)
+        private set
+    var nanoSorted by mutableStateOf(0)
+        private set
+    /** Apps that came with the phone and hold some of these powers: counted, not listed (shared/phone.js). */
+    var builtIn by mutableStateOf(0)
+        private set
+    var checkedAt by mutableStateOf("")
+        private set
+    val ownership = mutableStateMapOf<String, String>()
+    val revealed = mutableStateMapOf<String, Boolean>()
+
+    // The plan.
+    var situation by mutableStateOf(JSONObject())
+        private set
+    var plan by mutableStateOf<JSONObject?>(null)
+        private set
+    var planSource by mutableStateOf("")
+        private set
+    var planNote by mutableStateOf("")
+        private set
+    var planBusy by mutableStateOf(false)
+        private set
+    var deviceAnswers by mutableStateOf(0)
+        private set
+    /** A question from the cloud plan for the person (ask_user), waiting for an answer. */
+    var asking by mutableStateOf<Pair<String, CompletableDeferred<String>>?>(null)
+        private set
+
+    /** One thing sent to the cloud: what it was, in a sentence, and the exact text. */
+    data class Sent(val what: String, val summary: String, val text: String)
+    /** Everything sent to the cloud from this phone, word for word, for "What left this phone". */
+    val ledger = mutableStateListOf<Sent>()
+    /**
+     * What Spare Key did, step by step, with how long each step took: for "Under the hood". It stays in memory on this
+     * phone and is forgotten with the check. No app's name goes in it. Spare Key sends no usage or crash reports.
+     */
+    val log = mutableStateListOf<String>()
+    private fun note(line: String) { log += "${DateFormat.getTimeInstance(DateFormat.MEDIUM).format(Date())}  $line" }
+    private fun secs(since: Long) = "%.1f s".format((System.currentTimeMillis() - since) / 1000.0)
+    /** The person can stop Gemini Nano's sorting and see the results as they are. */
+    private var skipSorting = false
+    fun showResultsNow() { skipSorting = true }
 
     init {
         viewModelScope.launch {
+            val t = System.currentTimeMillis()
             try {
-                Rules.start(app, store.liveCards())
-                recent = Rules.arr("recentInfant", 6)
-                engine = "ready"
+                Rules.start(getApplication())
+                library = Rules.obj("library")
+                ready = true
+                note("Rules started in the sandbox in ${secs(t)}. Steps library version ${library.optInt("version")}.")
             } catch (e: Throwable) {
-                engine = e.message ?: e.toString()
+                android.util.Log.w("SpareKey", "rules: ${e.javaClass.simpleName}: ${e.message?.take(300)}")
+                startError = "Spare Key's rules could not start on this phone. Update Android System WebView in the Play Store, then open Spare Key again."
+                note("Rules did not start: ${e.javaClass.simpleName}.")
             }
-        }
-        viewModelScope.launch {
-            model = Ai.deviceStatus()
-            if (model == "available") { modelName = Ai.deviceModelName(); Ai.warmUp() }
-            android.util.Log.i("StillRecalled", "on-device model: $model${if (modelName.isNotEmpty()) " ($modelName)" else ""}; device ${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}, Android ${android.os.Build.VERSION.RELEASE}")
-        }
-        viewModelScope.launch { settings = LiveSettings.get() }
-        // Recalls that arrive in the background show up in the recent list too.
-        viewModelScope.launch {
-            store.live.collect { if (engine == "ready") { Rules.call("setLive", store.liveCards()); recent = Rules.arr("recentInfant", 6) } }
+            nano = Ai.deviceStatus()
+            note("Gemini Nano on this phone: $nano.")
+            if (nano == "available") Ai.warmUp()
+            rcFrom = try { LiveSettings.get().from } catch (_: Throwable) { "defaults" }
         }
     }
 
-    fun startDownload() {
-        val flow = Ai.download() ?: return
+    fun setCloud(on: Boolean) { cloudOn = on; prefs.edit().putBoolean("cloud", on).apply() }
+    fun show(s: Screen) { screen = s }
+
+    // ---- The check ------------------------------------------------------------------------------------------------
+    fun check(practiceRun: Boolean) {
+        if (!ready) return
+        practice = practiceRun
+        ownership.clear(); revealed.clear(); plan = null; planNote = ""; ledger.clear()
+        skipSorting = false
+        // Plan help from the cloud needs an App Check token, which a slow phone can take 20 s to get. Start now, so it
+        // is ready by the time the person asks for a plan. Not for a practice check, which never calls the cloud.
+        if (cloudOn && !practiceRun) (getApplication<Application>() as? app.web.sparekey.SpareKeyApp)?.warmAppCheck()
+        screen = Checking("Reading this phone's settings", 0, 1)
         viewModelScope.launch {
-            var total = 0L
-            download = 0f
-            try {
-                flow.collect { s ->
-                    when (s) {
-                        is DownloadStatus.DownloadStarted -> total = s.bytesToDownload
-                        is DownloadStatus.DownloadInProgress -> if (total > 0) download = s.totalBytesDownloaded.toFloat() / total
-                        is DownloadStatus.DownloadCompleted -> download = 1f
-                        is DownloadStatus.DownloadFailed -> download = null
+            val t0 = System.currentTimeMillis()
+            val (facts, missed) = if (practiceRun) JSONObject(Rules.call("practiceFacts")) to emptyList()
+            else withContext(Dispatchers.Default) { PhoneScan.read(getApplication()).let { it.facts to it.notRead } }
+            val apps = facts.optJSONArray("apps") ?: JSONArray()
+            appsSeen = apps.length()
+            // Gemini Nano on this phone says what kind of app each one seems to be. ONLY_ON_DEVICE: the list of apps on
+            // a phone is private, so there is no cloud fallback. It can add a note and a kind, never hide a finding.
+            val kinds = JSONObject()
+            nanoSorted = 0
+            if (nano == "available") {
+                val prompt = Rules.obj("appKindPrompt")
+                val toSort = (0 until apps.length()).map { apps.getJSONObject(it) }.filter { !it.optBoolean("system") }.take(30)
+                val tn = System.currentTimeMillis()
+                for ((i, a) in toSort.withIndex()) {
+                    if (skipSorting) break
+                    screen = Checking("Gemini Nano is sorting the apps, on this phone", i, toSort.size)
+                    val answer = withTimeoutOrNull(20_000) {
+                        try {
+                            Ai.json(Ai.Prompt(prompt.getString("system"), prompt.getJSONObject("schema")),
+                                listOf(Ai.Text(Rules.str("appKindText", a))), Ai.Mode.DEVICE_ONLY, LiveSettings.DEFAULT_MODELS)
+                        } catch (e: Throwable) { null }
+                    }
+                    if (answer != null && answer.onDevice) {
+                        kinds.put(a.getString("pkg"), Rules.obj("appKindFrom", answer.json))
+                        nanoSorted++
                     }
                 }
-            } catch (_: Throwable) { download = null }
-            model = Ai.deviceStatus()
-            if (model == "available") modelName = Ai.deviceModelName()
+                note("Gemini Nano sorted $nanoSorted of ${toSort.size} apps on this phone in ${secs(tn)}" + (if (skipSorting) ", stopped early by you." else "."))
+            }
+            screen = Checking("Sorting what was found", 1, 1)
+            val result = Rules.obj("findings", facts, kinds)
+            val list = result.getJSONArray("findings")
+            findings = (0 until list.length()).map { list.getJSONObject(it) }
+            builtIn = result.optInt("builtIn")
+            notRead = missed
+            checkedAt = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT).format(Date())
+            note((if (practiceRun) "Practice check" else "Check") + " finished in ${secs(t0)}: ${apps.length()} apps with special access read, ${findings.size} listed, $builtIn that came with the phone not listed" +
+                (if (missed.isNotEmpty()) ", ${missed.distinct().size} thing not readable." else "."))
+            screen = Results
         }
     }
 
-    fun check(photo: Bitmap?, text: String?, example: Boolean = false) {
-        if (photo == null && text.isNullOrBlank()) return
-        shareNote = null
-        job?.cancel()
-        screen = Checking(photo, text, example)
-        steps.clear()
-        // The first App Check token after install can take most of a minute (reCAPTCHA on a fresh WebView). Say so,
-        // and wait for it, rather than let the first cloud call fail.
-        val needToken = store.cloudCheck && !app.web.sparekey.BuildConfig.DEBUG_APPCHECK && !app.web.sparekey.appcheck.Bridge.ready.value
-        if (needToken) steps += Checker.Step("secure", "Connecting securely (first launch only, up to a minute)", Checker.State.ACTIVE)
-        steps += listOf(Checker.Step("read", if (photo != null) "Reading the screenshot" else "Reading the listing"),
-            Checker.Step("words", "Searching recall notices"), Checker.Step("look", "Looking closer"))
-        outcome = null; error = null; label = null; labelError = null
-        job = viewModelScope.launch {
+    fun answer(ref: String, value: String?) {
+        if (value == null) ownership.remove(ref) else ownership[ref] = value
+        viewModelScope.launch { Rules.call("setOwnership", ref, value) }
+    }
+
+    // ---- The plan -------------------------------------------------------------------------------------------------
+    fun setSituation(key: String, value: String) { situation = JSONObject(situation.toString()).put(key, value) }
+
+    private fun notChecked(): JSONArray = JSONArray(notRead.distinct())
+
+    fun makePlan() {
+        if (planBusy) return
+        planBusy = true
+        deviceAnswers = 0
+        screen = Plan
+        viewModelScope.launch {
+            // 1. The plan made by code, at once. It is what the person sees if no model answers.
+            val code = Rules.obj("codePlan", situation, notChecked())
+            plan = code.getJSONObject("plan"); planSource = "code"
+            note("Plan made by code on this phone: ${plan?.optJSONArray("actions")?.length() ?: 0} steps.")
+            val settings = try { LiveSettings.get() } catch (_: Throwable) { null }
+            val shared = JSONObject().put("safe_to_change_now", true).put("has_advocate", true)
+            val cloud = cloudOn && settings?.cloudOn == true && !practice
             try {
-                if (engine != "ready") Rules.start(getApplication(), store.liveCards())
-                if (needToken) {
-                    kotlinx.coroutines.withTimeoutOrNull(60_000) { app.web.sparekey.appcheck.Bridge.ready.first { it } }
-                    val i = steps.indexOfFirst { it.key == "secure" }
-                    if (i >= 0) steps[i] = steps[i].copy(state = Checker.State.DONE)
+                if (cloud) {
+                    // 2. The cloud orders it from codes only. toCloud() and checkOutgoing() run in the sandbox: the same gate
+                    // as the extension's.
+                    planNote = "Asking Gemini in the cloud to order this. It sees finding types only, never an app's name."
+                    val body = Rules.obj("cloudBody", situation, shared, notChecked())
+                    val sent = body.getJSONObject("body").optJSONArray("findings")
+                    val types = (0 until (sent?.length() ?: 0)).map { sent!!.getJSONObject(it).optString("code") }.distinct()
+                    ledger += Sent(stamp("Plan request"), "${sent?.length() ?: 0} findings by type only (${types.joinToString(", ")}) and your answers to the two questions. No app's name.", body.getString("text"))
+                    val tc = System.currentTimeMillis()
+                    val p = Rules.obj("planPrompt", body.getJSONObject("body"))
+                    val decls = p.getJSONArray("tools").getJSONObject(0).getJSONArray("functionDeclarations")
+                    val fns = (0 until decls.length()).map { i ->
+                        val d = decls.getJSONObject(i)
+                        Ai.Function(d) { args ->
+                            val name = d.getString("name")
+                            val answer = if (name == "ask_user") askPerson(args.optString("question")) else JSONObject(Rules.call("answerCall", name, args))
+                            if (name == "ask_device") deviceAnswers++
+                            ledger += Sent(stamp("Answer to $name"), when (name) {
+                                "get_steps" -> "The public steps for ${answer.optJSONObject("entries")?.length() ?: 0} finding types, from the steps library. The same text is on the website."
+                                "ask_device" -> "One word about one finding: ${answer.optString("answer", "unknown")}."
+                                "ask_user" -> "Your answer: ${answer.optString("answer")}."
+                                else -> "A note that the function is not known."
+                            }, answer.toString(2))
+                            answer
+                        }
+                    }
+                    val ask: suspend () -> Ai.Answer = {
+                        Ai.jsonWithFunctions(Ai.Prompt(p.getString("system"), p.getJSONObject("schema")),
+                            listOf(Ai.Text(body.getString("text"))), settings!!.models, fns)
+                    }
+                    val r = try { ask() } catch (e: Throwable) {
+                        // The App Check token was not ready in time (the SDK waits about 10 s; a slow phone needs more).
+                        // Wait for it, then ask once more. The request is the same one already shown in the ledger.
+                        if (!e.toString().contains("App Check", ignoreCase = true)) throw e
+                        note("App Check token was not ready. Waiting for it, then asking once more.")
+                        val ready = (getApplication<Application>() as? app.web.sparekey.SpareKeyApp)?.awaitAppCheck(40_000) ?: false
+                        if (!ready) throw e
+                        ask()
+                    }
+                    val settled = Rules.obj("settle", r.json, situation, notChecked())
+                    plan = settled.getJSONObject("plan"); planSource = "cloud:${r.model}"
+                    note("Plan ordered by ${r.model} in the cloud in ${secs(tc)}, with ${fns.size} functions offered and $deviceAnswers answered from this phone. Code fixed ${settled.optJSONArray("fired")?.length() ?: 0} things.")
+                    planNote = "Ordered by ${r.model} from finding types only. Code checked it against the safety rules" +
+                        (if ((settled.optJSONArray("fired")?.length() ?: 0) > 0) " and made ${settled.getJSONArray("fired").length()} fixes." else ".")
+                } else if (nano == "available") {
+                    // 3. Plan help from the cloud is off: Gemini Nano orders it on this phone. Nothing leaves the phone.
+                    planNote = "Asking Gemini Nano on this phone to order this. Nothing is sent anywhere."
+                    val body = Rules.obj("cloudBody", situation, shared, notChecked())
+                    val p = Rules.obj("planPrompt", body.getJSONObject("body"))
+                    val r = withTimeoutOrNull(90_000) {
+                        Ai.json(Ai.Prompt(p.getString("deviceSystem"), p.getJSONObject("schema")), listOf(Ai.Text(body.getString("text"))),
+                            Ai.Mode.DEVICE_ONLY, LiveSettings.DEFAULT_MODELS)
+                    }
+                    if (r != null && r.onDevice) {
+                        val settled = Rules.obj("settle", r.json, situation, notChecked())
+                        plan = settled.getJSONObject("plan"); planSource = "device"
+                        planNote = "Ordered by Gemini Nano on this phone. Code checked it against the safety rules."
+                    } else planNote = "Gemini Nano did not answer in time. This is the plan made by Spare Key's rules on this phone."
+                } else {
+                    planNote = if (practice) "Practice check: this plan was made by Spare Key's rules on this phone." else "This plan was made by Spare Key's rules on this phone."
                 }
-                val t0 = System.currentTimeMillis()
-                ownerInfo = null
-                outcome = checker.check(photo, text) { s ->
-                    val i = steps.indexOfFirst { it.key == s.key }
-                    if (i >= 0) steps[i] = s
-                }
-                outcome?.let { o -> ownerInfo = try { Rules.obj("ownerView", o.result) } catch (_: Throwable) { null } }
-                outcome?.let { o -> android.util.Log.i("StillRecalled", "check done in ${System.currentTimeMillis() - t0} ms: ${o.result.optString("level")} / ${o.result.optString("badge")}; read on device: ${o.readOnDevice}; how: ${o.result.optJSONObject("how")}") }
-            } catch (e: Checker.NothingFound) {
-                error = "No product in this image. Try a screenshot that shows the listing's title and photo, or type what it is."
             } catch (e: Throwable) {
-                error = if (Regex("app ?check|attestation|40[13]", RegexOption.IGNORE_CASE).containsMatchIn(e.toString()))
-                    "The cloud check couldn't verify this app just now, so this listing couldn't be checked. Try again in a moment."
-                else "Something went wrong while checking. Try again in a moment."
-                android.util.Log.e("StillRecalled", "check failed", e)
+                android.util.Log.w("SpareKey", "plan: ${e.javaClass.simpleName}: ${e.message?.take(300)}")
+                note("The model did not answer (${e.javaClass.simpleName}). The plan made by code is shown.")
+                planNote = "The cloud did not answer. This is the plan made by Spare Key's rules on this phone."
+            } finally {
+                planBusy = false
+                asking = null
             }
         }
     }
 
-    fun checkExample() {
-        val bmp = getApplication<Application>().assets.open("example.jpg").use { BitmapFactory.decodeStream(it) }
-        check(bmp, null, example = true)
+    private suspend fun askPerson(question: String): JSONObject {
+        val wait = CompletableDeferred<String>()
+        asking = question to wait
+        val answer = withTimeoutOrNull(180_000) { wait.await() } ?: "skipped"
+        asking = null
+        return JSONObject().put("answer", answer)
     }
 
-    fun home() { job?.cancel(); screen = Home; outcome = null; error = null }
+    fun answerAsk(value: String) { asking?.second?.complete(value) }
 
-    fun readLabel(photo: Bitmap) {
-        val recall = outcome?.result?.optJSONObject("recall") ?: return
-        val r = JSONObject().put("codes", recall.optJSONArray("codes") ?: JSONArray()).put("from", recall.optInt("from")).put("to", recall.optInt("to"))
-            // The card keeps 14 of the notice's model numbers; "more" stops "not listed" being read from a cut list.
-            .put("more", recall.optBoolean("more"))
-        labelBusy = true; labelError = null
-        viewModelScope.launch {
-            try { label = checker.readLabel(photo, r, owner) } catch (e: Throwable) { labelError = "The label couldn't be read right now. Try again in a moment." }
-            labelBusy = false
-        }
-    }
+    private fun stamp(what: String) = "$what, ${DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())}"
 
-    // ---- Watch ---------------------------------------------------------------------------------------------------------
-    /** A key for the checked listing: its title, so the same listing shared twice is one entry. */
-    fun watchKey(o: Checker.Outcome) = "a" + Integer.toHexString(o.listing.optString("title").lowercase().hashCode())
-
-    fun toggleWatch(o: Checker.Outcome) {
-        val key = watchKey(o)
-        if (store.isWatched(key)) store.removeWatch(key) else store.addWatch(key, o.listing, o.photo)
-    }
-
-    fun forgetLive() {
-        store.forgetLive()
-        viewModelScope.launch { if (engine == "ready") { Rules.call("setLive", store.liveCards()); recent = Rules.arr("recentInfant", 6) } }
-    }
-
-    fun refreshNow() {
-        if (refreshing) return
-        refreshing = true
-        refreshNote = "Checking with CPSC…"
-        viewModelScope.launch {
-            refreshNote = try {
-                val out = LiveRecalls.refresh(getApplication(), store)
-                for ((w, alert) in out.hits) app.web.sparekey.work.RecallWorker.notify(getApplication(), w.key, w.listing.optString("title"), alert.getJSONObject("recall"))
-                if (out.added == 0) "No new recalls since the last check"
-                else "${out.added} new recall${if (out.added == 1) "" else "s"} added${if (out.hits.isNotEmpty()) ", ${out.hits.size} matching what you watch" else ""}"
-            } catch (e: Throwable) {
-                "Couldn't reach CPSC. Try again later"
-            }
-            refreshing = false
-        }
+    // ---- Quick exit -----------------------------------------------------------------------------------------------
+    /** Forgets everything from this check. The activity then leaves for an ordinary page. */
+    fun forgetAll() {
+        findings = emptyList(); notRead = emptyList(); builtIn = 0; ownership.clear(); revealed.clear()
+        plan = null; planNote = ""; ledger.clear(); log.clear(); situation = JSONObject(); screen = Safety
+        asking?.second?.complete("skipped"); asking = null
     }
 }

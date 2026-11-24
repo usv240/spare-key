@@ -6,6 +6,7 @@ import { phoneCode, phoneFindings, phoneAnswer, appKindFrom } from '../shared/ph
 import { toCloud } from '../shared/cloud-safe.js';
 import { buildPlan, PHONE_NOTE } from '../shared/plan/engine.js';
 import { CODES } from '../shared/findings.js';
+import { PRACTICE_PHONE, PRACTICE_PHONE_EXPECTED } from '../shared/phone-practice.js';
 
 const app = (label, powers, extra = {}) => ({ pkg: `com.example.${label.toLowerCase().replace(/\W/g, '')}`, label, system: false, installer: 'play', powers, ...extra });
 const FACTS = {
@@ -26,6 +27,12 @@ test('each app becomes one finding, by its strongest kind of control', () => {
   assert.equal(phoneCode(FACTS.apps[3]), null, 'a system app without a strong power is left out');
   assert.equal(phoneCode(FACTS.apps[4]), 'phone.app.notifications');
   assert.equal(phoneCode(app('Sideloaded', { notifications: true }, { installer: 'other' })), 'phone.app.control');
+  assert.equal(phoneCode(app('Android System Intelligence', { notifications: true, accessibility: true }, { system: true, installer: 'unknown' })), null,
+    'an app that came with the phone is counted, not listed (seen on a real emulator)');
+});
+
+test('apps that came with the phone are counted for the results', () => {
+  assert.equal(phoneFindings(FACTS).builtIn, 1);
 });
 
 test('every phone code is a known code, and USB debugging is its own finding', () => {
@@ -62,4 +69,22 @@ test('the code plan puts an app watching the phone first and warns on every othe
 test('Gemini Nano can add a kind and a note, never a reassurance', () => {
   assert.deepEqual(appKindFrom({ kind: 'everyday', about: 'A safe weather app' }), { kind: 'everyday', about: 'A weather app' });
   assert.equal(appKindFrom({ kind: 'harmless' }).kind, 'unknown');
+});
+
+test('the practice phone finds exactly what it was made with', () => {
+  const { findings } = phoneFindings(PRACTICE_PHONE);
+  const got = findings.map(f => [f.label.split(' · ')[0] === 'USB debugging is on' ? null : f.label.split(' · ')[0], f.code]);
+  assert.deepEqual(got.map(g => g.join('|')).sort(), PRACTICE_PHONE_EXPECTED.map(g => g.join('|')).sort());
+});
+
+test('a setting finding is worded by code, so the steps library may use the same words in a get_steps answer', async () => {
+  const { checkAnswer } = await import('../shared/cloud-safe.js');
+  const { libraryMap } = await import('../shared/steps-schema.js');
+  const { readFileSync } = await import('node:fs');
+  const library = libraryMap(JSON.parse(readFileSync(new URL('../data/steps.json', import.meta.url), 'utf8')));
+  const { findings } = phoneFindings(FACTS);
+  const privateStrings = findings.filter(f => f.pkg).flatMap(f => [f.label, f.detail, f.pkg]);
+  const answer = { entries: { 'phone.usb_debugging': library['phone.usb_debugging'] } };
+  assert.doesNotThrow(() => checkAnswer('get_steps', answer, { privateStrings, library }));
+  assert.throws(() => checkAnswer('ask_device', { answer: 'System Service' }, { privateStrings, library }));
 });

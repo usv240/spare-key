@@ -1,0 +1,162 @@
+{
+  "at": "2026-11-24T06:16:53.508Z",
+  "device": {
+    "model": "sdk_gphone64_x86_64",
+    "android": "16",
+    "sdk": 36
+  },
+  "checks": [
+    {
+      "name": "First screen shows the hotline and Quick exit",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "The planted app is found",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "It is listed as an app that can watch and control this phone",
+      "ok": true,
+      "note": "An app can watch and control this phone"
+    },
+    {
+      "name": "It is the first finding",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "The card says what the app can do, in words",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "Apps that came with the phone are not listed",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "They are counted under Not checked, with the rooted-phone caution",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "A caution about being noticed is on the card",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "Every button on the results is at least 48dp",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "No reassurance words",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "A plan is made",
+      "ok": true,
+      "note": "Ordered by gemini-3.5-flash-lite from finding types only. Code checked it against the safety rules."
+    },
+    {
+      "name": "The plan says to wait on removing the watching app when now is not a good time",
+      "ok": true,
+      "note": "1. Screenshot these first (2) | 2. Talk to an advocate | 3. Leave for a better time: An app can watch and control this phone | 4. Leave for a better time: USB debugging is on"
+    },
+    {
+      "name": "The plan points to an advocate",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "The hotline is on the plan",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "Under the hood lists what Spare Key did, with timings",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "It says no usage or crash reports are sent",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "Under the hood says where each step runs",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "Nothing naming an app left this phone",
+      "ok": true,
+      "note": "3 sent"
+    },
+    {
+      "name": "The cloud plan request is in the ledger, word for word",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "Quick exit leaves Spare Key",
+      "ok": true,
+      "note": "topResumedActivity=ActivityRecord{120734789 u0 com.android.chrome/org.chromium.chrome.browser.firstrun.FirstRunActivity "
+    },
+    {
+      "name": "Quick exit leaves no recent-apps entry",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "The practice phone finds its five apps",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "The practice phone finds USB debugging",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "name": "The practice phone says it is made up",
+      "ok": true,
+      "note": ""
+    }
+  ],
+  "nano": "downloadable",
+  "checkSeconds": 3.7,
+  "summary": "Spare Key read 37 apps with special access and listed 2 things that could let someone watch this phone.",
+  "planSeconds": 8.9,
+  "planNote": "Ordered by gemini-3.5-flash-lite from finding types only. Code checked it against the safety rules.",
+  "planSteps": [
+    "1. Screenshot these first (2)",
+    "2. Talk to an advocate",
+    "3. Leave for a better time: An app can watch and control this phone",
+    "4. Leave for a better time: USB debugging is on"
+  ],
+  "ledgerEntries": 3,
+  "sent": [
+    "Plan request, 1:18 AM",
+    "2 findings by type only (phone.app.control, phone.usb_debugging) and your answers to the two questions. No app's name.",
+    "Show the exact text (314 characters)",
+    "Answer to get_steps, 1:18 AM",
+    "The public steps for 2 finding types, from the steps library. The same text is on the website.",
+    "Show the exact text (4684 characters)",
+    "Answer to ask_device, 1:18 AM",
+    "One word about one finding: unknown.",
+    "Show the exact text (25 characters)",
+    "What Spare Key did (5)",
+    "Kept in memory on this phone and forgotten with the check. Spare Key sends no usage or crash reports.",
+    "1:17:02 AM  Rules started in the sandbox in 2.0 s. Steps library version 5.",
+    "1:17:03 AM  Gemini Nano on this phone: unavailable.",
+    "1:17:18 AM  Check finished in 2.1 s: 37 apps with special access read, 2 listed, 36 that came with the phone not listed.",
+    "1:18:08 AM  Plan made by code on this phone: 4 steps.",
+    "1:18:14 AM  Plan ordered by gemini-3.5-flash-lite in the cloud in 6.4 s, with 3 functions offered and 1 answered from this phone. Code fixed 0 things."
+  ],
+  "passed": 24,
+  "failed": 0
+}

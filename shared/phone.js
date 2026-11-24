@@ -29,15 +29,15 @@ const POWER_WORDS = {
   usage_access: 'can see which apps you use',
   location_always: 'can see your location all the time',
 };
-// Apps that ship with Android itself use some of these for their own job (the keyboard, the launcher). They are left
-// out unless they hold a strong power, which a system app rarely needs.
+// Apps that came with the phone (Android's own, or the maker's) use some of these for their own job: the keyboard, the
+// launcher, Android System Intelligence reading notifications. Another person cannot put an app there without rooting
+// the phone, so they are counted, not listed, and the results say a rooted phone can hide an app there.
 const ORDER = ['accessibility', 'device_admin', 'notifications', 'messages', 'usage_access', 'location_always'];
 
 /** The finding code for one app, or null when it holds nothing worth listing. */
 export function phoneCode(app) {
   const p = app.powers || {};
-  const strong = STRONG.filter(k => p[k]);
-  if (app.system && !strong.length) return null;
+  if (app.system) return null;
   const counted = COUNTS.filter(k => p[k]);
   if (counted.length >= 2 || (counted.length && app.installer === 'other')) return 'phone.app.control';
   for (const k of ORDER) if (p[k]) return `phone.app.${k}`;
@@ -52,6 +52,7 @@ export function phoneFindings(facts, { nano = {}, refStart = 0 } = {}) {
   let n = refStart;
   const findings = [];
   const apps = facts?.apps || [];
+  const builtIn = apps.filter(a => a.system).length;
   for (const app of apps) {
     const code = phoneCode(app);
     if (!code) continue;
@@ -94,7 +95,7 @@ export function phoneFindings(facts, { nano = {}, refStart = 0 } = {}) {
   // Monitoring-looking and outside-the-store apps first, then by how much they can do.
   const rank = f => (f.kind === 'monitoring' ? 0 : 1) * 10 + Object.keys(PHONE_CODES).indexOf(f.code);
   findings.sort((a, b) => rank(a) - rank(b));
-  return { findings, outcomes };
+  return { findings, outcomes, builtIn };
 }
 
 /** ask_device for a phone finding, answered on the phone from what it read: 'yes', 'no' or 'unknown'. */

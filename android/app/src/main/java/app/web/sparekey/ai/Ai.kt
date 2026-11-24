@@ -28,11 +28,13 @@ import org.json.JSONObject
 /**
  * Every model call in the app goes through Firebase AI Logic, here. Three ways of running, each where it fits:
  *
- *   ON_DEVICE_FIRST  PREFER_ON_DEVICE: Gemini Nano on this phone (through AICore) when the phone has it, Gemini in
- *                    the cloud when it doesn't. Reading a screenshot, looking at a listing, reading a label.
- *   DEVICE_ONLY      ONLY_ON_DEVICE: when the cloud check is switched off. Nothing leaves the phone.
- *   CLOUD_ONLY       ONLY_IN_CLOUD: the confirmation against the full recall notice and two photos, a judgment the
- *                    on-device model was measured to get wrong, and writing field-guide entries for new recalls.
+ *   DEVICE_ONLY      ONLY_ON_DEVICE: Gemini Nano on this phone (through AICore). Sorting the apps found on the phone,
+ *                    and the plan when plan help from the cloud is off. The list of apps on someone's phone is private,
+ *                    so this mode has no cloud fallback, on purpose.
+ *   CLOUD_ONLY       ONLY_IN_CLOUD: the plan, ordered by Gemini in the cloud from finding codes only (shared toCloud),
+ *                    with function calling: get_steps, ask_device (answered on the phone, yes / no / unknown) and
+ *                    ask_user.
+ *   ON_DEVICE_FIRST  PREFER_ON_DEVICE: kept for public text only, never for what the phone check read.
  *
  * The prompts and JSON schemas come from the shared rules engine (the same ones the extension uses). The cloud is
  * held to the schema with a response schema; on this phone the on-device path ignores response schemas, so the
@@ -117,16 +119,19 @@ object Ai {
      */
     class Function(val declaration: JSONObject, val run: suspend (JSONObject) -> JSONObject)
 
-    private fun toolModel(prompt: Prompt, cloudModel: String, fn: Function): GenerativeModel {
-        val key = "TOOL|$cloudModel|${prompt.system.hashCode()}"
+    private fun toolModel(prompt: Prompt, cloudModel: String, fns: List<Function>): GenerativeModel {
+        val key = "TOOL|$cloudModel|${prompt.system.hashCode()}|${fns.joinToString(",") { it.declaration.getString("name") }}"
         return synchronized(models) {
             models.getOrPut(key) {
-                val params = fn.declaration.getJSONObject("parameters")
-                val props = params.getJSONObject("properties")
-                val required = params.optJSONArray("required") ?: JSONArray()
-                val req = (0 until required.length()).map { required.getString(it) }.toSet()
-                val map = LinkedHashMap<String, Schema>()
-                for (k in props.keys()) map[k] = Schema.string(props.getJSONObject(k).optString("description").ifEmpty { null })
+                val declarations = fns.map { fn ->
+                    val params = fn.declaration.getJSONObject("parameters")
+                    val props = params.getJSONObject("properties")
+                    val required = params.optJSONArray("required") ?: JSONArray()
+                    val req = (0 until required.length()).map { required.getString(it) }.toSet()
+                    val map = LinkedHashMap<String, Schema>()
+                    for (k in props.keys()) map[k] = toSchema(props.getJSONObject(k))
+                    FunctionDeclaration(fn.declaration.getString("name"), fn.declaration.getString("description"), map, map.keys.filter { it !in req })
+                }
                 ai.generativeModel(
                     modelName = cloudModel,
                     generationConfig = generationConfig {
@@ -134,8 +139,7 @@ object Ai {
                         responseSchema = toSchema(prompt.schema)
                         temperature = 0f
                     },
-                    tools = listOf(Tool.functionDeclarations(listOf(FunctionDeclaration(
-                        fn.declaration.getString("name"), fn.declaration.getString("description"), map, map.keys.filter { it !in req })))),
+                    tools = listOf(Tool.functionDeclarations(declarations)),
                     systemInstruction = content { text(prompt.system + "\n\n" + jsonInstruction(prompt.schema)) },
                     requestOptions = options,
                     onDeviceConfig = OnDeviceConfig(mode = InferenceMode.ONLY_IN_CLOUD),
@@ -148,14 +152,15 @@ object Ai {
      * One JSON answer from the cloud (ONLY_IN_CLOUD), which may first call `fn`. The call comes back to the phone,
      * `fn.run` answers it here, and the model then gives its answer. At most two rounds of calls.
      */
-    suspend fun jsonWithFunction(prompt: Prompt, parts: List<Part>, cloudModels: List<String>, fn: Function): Answer {
+    suspend fun jsonWithFunctions(prompt: Prompt, parts: List<Part>, cloudModels: List<String>, fns: List<Function>): Answer {
+        val byName = fns.associateBy { it.declaration.getString("name") }
         var last: Throwable? = null
         for (attempt in 0..2) {
             for (name in cloudModels) {
                 val started = System.currentTimeMillis()
                 try {
                     val text = withTimeout(90_000) {
-                        val chat = toolModel(prompt, name, fn).startChat()
+                        val chat = toolModel(prompt, name, fns).startChat()
                         var response = chat.sendMessage(content {
                             for (p in parts) when (p) {
                                 is Text -> text(p.text)
@@ -164,14 +169,16 @@ object Ai {
                         })
                         var round = 0
                         while (response.functionCalls.isNotEmpty() && round < 3) {
-                            val answers = response.functionCalls.take(3).map { call ->
+                            val answers = response.functionCalls.take(4).map { call ->
                                 val args = JSONObject()
-                                for ((k, v) in call.args) args.put(k, (v as? JsonPrimitive)?.content ?: v.toString())
-                                val result = if (round < 2) fn.run(args) else JSONObject().put("note", "No more lookups. Answer now.")
+                                for ((k, v) in call.args) args.put(k, (v as? JsonPrimitive)?.content ?: JSONTokenerValue(v.toString()))
+                                val fn = byName[call.name]
+                                val result = if (round < 2 && fn != null) fn.run(args) else JSONObject().put("note", if (fn == null) "Unknown function." else "No more lookups. Answer now.")
                                 FunctionResponsePart(call.name, Json.parseToJsonElement(result.toString()).jsonObject)
                             }
                             android.util.Log.i("SpareKey", "function call: ${response.functionCalls.first().name}, answered on this phone")
-                            response = chat.sendMessage(content("function") { for (a in answers) part(a) })
+                            // The Gemini Developer API takes function answers in a "user" turn ("function" is refused there).
+                            response = chat.sendMessage(content("user") { for (a in answers) part(a) })
                             round++
                         }
                         response.text ?: ""
@@ -191,6 +198,9 @@ object Ai {
         }
         throw last ?: IllegalStateException("no model answered")
     }
+
+    /** A function argument that is an array or object (get_steps' list of codes) as org.json, so the rules can read it. */
+    private fun JSONTokenerValue(text: String): Any = try { org.json.JSONTokener(text).nextValue() } catch (e: Exception) { text }
 
     /** The answer's JSON object, also when a model wraps it in a code fence or adds a sentence. */
     fun parseJson(text: String): JSONObject {

@@ -25,8 +25,8 @@ android {
         applicationId = "app.web.sparekey"
         minSdk = 26
         targetSdk = 36
-        versionCode = 7
-        versionName = "0.12.1"
+        versionCode = 1
+        versionName = "0.1.0"
         buildConfigField("String", "BRIDGE_URL", "\"https://spare-key-app.web.app/appcheck-bridge.html?android=1\"")
     }
 
@@ -67,10 +67,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    // The recall cards are already compact JSON; storing them uncompressed lets the engine read them faster.
-    androidResources {
-        noCompress += listOf("json")
-    }
 }
 
 kotlin {
@@ -78,7 +74,7 @@ kotlin {
 }
 
 dependencies {
-    // Firebase AI Logic, with hybrid inference (Gemini Nano through ML Kit / AICore, or Gemini in the cloud).
+    // Firebase AI Logic: Gemini Nano on the phone (ONLY_ON_DEVICE, through AICore) and Gemini in the cloud (ONLY_IN_CLOUD).
     implementation("com.google.firebase:firebase-ai:18.2.0")
     implementation("com.google.firebase:firebase-ai-ondevice:16.0.0-beta08")
     implementation("com.google.firebase:firebase-appcheck:20.1.0")
@@ -94,7 +90,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
 
     implementation("androidx.webkit:webkit:1.18.0")
-    implementation("androidx.work:work-runtime-ktx:2.12.0")
     implementation("androidx.core:core-ktx:1.19.1")
     implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.1")
@@ -103,6 +98,4 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
-    implementation("io.coil-kt.coil3:coil-compose:3.6.3")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.6.3")
 }

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Still Recalled</string>
-    <string name="share_label">Check for recalls</string>
+    <string name="app_name">Spare Key</string>
 </resources>

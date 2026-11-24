@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1028727441035",
+    "project_id": "spare-key-app",
+    "storage_bucket": "spare-key-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1028727441035:android:d6a841293a39de9391b68e",
+        "android_client_info": {
+          "package_name": "app.web.sparekey"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhbW3UOmLarTzxZXLRXerROY0WnBYRPTo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

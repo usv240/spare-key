@@ -14,3 +14,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "SpareKey"
 include(":app")
+// A test app for the emulator only (planted/build.gradle.kts). Not part of Spare Key.
+include(":planted")

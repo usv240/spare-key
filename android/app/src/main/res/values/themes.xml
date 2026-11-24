@@ -6,6 +6,5 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
-    <color name="ground">#F8F8F8</color>
-    <color name="mark">#C4242A</color>
+    <color name="ground">#F7F4EE</color>
 </resources>

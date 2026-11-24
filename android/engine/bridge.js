@@ -14,14 +14,23 @@ import { PLAN_SYSTEM, PLAN_SCHEMA, PLAN_TOOLS, DEVICE_QUESTIONS, USER_QUESTIONS,
 import { libraryMap } from '../../shared/steps-schema.js';
 import { CODE_TEXT, GROUP_LABELS, GROUPS, SITUATION, SITUATION_DEFAULTS } from '../../shared/findings.js';
 import STEPS from '../../data/steps.json';
+import { PRACTICE_PHONE } from '../../shared/phone-practice.js';
 
 const out = v => JSON.stringify(v === undefined ? null : v);
 const LIBRARY = libraryMap(STEPS);
 let scan = null;      // { findings, outcomes } of the last check, on the phone only
 let refs = {};        // cloud ref (f1) -> finding ref (P1), for the last toCloud()
 
+// What is private on this phone: each app's name, package and what was read about it. A setting's finding (USB
+// debugging) is worded by code, the same on every phone, and the public steps library uses the same words, so it is
+// not in this list (found on the emulator: the gate refused its own get_steps answer).
+const privateOf = s => (s?.findings || []).filter(f => f.pkg).flatMap(f => [f.label, f.detail, f.pkg, f.detail.split('\n')[0]]).filter(Boolean);
+
 globalThis.SK = {
   library() { return out({ version: STEPS.version, updated_at: STEPS.updated_at, entries: LIBRARY, codeText: CODE_TEXT, groups: GROUPS, groupLabels: GROUP_LABELS, situation: SITUATION }); },
+
+  /** The made-up phone for the practice check (Jordan's). */
+  practiceFacts() { return out(PRACTICE_PHONE); },
 
   // ---- The check ------------------------------------------------------------------------------------------------
   appKindPrompt() { return out({ system: APP_KIND_SYSTEM, schema: APP_KIND_SCHEMA }); },
@@ -46,7 +55,7 @@ globalThis.SK = {
   cloudBody(situation, shared, notChecked) {
     const r = toCloud(scan?.findings || [], { situation, shared: shared || {}, notChecked: notChecked || [] });
     refs = r.refs;
-    const privateStrings = (scan?.findings || []).flatMap(f => [f.label, f.detail, f.pkg]).filter(Boolean);
+    const privateStrings = privateOf(scan);
     const text = checkOutgoing('plan', r.body, { privateStrings, library: LIBRARY });
     return out({ body: r.body, text });
   },
@@ -61,7 +70,7 @@ globalThis.SK = {
       const f = scan?.findings.find(x => x.ref === refs[args.ref]);
       answer = { answer: phoneAnswer(f, args.question) };
     } else answer = { note: 'Unknown function.' };
-    const privateStrings = (scan?.findings || []).flatMap(f => [f.label, f.detail, f.pkg]).filter(Boolean);
+    const privateStrings = privateOf(scan);
     return out(checkAnswer(name, answer, { privateStrings, library: LIBRARY }));
   },
   userQuestions() { return out(USER_QUESTIONS); },
