@@ -130,7 +130,7 @@ try {
   check('The planted app is found', iPlanted >= 0);
   check('It is listed as an app that can watch and control this phone', results[iPlanted + 1] === 'An app can watch and control this phone', results[iPlanted + 1]);
   check('It is the first finding', results.findIndex(t => /^An app can/.test(t)) === iPlanted + 1);
-  check('The card says what the app can do, in words', results.some(t => /^It can read and control the screen/.test(t)));
+  check('The card says what the app can do, in words', results.includes('Can read and control the screen') && results.includes('Is a device admin app') && results.includes('Is this yours?'));
   check('Apps that came with the phone are not listed', !results.includes('Android System Intelligence'));
   check('They are counted under Not checked, with the rooted-phone caution', results.some(t => /came with this phone .* rooted/s.test(t)));
   check('A caution about being noticed is on the card', results.some(t => /notice|alert|told/.test(t)));
@@ -146,6 +146,7 @@ try {
   const make = await scrollTo('Make my plan');
   tap(make); await pause(1200);
   await waitFor(n => /^Is now a good time/.test(n.text), 30000, 'the plan questions');
+  check('A new screen opens at its top', screen().some(n => n.text === 'Your plan' && n.y < 900));
   await tapText('No');
   const go = await scrollTo('Make my plan');
   tap(go);
@@ -192,6 +193,16 @@ try {
   check('The practice phone finds its five apps', want.every(w => practice.some(t => t.startsWith(w))), want.filter(w => !practice.some(t => t.startsWith(w))).join(', '));
   check('The practice phone finds USB debugging', practice.includes('USB debugging is on'));
   check('The practice phone says it is made up', practice.some(t => /^Practice check/.test(t)));
+  // 6. Back pressed twice quickly is Quick exit too.
+  await tapText('Not mine');
+  shell('input keyevent 4 4');
+  await pause(2500);
+  const top2 = shell('dumpsys activity activities | grep -E "topResumedActivity|mResumedActivity" | head -1');
+  const recents2 = shell('dumpsys activity recents | grep -E "baseIntent|realActivity" || true');
+  check('Back twice quickly leaves Spare Key and leaves no recent-apps entry', !top2.includes(APP) && !recents2.includes(APP));
+  shell(`am start -n ${APP}/.MainActivity`);
+  await waitFor(n => n.text === 'Before you start', 60000, 'the first screen again');
+  check('After Quick exit, opening Spare Key again shows nothing from the last check', !texts().some(t => /Jordan|What we found/.test(t)));
   shell(`am force-stop ${APP}`);
 } catch (e) {
   check('Run finished', false, e.message);

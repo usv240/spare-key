@@ -76,8 +76,13 @@ export function phoneFindings(facts, { nano = {}, refStart = 0 } = {}) {
       access: code === 'phone.app.location_always' ? ['location'] : ['messages', 'location', 'account'],
       ownership: null,
       openUrl: '',
-      // On the phone only: the app to open in Settings. Never sent anywhere (toCloud() takes the code alone).
+      // On the phone only: the app to open in Settings, and what it can do as a list for the card. Never sent
+      // anywhere (toCloud() takes the code alone).
       pkg: app.pkg,
+      name: app.label,
+      can: powers,
+      where,
+      note: read?.about || '',
       kind: read?.kind || 'unknown',
     });
   }

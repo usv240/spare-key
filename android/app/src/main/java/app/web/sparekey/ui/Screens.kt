@@ -22,7 +22,6 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -76,7 +75,7 @@ fun SafetyScreen(m: AppModel) {
     Body("Spare Key looks at this phone's settings and lists every app that could let someone watch it: read your screen, your messages or your notifications, or see where you are. It only reads. It changes nothing.")
     Section(tone = Ink.cautionBg, edge = Ink.cautionBg) {
         Text("If an app on this phone is watching it, that app may see that you ran this check.", style = MaterialTheme.typography.titleSmall, color = Ink.text)
-        Body("A phone the other person has never had, like a trusted friend's, is a better place to plan. Quick exit is at the top of every screen.")
+        Body("A phone the other person has never had, like a trusted friend's, is a better place to plan. Quick exit is at the top of every screen. Pressing back twice quickly does the same.")
     }
     if (m.startError != null) Section(tone = Ink.cautionBg, edge = Ink.cautionBg) { Body(m.startError!!, Modifier.said()) }
     Primary(if (m.ready || m.startError != null) "Check this phone" else "Getting ready", { m.check(practiceRun = false) }, enabled = m.ready)
@@ -166,16 +165,17 @@ fun ResultsScreen(m: AppModel) {
 }
 
 @Composable
-private fun AppIcon(pkg: String) {
+private fun AppIcon(pkg: String, letter: String) {
     val context = LocalContext.current
     val picture = remember(pkg) {
         if (pkg.isEmpty()) null
         else try { context.packageManager.getApplicationIcon(pkg).toBitmap(96, 96).asImageBitmap() } catch (_: Throwable) { null }
     }
     // The app's own icon, as on the home screen, so the person can match it. It never leaves the phone.
+    // An app with no icon to show (the practice phone's made-up apps) gets its first letter, as a launcher does.
     if (picture != null) Image(picture, null, Modifier.size(44.dp).clip(RoundedCornerShape(10.dp)))
-    else Box(Modifier.size(44.dp).background(Ink.tint, RoundedCornerShape(10.dp)), contentAlignment = Alignment.Center) {
-        Icon(Icons.phone, null, tint = Ink.accent, modifier = Modifier.size(24.dp))
+    else Box(Modifier.size(44.dp).background(Ink.line, RoundedCornerShape(10.dp)), contentAlignment = Alignment.Center) {
+        Text(letter, style = MaterialTheme.typography.titleLarge, color = Ink.text)
     }
 }
 
@@ -185,10 +185,8 @@ private fun FindingCard(m: AppModel, f: JSONObject, codeText: JSONObject, entrie
     val ref = f.optString("ref")
     val pkg = f.optString("pkg")
     val (title, means) = codeText.optJSONArray(code)?.let { it.optString(0) to it.optString(1) } ?: (code to "")
-    // detail: the app's name, then what it can do, where it came from, and Gemini Nano's note, one per line.
-    val lines = f.optString("detail").split("\n").filter { it.isNotBlank() }
-    val name = if (pkg.isEmpty()) f.optString("label") else lines.firstOrNull() ?: f.optString("label")
-    val facts = if (pkg.isEmpty()) lines else lines.drop(1)
+    val name = f.optString("name").ifEmpty { f.optString("label") }
+    val can = f.strings("can")
     val notice = when (entries.optJSONObject(code)?.optString("who_can_notice")) {
         "notifies" -> "If you remove it, they are told."
         "unlikely" -> "Removing it is unlikely to be noticed."
@@ -197,15 +195,26 @@ private fun FindingCard(m: AppModel, f: JSONObject, codeText: JSONObject, entrie
     }
     Section {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            AppIcon(if (m.practice) "" else pkg)
+            if (pkg.isNotEmpty()) AppIcon(if (m.practice) "" else pkg, name.take(1).uppercase())
             Column(Modifier.weight(1f)) {
                 Text(name, style = MaterialTheme.typography.titleMedium, color = Ink.text, modifier = Modifier.semantics { heading() })
                 if (pkg.isNotEmpty()) Muted(title)
             }
         }
-        for (line in facts) Body(line.replaceFirstChar { it.uppercase() })
+        // What it can do, one power to a line: easier to take in than a sentence when there are five.
+        if (can.isNotEmpty()) Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            for (power in can) Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Box(Modifier.padding(top = 9.dp).size(6.dp).background(Ink.control, RoundedCornerShape(3.dp)))
+                Body(power.replaceFirstChar { it.uppercase() }, Modifier.weight(1f))
+            }
+        }
+        if (pkg.isEmpty()) Body(f.optString("detail").removePrefix(f.optString("label")).trim().trimStart('.').trim())
+        val where = f.optString("where")
+        if (where.isNotEmpty()) Body(where.replaceFirstChar { it.uppercase() } + ".")
+        if (f.optString("note").isNotEmpty()) Muted("Gemini Nano on this phone: ${f.optString("note")}")
         if (means.isNotEmpty()) Muted(means)
         Caution(notice)
+        Text("Is this yours?", style = MaterialTheme.typography.titleSmall, color = Ink.text)
         Choice(
             listOf("mine" to "Mine", "not_mine" to "Not mine", "unsure" to "Not sure"), m.ownership[ref],
             describe = { "$it: $name" }, onPick = { m.answer(ref, it) },
@@ -284,7 +293,7 @@ fun PlanScreen(m: AppModel) {
             Text("$n. $head", style = MaterialTheme.typography.titleMedium, color = Ink.text, modifier = Modifier.semantics { heading() })
             // Which apps this step is about. Names are shown here, on the phone; the model only ever saw "f1".
             val about = a.strings("refs").mapNotNull { r -> m.findings.firstOrNull { it.optString("ref") == r } }
-                .map { f -> if (f.optString("pkg").isEmpty()) f.optString("label") else f.optString("detail").substringBefore("\n") }
+                .map { f -> f.optString("name").ifEmpty { f.optString("label") } }
             if (about.isNotEmpty() && a.optString("action") != "talk_to_advocate") Muted(about.distinct().joinToString(", "))
             Body(a.optString("why"))
             if (a.optString("linked").isNotEmpty()) Caution(a.optString("linked"))
