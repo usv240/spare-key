@@ -218,7 +218,8 @@ for (const s of scenes) {
     if (s.clip) {
       // A recorded clip, squeezed to the narration's length.
       speed = Math.max(1, (to - from) / D);
-      ff(['-ss', String(from), '-t', String(to - from), '-i', s.clip, '-vf', `setpts=PTS/${speed.toFixed(4)},${vf}`, '-t', String(D), '-an', ...ENC, pv]);
+      // A screen recording is already limited range, unlike the saved frames, so it is not converted again.
+      ff(['-ss', String(from), '-t', String(to - from), '-i', s.clip, '-vf', `setpts=PTS/${speed.toFixed(4)},fps=${FPS},scale=in_range=tv:out_range=tv:out_color_matrix=bt709,format=yuv420p`, '-t', String(D), '-an', ...ENC, pv]);
     } else speed = footage(s.panel ? 'panel' : s.footage, from, to, D, pv);
     const inputs = ['-loop', '1', '-i', bg, '-i', pv];
     // The panel sits in the white frame on the right (456 x 1032 at 1344, 24).

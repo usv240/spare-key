@@ -36,6 +36,11 @@ What it never does:
 Quick exit is on every screen (the button, Escape twice, or Alt+Shift+X): it clears everything from the session and
 shows an ordinary page. You can try everything first on made-up practice pages at https://spare-key-app.web.app.
 
+Before you install: if Chrome sync is on, an extension you add from the Chrome Web Store is also added to every
+computer signed in to the same Chrome profile, and it shows in the list of extensions there. If the other person uses
+a computer signed in as you, turn off sync for extensions first (Chrome settings, You and Google, Sync, Manage what
+you sync), or use a Chrome profile they have never used. Remove Spare Key when you are done.
+
 National Domestic Violence Hotline: 1-800-799-7233, or text START to 88788.
 
 **Privacy policy URL:** https://spare-key-app.web.app/privacy.html
