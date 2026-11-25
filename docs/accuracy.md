@@ -304,6 +304,22 @@ goal is grade 6 to 8 or lower. An earlier one-off scoring of the panel's 257 str
 script) gave median 4.3, with 5 short steps that name a menu, such as "Open Gmail settings, then Forwarding and
 POP/IMAP.", between grade 8 and 9.1.
 
+Against published clinic findings (checked against the papers' own text, November 25). Havron and others, *Clinical
+Computer Security for Victims of Intimate Partner Violence*, USENIX Security 2019 (https://www.usenix.org/system/files/sec19-havron.pdf):
+46 consultations with 44 survivors at New York City's Family Justice Centers; a real risk for 23 of 44 (52%). Figure 3
+counts: potential password compromise 14, unknown "trusted" devices 12 (8 on email or social media, 4 on iCloud),
+shared family or phone plan 4, potential spyware 3, rooted device 1; the text adds browser extensions the client did
+not install, 2. Spare Key: password compromise, through what a known password leads to (signed-in devices, recovery
+details, 2-Step Verification); Google signed-in devices read, Apple devices through the guided phone check (social
+media sign-ins are next); the phone plan through the guided check and the Google family group read; spyware through
+the Android app's access list; Chrome extensions read. Next: a rooted-phone check. Freed and others, *A Stalker's
+Paradise*, CHI 2018: 39 survivors and 50 professionals, with "numerous (n=47) accounts" of location tracking.
+
+Effort by hand (`tools/effort.mjs`, `docs/evidence/effort.json`): 13 settings pages on 4 sites from the check
+catalogue, and the 18 official help pages the steps library cites for the account checks. The 15 that could be fetched
+(Amazon refused 3) hold 12,640 words, about 63 minutes at 200 words per minute, before any time spent finding a setting
+or deciding what an entry means.
+
 Accessibility (`tools/a11y-check.mjs`, `docs/evidence/a11y.json`, November 25): axe-core 4.10.2 with the WCAG 2.0 and 2.1
 A and AA rules and best practices, on all 16 site pages (the phone check included) at 375 and 1280 px in light and dark, and on the real side panel
 (safety, choose, scanning with the "confirm it is you" box, results, the plan questions, the plan, and Under the hood) in light and dark: 78 runs, 0 violations, and no

@@ -1,0 +1,112 @@
+{
+ "at": "2026-11-25T15:12:15.158Z",
+ "tool": "node tools/effort.mjs",
+ "byHand": {
+  "settingsPages": 13,
+  "sites": 4,
+  "siteNames": [
+   "myaccount.google.com",
+   "mail.google.com",
+   "www.amazon.com",
+   "photos.google.com"
+  ],
+  "checks": 12,
+  "helpPagesCited": 18,
+  "helpPagesRead": 15,
+  "helpWords": 12640,
+  "readingMinutesAt200wpm": 63
+ },
+ "note": "Help pages are those the steps library cites for the account checks (Google, Gmail, Photos, Amazon, Chrome), counted from the article or main element. Reading time is at 200 words per minute and leaves out finding each setting, logging in and deciding what each entry means.",
+ "help": [
+  {
+   "url": "https://support.google.com/accounts/answer/3067630",
+   "status": 200,
+   "words": 679
+  },
+  {
+   "url": "https://support.google.com/accounts/answer/41078",
+   "status": 200,
+   "words": 337
+  },
+  {
+   "url": "https://support.google.com/accounts/answer/13533235",
+   "status": 200,
+   "words": 1017
+  },
+  {
+   "url": "https://support.google.com/accounts/answer/3466521",
+   "status": 200,
+   "words": 863
+  },
+  {
+   "url": "https://support.google.com/accounts/answer/183723",
+   "status": 200,
+   "words": 1368
+  },
+  {
+   "url": "https://support.google.com/accounts/answer/185839",
+   "status": 200,
+   "words": 1077
+  },
+  {
+   "url": "https://support.google.com/mail/answer/10957",
+   "status": 200,
+   "words": 615
+  },
+  {
+   "url": "https://support.google.com/mail/answer/6579",
+   "status": 200,
+   "words": 387
+  },
+  {
+   "url": "https://support.google.com/mail/answer/138350",
+   "status": 200,
+   "words": 1042
+  },
+  {
+   "url": "https://support.google.com/maps/answer/7326816",
+   "status": 200,
+   "words": 458
+  },
+  {
+   "url": "https://support.google.com/chrome_webstore/answer/2664769",
+   "status": 200,
+   "words": 1154
+  },
+  {
+   "url": "https://support.google.com/chrome/answer/185277",
+   "status": 200,
+   "words": 407
+  },
+  {
+   "url": "https://www.amazon.com/gp/help/customer/display.html?nodeId=GBSVVXGRTJMULM47",
+   "status": 403,
+   "words": 0
+  },
+  {
+   "url": "https://www.amazon.com/gp/help/customer/display.html?nodeId=GMA7DTL7BABZ6Z5A",
+   "status": 403,
+   "words": 0
+  },
+  {
+   "url": "https://www.amazon.com/gp/help/customer/display.html?nodeId=201357520",
+   "status": 403,
+   "words": 0
+  },
+  {
+   "url": "https://support.google.com/families/answer/6286986",
+   "status": 200,
+   "words": 866
+  },
+  {
+   "url": "https://support.google.com/families/answer/6317858",
+   "status": 200,
+   "words": 1273
+  },
+  {
+   "url": "https://support.google.com/photos/answer/7378858",
+   "status": 200,
+   "words": 1097
+  }
+ ]
+}

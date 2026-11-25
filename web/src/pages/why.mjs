@@ -85,6 +85,27 @@ export default function why({ numbers, drift = null, android = null, grade = nul
   </div>
 </section>
 
+<section class="block" id="clinic" aria-labelledby="clinic-title">
+  <div class="wrap">
+    <h2 id="clinic-title">Measured against what real clinics found</h2>
+    <p class="lead">Researchers from Cornell and NYU sat with 44 survivors at New York City’s Family Justice Centers and checked their phones and accounts by hand. For 23 of the 44 (52%), they found a real risk. Here is what they found, and where Spare Key looks for it.</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Clinic findings: table, scrolls sideways on small screens"><table>
+      <thead><tr><th>What the clinic found</th><th>Clients</th><th>Where Spare Key looks</th></tr></thead>
+      <tbody>
+        <tr><td>Signs a password was known to the other person</td><td>14</td><td>What a known password leads to: devices signed in, the recovery email and phone, and 2-Step Verification phones. The plan says when to change the password.</td></tr>
+        <tr><td>Unknown devices signed in (8 on email or social media, 4 on iCloud)</td><td>12</td><td>Read: the devices signed in to a Google account. The phone check walks through the devices on an Apple account.</td></tr>
+        <tr><td>A shared family or phone plan</td><td>4</td><td>The phone check asks who holds the phone plan, and the Google family group is read.</td></tr>
+        <tr><td>Possible spyware</td><td>3</td><td>The Android app lists every app that holds the access spyware needs.</td></tr>
+        <tr><td>Browser extensions the person did not install</td><td>2</td><td>Read: the Chrome extensions that can see every page.</td></tr>
+        <tr><td>A rooted phone</td><td>1</td><td>Next: a rooted-phone check. Today the Android app says that an app can hide on a rooted phone.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted">Source: Havron and others, <a href="https://www.usenix.org/system/files/sec19-havron.pdf">Clinical Computer Security for Victims of Intimate Partner Violence</a>, USENIX Security 2019, Figure 3. In an earlier study by the same group, with 39 survivors and 50 professionals, people described 47 times how an abuser tracked a phone’s location (Freed and others, <a href="https://rist.tech.cornell.edu/papers/stalkers-paradise-intimate.pdf">A Stalker’s Paradise</a>, CHI 2018). Spare Key reads Google location sharing and Android’s always-on location, and the phone check covers Find My, Life360 and tracker alerts.</p>
+    <p class="result-line">By hand, this check means 13 settings pages on 4 sites, and the 18 official help pages behind them: 12,640 words in the 15 that could be counted, about an hour of reading. Spare Key reads the 12 checks in one pass: 13 seconds on the practice pages.</p>
+    <p class="muted"><a href="https://github.com/usv240/spare-key/blob/main/docs/evidence/effort.json">How that was counted</a> (<code>tools/effort.mjs</code>).</p>
+  </div>
+</section>
+
 <section class="block field" id="stays" aria-labelledby="stays-title">
   <div class="wrap">
     <div class="block-head"><h2 id="stays-title">What leaves the device</h2>${info('sent-log', 'About what left this computer')}</div>
@@ -106,13 +127,13 @@ export default function why({ numbers, drift = null, android = null, grade = nul
 <section class="block" id="numbers" aria-labelledby="numbers-title">
   <div class="wrap">
     <h2 id="numbers-title">How well it works</h2>
-    <p class="muted">Measured on made-up practice pages and a made-up phone. The readers were also checked against one real account with nothing planted on it. What these numbers do not show is on the <a href="/accuracy.html">Accuracy</a> page.</p>
+    <p class="muted">Measured on made-up practice pages and a made-up phone. The readers were also checked against one real account, read-only. How to read each number is on the <a href="/accuracy.html">Accuracy</a> page.</p>
     <ul class="ledger">
       ${n.practice ? `<li><span class="n">${n.practice.found} of ${n.practice.of}</span><p>planted ways in found on the 13 made-up practice pages, and none of the 4 that belong to the person flagged, with code only and with Gemini Nano. ${esc(n.practice.date)}.</p></li>` : ''}
       ${nanoAdds(drift)}
       ${driftItem(drift)}
       ${n.privacy ? `<li><span class="n">${n.privacy.withPrivate} of ${n.privacy.requests}</span><p>requests from the extension held a name, email address, phone number or device, in a full practice check with every cloud step on. ${esc(n.privacy.date)}.</p></li>` : ''}
-      ${grade ? `<li><span class="n">${grade.totals.document_first.yes} of ${grade.of}</span><p>answers from a plain chatbot told the person to record their settings before changing anything, on ${grade.of} made-up situations. None made it the first thing to do, ${grade.totals.first_instruction.change} began with a change, and ${grade.totals.unsafe} said something risky, such as “now is the absolute best time to make changes” to a person who was not sure. It warned clearly that a change may be noticed in ${grade.totals.alert_warning.yes}. Every plan Spare Key shows starts with the record and carries the warning. Each answer was read in full against a written rubric by an AI reviewer; no person has checked the grades (<a href="https://github.com/usv240/spare-key/blob/main/docs/evidence/chatbot-hand-grade.json">the grades, with a quote for each</a>). ${esc(plan?.date || '')}.</p></li>` : ''}
+      ${grade ? `<li><span class="n">${grade.totals.document_first.yes} of ${grade.of}</span><p>answers from a plain chatbot told the person to record their settings before changing anything, on ${grade.of} made-up situations. None made it the first thing to do, ${grade.totals.first_instruction.change} began with a change, and ${grade.totals.unsafe} said something risky, such as “now is the absolute best time to make changes” to a person who was not sure. It warned clearly that a change may be noticed in ${grade.totals.alert_warning.yes}. Every plan Spare Key shows starts with the record and carries the warning. Each answer was read in full against a written rubric by an AI reviewer; a person’s review of the grades is next (<a href="https://github.com/usv240/spare-key/blob/main/docs/evidence/chatbot-hand-grade.json">the grades, with a quote for each</a>). ${esc(plan?.date || '')}.</p></li>` : ''}
       ${androidProof(android)}
       ${realPhone(real)}
     </ul>

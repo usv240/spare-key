@@ -25,6 +25,13 @@ Researchers at NYU asked AI chatbots 193 real questions from survivors; 60% of t
 warnings. The same study counts three dedicated tech-abuse clinics in the US. And a chatbot cannot see your settings:
 pasting them in sends the very names and addresses that are the danger.
 
+We measured Spare Key against what a real clinic found. A Cornell and NYU team checked 44 survivors' phones and
+accounts by hand at New York City's Family Justice Centers and found a real risk for 23 of them (USENIX Security 2019).
+Spare Key looks for 5 of the 6 kinds of problem they found: signs a password was known (14 clients), unknown signed-in
+devices (12), a shared family or phone plan (4), possible spyware (3) and browser extensions the person did not install
+(2). A rooted-phone check (1) is next. By hand, the same check is 13 settings pages on 4 sites and 18 official help
+pages, about an hour of reading; Spare Key reads the 12 checks in one pass.
+
 ## What it does
 
 Spare Key is a free, read-only Chrome extension, an Android app, and a step-by-step phone check that works on any phone.
