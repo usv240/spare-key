@@ -110,7 +110,7 @@ export default function index({ numbers, apk = null, grade = null }) {
   <div class="wrap">
     <h2 id="help-title">Get help now</h2>
     <div class="help-grid" style="margin-top:24px">
-      <div class="rise"><h3>National Domestic Violence Hotline</h3><a class="call" href="tel:+18007997233">1-800-799-7233</a><p>Text START to 88788, or chat at <a href="https://www.thehotline.org">thehotline.org</a>. Free, 24/7.</p></div>
+      <div class="rise"><h3>National Domestic Violence Hotline</h3><a class="call" href="tel:+18007997233">1-800-799-7233</a><p>Text START to 88788, or chat at <a href="https://www.thehotline.org">thehotline.org</a>. Free, 24/7. Line busy? loveisrespect: call <a href="tel:+18663319474">1-866-331-9474</a> or text LOVEIS to 22522. In danger now, call <a href="tel:911">911</a>.</p></div>
       <div class="rise"><h3>Safety Net (NNEDV)</h3><p>Guides on technology safety for survivors, app by app.</p><a href="https://www.techsafety.org/resources-survivors">techsafety.org</a></div>
       <div class="rise"><h3>Cornell Clinic to End Tech Abuse</h3><p>Resources from a clinic that helps survivors find out who has access.</p><a href="https://ceta.tech.cornell.edu/resources">ceta.tech.cornell.edu</a></div>
     </div>

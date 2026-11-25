@@ -82,6 +82,12 @@ free Steps API), and an MCP server so an advocate's AI assistant gives the curre
 Not used, on purpose: **Firebase Authentication**. An account is a record that ties a person to a safety check, and a
 sign-in can send an alert; Spare Key works with no account. App Check guards the quota instead.
 
+**Every step has a backup, and the last one never needs the cloud.** The plan: two server prompt templates on two
+models, then the direct call, then the plan made by code. Gemini Nano on Android: Nano 4 Fast, Nano 4 Full, then the
+stable Nano. The Android rules engine: Jetpack's JavaScript sandbox, then a hidden WebView with the network off. App
+Check: the bridge page on two Hosting domains. The hotline: the National Domestic Violence Hotline, then loveisrespect,
+then 911. Settings, page readers and the steps library each fall back to the copy built into the app.
+
 ## Challenges we ran into
 
 - **Proving nothing leaks.** A test captures every network request the extension makes and searches it for 30 made-up
@@ -96,9 +102,9 @@ sign-in can send an alert; Spare Key works with no account. App Check guards the
 
 ## Accomplishments that we're proud of
 
-- A plain chatbot told the person to record their settings before changing anything in 7 of 30 answers, each read in full
-  against a written rubric; none made it the first step and 10 said something risky, like urging changes at once on someone who was
-  not sure. Every plan Spare Key shows starts with the record, in 30 of 30.
+- A plain chatbot told the person to record their settings before changing anything in 7 of 38 answers, each read in full
+  against a written rubric; none made it the first step and 14 said something risky, like urging changes at once on someone who was
+  not sure. Every plan Spare Key shows starts with the record, in 38 of 38.
 - Rule R9: when mail is copied to someone else, or someone else may hold the recovery email or phone, deal with that
   before any change Google would tell them about. By keyword position, the chatbot got the mail order wrong in 3 of 7
   situations where it applied.

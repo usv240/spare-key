@@ -177,7 +177,7 @@ class AppModel(app: Application) : AndroidViewModel(app) {
                 Rules.start(getApplication())
                 library = Rules.obj("library")
                 ready = true
-                note("Rules started in the sandbox in ${secs(t)}. Steps library version ${library.optInt("version")}.")
+                note((if (Rules.engine == "webview") "Rules started in the WebView backup (the sandbox did not start: ${Rules.sandboxError}) in ${secs(t)}." else "Rules started in the sandbox in ${secs(t)}.") + " Steps library version ${library.optInt("version")}.")
             } catch (e: Throwable) {
                 android.util.Log.w("SpareKey", "rules: ${e.javaClass.simpleName}: ${e.message?.take(300)}")
                 startError = "Spare Key's rules could not start on this phone. Update Android System WebView in the Play Store, then open Spare Key again."

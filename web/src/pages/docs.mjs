@@ -149,7 +149,7 @@ export function builtWithPage({ numbers }) {
     ['Firebase AI Logic for Android, on device (<code>InferenceMode.ONLY_ON_DEVICE</code>)', 'The phone', 'Gemini Nano, through AICore, says what kind of app each one seems to be: monitoring, family locator, parental control, assistive, everyday. The list of apps on a phone is private, so there is no cloud fallback. It can add a caution to a card; a note that would reassure is never shown, and it can never hide a finding. Run on one real phone (a Pixel on Android 17): it read all 13 listed apps on the phone in 9.8 seconds. A caution from it counts only when the app’s name, its source or its powers back it up: its first run raised a caution on 10 of 13 ordinary apps, and with the rule 2 were kept and 6 set aside.'],
     ['Firebase AI Logic for Android, in the cloud (<code>InferenceMode.ONLY_IN_CLOUD</code>, function calling)', 'Google’s cloud', 'Orders the phone’s plan from finding types only. <code>ask_device</code> asks the phone things like “did this app come from outside the store?”, and the phone answers yes, no or unknown.'],
     ['Which on-device model, from Remote Config (<code>OnDeviceModelOption</code>)', 'The phone', 'Gemini Nano 4 Fast, then Gemini Nano 4 Full (previews built on Gemma 4, for phones in the AICore developer preview), then the Gemini Nano the phone ships with. The first one the phone has is used; the list can change with no app update.'],
-    ['Jetpack JavaScriptSandbox (<code>androidx.javascriptengine</code>)', 'The phone', 'Runs the extension’s own rules on the phone, in a process with no network and no files: the finding types, the cloud gate, the plan and the safety rules. One engine, so the phone and the extension cannot drift apart.'],
+    ['Jetpack JavaScriptSandbox (<code>androidx.javascriptengine</code>)', 'The phone', 'Runs the extension’s own rules on the phone, in a process with no network and no files: the finding types, the cloud gate, the plan and the safety rules. One engine, so the phone and the extension cannot drift apart. If the sandbox cannot start, the same rules run in a hidden WebView with network loads off.'],
     ['App Check on Android, through the site', 'The phone', 'An app installed from this site has no Play Integrity, so it gets reCAPTCHA Enterprise tokens from the same small page the extension uses, over a message channel the app adds to that page. Another Android app could load the page the same way, so this guards the model quota less well than Play Integrity would. It is what an app outside the Play Store can have.'],
     ['WebCrypto', 'This computer', 'The locked copy: PBKDF2 with 600,000 rounds and AES-GCM. Opening one beside a new check shows what is new since then.'],
     ['A wrapper around fetch', 'This computer', 'The ledger under “What left this computer”: every request by where it went and its size, and how many hold anything from the check.'],
@@ -162,6 +162,24 @@ export function builtWithPage({ numbers }) {
 <thead><tr><th>Piece</th><th>Runs</th><th>Why it is used</th></tr></thead>
 <tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody>
 </table></div>
+<h2>What happens when a piece fails</h2>
+<p>Every step has a backup, and the last one never needs the cloud.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Backups: table, scrolls sideways on small screens"><table>
+<thead><tr><th>Piece</th><th>In order</th></tr></thead><tbody>
+<tr><td>Ordering the plan in the cloud</td><td>Server prompt template 1, then template 2 on a second model, then the direct call to model 1 and then model 2 (one retry when a model is busy), then the plan made by code, which is already on the screen before any of them answer.</td></tr>
+<tr><td>Gemini Nano on the computer</td><td>Gemini Nano, then code’s own reader and sorter. A page neither can read is listed as not checked, never as nothing found.</td></tr>
+<tr><td>Gemini Nano on the phone</td><td>Gemini Nano 4 Fast, then Gemini Nano 4 Full, then the Gemini Nano the phone ships with, then code’s own sorting (the order is a Remote Config list).</td></tr>
+<tr><td>Reading a settings page</td><td>A reader fixed through Remote Config, then the bundled reader, then Gemini Nano reading the page text, then “Not checked” with the page to check by hand.</td></tr>
+<tr><td>The rules engine on Android</td><td>Jetpack’s JavaScript sandbox, then the same rules file in a hidden WebView with network loads, file access and content access off. On the builder’s phone both gave the same result: 72 apps read, 13 listed, the same 7-step plan.</td></tr>
+<tr><td>App Check for the extension</td><td>The bridge page on spare-key-app.web.app, then a fresh copy of it, then the same page on spare-key-app.firebaseapp.com. With no token, nothing goes to the cloud and the plan made by code is shown.</td></tr>
+<tr><td>App Check for the phone</td><td>The bridge page, then one wait and a second try, then the plan made by code.</td></tr>
+<tr><td>Settings and switches</td><td>Remote Config, then the last copy fetched, then the defaults built into the app.</td></tr>
+<tr><td>The steps library</td><td>The Firestore copy when it is newer and passes its checks, then the copy built into the extension and the app. The MCP server: the live Steps API, then its own copy.</td></tr>
+<tr><td>Checking that steps still match the help pages</td><td>The URL context tool, then a fetch from the device with no cookies, then “not sure”.</td></tr>
+<tr><td>The two-voice check</td><td>If it fails, the cloud plan stays, and the safety rules still check it.</td></tr>
+<tr><td>Someone to talk to</td><td>The National Domestic Violence Hotline by call, text or chat, then loveisrespect by call or text, then 911 for danger right now. The numbers can be changed through Remote Config, and a malformed number falls back to the built-in one.</td></tr>
+</tbody></table></div>
+<p>Not backed up yet: the site and the extension download are on Firebase Hosting only. A copy on GitHub Releases waits for the repository to be public.</p>
 <h2>Privacy-tiered routing</h2>
 <p>Each step runs at the most private tier its data allows, and the tier is set by the data, not by convenience:</p>
 <ol>
@@ -178,7 +196,7 @@ export function builtWithPage({ numbers }) {
 <tr><td>Order the plan for this situation and explain each step in plain words</td><td>One fixed order and stock sentences</td><td>Per-situation order and wording, asking the computer yes or no questions it needs</td></tr>
 <tr><td>Put a step in simpler words, on request</td><td>Not possible</td><td>Gemini Nano on the computer, or the cloud for the public steps only</td></tr>
 </tbody></table></div>
-<p>Ordering is where models still fall short, so the rules stay in charge. Before the rules ran, the cloud’s plans needed 43 fixes on 30 situations (18 after the two voices) and Gemini Nano’s 103 on 35. The <a href="accuracy.html">accuracy page</a> has the measures.</p>
+<p>Ordering is where models still fall short, so the rules stay in charge. Before the rules ran, the cloud’s plans needed 63 fixes on 38 situations (45 after the two voices) and Gemini Nano’s 103 on 35. The <a href="accuracy.html">accuracy page</a> has the measures.</p>
 <h2>The cloud asks, the device answers</h2>
 <p>Gemini in the cloud orders the plan without ever learning who anyone is. When it needs a fact, it can call back to the device, and the device answers with an enum. The shape of an exchange:</p>
 <pre tabindex="0" aria-label="Code example"><code>cloud:  ask_device({ ref: "f3", question: "filter_also_deletes" })
@@ -418,7 +436,7 @@ export function safetyPage() {
 <h1>Getting help</h1>
 <p class="lead">You do not have to do this alone. An advocate can help you decide what to change, and when.</p>
 <h2>Talk to someone now</h2>
-<p><strong>National Domestic Violence Hotline</strong>, free and open all day, every day: call <a href="tel:+18007997233">1-800-799-7233</a>, text START to 88788, or chat at <a href="https://www.thehotline.org">thehotline.org</a>. You do not have to give your name.</p>
+<p><strong>National Domestic Violence Hotline</strong>, free and open all day, every day: call <a href="tel:+18007997233">1-800-799-7233</a>, text START to 88788, or chat at <a href="https://www.thehotline.org">thehotline.org</a>. You do not have to give your name. Line busy? loveisrespect: call <a href="tel:+18663319474">1-866-331-9474</a> or text LOVEIS to 22522. In danger now, call <a href="tel:911">911</a>.</p>
 <p>If you are in danger right now, call 911.</p>
 <h2>Guides for technology safety</h2>
 <ul>
@@ -495,6 +513,6 @@ export function notFoundPage() {
   return doc('404.html', 'Page not found', 'This page does not exist.', `
 <h1>This page does not exist</h1>
 <p class="lead">The address may be mistyped, or the page has moved. Quick exit, at the top, leaves this site at once.</p>
-<p><strong>Talk to someone now:</strong> call <a href="tel:+18007997233">1-800-799-7233</a>, text START to 88788, or chat at <a href="https://www.thehotline.org">thehotline.org</a>. It is free and open all day, every day.</p>
+<p><strong>Talk to someone now:</strong> call <a href="tel:+18007997233">1-800-799-7233</a>, text START to 88788, or chat at <a href="https://www.thehotline.org">thehotline.org</a>. It is free and open all day, every day. Line busy? loveisrespect: call <a href="tel:+18663319474">1-866-331-9474</a> or text LOVEIS to 22522. In danger now, call <a href="tel:911">911</a>.</p>
 <p><a href="/index.html">Go to the home page</a> or <a href="/try.html">try the practice check</a>.</p>`);
 }

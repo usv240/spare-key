@@ -171,58 +171,67 @@ The scan tab's own requests are the practice site's, not Spare Key's, and are no
 of 2 to 6 findings and the four situation answers, covering every finding code at least 4 times and every answer at least
 10 times. `tools/plan-eval-cloud.mjs`, model `gemini-3.5-flash-lite` on the Gemini Developer API free tier.
 
-**30 of the 40 situations were scored.** The other 10 failed in the cloud and are not counted: 8 timed out after 30
-seconds during function calling (5 while making the plan, 3 during the two voices), 1 got HTTP 500 (model overloaded)
-and 1 got HTTP 429 (free-tier quota). The run made 267 cloud calls, including failed attempts. In 21 of the 30 scored
-situations, the person said now is not a good time or was not sure.
+**38 of the 40 situations were scored.** On November 21, 10 failed in the cloud: 8 timed out after 30 seconds during
+function calling (5 while making the plan, 3 during the two voices), 1 got HTTP 500 (model overloaded) and 1 got HTTP
+429 (free-tier quota). On November 24 those 10 were run once more (`plan-eval-cloud.mjs --resume`, log in
+`docs/evidence/plan-eval-cloud-retry.log`), with that day's code, where the plan and the two voices each wait up to 60
+seconds. The cloud plan answered all 10, and the two voices 8: the other 2 are still not counted (1 two-voice timeout,
+1 HTTP 500). The two runs made 332 cloud calls (267 and 65), including failed attempts. So 30 of the scored answers come
+from the November 21 code and 8 from the November 24 code. In 27 of the 38 scored situations, the person said now is
+not a good time or was not sure.
 
-The scores below are from `tools/plan-eval-score.mjs`, which reads the saved run again offline (no new calls). It
-replaced the first scoring, which counted the word "safe" anywhere (even in "a safe device") as false reassurance, and
-counted rule R3 as a fix (R3 adds the library's warning to every noticeable "change now" step by design).
+The scores below are from `tools/plan-eval-score.mjs`, which reads the saved runs again offline (no new calls), with
+today's safety rules. It replaced the first scoring, which counted the word "safe" anywhere (even in "a safe device") as
+false reassurance, and counted rule R3 as a fix (R3 adds the library's warning to every noticeable "change now" step
+by design).
 
-| Measure (of 30) | A. Plain chatbot | B. Code plan | C. Cloud plan | D. C with two voices | E. What you see (D after the rules) |
+| Measure (of 38) | A. Plain chatbot | B. Code plan | C. Cloud plan | D. C with two voices | E. What you see (D after the rules) |
 |---|---|---|---|---|---|
-| Warns that a change may be noticed | 30 | 30 | 24 | 26 | 30 |
-| Screenshot before any change | **4** | 30 | 30 | 30 | 30 |
-| Advocate or hotline step | 30 | 30 | 30 | 30 | 30 |
-| Never promises "you are safe", "all clear" or the like | 23 | 30 | 26 | 26 | 30 |
-| Every finding covered | 27 | 30 | 30 | 29 | 30 |
-| Changes that may be noticed wait, when now may not be a good time | 22 | 30 | 30 | 30 | 30 |
-| Mail copying stopped before account changes Google emails about (R9) | 27 | 30 | 29 | 28 | 30 |
+| Warns that a change may be noticed | 37 | 38 | 30 | 32 | 38 |
+| Screenshot before any change | **4** | 38 | 38 | 38 | 38 |
+| Advocate or hotline step | 38 | 38 | 38 | 38 | 38 |
+| Never promises "you are safe", "all clear" or the like | 30 | 38 | 33 | 34 | 38 |
+| Every finding covered | 34 | 38 | 38 | 35 | 38 |
+| Changes that may be noticed wait, when now may not be a good time | 28 | 38 | 38 | 38 | 38 |
+| Mail copying stopped before account changes Google emails about (R9) | 35 | 38 | 37 | 36 | 38 |
 
 Fixes the safety rules made to the model's plan (R3 not counted):
 
 | | R1 finding missing | R6 promise or banned word | R8 not-checked step | R9 linked order | Total |
 |---|---|---|---|---|---|
-| C. Cloud plan | 0 | 38 | 4 | 1 | 43 |
-| D. With two voices | 5 | 12 | 0 | 1 | 18 |
+| C. Cloud plan | 0 | 53 | 7 | 3 | 63 |
+| D. With two voices | 11 | 33 | 0 | 1 | 45 |
 
 Rule R6 removes any sentence with the word "safe" or "secure", not only promises, because Spare Key never uses those
-words (README hard rule 3). That is why R6 fires more often than the "promise" measure fails.
+words (README hard rule 3). That is why R6 fires more often than the "promise" measure fails. Since November 24 it also
+removes lines that promise the other person will not notice ("so nobody notices", "he won't know"). Scored again with
+that rule, the first 30 two-voice plans need 27 R6 fixes, not the 12 counted before it: the rule got stricter, the saved
+answers did not change.
 
 **What this shows, honestly:**
 
 - The expected story was that the plain chatbot would often miss the warning that a change can alert the other person.
-  On these 30 situations it did not: its answers mentioned noticing or alerting every time. Where it fell short was the
-  field's other rule, keeping a record before changing anything: it put screenshots or documentation before the first
-  change in 4 of 30. It promised the person would be fine or safe in 7 of 30, left a finding unaddressed in 3 of 30,
-  and did not tell the person to wait in 8 of the 21 situations where now may not be a good time.
-- The cloud plan alone (C) left out the warning on a noticeable "change now" step in 6 of 30 situations, and the two
-  voices (D) in 4. Rule R3 attaches the library's warning in every case.
-- The two voices cut the fixes from 43 to 18, and cut "change now" steps from 27 to 15 (more waits). They also dropped
-  a finding 5 times, which rule R1 put back.
-- **Linked findings (R9, added November 22, after these runs).** In 7 of the 30 situations, the person's mail was copied
-  to someone else (forwarding, a forwarding filter, a delegate) and an account change was also needed (recovery, 2-Step
-  Verification, signed-in devices). Any email Google sends about such a change, like a security alert or a code, would
-  reach the other person, so the mail copying has to come first. The plain chatbot brought up the account change first
-  in 3 of the 7 (keyword position, rough); the cloud plan got it wrong once, the two voices twice. The code plan puts the
-  mail copying first by construction, and R9 fixes any model plan that does not.
+  By keyword count it did not: a warning word was in 37 of 38 answers (read in full, it warned clearly in 29; see
+  below). Where it fell short was the field's other rule, keeping a record before changing anything: by keyword it put
+  screenshots or documentation before the first change in 4 of 38. It promised the person would be fine or safe in 8
+  of 38, left a finding unaddressed in 4 of 38, and did not tell the person to wait in 10 of the 27 situations where
+  now may not be a good time.
+- The cloud plan alone (C) left out the warning on a noticeable "change now" step in 8 of 38 situations, and the two
+  voices (D) in 6. Rule R3 attaches the library's warning in every case.
+- The two voices cut the fixes from 63 to 45, and cut "change now" steps from 31 to 19 (more waits). They also dropped
+  a finding 11 times, which rule R1 put back.
+- **Linked findings (R9, added November 22, after the first run).** In 7 of the 38 situations, the person's mail was
+  copied to someone else (forwarding, a forwarding filter, a delegate) and an account change was also needed (recovery,
+  2-Step Verification, signed-in devices). Any email Google sends about such a change, like a security alert or a code,
+  would reach the other person, so the mail copying has to come first. The plain chatbot brought up the account change
+  first in 3 of the 7 (keyword position, rough); the cloud plan got it wrong once, the two voices twice. The code plan
+  puts the mail copying first by construction, and R9 fixes any model plan that does not.
 - What a person sees (E) passes every measure by construction: the rules enforce it whatever the model writes.
-- What a person would have seen, by situation (`docs/evidence/plan-eval-cloud.log`): the cloud plan answered in 35 of
-  40, and the two voices then finished in 30 of those 35. In the other 5 the person keeps the cloud plan, which is
-  drawn before the voices run. In 5 of 40 the cloud plan failed (4 timeouts at the then 30-second limit, 1 quota) and
-  the person gets the plan made by code on the computer, which passes every measure. Since this run, the plan's
-  function-calling exchange and the two voices each wait up to 60 seconds; that change is not yet re-measured.
+- What a person would have seen, by situation (`docs/evidence/plan-eval-cloud.log`): on November 21 the cloud plan
+  answered in 35 of 40, and the two voices then finished in 30 of those 35. In the other 5 the person keeps the cloud
+  plan, which is drawn before the voices run. In 5 of 40 the cloud plan failed (4 timeouts at the then 30-second limit,
+  1 quota) and the person gets the plan made by code on the computer, which passes every measure. With the 60-second
+  waits, the retry of the 10 failed situations got a cloud plan in all 10.
 
 **How it was measured, and its limits:** the structured plans (B to E) are read step by step by code. The plain
 chatbot's free-text answers are read with fixed keyword lists, which is rough: a warning word anywhere in a long answer
@@ -252,23 +261,25 @@ for a person, who then gets the code plan). Median 29.5 seconds per plan on this
 The safety rules made **103 fixes** to Nano's 35 plans (R3 not counted): 44 moved a noticeable change to "wait" (R4),
 22 added a "check it yourself" step (R8), 17 put back a finding Nano left out (R1), 8 added the advocate step (R5), 5
 removed a banned word (R6), 4 moved the screenshot step first (R2), 3 put the mail copying first (R9). For comparison,
-the cloud plan on the 30 situations it answered needed 43, and 18 after the two voices. The plan made by code needs none. On the 25 situations both answered, Nano said to change a noticeable
-setting now when now may not be a good time far more often (Nano's plans had 58 "change now" steps across 35 plans,
-against 27 for the cloud's 30).
+the cloud plan on the 38 situations it answered needed 63, and 45 after the two voices, under the same rules. The plan
+made by code needs none. Nano said to change a noticeable setting now when now may not be a good time far more often
+(Nano's plans had 58 "change now" steps across 35 plans, against 31 for the cloud's 38).
 
 **What this decided:** with plan help from the cloud on, the cloud orders the plan; Gemini Nano orders it only when the
 person turns plan help off, so that nothing leaves the computer. In both cases the safety rules, not the model, decide
 what a person sees, which is why both pass every measure after them.
 
 **Read in full, not by keywords (`docs/evidence/chatbot-hand-grade.json`, November 24).** A reviewer said a keyword count was
-too weak a judge, so each of the 30 chatbot answers was read in full against a written rubric by an AI reviewer (Claude),
-with a quote saved for every grade. No person has checked the grades. Told the person to record their settings before
-changing anything: yes in 7, partly in 3, no in 20 (the keyword count said 4, and only 3 of those were the same answers).
-Warned clearly that a change may be noticed: yes in 24, a hint in 4, nothing in 2 (the keyword count said 30 of 30, which
-overstated it). Pointed to an advocate before any change: 18; the other 12 named a hotline only as a resource at the end.
-The first thing the answer told the person to do: an advocate in 13, a change in 5, something else in 12, the record in 0.
-10 answers said something that could raise risk, mostly "now is the right time" to a person who had said they were not
-sure; one gave a wrong hotline number. Six of the 7 "yes" answers gave no change steps at all, so the record came first
+too weak a judge, so each of the 38 chatbot answers was read in full against a written rubric by an AI reviewer (Claude),
+with a quote saved for every grade. The first 30 were graded by one reviewer; the 8 that answered only on the November
+24 retry were graded by a second, with the same rubric and the definitions of "first instruction" and "could raise
+risk" written down for it. No person has checked the grades. Told the person to record their settings before changing
+anything: yes in 7, partly in 3, no in 28 (the keyword count said 4). Warned clearly that a change may be noticed: yes
+in 29, a hint in 6, nothing in 3 (the keyword count said 37 of 38, which overstated it). Pointed to an advocate before
+any change: 23; the other 15 named a hotline only as a resource at the end. The first thing the answer told the person
+to do: an advocate in 15, a change in 7, something else in 16, the record in 0. 14 answers said something that could
+raise risk, mostly "now is the right time" to a person who had said they were not sure, or "lock him out" with no
+warning; one gave a wrong hotline number. Six of the 7 "yes" answers gave no change steps at all, so the record came first
 only by default; read strictly, one answer said "before you change them" outright. The site and the submission now quote
 these numbers, not the keyword ones.
 

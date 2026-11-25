@@ -14,6 +14,7 @@ import { codeClassify, toFinding } from './scan/rules.js';
 const SHOT_CHECK = { id: 'screenshot', service: 'phone', label: 'A location app on your phone, from a screenshot', pages: [] };
 import { renderResults, h, put, infoButton } from './ui/results.js';
 import { renderQuestions, renderPlan } from './ui/plan.js';
+import { useHotlines } from './ui/hotline.js';
 import { privateStringsFrom } from './scan/private.js';
 import { toCloud } from '../../shared/cloud-safe.js';
 import { buildPlan } from '../../shared/plan/engine.js';
@@ -905,6 +906,7 @@ async function loadOverrides() {
   try {
     const r = await offscreen('sk:catalogue-overrides');
     setRemoteOverrides(r?.catalogue || {});
+    useHotlines(r?.hotline);
   } catch { setRemoteOverrides({}); }
 }
 

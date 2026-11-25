@@ -19,7 +19,10 @@ export const recaptchaSiteKey = '6LcA6SouAAAAAC0dXkvRkUvbFIbuZYL3QaOt1x0N';
 export const extensionIds = ['opmpimgddnahhbmhioookicpekibjahl'];
 
 /* global __BRIDGE_URL__ */
-// A local build can point at a bridge served from localhost (tools/serve.mjs); releases use the site's own page.
-export const appCheckBridgeUrl = typeof __BRIDGE_URL__ === 'string' && __BRIDGE_URL__
-  ? __BRIDGE_URL__
-  : 'https://spare-key-app.web.app/appcheck-bridge.html';
+// A local build can point at a bridge served from localhost (tools/serve.mjs); releases use the site's own page, and
+// the same page on the project's second Hosting domain if the first does not answer. Both domains are on the
+// reCAPTCHA key, and both send the header that lets only this extension frame the page.
+export const appCheckBridgeUrls = typeof __BRIDGE_URL__ === 'string' && __BRIDGE_URL__
+  ? [__BRIDGE_URL__]
+  : ['https://spare-key-app.web.app/appcheck-bridge.html', 'https://spare-key-app.firebaseapp.com/appcheck-bridge.html'];
+export const appCheckBridgeUrl = appCheckBridgeUrls[0];

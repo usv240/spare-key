@@ -189,7 +189,7 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
     return true;
   }
   if (msg.type === 'sk:catalogue-overrides') {
-    liveSettings().then(s => reply({ catalogue: s.catalogue || {}, from: s.from }), () => reply({ catalogue: {}, from: 'defaults' }));
+    liveSettings().then(s => reply({ catalogue: s.catalogue || {}, hotline: s.hotline || null, from: s.from }), () => reply({ catalogue: {}, hotline: null, from: 'defaults' }));
     return true;
   }
   return false;

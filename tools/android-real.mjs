@@ -6,7 +6,7 @@
 // private/android-real.json (the private/ folder is not in the repository), and the summary it prints, and
 // docs/evidence/android-real.json, hold counts, timings and Spare Key's own sentences only.
 //
-//   node tools/android-real.mjs [--apk=path] [--no-cloud] [--practice]
+//   node tools/android-real.mjs [--apk=path] [--no-cloud] [--practice] [--webview-rules] [--label=text]
 //   --practice runs the made-up practice phone instead (nothing on the phone is read), and prints what Gemini Nano
 //   said about each made-up app: those names are invented, so they can be shown.
 import { execFileSync, spawn } from 'node:child_process';
@@ -19,6 +19,8 @@ const arg = name => process.argv.find(a => a.startsWith(`--${name}=`))?.split('=
 const APK = arg('apk') || resolve(ROOT, 'android/app/build/outputs/apk/debug/app-debug.apk');
 const NO_CLOUD = process.argv.includes('--no-cloud');
 const PRACTICE = process.argv.includes('--practice');
+// --webview-rules: a debug build runs its rules in the WebView backup instead of the JavaScript sandbox, to test the backup.
+const WEBVIEW_RULES = process.argv.includes('--webview-rules');
 const APP = 'app.web.sparekey';
 const SDK = process.env.ANDROID_HOME || 'C:/Users/ujwal/AppData/Local/Android/Sdk';
 const ADB = existsSync(`${SDK}/platform-tools/adb.exe`) ? `${SDK}/platform-tools/adb.exe` : 'adb';
@@ -86,6 +88,7 @@ report.appsAdded = shell('pm list packages --user 0 -3').split('\n').filter(l =>
 
 adb('install', '-r', '--user', '0', APK);
 shell(`pm clear --user 0 ${APP}`);
+if (WEBVIEW_RULES) shell(`run-as ${APP} sh -c 'mkdir -p files && touch files/force-webview-rules'`);
 shell('logcat -c');
 // Spare Key's own log lines, kept as they are written: a busy phone's log is overwritten within seconds.
 let ownLog = '';

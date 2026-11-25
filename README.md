@@ -97,7 +97,7 @@ Gemini adds what code cannot do, measured:
 | Order the plan and say why each step comes where it does, in plain words | one fixed order and stock sentences | an order and wording for the answers the person chose to share (none by default); Gemini asks the computer yes/no questions it needs |
 
 The plan's ordering is where models still fall short, so the rules stay in charge: before the rules ran, the cloud's
-plans needed 43 fixes on 30 situations (18 after the two voices), Gemini Nano's 103 on 35. So the cloud orders the plan
+plans needed 63 fixes on 38 situations (45 after the two voices), Gemini Nano's 103 on 35. So the cloud orders the plan
 by default, and Gemini Nano is the private option for a person who turns plan help off.
 
 `shared/cloud-safe.js` is the only exit to the cloud. `toCloud()` builds a new object from an allow-list of codes and
@@ -119,6 +119,27 @@ model, then the direct call through the same gate; which templates to use is a R
 on-device model to use is a Remote Config list too: Gemini Nano 4 Fast and Full (previews built on Gemma 4) first,
 then the Gemini Nano a phone ships with.
 
+## What happens when a piece fails
+
+Every step has a backup, and the last one never needs the cloud.
+
+| Piece | In order |
+|---|---|
+| Ordering the plan in the cloud | Server prompt template 1, then template 2 on a second model, then the direct call to model 1 and then model 2 (one retry when a model is busy), then the plan made by code, which is already on the screen before any of them answer. |
+| Gemini Nano on the computer | Gemini Nano, then code's own reader and sorter. A page neither can read is listed as not checked, never as nothing found. |
+| Gemini Nano on the phone | Gemini Nano 4 Fast, then Gemini Nano 4 Full, then the Gemini Nano the phone ships with, then code's own sorting (the order is a Remote Config list). |
+| Reading a settings page | A reader fixed through Remote Config, then the bundled reader, then Gemini Nano reading the page text, then "Not checked" with the page to check by hand. |
+| The rules engine on Android | Jetpack's JavaScript sandbox, then the same rules file in a hidden WebView with network loads, file access and content access off. On the builder's phone both gave the same result: 72 apps read, 13 listed, the same 7-step plan. |
+| App Check for the extension | The bridge page on spare-key-app.web.app, then a fresh copy of it, then the same page on spare-key-app.firebaseapp.com. With no token, nothing goes to the cloud and the plan made by code is shown. |
+| App Check for the phone | The bridge page, then one wait and a second try, then the plan made by code. |
+| Settings and switches | Remote Config, then the last copy fetched, then the defaults built into the app. |
+| The steps library | The Firestore copy when it is newer and passes its checks, then the copy built into the extension and the app. The MCP server: the live Steps API, then its own copy. |
+| Checking that steps still match the help pages | The URL context tool, then a fetch from the device with no cookies, then "not sure". |
+| The two-voice check | If it fails, the cloud plan stays, and the safety rules still check it. |
+| Someone to talk to | The National Domestic Violence Hotline by call, text or chat, then loveisrespect by call or text, then 911 for danger right now. The numbers can be changed through Remote Config, and a malformed number falls back to the built-in one. |
+
+Not backed up yet: the site and the extension download are on Firebase Hosting only. A copy on GitHub Releases waits for the repository to be public.
+
 ## Results
 
 All from scripts in `tools/`; details and limits in [docs/accuracy.md](docs/accuracy.md), and the saved runs in
@@ -138,10 +159,11 @@ All from scripts in `tools/`; details and limits in [docs/accuracy.md](docs/accu
 - **Privacy:** 0 of 20 requests from the extension held a name, email, phone number, device or place, in a full check
   with every cloud step on; all 9 model requests matched "What left this computer" word for word, and the panel's own
   ledger agreed (0 of 13). The cloud plan asked the device a yes/no question (`ask_device`) and got an enum back.
-- **Plan safety (40 situations written before any run):** a plain chatbot (the same Gemini 3.5 Flash-Lite, with no Spare Key instructions) told the person to record their settings before changing anything in 7 of 30 answers,
-  read in full against a written rubric by an AI reviewer (4 of 30 by the first, keyword count; none made it the first thing to do, and 10 said
-  something risky). It warned clearly that a change may be noticed in 24. Every plan Spare Key shows starts with the record and carries the
-  warning, in 30 of 30 ([docs/evidence/chatbot-hand-grade.json](docs/evidence/chatbot-hand-grade.json)). Where the person's mail was copied to someone else and an account change was also needed (7 of the 30),
+- **Plan safety (40 situations written before any run):** a plain chatbot (the same Gemini 3.5 Flash-Lite, with no Spare Key instructions) told the person to record their settings before changing anything in 7 of 38 answers,
+  read in full against a written rubric by an AI reviewer (4 of 38 by the first, keyword count; none made it the first thing to do, and 14 said
+  something risky). It warned clearly that a change may be noticed in 29. Every plan Spare Key shows starts with the record and carries the
+  warning, in 38 of 38 ([docs/evidence/chatbot-hand-grade.json](docs/evidence/chatbot-hand-grade.json)). 10 of the 40 failed in the cloud
+  on the first run and were run once more with the next code; 8 answered. Where the person's mail was copied to someone else and an account change was also needed (7 of the 38),
   the chatbot brought up the account change (recovery, password, sign-ins) before stopping the mail copying in 3 of 7:
   Google's alert emails and codes would then reach the other person. Spare Key's rule R9 puts the mail copying first in
   7 of 7. The rule was added after these runs, and the chatbot's answers are judged by keyword position, which is rough.

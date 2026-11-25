@@ -86,6 +86,9 @@ fun SafetyScreen(m: AppModel) {
         Muted("The National Domestic Violence Hotline.")
         Secondary("Call 1-800-799-7233", { open(Intent(Intent.ACTION_DIAL, Uri.parse("tel:18007997233"))) })
         Secondary("Text START to 88788", { open(Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:88788")).putExtra("sms_body", "START")) })
+        Muted("Line busy? loveisrespect answers too.")
+        Secondary("Call 1-866-331-9474", { open(Intent(Intent.ACTION_DIAL, Uri.parse("tel:18663319474"))) })
+        Muted("In danger now, call 911.")
         Muted("A call or a text shows in this phone's history.")
     }
     Section {
@@ -316,7 +319,7 @@ fun PlanScreen(m: AppModel) {
             if (a.optString("linked").isNotEmpty()) Caution(a.optString("linked"))
             // The field's advice is "screenshot first". On a phone that may be watched, say where not to keep them.
             if (a.optString("action") == "document") Caution("On this phone, do not use a screenshot: it stays here and may back up to shared photos. Take a picture with another phone, or write a list on paper.")
-            if (a.optString("action") == "talk_to_advocate") Muted("Call 1-800-799-7233, or text START to 88788. Free, all day, every day.")
+            if (a.optString("action") == "talk_to_advocate") Muted("Call 1-800-799-7233, or text START to 88788. Free, all day, every day. Line busy? loveisrespect: 1-866-331-9474, or text LOVEIS to 22522. In danger now, call 911.")
             entries.optJSONObject(code)?.let { e ->
                 if (wait && e.optString("if_not_safe_yet").isNotEmpty()) Body(e.optString("if_not_safe_yet"))
                 val steps = e.strings("steps")
@@ -373,7 +376,7 @@ fun HoodScreen(m: AppModel, appCheck: String) {
     Muted("Where each step runs, everything Spare Key sent from this phone, and what it did. You never need this page to use Spare Key.")
     Heading("Where each step runs")
     Section {
-        Where("Reading this phone", "Spare Key's rules, on this phone. The same code as the Chrome extension, run in Android's JavaScript sandbox.")
+        Where("Reading this phone", if (app.web.sparekey.engine.Rules.engine == "webview") "Spare Key's rules, on this phone. The same code as the Chrome extension, run in a hidden WebView with network loads off, the backup for when Android's JavaScript sandbox cannot start." else "Spare Key's rules, on this phone. The same code as the Chrome extension, run in Android's JavaScript sandbox.")
         Where("Sorting the apps", when (m.nano) { "available" -> "Gemini Nano, on this phone: the ${m.modelWords(app.web.sparekey.ai.Ai.deviceOptionName)} model (Firebase AI Logic, on-device only). The list of apps never leaves."; "downloadable" -> "Spare Key's rules, on this phone. Gemini Nano can be downloaded from the first screen."; "downloading" -> "Spare Key's rules, on this phone, while Gemini Nano downloads."; else -> "Spare Key's rules, on this phone. This phone can't run Gemini Nano." })
         Where("Simpler words for a step", if (m.nano == "available") "Gemini Nano on this phone; the cloud only if it cannot (Firebase AI Logic, prefer on device). Public steps only." else if (m.cloudOn) "Gemini in the cloud, as the fallback: Gemini Nano is not on this phone" + (if (m.nano == "unavailable") "" else " yet") + " (Firebase AI Logic, prefer on device). Public steps only." else "Off: this phone has no Gemini Nano and plan help is off.")
         Where("Ordering your plan", if (m.practice) (if (m.nano == "available") "Gemini Nano, on this phone, or Spare Key's rules if it does not answer. A practice check sends nothing." else "Spare Key's rules, on this phone. A practice check sends nothing.") else if (m.cloudOn) "Gemini in the cloud (Firebase AI Logic, cloud only), from finding types only. Code checks every plan against the safety rules." else if (m.nano == "available") "Gemini Nano, on this phone." else "Spare Key's rules, on this phone.")

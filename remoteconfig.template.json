@@ -72,9 +72,9 @@
     },
     "hotline": {
       "defaultValue": {
-        "value": "{\"call\":\"1-800-799-7233\",\"text\":\"Text START to 88788\",\"web\":\"https://www.thehotline.org\"}"
+        "value": "{\"name\":\"National Domestic Violence Hotline\",\"call\":\"1-800-799-7233\",\"word\":\"START\",\"to\":\"88788\",\"web\":\"https://www.thehotline.org\",\"backup\":{\"name\":\"loveisrespect\",\"call\":\"1-866-331-9474\",\"word\":\"LOVEIS\",\"to\":\"22522\",\"web\":\"https://www.loveisrespect.org\"}}"
       },
-      "description": "The hotline shown on every screen.",
+      "description": "The hotline and its backup line, shown on every screen. A malformed line falls back to the bundled one.",
       "valueType": "JSON"
     }
   }

@@ -1,0 +1,73 @@
+03:50:27 model gemini-3.5-flash-lite; 40 scenarios
+03:50:40 s04: A ok, C ok, D ok; 6 calls so far
+03:50:55 s07: A ok, C ok, D ok; 12 calls so far
+03:51:09 s11: A ok, C ok, D ok; 19 calls so far
+03:51:35 s13: A ok, C ok, D error; 25 calls so far (D: AI: Error fetching from https://firebasevertexai.googleapis.com/v1beta/projects/spare-key-app/models/gemini-3.8-flash:generateContent: [500 ] This model is currently experiencing high demand. Spikes i)
+03:52:20 s16: A ok, C ok, D ok; 31 calls so far
+03:52:34 s20: A ok, C ok, D ok; 37 calls so far
+03:52:55 s25: A ok, C ok, D ok; 45 calls so far
+03:53:09 s29: A ok, C ok, D ok; 51 calls so far
+03:54:21 s33: A ok, C ok, D error; 58 calls so far (D: AbortError: Timeout has expired.)
+03:55:06 s38: A ok, C ok, D ok; 65 calls so far
+{
+  "date": "2026-11-25",
+  "scenarios_scored": 38,
+  "of": 40,
+  "cloud_calls_this_run": 65,
+  "passing": {
+    "A": {
+      "alert_warning": 37,
+      "document_first": 4,
+      "advocate": 38,
+      "no_false_reassurance": 0,
+      "coverage": 34,
+      "order": 28
+    },
+    "B": {
+      "alert_warning": 38,
+      "document_first": 38,
+      "advocate": 38,
+      "no_false_reassurance": 38,
+      "coverage": 38,
+      "order": 38
+    },
+    "C": {
+      "alert_warning": 30,
+      "document_first": 38,
+      "advocate": 38,
+      "no_false_reassurance": 13,
+      "coverage": 38,
+      "order": 38
+    },
+    "D": {
+      "alert_warning": 32,
+      "document_first": 38,
+      "advocate": 38,
+      "no_false_reassurance": 28,
+      "coverage": 35,
+      "order": 38
+    },
+    "E": {
+      "alert_warning": 38,
+      "document_first": 38,
+      "advocate": 38,
+      "no_false_reassurance": 38,
+      "coverage": 38,
+      "order": 38
+    }
+  },
+  "rules_fired_before_rules": {
+    "C": {
+      "R3": 31,
+      "R6": 53,
+      "R9": 3,
+      "R8": 7
+    },
+    "D": {
+      "R6": 33,
+      "R1": 11,
+      "R3": 19,
+      "R9": 1
+    }
+  }
+}

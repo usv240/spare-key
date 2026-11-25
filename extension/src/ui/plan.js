@@ -5,7 +5,7 @@
 // page where one exists). A model's words appear only in "why" and the summary, after the safety rules have run.
 import { h, put, infoButton, UNCHECKED } from './results.js';
 import { registerInfo } from './info.js';
-import { HOTLINE } from '../../../shared/config.js';
+import { hotlines, EMERGENCY } from './hotline.js';
 import { CODE_TEXT } from '../../../shared/findings.js';
 
 export const QUESTIONS = [
@@ -157,19 +157,25 @@ function startHere({ docs, adv, nows, waits }, { library }) {
   const kind = first ? (library[first.code]?.title || (CODE_TEXT[first.code] || [first.code])[0]) : '';
   const lines = [
     docs.length ? `Screenshot the ${docs[0].refs.length} ${docs[0].refs.length === 1 ? 'setting' : 'settings'} in step 1, and keep the pictures where the other person cannot see them.` : '',
-    adv ? `Call or text an advocate: ${HOTLINE.call.replace(/-/g, '‑')}, or text START to 88788. It is free and open all day, every day.` : '',
+    adv ? (({ main }) => `Call or text an advocate: ${main.call.replace(/-/g, '‑')}, or text ${main.word} to ${main.to}. It is free and open all day, every day.`)(hotlines()) : '',
     first ? `Then the most urgent kind: ${kind.charAt(0).toLowerCase()}${kind.slice(1)}. ${first.action === 'change_now' ? 'You said now is a good time.' : 'Leave it for a better time, and ask the advocate when.'}` : '',
   ].filter(Boolean);
   return lines.length ? h('div', { class: 'start-here' }, h('h2', { text: 'Start here' }), h('ol', {}, lines.map(t => h('li', { text: t })))) : null;
 }
 
 function advocateSection(a) {
+  const { main, backup } = hotlines();
+  const site = u => u.replace(/^https:\/\/(www\.)?/, '').replace(/\/$/, '');
   return section('talk_to_advocate', 'Talk to an advocate',
     h('p', { text: a.why }),
     h('div', { class: 'hotline compact' },
-      h('a', { href: HOTLINE.tel }, h('span', {}, 'Call ', h('strong', { text: HOTLINE.call }))),
-      h('a', { href: HOTLINE.sms }, h('span', {}, 'Text ', h('strong', { text: 'START' }), ' to ', h('strong', { text: '88788' }))),
-      h('a', { href: HOTLINE.web, target: '_blank', rel: 'noopener noreferrer' }, h('span', { text: 'Chat at thehotline.org' }))));
+      h('a', { href: main.tel }, h('span', {}, 'Call ', h('strong', { text: main.call }))),
+      h('a', { href: main.sms }, h('span', {}, 'Text ', h('strong', { text: main.word }), ' to ', h('strong', { text: main.to }))),
+      h('a', { href: main.web, target: '_blank', rel: 'noopener noreferrer' }, h('span', { text: `Chat at ${site(main.web)}` })),
+      h('p', { class: 'hotline-more' }, `Line busy? ${backup.name}: `,
+        h('a', { href: backup.tel }, h('strong', { text: backup.call })), ', or text ',
+        h('a', { href: backup.sms }, h('strong', { text: backup.word }), ' to ', h('strong', { text: backup.to })),
+        '. In danger now, call ', h('a', { href: EMERGENCY.tel, text: EMERGENCY.call }), '.')));
 }
 
 // One folded block per kind of finding, grouped under the service it belongs to.

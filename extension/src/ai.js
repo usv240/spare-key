@@ -9,7 +9,7 @@ import { initializeApp } from 'firebase/app';
 import { initializeAppCheck, CustomProvider, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { getAI, getGenerativeModel, getTemplateGenerativeModel, GoogleAIBackend, InferenceMode } from 'firebase/ai';
 import { getRemoteConfig, fetchAndActivate, getValue } from 'firebase/remote-config';
-import { firebaseConfig, recaptchaSiteKey, appCheckBridgeUrl } from './firebase-config.js';
+import { firebaseConfig, recaptchaSiteKey, appCheckBridgeUrls } from './firebase-config.js';
 import { CLOUD_MODELS, REMOTE_DEFAULTS, remoteDefaultConfig } from '../../shared/config.js';
 import { checkOutgoing, checkAnswer, CloudSafetyError } from '../../shared/cloud-safe.js';
 
@@ -101,13 +101,23 @@ let bridgeFrame = null;
 const waiting = new Map();
 let nextId = 0;
 
+// Which bridge page is in use: the site's own domain first, then the project's second Hosting domain.
+let bridgeAt = 0;
 async function bridgeToken() {
   try {
     return await bridgeTokenOnce();
   } catch {
     // A refused token makes the SDK inside the bridge stop asking for a day; a fresh frame starts with no back-off.
     resetBridge();
-    return bridgeTokenOnce();
+    try {
+      return await bridgeTokenOnce();
+    } catch (e) {
+      // The page did not load or answer twice: try the same page on the other domain, and keep it if it works.
+      if (appCheckBridgeUrls.length < 2) throw e;
+      resetBridge();
+      bridgeAt = (bridgeAt + 1) % appCheckBridgeUrls.length;
+      return bridgeTokenOnce();
+    }
   }
 }
 function resetBridge() {
@@ -116,12 +126,13 @@ function resetBridge() {
   bridge = null;
 }
 function bridgeTokenOnce() {
-  const origin = new URL(appCheckBridgeUrl).origin;
+  const url = appCheckBridgeUrls[bridgeAt];
+  const origin = new URL(url).origin;
   if (!bridge) {
     bridge = new Promise((resolve, reject) => {
       const frame = document.createElement('iframe');
       bridgeFrame = frame;
-      frame.src = appCheckBridgeUrl;
+      frame.src = url;
       frame.title = 'App Check';
       frame.style.display = 'none';
       const timer = setTimeout(() => { bridge = null; frame.remove(); reject(new Error('App Check bridge did not load')); }, 20000);
