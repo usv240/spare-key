@@ -152,6 +152,8 @@ export function renderPlan(root, { plan, byRef, library, source, model, calls = 
       h('summary', { text: `Spare Key’s safety rules changed this plan (${added.length})` }),
       h('ul', {}, added.map(f => h('li', { text: ruleWords(f) })))) : null,
   );
+  root.setAttribute('data-plan-root', '');
+  showProgress(root);
 }
 
 // Where the two voices disagreed, kind by kind, and what the plan did with it.
@@ -182,21 +184,50 @@ function ruleWords(f) {
 const SERVICE_NAMES = { google: 'Google account', gmail: 'Gmail', photos: 'Google Photos', amazon: 'Amazon', chrome: 'This Chrome browser', phone: 'Your phone', other: 'Other' };
 const groupBy = (list, key) => list.reduce((m, x) => m.set(key(x), [...(m.get(key(x)) || []), x]), new Map());
 
+// What the person has ticked off while working through the plan: a record made, a change done. In this page's memory
+// only, never stored or sent; Quick exit and "Clear" empty it (clearPlanProgress).
+const progress = new Set();
+export const clearPlanProgress = () => progress.clear();
+
+function tick(key, label, words) {
+  const box = h('input', { type: 'checkbox', class: 'tick-box', 'data-tick': key, 'data-kind': key.split(':')[0] });
+  box.checked = progress.has(key);
+  box.addEventListener('change', () => {
+    if (box.checked) progress.add(key); else progress.delete(key);
+    box.closest('.tick')?.classList.toggle('is-done', box.checked);
+    showProgress(box.closest('[data-plan-root]'));
+  });
+  return h('label', { class: `tick${box.checked ? ' is-done' : ''}` }, box, h('span', { class: 'tick-label' }, label), words ? h('span', { class: 'tick-words', text: words }) : null);
+}
+
+// "Done so far" under Start here, counted from the boxes on the screen.
+function showProgress(root) {
+  const line = root?.querySelector('.done-line');
+  if (!line) return;
+  const count = kind => { const all = [...root.querySelectorAll(`.tick-box[data-kind="${kind}"]`)]; return [all.filter(b => b.checked).length, all.length]; };
+  const [rd, rn] = count('record'), [cd, cn] = count('change');
+  const parts = [rn ? `${rd} of ${rn} recorded` : '', cn ? `${cd} of ${cn} changed` : ''].filter(Boolean);
+  line.textContent = parts.length ? `Done so far: ${parts.join(', ')}. Tick each one as you go; nothing is saved.` : '';
+  line.hidden = !parts.length;
+}
+
 const section = (kind, title, ...body) => h('li', { class: `step step-${kind}`, 'data-action': kind },
   h('div', { class: 'step-head' }, h('span', { class: 'step-n num' }), h('h2', { class: `step-kind kind-${kind}`, text: title })), ...body);
 
 function screenshotSection(docs, { byRef, phoneOnly }) {
   const items = [...new Set(docs.flatMap(a => a.refs))].map(r => byRef.get(r)).filter(Boolean);
   const byCode = groupBy(items, f => f.code);
-  const list = h('ul', { class: 'step-list' }, [...byCode].map(([code, fs]) => h('li', {},
-    h('strong', { text: `${(CODE_TEXT[code] || [code])[0]}${fs.length > 1 ? ` (${fs.length})` : ''}` }),
-    ...fs.map(f => h('span', { class: 'muted', text: f.label })))));
+  const list = h('ul', { class: 'step-list ticks' }, [...byCode].map(([code, fs]) => h('li', {},
+    tick(`record:${code}`, h('strong', { text: `${(CODE_TEXT[code] || [code])[0]}${fs.length > 1 ? ` (${fs.length})` : ''}` }),
+      fs.map(f => f.label).join('; ')))));
   if (phoneOnly) return section('document', `Make a record of these first (${items.length})`,
     h('p', { text: 'A record of what is set up now helps you and an advocate, and it is gone once a setting changes. Take a picture of each one with another phone, or write it on paper with the date. A screenshot stays on this phone and may back up to photos the other person can see.' }),
     byCode.size > 4 ? h('details', { class: 'later shot-list' }, h('summary', { text: `See all ${items.length}, in ${byCode.size} kinds` }), list) : list);
   return section('document', `Screenshot these first (${items.length})`,
-    h('p', { text: 'A record of what is set up now helps you and an advocate, and it is gone once a setting changes. Keep the screenshots where the other person cannot see them. Do not mail them from this account: a copy stays in Sent, where anyone who can read this mail can see it. If your photos back up to an account they can see, or Google Photos partner sharing is on, write the list on paper or take a picture with another phone instead.' }),
-    h('p', { class: 'muted', text: 'Spare Key also kept the words on each page it read, with the date and time. They are under "What we found", and in a locked copy if you save one. Screenshots are still the stronger record.' }),
+    h('p', { text: 'A record of what is set up now helps you and an advocate, and it is gone once a setting changes. Keep the pictures where the other person cannot see them, and do not mail them from this account. Tick each one as you take it.' }),
+    h('details', { class: 'later' }, h('summary', { text: 'Why, and where else not to keep them' }),
+      h('p', { text: 'Keep the screenshots where the other person cannot see them. Do not mail them from this account: a copy stays in Sent, where anyone who can read this mail can see it. If your photos back up to an account they can see, or Google Photos partner sharing is on, write the list on paper or take a picture with another phone instead.' }),
+      h('p', { class: 'muted', text: 'Spare Key also kept the words on each page it read, with the date and time. They are under "What we found", and in a locked copy if you save one. Screenshots are still the stronger record.' })),
     // A short list stays open; a long one folds, so the plan's next steps stay in view.
     byCode.size > 4 ? h('details', { class: 'later shot-list' }, h('summary', { text: `See all ${items.length}, in ${byCode.size} kinds` }), list) : list);
 }
@@ -214,7 +245,8 @@ function startHere({ docs, adv, nows, waits }, { library, phoneOnly }) {
       ? `Then the first change, since you said now is a good time: ${kind.charAt(0).toLowerCase()}${kind.slice(1)}.`
       : `One to talk over with your advocate first: ${kind.charAt(0).toLowerCase()}${kind.slice(1)}. Leave it as it is for now.`) : '',
   ].filter(Boolean);
-  return lines.length ? h('div', { class: 'start-here' }, h('h2', { text: 'Start here' }), h('ol', {}, lines.map(t => h('li', { text: t })))) : null;
+  return lines.length ? h('div', { class: 'start-here' }, h('h2', { text: 'Start here' }), h('ol', {}, lines.map(t => h('li', { text: t }))),
+    h('p', { class: 'done-line', role: 'status', hidden: true })) : null;
 }
 
 function advocateSection(a) {
@@ -311,6 +343,7 @@ function codeBlock(a, { byRef, library, onOpen, freshDays, freshness, onCheckFre
       ? h('div', { class: 'steps-now' }, ...steps)
       : h('details', { class: 'later' }, h('summary', { text: 'Steps for when it is a better time' }), ...steps),
     f?.openUrl ? h('div', { class: 'finding-actions' }, h('button', { type: 'button', class: 'link-button', onclick: () => onOpen(f.openUrl) }, 'Open this setting')) : null,
+    a.action === 'change_now' ? tick(`change:${code}`, 'I changed this') : null,
     e.sources?.length ? h('p', { class: 'source muted' }, 'Source: ', ...e.sources.flatMap((s, k) => [k ? '; ' : '', h('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer', text: s.title })])) : null,
     ...(freshnessBlock(code, e, { freshDays, freshness, onCheckFresh }) || []),
   ];

@@ -299,7 +299,7 @@ Speed: see section 1. On this PC, loading Gemini Nano the first time took 104 to
 
 Reading level (`tools/reading-grade.mjs`, `docs/evidence/reading-grade.json`, November 25): the Flesch-Kincaid grade
 of the words on the 14 site pages and the side panel (paragraphs, list items, headings and buttons; code, number tables
-and menus left out). Median grade 4.3; the highest page is 6.4 (`built-with.html`). The
+and menus left out). Median grade 4.2; the highest page is 6.4 (`built-with.html`). The
 goal is grade 6 to 8 or lower. An earlier one-off scoring of the panel's 257 strings on November 22 (not saved as a
 script) gave median 4.3, with 5 short steps that name a menu, such as "Open Gmail settings, then Forwarding and
 POP/IMAP.", between grade 8 and 9.1.

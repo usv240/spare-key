@@ -1,8 +1,8 @@
 {
- "at": "2026-11-25T21:06:01.970Z",
+ "at": "2026-11-25T21:44:47.234Z",
  "tool": "node tools/phone-check-test.mjs",
- "passed": 38,
- "of": 38,
+ "passed": 39,
+ "of": 39,
  "results": [
   {
    "name": "iphone: the plan starts with the record, then an advocate",
@@ -33,6 +33,11 @@
    "name": "iphone: shared children: a step for their devices",
    "ok": true,
    "note": ""
+  },
+  {
+   "name": "iphone: ticking a record off updates \"Done so far\"",
+   "ok": true,
+   "note": "Done so far: 1 of 2 recorded, 0 of 2 changed. Tick each one as you go; nothing is saved."
   },
   {
    "name": "iphone: nothing was sent after the page loaded",

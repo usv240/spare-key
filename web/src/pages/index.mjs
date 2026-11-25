@@ -8,14 +8,14 @@ export default function index({ numbers, apk = null, grade = null }) {
   const body = `
 <section class="hero" aria-labelledby="hero-title">
   <div class="wrap">
-    <div>
+    <div class="hero-copy">
       <h1 id="hero-title">Who still has a key to your accounts?</h1>
-      <p class="lead">Spare Key reads your own Google, Gmail, Amazon and Chrome settings, and an Android phone itself. It lists who can still see your location, your mail or your account, then gives you a plan that starts with screenshots. It changes nothing. Names never leave your device.</p>
+      <p class="lead">Spare Key reads your own Google, Amazon, Chrome and Android settings and lists who can still see your location, your mail or your account. Then it gives you a plan that starts with screenshots. It changes nothing, and names never leave your device.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="/try.html">Try the practice check</a>
         <a class="btn btn-secondary" href="/install.html">Get Spare Key</a>
       </div>
-      <p class="hero-note">The practice check uses made-up pages, installs nothing and works on a phone. Checking your own accounts needs Chrome on a computer; the Android app checks the phone. This visit stays in your browser’s history unless you clear it. Spare Key is free, with no sign-in. If someone may be watching this computer, check on one you already use that they never touch. ${info('shared-computer', 'About using a shared computer')}</p>
+      <p class="hero-note">Free, with no sign-in. The practice check uses made-up pages and works on any phone. This visit stays in your browser’s history. ${info('shared-computer', 'About using a shared computer')}</p>
       <p class="hero-note hero-links"><a href="/phone-check.html">Only have a phone? Check it step by step</a><a href="/why.html">Judging, or curious? The two-minute tour</a><a href="/advocates.html">For advocates</a></p>
     </div>
     <figure class="panel-frame" id="panel-demo" data-ui>
@@ -69,8 +69,8 @@ export default function index({ numbers, apk = null, grade = null }) {
   <div class="wrap phone-grid">
     <div class="phone-text">
       <h2 id="phone-title">The phone itself, iPhone or Android</h2>
-      <p class="lead">An account check cannot see an app hidden on the phone. The Android app reads the phone’s own settings and lists every app that could let someone watch it. It opens nothing and removes nothing. On any phone, iPhone included, the <a href="/phone-check.html">step-by-step phone check</a> shows where to look, and makes the same plan from your answers.</p>
-      <div class="phone-more"><p>An app that can watch the phone is the first thing the plan deals with: take a picture of it with another phone, talk to an advocate, and leave it in place until a better time if removing it may be noticed.</p><p><a class="big" href="/install.html#${apk ? 'android' : 'android-by-hand'}">${apk ? 'Get the Android app' : 'Check your phone by hand, step by step'}</a></p><p><a href="/install.html#android-video">Watch it run on a practice phone (40 seconds)</a></p></div>
+      <p class="lead">An account check cannot see an app hidden on the phone. The Android app lists every app that could let someone watch it, and removes nothing. On any phone, iPhone included, the <a href="/phone-check.html">step-by-step phone check</a> shows where to look and makes the same plan.</p>
+      <div class="phone-more"><p><a class="big" href="/install.html#${apk ? 'android' : 'android-by-hand'}">${apk ? 'Get the Android app' : 'Check your phone by hand, step by step'}</a></p><p><a href="/install.html#android-video">Watch it run on a practice phone (40 seconds)</a></p></div>
     </div>
     <div class="phones" tabindex="0" role="region" aria-label="Three screens from the Android app, on a made-up practice phone">
       <figure class="shot rise" data-ui><img src="/img/android/results.png" width="540" height="1200" alt="The Android app’s results for a made-up phone: an app called System Update Service can read and control the screen, is a device admin app, and can read notifications, texts and location." loading="lazy"><figcaption>What it found, one app to a card.</figcaption></figure>
@@ -95,13 +95,11 @@ export default function index({ numbers, apk = null, grade = null }) {
   <div class="wrap">
     <h2 id="limits-title">Good to know</h2>
     <ul class="limits">
-      <li>Next: review by advocates and survivors. <a href="/advocates.html#review">Advocates can help here.</a></li>
-      <li>It reads the services listed above. The step-by-step phone check covers Apple, Life360, the phone plan and trackers with your answers.</li>
-      <li>Websites change their pages, and a page reader can break. When it does, the result says so: the page is listed under “Not checked”, never shown as empty.</li>
-      <li>Gemini Nano is needed for the best reading. Without it, pages are read by code only.</li>
-      <li>The phone has its own checks: the Android app reads an Android phone, the step-by-step phone check works on any phone, iPhone included, and the extension can read a screenshot of a location app with Gemini Nano on this computer.</li>
-      <li>The Android app was tested on an emulator with a planted test app and on a real phone. An app hidden on a rooted phone can escape it, and the results say so.</li>
       <li>It reads; it does not fix. Every change is yours to make, when the time is right.</li>
+      <li>When a site changes a page and a reader breaks, the page is listed under “Not checked”, never shown as empty.</li>
+      <li>Gemini Nano gives the best reading. Without it, code reads the pages and says where that is less complete.</li>
+      <li>An app hidden on a rooted phone can escape the Android app, and the results say so.</li>
+      <li>Next: review by advocates and survivors. <a href="/advocates.html#review">Advocates can help here.</a></li>
     </ul>
   </div>
 </section>
@@ -109,22 +107,11 @@ export default function index({ numbers, apk = null, grade = null }) {
 <section class="block" id="help" aria-labelledby="help-title">
   <div class="wrap">
     <h2 id="help-title">Get help now</h2>
-    <div class="help-grid" style="margin-top:24px">
+    <div class="help-grid">
       <div class="rise"><h3>National Domestic Violence Hotline</h3><a class="call" href="tel:+18007997233">1-800-799-7233</a><p>Text START to 88788, or chat at <a href="https://www.thehotline.org">thehotline.org</a>. Free, 24/7. Line busy? loveisrespect: call <a href="tel:+18663319474">1-866-331-9474</a> or text LOVEIS to 22522. In danger now, call <a href="tel:911">911</a>.</p></div>
       <div class="rise"><h3>Safety Net (NNEDV)</h3><p>Guides on technology safety for survivors, app by app.</p><a href="https://www.techsafety.org/resources-survivors">techsafety.org</a></div>
       <div class="rise"><h3>Cornell Clinic to End Tech Abuse</h3><p>Resources from a clinic that helps survivors find out who has access.</p><a href="https://ceta.tech.cornell.edu/resources">ceta.tech.cornell.edu</a></div>
     </div>
-  </div>
-</section>
-
-<section class="block" id="next" aria-labelledby="next-title">
-  <div class="wrap">
-    <h2 id="next-title">See it before you use it</h2>
-    <ul class="try-list">
-      <li class="rise"><h3>Practice check</h3><p>A made-up person’s settings pages, start to finish, in about two minutes. Nothing of yours is used, and nothing is installed.</p><a class="big" href="/try.html">Start the practice check</a></li>
-      <li class="rise"><h3>Why Spare Key</h3><p>The problem, what leaves the device, how well it works and how it is built, with the test results.</p><a class="big" href="/why.html">Take the two-minute tour</a></li>
-      <li class="rise"><h3>For advocates</h3><p>How to use it in a session with someone, what it sends, and what it cannot tell you.</p><a class="big" href="/advocates.html">Read the advocate guide</a></li>
-    </ul>
   </div>
 </section>
 
@@ -139,7 +126,7 @@ export default function index({ numbers, apk = null, grade = null }) {
       <details><summary>Can I use it on my phone?</summary><p>On Android, yes. The Android app checks the phone itself: which apps can read your screen, your notifications, your texts or your location. The extension runs in Chrome on a computer and checks your accounts. There is no iPhone app; on an iPhone, Apple’s Safety Check does a similar job. The practice check on this site works on any phone.</p></details>
       <details><summary>Is it free?</summary><p>Yes. No sign-in, no account, no payment.</p></details>
       <details><summary>Who made it?</summary><p>One developer, for the #BuildHybridAI 2026 hackathon. It is open source under the Apache-2.0 license. It is not made by Google, Amazon or the National Domestic Violence Hotline.</p></details>
-      <details><summary>How is this different from Google’s Security Checkup or Apple’s Safety Check?</summary><p>Those are made by one company for its own account, and they are built to fix things fast. Spare Key reads across Google, Gmail, Amazon, Chrome and an Android phone in one pass, and it is built around the two rules the field teaches: screenshot before you change anything, and a change can alert the other person. It tells you which changes they would be told about, and it changes nothing itself. Use them together: Spare Key to see and plan, their tools to make each change when the time is right.</p></details>
+      <details><summary>How is this different from Google’s Security Checkup or Apple’s Safety Check?</summary><p>Those check one company’s account and are built to fix things fast. Spare Key reads Google, Gmail, Amazon, Chrome and an Android phone in one pass, changes nothing, and follows the field’s two rules: screenshot before you change anything, and a change can alert the other person. Use them together: Spare Key to see and plan, their tools to make each change when the time is right.</p></details>
       <details><summary>Why can’t a chatbot do this?</summary><p>A chatbot cannot see your settings, and pasting them into one sends the very details that are the danger. We asked a plain chatbot about 30 made-up situations and read every answer: ${grade ? `${grade.totals.document_first.yes} told the person to record their settings before changing anything, and ${grade.totals.unsafe} said something risky, like urging changes right away on someone who was not sure` : 'most did not say to record the settings first'}. Spare Key reads on your device, and every plan starts with the record and warns that a change may be noticed.</p></details>
     </div>
   </div>

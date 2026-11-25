@@ -454,3 +454,17 @@ kbd {
 .findings-record table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .findings-record th, .findings-record td { border: 1px solid #999; padding: 4px 6px; text-align: left; vertical-align: top; }
 @media print { body.printing-record main > *:not(#findings-record) { display: none !important; } }
+
+/* Ticking off the plan: a record made, a change done. The box is the hit target's left edge; the whole row is the label. */
+.tick, .step-list li > .tick { display: grid; grid-template-columns: 24px minmax(0, 1fr); column-gap: 12px; align-items: start; min-height: 44px; padding-block: 10px; cursor: pointer; }
+.tick-box { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--accent); cursor: pointer; }
+.tick-box:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.tick-label { grid-column: 2; }
+.tick-words { grid-column: 2; display: block; margin-top: 2px; color: var(--ink-2); font-size: 15px; }
+.tick.is-done .tick-label { color: var(--ink-2); text-decoration: line-through; text-decoration-thickness: 1px; }
+.tick.is-done .tick-words { color: var(--ink-2); }
+.step-list.ticks { list-style: none; padding-left: 0; }
+.step-list.ticks > li { border-top: 1px solid var(--line); }
+.step-list.ticks > li:first-child { border-top: 0; }
+.code-block > .tick { margin-top: 8px; border-top: 1px solid var(--line); padding-top: 12px; font-weight: 600; }
+.done-line { margin: 12px 0 0; font-weight: 600; color: var(--ink); }

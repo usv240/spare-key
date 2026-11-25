@@ -34,18 +34,24 @@ export function tryPage() {
 export function installPage({ apk = null } = {}) {
   return doc('install.html', 'Get Spare Key', 'How to install Spare Key in Chrome, and on an Android phone.', `
 <h1>Get Spare Key</h1>
-<p class="lead">The Chrome extension checks your accounts, on a computer. The Android app checks the phone itself. Both are free, and neither asks you to sign in.</p>
-<div class="note"><p><strong>No computer, or does this look like a lot?</strong> Install nothing tonight. The <a href="/try.html">practice check</a> works on any phone and shows what the real check looks like. An advocate can do the real one with you: call 1-800-799-7233 or text START to 88788.</p></div>
-<h2>The Chrome extension</h2>
-<div class="note caution"><p><strong>Before you install:</strong> if someone else uses this computer, they may see that the extension is installed. The best place to check is a computer you already use that the other person never touches. A computer that is new to your account, like a friend’s, sends a new sign-in alert to your recovery email and phone, and shows in your list of devices. If the other person can see those, they will know. An advocate can help you choose. If Chrome sync is on, your history, including this site, can show on every computer signed in to the same Chrome profile. (Installed the way described below, the extension itself is not copied to other computers; an extension added from the Chrome Web Store would be.) Library and work computers usually do not allow installing extensions. You can remove Spare Key when you are done.</p></div>
-<h3>Install it</h3>
-<p>Spare Key is not in the Chrome Web Store yet. Until it is, install it this way:</p>
-<ol>
+<p class="lead">Free, with no sign-in. Pick the way that fits tonight.</p>
+<ul class="routes">
+  <li><a href="#chrome"><strong>On a computer you trust</strong><span>The Chrome extension checks your accounts. About 3 minutes to add.</span></a></li>
+  <li><a href="#android"><strong>On an Android phone</strong><span>The app lists every app that could let someone watch the phone.</span></a></li>
+  <li><a href="/phone-check.html"><strong>Only a phone, or not ready to install</strong><span>The step-by-step phone check installs nothing, on iPhone or Android. An advocate can also do the check with you: call 1-800-799-7233 or text START to 88788.</span></a></li>
+</ul>
+<h2 id="chrome">The Chrome extension</h2>
+<div class="note caution"><p><strong>Before you install:</strong> the other person may see the extension if they use this computer. Use one you already use that they never touch, and remove Spare Key when you are done.</p>
+<details><summary>More on picking a computer</summary><p>A computer that is new to your account, like a friend’s, sends a new sign-in alert to your recovery email and phone, and shows in your list of devices. If the other person can see those, they will know. An advocate can help you choose. If Chrome sync is on, your history, including this site, can show on every computer signed in to the same Chrome profile. (Installed the way described below, the extension itself is not copied to other computers; an extension added from the Chrome Web Store would be.) Library and work computers usually do not allow installing extensions.</p></details></div>
+<h3>Add it to Chrome</h3>
+<p>Spare Key is not in the Chrome Web Store yet, so it is added by hand:</p>
+<ol class="install-steps">
   <li>Download <a href="/downloads/spare-key-extension.zip" download><strong>spare-key-extension.zip</strong></a> and unzip it. It holds a folder called <code>spare-key</code>.</li>
-  <li>In Chrome, open <code>chrome://extensions</code> and turn on <strong>Developer mode</strong> (top right).</li>
-  <li>Select <strong>Load unpacked</strong> and choose the <code>spare-key</code> folder.</li>
+  <li>In Chrome, open <code>chrome://extensions</code> and turn on <strong>Developer mode</strong>, top right.</li>
+  <li>Select <strong>Load unpacked</strong> and choose the <code>spare-key</code> folder. Spare Key appears in the list.</li>
   <li>Click the puzzle piece in Chrome’s toolbar, then the key, to open Spare Key beside the page.</li>
 </ol>
+<figure class="install-shot"><img src="/img/install-extensions.png" width="1000" height="420" alt="Chrome’s extensions page: Developer mode turned on at the top right, the Load unpacked button at the top left, and Spare Key in the list of extensions." loading="lazy"><figcaption>Chrome’s own extensions page after steps 2 and 3: Developer mode on, top right; Load unpacked, top left; Spare Key in the list.</figcaption></figure>
 <h3>Gemini Nano</h3>
 <p>For the best reading, Spare Key uses Gemini Nano, a small AI model inside Chrome on your computer. Chrome downloads it the first time a site or extension asks for it, when the computer has enough memory and disk. Without it, Spare Key reads pages with code only and says where that is less complete.</p>
 <h3>Remove it when you are done</h3>

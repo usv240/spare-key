@@ -13,7 +13,7 @@ import { codeClassify, toFinding, displayLabel } from './scan/rules.js';
 // The phone screenshot check (below): not a page the scan opens, so not in the catalogue.
 const SHOT_CHECK = { id: 'screenshot', service: 'phone', label: 'A location app on your phone, from a screenshot', pages: [] };
 import { renderResults, h, put, infoButton } from './ui/results.js';
-import { renderQuestions, renderPlan, readingWords } from './ui/plan.js';
+import { renderQuestions, renderPlan, readingWords, clearPlanProgress } from './ui/plan.js';
 import { useHotlines } from './ui/hotline.js';
 import { privateStringsFrom } from './scan/private.js';
 import { toCloud } from '../../shared/cloud-safe.js';
@@ -51,6 +51,7 @@ async function quickExit() {
   if (exiting) return;
   exiting = true;
   toldText = '';
+  clearPlanProgress();
   scanAbort?.abort();
   document.body.replaceChildren();
   document.documentElement.style.background = '#fff';
@@ -427,6 +428,7 @@ $('check-again').addEventListener('click', () => show('choose', { focus: 'choose
 async function clearAll() {
   reveal.clear();
   toldText = '';
+  clearPlanProgress();
   await chrome.storage.session.remove(['scan', 'sentLog', 'situation', 'plan']);
   announce('Everything from this check was cleared from this computer.');
   show('choose', { focus: 'choose-title' });

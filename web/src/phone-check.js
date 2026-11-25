@@ -7,7 +7,7 @@
 // reader where it does not (most phones). Either way the words are read here and nothing is sent after the page loads.
 import { initInfo, closeInfo, isInfoOpen } from '../../extension/src/ui/info.js';
 import { h, put } from '../../extension/src/ui/results.js';
-import { renderPlan, QUESTIONS, toldBox, readingWords } from '../../extension/src/ui/plan.js';
+import { renderPlan, QUESTIONS, toldBox, readingWords, clearPlanProgress } from '../../extension/src/ui/plan.js';
 import { toldFindings, toldSituation } from '../../shared/told.js';
 import { CODE_TEXT } from '../../shared/findings.js';
 import { readTold } from './told-device.js';
@@ -126,6 +126,7 @@ function clearAll() {
   for (const k of Object.keys(answers)) delete answers[k];
   for (const k of Object.keys(situation)) delete situation[k];
   toldText = '';
+  clearPlanProgress();
   os = null;
   for (const r of document.querySelectorAll('input[name="os"]')) r.checked = false;
   put($('places'));

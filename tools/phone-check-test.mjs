@@ -85,6 +85,10 @@ try {
     } else if (run.os === 'iphone') {
       step('iphone: what the other person sees, from Apple’s own guide, is on the Find My step', /disappear from their Find My/.test(plan.text));
       step('iphone: shared children: a step for their devices', /Your children’s devices/.test(plan.text));
+      // Working through the plan: ticking a record updates "Done so far", and Start over clears the ticks.
+      await page.click('#plan .tick-box[data-kind="record"]');
+      const done = await page.$eval('#plan .done-line', e => e.textContent);
+      step('iphone: ticking a record off updates "Done so far"', /^Done so far: 1 of \d+ recorded/.test(done), done);
     } else {
       step('android: living apart, now a good time: the person can change things now', plan.kinds.includes('change_now'), plan.kinds.join(' > '));
       step('android: an app that may watch the phone comes first, with the note to use another device', plan.titles[0]?.startsWith('An app can read your screen') || /another phone|never had/i.test(plan.text), plan.titles[0]);

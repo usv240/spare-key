@@ -1,17 +1,17 @@
 {
- "at": "2026-11-25T04:53:31.534Z",
+ "at": "2026-11-25T21:47:47.398Z",
  "method": "Flesch-Kincaid grade of p, li, h1-h6, dd, summary, figcaption, label and button text; code, tables, nav and footer left out; vowel-group syllable count",
- "median": 4.3,
+ "median": 4.2,
  "rows": [
   {
    "page": "web/dist/accuracy.html",
-   "words": 1691,
+   "words": 1683,
    "grade": 6.3
   },
   {
    "page": "web/dist/advocates.html",
-   "words": 1050,
-   "grade": 4.3
+   "words": 1267,
+   "grade": 4.4
   },
   {
    "page": "web/dist/api.html",
@@ -30,13 +30,13 @@
   },
   {
    "page": "web/dist/index.html",
-   "words": 1490,
-   "grade": 4.3
+   "words": 1257,
+   "grade": 4.1
   },
   {
    "page": "web/dist/install.html",
-   "words": 803,
-   "grade": 4.7
+   "words": 1049,
+   "grade": 5.1
   },
   {
    "page": "web/dist/panel-demo.html",
@@ -44,9 +44,14 @@
    "grade": 3
   },
   {
+   "page": "web/dist/phone-check.html",
+   "words": 154,
+   "grade": 2.1
+  },
+  {
    "page": "web/dist/plant.html",
-   "words": 329,
-   "grade": 4.3
+   "words": 314,
+   "grade": 4.2
   },
   {
    "page": "web/dist/privacy.html",
@@ -70,13 +75,13 @@
   },
   {
    "page": "web/dist/why.html",
-   "words": 1222,
-   "grade": 5.2
+   "words": 1542,
+   "grade": 5.5
   },
   {
    "page": "extension/src/panel.html",
-   "words": 364,
-   "grade": 2.3
+   "words": 488,
+   "grade": 2.8
   }
  ]
 }

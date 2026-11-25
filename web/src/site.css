@@ -216,7 +216,7 @@ td.num, th.num { text-align: right; white-space: nowrap; }
 .paper img { border-radius: 4px; }
 
 /* ---------- Help ---------- */
-.help-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+.help-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; margin-top: 24px; }
 .help-grid a.call { display: block; font-size: 26px; font-weight: 700; color: var(--ink); text-decoration: none; }
 
 /* ---------- Questions: an accordion with space between rows, no lines ---------- */
@@ -250,6 +250,20 @@ dl.glossary dd { margin: 0; color: var(--ink-2); }
 .doc li { margin: 6px 0; }
 .note { padding: 16px 18px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); }
 .note.caution { background: var(--caution-bg); border-color: color-mix(in srgb, var(--caution) 35%, transparent); }
+.note details { margin-top: 8px; }
+.note summary { display: inline-flex; align-items: center; min-height: 44px; cursor: pointer; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.note details p { margin: 4px 0 0; }
+/* Three ways to start, as one list of large links: the whole row is the target. */
+.routes, .doc .routes { list-style: none; margin: 24px 0 8px; padding: 0; border-top: 1px solid var(--line); }
+.routes li, .doc .routes li { margin: 0; border-bottom: 1px solid var(--line); }
+.routes a { display: grid; gap: 4px; padding: 16px 4px; color: var(--ink); text-decoration: none; }
+.routes a strong { font-size: 19px; color: var(--accent); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+.routes a span { color: var(--ink-2); max-width: 62ch; }
+.routes a:hover strong { text-decoration-thickness: 2px; }
+.routes a:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+.install-shot { margin: 20px 0 8px; }
+.install-shot img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 10px; }
+.install-shot figcaption { margin-top: 10px; font-size: 15px; color: var(--ink-2); }
 
 /* ---------- The "i" button: popover on desktop, sheet on phones ---------- */
 .info { position: relative; display: inline-grid; place-items: center; flex: none; width: 28px; height: 28px; padding: 0; background: none; border: 0; border-radius: 50%; color: var(--ink-2); cursor: pointer; vertical-align: middle; }
@@ -317,6 +331,12 @@ dl.glossary dd { margin: 0; color: var(--ink-2); }
   /* On a phone a working panel inside the page traps the scroll: show a picture of it that opens the practice check. */
   .panel-frame iframe { display: none; }
   .panel-still, .narrow-only { display: block; }
+  /* On a phone the product comes right after the two buttons, before the small print. */
+  .hero .wrap { gap: 0; }
+  .hero-copy { display: contents; }
+  .hero h1, .hero .lead, .hero-actions { order: 1; }
+  .hero .panel-frame { order: 2; margin-top: 32px; }
+  .hero-note { order: 3; }
   .wide-only { display: none; }
   .try-grid .panel-frame iframe { display: block; height: 640px; }
   .lead { font-size: 18px; }
