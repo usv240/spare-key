@@ -314,7 +314,8 @@ details, 2-Step Verification); Google signed-in devices read, Apple devices thro
 media sign-ins are next); the phone plan through the guided check and the Google family group read; spyware through
 the Android app's access list; Chrome extensions read; a rooted phone through three signs the Android app reads (a
 root tool on the phone, a rooting app, Android built with test keys), each tested on made-up phone facts in
-`tests/rooted.test.mjs`. None proves rooting, and a hidden root shows none of them, so the result says "may be". Freed and others, *A Stalker's
+`tests/rooted.test.mjs`. The built app ran it on the Android emulator (release keys, no root tool) on November 25 and
+raised nothing, with the other 34 end-to-end checks passing. None proves rooting, and a hidden root shows none of them, so the result says "may be". Freed and others, *A Stalker's
 Paradise*, CHI 2018: 39 survivors and 50 professionals, with "numerous (n=47) accounts" of location tracking.
 
 In your own words (`tools/told-eval.mjs`, November 25). Three sets of statements a person might type, with made-up
