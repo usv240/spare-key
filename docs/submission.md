@@ -143,8 +143,9 @@ Hosting, Chrome Extensions, Kotlin, Jetpack Compose.
 3. **The extension:** download https://spare-key-app.web.app/downloads/spare-key-extension.zip, unzip it, open
    `chrome://extensions`, turn on Developer mode, Load unpacked, choose the `spare-key` folder, then click the puzzle
    piece and the key. Choose **Try a practice check first** to run it on the made-up pages.
-4. **The Android app (optional):** build it from `android/` (README, "Install") and choose **Try a practice phone
-   first**.
+4. **The Android app (optional):** on an Android phone, download the signed app from
+   https://github.com/usv240/spare-key/releases/download/android-v0.1.0/spare-key-android.apk, allow the install for that one file, and choose
+   **Try a practice phone first**.
 
 ## Code shared with the author's other entry
 

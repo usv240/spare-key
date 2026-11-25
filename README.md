@@ -154,7 +154,9 @@ Android app.
 2. In Chrome, open `chrome://extensions`, turn on Developer mode, select **Load unpacked**, and choose `spare-key`.
 3. Click the puzzle piece in Chrome's toolbar, then the key, to open the side panel.
 
-The Android app (Android 8 or newer; it asks for one thing, the list of apps, and keeps nothing):
+The Android app (Android 8 or newer; it asks for one thing, the list of apps, and keeps nothing): on the phone,
+download the signed [spare-key-android.apk](https://github.com/usv240/spare-key/releases/download/android-v0.1.0/spare-key-android.apk) and allow
+the install for that one file. To build it yourself:
 
 ```
 npm ci && node build.mjs            # bundles shared/ into android/app/src/main/assets/engine.js

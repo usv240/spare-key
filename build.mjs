@@ -60,14 +60,18 @@ await cp('extension/icons/icon-32.png', 'web/dist/icon-32.png');
   const readJson = async f => { try { return JSON.parse(await readFile(f, 'utf8')); } catch { return null; } };
   // The Android app's download is offered only when a signed release build is there to offer. A debug build is never
   // put on the site: it can be read by any computer the phone is plugged into.
+  // Firebase Hosting on the Spark plan refuses executable files, so the signed app lives on a GitHub release. The site
+  // offers it only when that link answers (the repository must be public), so a visitor never meets a broken download.
   let apk = null;
   const RELEASE_APK = 'android/app/build/outputs/apk/release/app-release.apk';
+  const APK_URL = 'https://github.com/usv240/spare-key/releases/download/android-v0.1.0/spare-key-android.apk';
   if (existsSync(RELEASE_APK)) {
-    await mkdir('web/dist/downloads', { recursive: true });
-    await cp(RELEASE_APK, 'web/dist/downloads/spare-key-android.apk');
+    const live = await fetch(APK_URL, { method: 'HEAD', redirect: 'follow' }).then(r => r.ok).catch(() => false);
     const gradle = await readFile('android/app/build.gradle.kts', 'utf8');
-    apk = { mb: Math.round((await stat(RELEASE_APK)).size / 1e6), version: (gradle.match(/versionName = "([^"]+)"/) || [])[1] || '' };
-    console.log(`Android app on the site: ${apk.mb} MB, version ${apk.version}`);
+    if (live) {
+      apk = { url: APK_URL, mb: Math.round((await stat(RELEASE_APK)).size / 1e6), version: (gradle.match(/versionName = "([^"]+)"/) || [])[1] || '' };
+      console.log(`Android app on the site: ${apk.mb} MB, version ${apk.version}, from the GitHub release`);
+    } else console.log('Android app: the GitHub release download does not answer yet (is the repository public?), so the site shows the check by hand');
   }
   const { default: index } = await import('./web/src/pages/index.mjs');
   const { default: why } = await import('./web/src/pages/why.mjs');

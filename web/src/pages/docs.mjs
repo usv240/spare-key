@@ -67,16 +67,15 @@ export function installPage({ apk = null } = {}) {
 <div class="note caution"><p><strong>Before you install:</strong> if an app on the phone is watching it, that app may see that Spare Key was installed and opened. A phone the other person has never had is a better place to plan. Quick exit is at the top of every screen, and pressing back twice quickly does the same.</p></div>
 <h3>Install it</h3>
 ${apk ? `<ol>
-  <li>On the phone, download <a href="/downloads/spare-key-android.apk" download><strong>spare-key-android.apk</strong></a> (${apk.mb} MB, version ${apk.version}).</li>
+  <li>On the phone, download <a href="${apk.url}"><strong>spare-key-android.apk</strong></a> (${apk.mb} MB, version ${apk.version}).</li>
   <li>Open the file. Android asks whether to allow installing from your browser: allow it for this one file.</li>
   <li>Open Spare Key and choose <strong>Check this phone</strong>, or <strong>Try a practice phone first</strong>.</li>
 </ol>
-<p class="muted">It is not in the Play Store yet. An app that reads the list of installed apps needs a review there that takes longer than this hackathon.</p>` : `<p>A signed download is on its way. In the meantime, the checks below can be done by hand, and developers can build the app from the source:</p>
-<ol>
+<p class="muted">It is not in the Play Store yet. An app that reads the list of installed apps needs a review there that takes longer than this hackathon.</p>` : `<p>The download will be here shortly. Until then, the <a href="/phone-check.html">step-by-step phone check</a> covers the same places, by hand, in about 10 minutes.</p>
+<details class="note"><summary>For developers: build it from the source</summary><ol>
   <li>Get the code from the <a href="https://github.com/usv240/spare-key">repository</a> and run <code>npm ci</code>, then <code>node build.mjs</code>. This bundles the shared rules for the phone.</li>
   <li>In the <code>android</code> folder, run <code>./gradlew assembleRelease</code> with your own signing key, or open the folder in Android Studio and run it on a phone.</li>
-  <li>Open Spare Key and choose <strong>Check this phone</strong>, or <strong>Try a practice phone first</strong>.</li>
-</ol>`}
+</ol></details>`}
 <h3 id="android-by-hand">Check an Android phone by hand, in about 10 minutes</h3>
 <p>The <a href="/phone-check.html">step-by-step phone check</a> walks through these places one at a time, for Android or iPhone, and makes a plan from your answers.</p>
 <p>These are the same places the app reads. Menu names differ a little between phones; the Settings search box finds each one. Write down any app you do not know, on paper or with another phone, and leave it as it is for now.</p>
