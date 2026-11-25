@@ -65,8 +65,16 @@ if (NANO) {
     }
     console.log();
     const ran = nanoRaw.filter(x => x.how === 'nano').length;
-    nano = { ...score(nanoRaw.map(x => x.answer)), ranOnNano: ran, medianMs: nanoRaw.filter(x => x.ms).map(x => x.ms).sort((a, b) => a - b)[Math.floor(ran / 2)] ?? null };
-    console.log('Gemini Nano:', JSON.stringify({ ...nano, misses: nano.misses.length }));
+    // Only a run where Gemini Nano answered every statement is scored as Gemini Nano: a statement the keyword reader
+    // answered instead would make the two look alike.
+    if (ran < cases.length) {
+      nano = { ranOnNano: ran, of: cases.length, notScored: 'Gemini Nano did not answer every statement; see nanoRaw for the reasons', errors: [...new Set(nanoRaw.map(x => x.nanoError).filter(Boolean))] };
+      console.log(`Gemini Nano answered ${ran} of ${cases.length}: not scored.`, nano.errors.join(' | '));
+    } else {
+      const ms = nanoRaw.map(x => x.ms).sort((a, b) => a - b);
+      nano = { ...score(nanoRaw.map(x => x.answer)), ranOnNano: ran, medianMs: ms[Math.floor(ms.length / 2)] };
+      console.log('Gemini Nano:', JSON.stringify({ ...nano, misses: nano.misses.length }));
+    }
   } finally { await browser.close(); }
 }
 
