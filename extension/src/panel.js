@@ -13,7 +13,7 @@ import { codeClassify, toFinding, displayLabel } from './scan/rules.js';
 // The phone screenshot check (below): not a page the scan opens, so not in the catalogue.
 const SHOT_CHECK = { id: 'screenshot', service: 'phone', label: 'A location app on your phone, from a screenshot', pages: [] };
 import { renderResults, h, put, infoButton } from './ui/results.js';
-import { renderQuestions, renderPlan } from './ui/plan.js';
+import { renderQuestions, renderPlan, readingWords } from './ui/plan.js';
 import { useHotlines } from './ui/hotline.js';
 import { privateStringsFrom } from './scan/private.js';
 import { toCloud } from '../../shared/cloud-safe.js';
@@ -505,13 +505,15 @@ async function makePlan() {
   // "Anything else you know?": read on this computer (Gemini Nano, or the keyword reader), into codes and answers. It can
   // add a step and fill a question the person left blank; it never takes a step away or changes an answer they gave.
   let told = [];
-  let toldValues = {};
+  let toldValues = {}, toldBy = null;
   if (toldText.trim()) {
-    const r = await offscreen('sk:told', { text: toldText }).catch(() => null);
+    const done = readingWords();
+    const r = await offscreen('sk:told', { text: toldText }).catch(() => null).finally(done);
     if (r?.answer) {
       const words = Object.fromEntries(Object.entries(CODE_TEXT).map(([c, t]) => [c, t[0]]));
       told = toldFindings(r.answer, { existing: scan.findings, howFound: r.how === 'nano' ? 'nano' : 'reader', words });
       toldValues = toldSituation(r.answer, situation.values);
+      toldBy = r.how === 'nano' ? 'nano' : 'reader';
     }
   }
   const values = { ...SITUATION_DEFAULTS, ...toldValues, ...situation.values };
@@ -526,7 +528,7 @@ async function makePlan() {
   const freshDays = (await offscreen('sk:fresh-days').catch(() => ({})))?.freshDays ?? 45;
   const draw = (result, source, extra = {}) => {
     lastDraw = { result, source, extra, byRef, freshDays, scan };
-    return renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, freshDays, freshness, onCheckFresh, ...planHelpers(scan), onOpen: url => chrome.tabs.create({ url }), ...extra });
+    return renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, toldBy, freshDays, freshness, onCheckFresh, ...planHelpers(scan), onOpen: url => chrome.tabs.create({ url }), ...extra });
   };
   draw(codeResult, 'code', { cloudNote: cloudOn ? 'Asking Gemini in the cloud to order this for your situation. It sees finding types only.' : '' });
   $('plan-title')?.focus({ preventScroll: true });

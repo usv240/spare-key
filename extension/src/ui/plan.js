@@ -28,7 +28,24 @@ export function toldBox({ text = '', onTold, where = 'this computer' }) {
   return h('div', { class: 'question told' },
     h('label', { for: 'told-text', class: 'told-label', text: 'Anything else you know? (optional)' }),
     h('p', { id: 'told-help', class: 'muted', text: `For example: “he bought this phone” or “we are on his phone plan.” Your words stay on ${where}. Gemini Nano reads them here, or Spare Key’s own code if Nano is not ready, and only what they point to is used.` }),
-    box);
+    box,
+    h('p', { id: 'told-status', class: 'told-status', role: 'status' }));
+}
+
+/**
+ * While the typed words are read (Gemini Nano takes about 3 seconds): "Make my plan" says so and cannot be pressed
+ * twice, and a status line tells a screen reader. Returns a function that puts both back.
+ */
+export function readingWords() {
+  const button = document.getElementById('make-plan');
+  const status = document.getElementById('told-status');
+  const was = button?.textContent;
+  if (button) { button.disabled = true; button.setAttribute('aria-busy', 'true'); button.textContent = 'Reading what you typed'; }
+  if (status) status.textContent = 'Reading what you typed, on this device. Nothing is sent.';
+  return () => {
+    if (button) { button.disabled = false; button.removeAttribute('aria-busy'); button.textContent = was; }
+    if (status) status.textContent = '';
+  };
 }
 
 export function renderQuestions(root, { values, share, cloudOn, onChange, onMake, told = null }) {
@@ -73,7 +90,7 @@ const WHERE = {
  * The plan. `plan` uses local refs. `byRef` maps a local ref to its finding; `library` maps code to entry.
  * `source` is 'code', 'device' or 'cloud'; `fired` lists the safety rules that changed it; `onOpen(url)` opens a setting.
  */
-export function renderPlan(root, { plan, byRef, library, source, model, calls = null, fired = [], cloudNote = '', voices = null, freshDays = 45, freshness = {}, onCheckFresh = null, simpler = {}, onSimpler = null, onOpenCheck = null, checkLabels = {}, onOpen }) {
+export function renderPlan(root, { plan, byRef, library, source, model, calls = null, fired = [], cloudNote = '', voices = null, freshDays = 45, freshness = {}, onCheckFresh = null, simpler = {}, onSimpler = null, onOpenCheck = null, checkLabels = {}, toldBy = null, onOpen }) {
   const ctx = { byRef, library, onOpen, freshDays, freshness, onCheckFresh, simpler, onSimpler, onOpenCheck, checkLabels, phoneOnly: [...byRef.values()].every(f => f.service === 'phone') };
   const acts = plan.actions;
   const docs = acts.filter(a => a.action === 'document');
@@ -81,7 +98,11 @@ export function renderPlan(root, { plan, byRef, library, source, model, calls = 
   const nows = acts.filter(a => a.action === 'change_now');
   const waits = acts.filter(a => a.action === 'wait');
   const checks = acts.filter(a => a.action === 'check_manually');
-  const [lead, base] = (WHERE[source] || WHERE.code)(model);
+  const [lead, where] = (WHERE[source] || WHERE.code)(model);
+  // Who read what the person typed. When it was Gemini Nano, "with no AI" would no longer be true.
+  const base = toldBy === 'nano'
+    ? `${where.replace(/, with no AI(: you did the reading, so no model was needed)?\./, '.')} Gemini Nano read what you typed, on this device, and could only add steps.`
+    : toldBy === 'reader' ? `${where} Spare Key’s code read what you typed, on this device.` : where;
   const times = n => (n === 1 ? 'once' : `${n} times`);
   const tech = source === 'cloud' && calls
     ? `${base} While ordering it, Gemini read the steps library ${times(calls.get_steps)}, asked this computer ${calls.ask_device} ${calls.ask_device === 1 ? 'question' : 'questions'} and asked you ${calls.ask_user}. Each answer was yes, no or not sure.${calls.nano_answered ? ` Gemini Nano answered ${calls.nano_answered} of this computer's questions by reading the entry here; only its yes or no went back.` : ''}`

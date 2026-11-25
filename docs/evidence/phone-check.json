@@ -1,8 +1,8 @@
 {
- "at": "2026-11-25T19:26:19.744Z",
+ "at": "2026-11-25T20:36:34.193Z",
  "tool": "node tools/phone-check-test.mjs",
- "passed": 22,
- "of": 22,
+ "passed": 24,
+ "of": 24,
  "results": [
   {
    "name": "iphone: the plan starts with the record, then an advocate",
@@ -108,6 +108,16 @@
    "name": "told: the typed words are not in the plan",
    "ok": true,
    "note": ""
+  },
+  {
+   "name": "told: after reading, \"Make my plan\" works again and the reading line is cleared",
+   "ok": true,
+   "note": "{\"disabled\":false,\"busy\":null,\"status\":\"\"}"
+  },
+  {
+   "name": "told: \"Why this order\" says who read the typed words",
+   "ok": true,
+   "note": "Made in this page by Spare Key’s rules, the same code the extension and the Android app use, with no AI: you did the reading, so no model was needed. Spare Key’s code read what you typed, on this devi"
   },
   {
    "name": "iphone: nothing was sent after the page loaded",

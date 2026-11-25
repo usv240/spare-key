@@ -56,6 +56,11 @@ try {
       step('told: the typed words add a step for the device they gave', /gave you or set up a device/i.test(plan.text), plan.titles.join('; '));
       step('told: "we still live together" fills the question left blank, so changes they may notice wait', !plan.kinds.includes('change_now'), plan.kinds.join(' > '));
       step('told: the typed words are not in the plan', !plan.text.includes('He bought me this phone'));
+      const button = await page.evaluate(() => ({ disabled: document.querySelector('#make-plan').disabled, busy: document.querySelector('#make-plan').getAttribute('aria-busy'), status: document.querySelector('#told-status')?.textContent }));
+      step('told: after reading, "Make my plan" works again and the reading line is cleared', !button.disabled && !button.busy && !button.status, JSON.stringify(button));
+      await page.click('[data-info="why-order"]');
+      const sheet = await page.$eval('#sheet-tech', e => e.textContent);
+      step('told: "Why this order" says who read the typed words', /code read what you typed, on this device/.test(sheet), sheet);
     } else if (run.os === 'iphone') {
       step('iphone: what the other person sees, from Apple’s own guide, is on the Find My step', /disappear from their Find My/.test(plan.text));
       step('iphone: shared children: a step for their devices', /Your children’s devices/.test(plan.text));

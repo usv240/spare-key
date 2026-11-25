@@ -5,7 +5,7 @@
 // makes no network request after it loads: no model is needed, because the person already did the reading.
 import { initInfo, closeInfo, isInfoOpen } from '../../extension/src/ui/info.js';
 import { h, put } from '../../extension/src/ui/results.js';
-import { renderPlan, QUESTIONS, toldBox } from '../../extension/src/ui/plan.js';
+import { renderPlan, QUESTIONS, toldBox, readingWords } from '../../extension/src/ui/plan.js';
 import { toldFindings, toldSituation } from '../../shared/told.js';
 import { CODE_TEXT } from '../../shared/findings.js';
 import { readTold } from './told-device.js';
@@ -97,19 +97,21 @@ async function makePlan() {
   const found = findings();
   // "Anything else you know?": read here (Gemini Nano on this device, or the keyword reader). It can add a step and fill a
   // question left blank, never take a step away.
-  let told = [], toldValues = {};
+  let told = [], toldValues = {}, toldBy = null;
   if (toldText.trim()) {
-    const r = await readTold(toldText);
+    const done = readingWords();
+    const r = await readTold(toldText).finally(done);
     const words = Object.fromEntries(Object.entries(CODE_TEXT).map(([c, t]) => [c, t[0]]));
     told = toldFindings(r.answer, { existing: found, howFound: r.how === 'nano' ? 'nano' : 'reader', words });
     toldValues = toldSituation(r.answer, situation);
+    toldBy = r.how === 'nano' ? 'nano' : 'reader';
   }
   const fs = [...found, ...told];
   const notChecked = ['other_services'];
   const ctx = { findings: fs, situation: { ...toldValues, ...situation }, notChecked, library: LIBRARY };
   const { plan, fired } = applyInvariants(buildPlan(ctx), ctx);
   const byRef = new Map(fs.map(f => [f.ref, f]));
-  renderPlan($('plan'), { plan, fired, byRef, library: LIBRARY, source: 'page', onOpen: () => {} });
+  renderPlan($('plan'), { plan, fired, byRef, library: LIBRARY, source: 'page', toldBy, onOpen: () => {} });
   initInfo($('plan'));
   if (!fs.length) $('plan').prepend(h('p', { class: 'notice', text: 'You did not mark anything in these places. That is useful to know, and it covers only these places: other apps, accounts and devices can still share. The guides at the end show where else to look.' }));
   $('screen-ask').hidden = true;
