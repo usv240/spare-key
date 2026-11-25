@@ -55,6 +55,7 @@ export const CODES = {
   'phone.app.usage_access': { group: 'phone', check: 'phone.apps' },
   'phone.app.location_always': { group: 'location', check: 'phone.apps' },
   'phone.usb_debugging': { group: 'phone', check: 'phone.settings' },
+  'phone.rooted': { group: 'phone', check: 'phone.settings' },
   // The guided phone check on the website (web/src/phone-check.js): the person answers, on any phone; nothing is read.
   'apple.findmy.sharing': { group: 'location', check: 'phone.guided' },
   'apple.family.organizer_other': { group: 'account', check: 'phone.guided' },
@@ -125,6 +126,7 @@ export const CODE_TEXT = {
   'phone.app.usage_access': ['An app can see which apps you use', 'This app can see which apps you open and for how long.'],
   'phone.app.location_always': ['An app can see your location all the time', 'This app can see where you are even when you are not using it.'],
   'phone.usb_debugging': ['USB debugging is on', 'A computer connected to this phone by cable can install and control apps on it.'],
+  'phone.rooted': ['This phone may be rooted', 'Rooting removes the limits Android puts on apps. An app on a rooted phone can hide from checks like this one.'],
   'apple.findmy.sharing': ['Someone can see your location in Find My', 'This person can see where your iPhone is.'],
   'apple.family.organizer_other': ['Someone else runs your Apple family group', 'The organizer can see what the family buys, and may see your location and screen time.'],
   'apple.account.device_other': ['A device you do not know is signed in to your Apple Account', 'Whoever has this device may see your messages, photos and where you are.'],

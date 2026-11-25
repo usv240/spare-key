@@ -24,7 +24,8 @@ export const ALERTS_TO = new Set(['google.recovery.email_other', 'google.recover
 export const ALERTED = new Set(['google.2sv.other_device', 'google.devices.other']);
 export const ALERT_NOTE = 'Google sends security alerts to your recovery email and phone. Someone else may hold one of yours, so they could be told about this change. Deal with the recovery email and phone first.';
 // An app that can watch the phone sees what is done on that phone, including changes to accounts (the phone check).
-export const PHONE_WATCH = new Set(['phone.app.control', 'phone.app.accessibility', 'phone.app.device_admin', 'phone.app.notifications', 'phone.app.messages']);
+// A rooted phone counts too: an app on it can watch the phone and hide from this check.
+export const PHONE_WATCH = new Set(['phone.app.control', 'phone.app.accessibility', 'phone.app.device_admin', 'phone.app.notifications', 'phone.app.messages', 'phone.rooted']);
 export const PHONE_NOTE = 'An app on your phone may be able to see what you do on it. Make other changes from a phone or computer the other person has never had.';
 export const PHONE_CALL_NOTE = 'An app on this phone may be able to see your calls and texts. Call or text from another phone if you can.';
 // Rule R11 (added November 25, 2026, from a simulated advocate review). When the person lives with the other person, or

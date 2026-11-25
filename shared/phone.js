@@ -15,6 +15,7 @@ export const PHONE_CODES = {
   'phone.app.usage_access': { group: 'phone', check: 'phone.apps' },
   'phone.app.location_always': { group: 'location', check: 'phone.apps' },
   'phone.usb_debugging': { group: 'phone', check: 'phone.settings' },
+  'phone.rooted': { group: 'phone', check: 'phone.settings' },
 };
 export const PHONE_CHECK_IDS = ['phone.apps', 'phone.settings'];
 
@@ -105,6 +106,17 @@ export function phoneFindings(facts, { nano = {}, refStart = 0 } = {}) {
     findings.push({
       ref: `P${++n}`, code: 'phone.usb_debugging', check: 'phone.settings', service: 'phone', group: 'phone',
       label: 'USB debugging is on', detail: 'USB debugging is on. A computer connected to this phone can install and control apps.',
+      howFound: 'reader', confidence: 'high', disagree: false, recency: 'unknown', access: ['account'], ownership: null, openUrl: '',
+    });
+  }
+  // Signs the phone is rooted, read by PhoneScan.kt: a root tool on the phone, a rooting app, or Android built with test
+  // keys. None of them proves it, and a hidden root shows none of them, so the finding says "may be".
+  const ROOT_WORDS = { su_binary: 'a root tool (su) is on the phone', root_app: 'a rooting app is installed', test_keys: 'Android on this phone was not built with the maker’s release keys' };
+  const signs = (facts?.device?.root_signs || []).filter(s => ROOT_WORDS[s]);
+  if (signs.length) {
+    findings.push({
+      ref: `P${++n}`, code: 'phone.rooted', check: 'phone.settings', service: 'phone', group: 'phone',
+      label: 'This phone may be rooted', detail: `Signs: ${signs.map(s => ROOT_WORDS[s]).join('; ')}. An app on a rooted phone can hide from checks like this one, and from the phone’s own settings.`,
       howFound: 'reader', confidence: 'high', disagree: false, recency: 'unknown', access: ['account'], ownership: null, openUrl: '',
     });
   }

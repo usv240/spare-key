@@ -97,7 +97,7 @@ export default function why({ numbers, drift = null, android = null, grade = nul
         <tr><td>A shared family or phone plan</td><td>4</td><td>The phone check asks who holds the phone plan, and the Google family group is read.</td></tr>
         <tr><td>Possible spyware</td><td>3</td><td>The Android app lists every app that holds the access spyware needs.</td></tr>
         <tr><td>Browser extensions the person did not install</td><td>2</td><td>Read: the Chrome extensions that can see every page.</td></tr>
-        <tr><td>A rooted phone</td><td>1</td><td>Next: a rooted-phone check. Today the Android app says that an app can hide on a rooted phone.</td></tr>
+        <tr><td>A rooted phone</td><td>1</td><td>The Android app looks for signs the phone is rooted: a root tool, a rooting app, or Android built with test keys. The plan then treats the phone as watched.</td></tr>
       </tbody>
     </table></div>
     <p class="muted">Source: Havron and others, <a href="https://www.usenix.org/system/files/sec19-havron.pdf">Clinical Computer Security for Victims of Intimate Partner Violence</a>, USENIX Security 2019, Figure 3. In an earlier study by the same group, with 39 survivors and 50 professionals, people described 47 times how an abuser tracked a phone’s location (Freed and others, <a href="https://rist.tech.cornell.edu/papers/stalkers-paradise-intimate.pdf">A Stalker’s Paradise</a>, CHI 2018). Spare Key reads Google location sharing and Android’s always-on location, and the phone check covers Find My, Life360 and tracker alerts.</p>

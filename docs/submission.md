@@ -41,9 +41,10 @@ Spare Key is a free, read-only Chrome extension, an Android app, and a step-by-s
    copy kept on the computer, shows what is gone and anything new. For advocates, a printed record of what was found goes in the case file.
 5. **Quick exit** is on every screen, and nothing is kept unless the person asks.
 
-It covers 5 of the 6 kinds of problem the Cornell and NYU clinic found: signs a password was known (14 clients),
-unknown signed-in devices (12), a shared family or phone plan (4), possible spyware (3) and browser extensions the
-person did not install (2). A rooted-phone check (1) is next. By hand the same check is 13 settings pages on 4 sites
+It looks for all 6 kinds of problem the Cornell and NYU clinic found: signs a password was known (14 clients),
+unknown signed-in devices (12), a shared family or phone plan (4), possible spyware (3), browser extensions the
+person did not install (2) and a rooted phone (1). A phone that may be rooted is treated like one an app is watching:
+it comes first in the plan, and every other step says to use a device the other person never had. By hand the same check is 13 settings pages on 4 sites
 and about an hour of reading official help pages; Spare Key reads the 12 checks in one pass.
 
 ## How we used Firebase AI Logic: the data decides where the model runs
@@ -111,7 +112,7 @@ product more useful and more honest about what each part does.
 ## What's next
 
 - Review by advocates and survivors: the questions are at https://spare-key-app.web.app/advocates.html.
-- A rooted-phone check, and readers for social media sign-ins.
+- Readers for social media sign-ins, and a test of the rooted-phone check on a real rooted phone.
 - A Chrome Web Store listing and a signed Android release.
 
 ## Built with

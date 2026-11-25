@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 7,
   "updated_at": "2026-11-25",
   "note": "who_can_notice is \"unknown\" unless an official help page or the builder’s own test accounts show what the other person sees; unknown is treated exactly like noticeable. notice_source quotes the official page. steps_followed is true only after the builder followed the steps on a test account.",
   "entries": [
@@ -1094,6 +1094,43 @@
       "steps_followed": false,
       "version": 1,
       "what_they_see": "A computer can no longer install or control apps on the phone over a cable or Wi-Fi."
+    },
+    {
+      "code": "phone.rooted",
+      "title": "This phone may be rooted",
+      "what_it_means": "Rooting removes the limits Android puts on apps. On a rooted phone, an app can hide from this check and from the phone's own settings, so the list may not show everything.",
+      "who_can_notice": "unknown",
+      "notice_why": "Undoing root means resetting the phone or putting its software back. If an app on it was sending information to someone, it stops, and they may notice that.",
+      "evidence_first": [
+        "With another phone, take a picture of this result, and of Settings, then About phone."
+      ],
+      "steps": [
+        "Talk to an advocate before changing anything on this phone.",
+        "Save only what you need, like photos, to an account the other person has never had.",
+        "Reset the phone to factory settings: open Settings, then System, then Reset options. A reset may not undo every kind of rooting; the maker or a phone shop can put back the original software.",
+        "Or keep this phone as it is, and use a new phone the other person has never had for anything private."
+      ],
+      "if_not_safe_yet": "Leave it for now, and treat this phone as one the other person can see. Use a phone or computer they have never had for anything private, including this plan. Police can sometimes examine the phone first, which keeps it as evidence. Talk to an advocate about which fits you, and when.",
+      "also_check": [
+        "phone.app.control",
+        "phone.usb_debugging"
+      ],
+      "sources": [
+        {
+          "title": "NNEDV Safety Net: Spyware and stalkerware: phone surveillance",
+          "url": "https://www.techsafety.org/spyware-and-stalkerware-phone-surveillance",
+          "quote": "A rooted or jailbroken phone will be more vulnerable to viruses and malware and make it easier for stalkerware to be installed."
+        },
+        {
+          "title": "Android Help: Reset your Android device to factory settings",
+          "url": "https://support.google.com/android/answer/6088915"
+        }
+      ],
+      "verified_at": "2026-11-25",
+      "verified_how": "NNEDV Safety Net page checked for what rooting allows; Android Help checked for the reset; steps not yet followed on a test phone",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "If an app on the phone was sending them information, it stops after a reset or a new phone."
     },
     {
       "code": "apple.findmy.sharing",

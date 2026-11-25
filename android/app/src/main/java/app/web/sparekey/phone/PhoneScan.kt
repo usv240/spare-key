@@ -28,6 +28,12 @@ import org.json.JSONObject
 object PhoneScan {
     data class Result(val facts: JSONObject, val notRead: List<String>)
 
+    // Where a root tool usually sits, and the apps that root a phone or manage root.
+    private val ROOT_PATHS = listOf("/system/bin/su", "/system/xbin/su", "/sbin/su", "/su/bin/su", "/system/sbin/su", "/vendor/bin/su",
+        "/data/local/su", "/data/local/bin/su", "/data/local/xbin/su", "/system/app/Superuser.apk")
+    private val ROOT_APPS = setOf("com.topjohnwu.magisk", "io.github.huskydg.magisk", "me.weishu.kernelsu", "eu.chainfire.supersu",
+        "com.noshufou.android.su", "com.koushikdutta.superuser", "com.thirdparty.superuser", "com.kingroot.kinguser", "com.kingo.root")
+
     fun read(context: Context): Result {
         val pm = context.packageManager
         val notRead = ArrayList<String>()
@@ -104,6 +110,15 @@ object PhoneScan {
         // listed as not checked, with how to look at it, rather than shown as off.
         if (Build.VERSION.SDK_INT >= 37) notRead += "phone.settings"
         else try { device.put("usb_debugging", Settings.Global.getInt(context.contentResolver, Settings.Global.ADB_ENABLED, 0) == 1) } catch (e: Throwable) { notRead += "phone.settings" }
+        // Signs the phone is rooted. Each is a plain check of the phone itself, and none proves it: a root that is
+        // hidden shows none of them, which is why the results say "may be" and the plan treats the phone as watched.
+        val rootSigns = JSONArray()
+        try {
+            if (ROOT_PATHS.any { java.io.File(it).exists() }) rootSigns.put("su_binary")
+        } catch (e: Throwable) { /* not readable: no sign */ }
+        if (installed.any { it.packageName in ROOT_APPS }) rootSigns.put("root_app")
+        if (Build.TAGS?.contains("test-keys") == true) rootSigns.put("test_keys")
+        device.put("root_signs", rootSigns)
         device.put("android", Build.VERSION.RELEASE).put("sdk", Build.VERSION.SDK_INT)
 
         return Result(JSONObject().put("apps", apps).put("device", device), notRead)

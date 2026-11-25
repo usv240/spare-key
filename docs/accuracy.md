@@ -312,7 +312,9 @@ shared family or phone plan 4, potential spyware 3, rooted device 1; the text ad
 not install, 2. Spare Key: password compromise, through what a known password leads to (signed-in devices, recovery
 details, 2-Step Verification); Google signed-in devices read, Apple devices through the guided phone check (social
 media sign-ins are next); the phone plan through the guided check and the Google family group read; spyware through
-the Android app's access list; Chrome extensions read. Next: a rooted-phone check. Freed and others, *A Stalker's
+the Android app's access list; Chrome extensions read; a rooted phone through three signs the Android app reads (a
+root tool on the phone, a rooting app, Android built with test keys), each tested on made-up phone facts in
+`tests/rooted.test.mjs`. None proves rooting, and a hidden root shows none of them, so the result says "may be". Freed and others, *A Stalker's
 Paradise*, CHI 2018: 39 survivors and 50 professionals, with "numerous (n=47) accounts" of location tracking.
 
 Effort by hand (`tools/effort.mjs`, `docs/evidence/effort.json`): 13 settings pages on 4 sites from the check

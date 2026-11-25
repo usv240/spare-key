@@ -103,10 +103,10 @@ The last backup never needs the cloud.
 From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved runs in [docs/evidence/](docs/evidence/).
 
 - **Against what real clinics found:** a Cornell and NYU team checked 44 survivors' phones and accounts by hand and
-  found a real risk for 23 (Havron and others, USENIX Security 2019, Figure 3). Spare Key looks for 5 of the 6 kinds
+  found a real risk for 23 (Havron and others, USENIX Security 2019, Figure 3). Spare Key looks for all 6 kinds
   of problem they found: signs a password was known (14 clients), unknown signed-in devices (12), a shared family or
-  phone plan (4), possible spyware (3) and browser extensions the person did not install (2). Next: a rooted-phone
-  check (1).
+  phone plan (4), possible spyware (3), browser extensions the person did not install (2) and a rooted phone (1). The
+  rooted-phone check is tested on made-up phone facts; a real rooted phone is the next test.
 - **Effort saved:** by hand, the same check is 13 settings pages on 4 sites and 18 official help pages (12,640 words
   in the 15 that could be counted, about an hour of reading). Spare Key reads the 12 checks in one pass, 13 seconds on
   the practice pages ([evidence](docs/evidence/effort.json), `tools/effort.mjs`).
