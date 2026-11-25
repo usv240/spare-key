@@ -92,7 +92,7 @@ The last backup never needs the cloud.
 |---|---|
 | Ordering the plan | Template 1, template 2 on a second model, the direct call to two models, then the plan made by code, which is on screen before any of them answer |
 | Gemini Nano on the computer | Nano, then code's own reader. A page neither can read is listed as not checked |
-| Gemini Nano on the phone | Nano 4 Fast, Nano 4 Full, then the phone's own Nano (on the builder's phone that is Nano 4 Full), each asked one tiny question first so a model still downloading is skipped, then code's sorting (a Remote Config list) |
+| Gemini Nano on the phone | Nano 4 Fast, Nano 4 Full, then the phone's own Nano (on the builder's phone that is Nano 4 Full), each asked one tiny question first so a model that does not answer yet is skipped, then code's sorting (a Remote Config list) |
 | Reading a settings page | A reader fixed through Remote Config, the bundled reader, Gemini Nano, then "Not checked" with the page to check by hand |
 | The rules engine on Android | Jetpack's JavaScript sandbox, then the same file in a locked-down hidden WebView. Both gave the same result on a real phone: 72 apps read, 13 listed, the same 7-step plan |
 | App Check | The bridge page on spare-key-app.web.app, a fresh copy, then spare-key-app.firebaseapp.com; with no token, the plan made by code |
@@ -103,11 +103,13 @@ The last backup never needs the cloud.
 
 From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved runs in [docs/evidence/](docs/evidence/).
 
-- **Against what real clinics found:** a Cornell and NYU team checked 44 survivors' phones and accounts by hand and
-  found a real risk for 23 (Havron and others, USENIX Security 2019, Figure 3). Spare Key looks for all 6 kinds
-  of problem they found: signs a password was known (14 clients), unknown signed-in devices (12), a shared family or
-  phone plan (4), possible spyware (3), browser extensions the person did not install (2) and a rooted phone (1). The
-  rooted-phone check is tested on made-up phone facts; a real rooted phone is the next test.
+- **Against what real clinics found:** a Cornell and NYU team checked 44 survivors' phones and accounts in person, by
+  hand and with a spyware scanner, and found a real risk for 23 (Havron and others, USENIX Security 2019, Figure 3).
+  Spare Key has a check for each of the 6 kinds of problem they found, some in full and some in part: unknown
+  signed-in devices (12 clients; Google read, Apple through the guided phone check, social media next), signs a
+  password was known (14; through what a known password leads to: signed-in devices, recovery details, 2-Step
+  Verification), a shared family or phone plan (4), possible spyware (3; Android), browser extensions the person did
+  not install (2) and a rooted phone (1; Android, tested on made-up phone facts).
 - **In your own words:** a box where the person types what no settings page shows ("he bought this phone", "we're on
   his plan"). On 60 statements written by an agent that never saw the code, the keyword reader found 34 of 52 ways in
   with 2 wrong, and 39 of 60 statements fully right; Gemini Nano's run on the same set is next
@@ -132,10 +134,10 @@ From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved
   ([evidence](docs/evidence/android-e2e.json), [network](docs/evidence/android-net.json)). On the builder's own
   Android 17 phone, Gemini Nano read 13 of 13 listed apps in 7.5 to 10 s ([evidence](docs/evidence/android-real.json)),
   and Android's own AICore record shows those calls ran on Gemini Nano 4 (nano-v4-full): 51 finished calls, a median of
-  0.7 s each ([evidence](docs/evidence/aicore-record.json)). In the latest run the two Nano 4 previews were still
-  downloading, so Spare Key skipped them and Nano 4 Full sorted all 13 apps in 9.6 s; both plan templates answered
-  "high demand" and the direct call ordered the plan.
-- **Phone check:** 14 of 14 browser checks, including that the page sends nothing after it loads.
+  0.7 s each ([evidence](docs/evidence/aicore-record.json)). In the latest run the two Nano 4 previews were listed
+  but did not answer (AICore: not on this phone yet), so Spare Key skipped them and Nano 4 Full sorted all 13 apps in
+  9.6 s; both plan templates returned a server error ("high demand") and the direct call ordered the plan.
+- **Phone check:** 22 of 22 browser checks, including the typed-words box, including that the page sends nothing after it loads.
 - **Accessibility and reading level:** 78 axe runs with 0 issues; median reading grade 4.3.
 
 Next: review by advocates and survivors, planted ways in on real test accounts, and real stalkerware samples for the

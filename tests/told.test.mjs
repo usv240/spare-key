@@ -29,7 +29,7 @@ test('told findings only add: a code already found is not added again, and nothi
 });
 
 test('words never override an answer the person gave', () => {
-  assert.deepEqual(toldSituation({ codes: [], living: 'together', children_shared: 'no' }, { living: 'apart' }), { children_shared: 'no' });
+  assert.deepEqual(toldSituation({ codes: [], living: 'together', children_shared: 'yes' }, { living: 'apart' }), { children_shared: 'yes' });
 });
 
 test('the cloud body holds the code, never the words', () => {
@@ -44,4 +44,29 @@ test('the keyword reader skips what the person says is over or only a guess', ()
   assert.deepEqual(keywordTold('I turned off location sharing with him last week.').codes, []);
   assert.deepEqual(keywordTold('I think he forwards my email somehow.').codes, []);
   assert.deepEqual(keywordTold('He installed an app on my phone.').codes, ['phone.app.control']);
+});
+
+test('words only ever make the plan more careful: "apart" and "no children" are never filled in (judge round 10)', () => {
+  assert.deepEqual(toldSituation({ codes: [], living: 'apart', children_shared: 'no' }, {}), {});
+  assert.deepEqual(toldSituation({ codes: [], living: 'together', children_shared: 'yes' }, {}), { living: 'together', children_shared: 'yes' });
+});
+
+test('a misread "apart" cannot turn a noticed change into "change now"', async () => {
+  const { buildPlan } = await import('../shared/plan/engine.js');
+  const { applyInvariants } = await import('../shared/plan/invariants.js');
+  // google.family.member notifies the other person; R11 keeps it waiting unless the person said they live apart.
+  const findings = [{ ref: 'f1', code: 'google.family.member', ownership: 'not_mine' }];
+  const plan = situation => { const ctx = { findings, situation, notChecked: [], library }; return applyInvariants(buildPlan(ctx), ctx).plan; };
+  const misread = plan({ safe_to_change_now: 'yes', ...toldSituation({ codes: [], living: 'apart', children_shared: 'no' }, {}) });
+  assert.deepEqual(misread, plan({ safe_to_change_now: 'yes' }), 'the plan is exactly as it would be with no words');
+  const step = misread.actions.find(a => (a.refs || []).includes('f1') && !['document', 'talk_to_advocate'].includes(a.action));
+  assert.equal(step.action, 'wait');
+});
+
+test('the keyword reader skips a sentence that says the way in is not there', () => {
+  assert.deepEqual(keywordTold('I do not have an AirTag.').codes, []);
+  assert.deepEqual(keywordTold('He never bought me a phone.').codes, []);
+  assert.deepEqual(keywordTold('No, he is not on my Life360.').codes, []);
+  assert.deepEqual(keywordTold("There is an app on my phone I didn't install.").codes, ['phone.app.control']);
+  assert.deepEqual(keywordTold('He forwarded my mail to his Gmail and I never changed it.').codes, ['gmail.forwarding.external']);
 });

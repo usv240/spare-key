@@ -536,7 +536,7 @@ async function makePlan() {
   // 2a. Plan help from the cloud is off: Gemini Nano orders the plan on this computer when it is ready, from the same
   // codes plus every situation answer (nothing leaves, so nothing needs the person's permission to share). When plan
   // help is on, the cloud orders it instead. Measured on the 40 frozen situations (November 22, 2026): before the safety
-  // rules, Nano's plans needed 103 fixes on 35, the cloud's 43 on 30 (18 after the two voices), and the code plan none;
+  // rules, Nano's plans needed 103 fixes on 35, the cloud's 63 on 38 (45 after the two voices), and the code plan none;
   // 5 of Nano's 40 ran past the time limit. After the rules, every plan passes every measure.
   const nanoStatus = cloudOn ? null : (await offscreen('sk:nano-status').catch(() => ({})))?.status;
   if (nanoStatus === 'available') {

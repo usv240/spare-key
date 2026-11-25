@@ -77,7 +77,7 @@ export default function why({ numbers, drift = null, android = null, grade = nul
     </div>
     <ul class="facts">
       <li class="fact rise"><span class="fact-n">3.4 million</span><p>people age 16 or older in the US were stalked in 2019. Those stalked both in person and with technology were most often stalked by an intimate partner (35%).</p><cite><a href="https://bjs.ojp.gov/content/pub/pdf/sv19.pdf">Bureau of Justice Statistics, Stalking Victimization, 2019</a> (February 2022)</cite></li>
-      <li class="fact rise"><span class="fact-n">60%</span><p>When researchers asked AI chatbots 193 real questions from survivors, 60% of the answers left out critical safety warnings.</p><cite><a href="https://engineering.nyu.edu/news/ai-chatbots-often-give-unsafe-or-incomplete-advice-survivors-tech-enabled-abuse-study-finds">NYU Tandon, USENIX Security 2026</a> (October 20, 2026)</cite></li>
+      <li class="fact rise"><span class="fact-n">60%</span><p>When researchers asked AI chatbots 193 real questions survivors had asked online and in published studies, 60% of the answers left out critical safety warnings.</p><cite><a href="https://engineering.nyu.edu/news/ai-chatbots-often-give-unsafe-or-incomplete-advice-survivors-tech-enabled-abuse-study-finds">NYU Tandon, USENIX Security 2026</a> (October 20, 2026)</cite></li>
       <li class="fact rise"><span class="fact-n">3</span><p>There are only three dedicated tech-abuse clinics in the US, to the researchers’ knowledge. They do this check by hand, account by account.</p><cite><a href="https://engineering.nyu.edu/news/ai-chatbots-often-give-unsafe-or-incomplete-advice-survivors-tech-enabled-abuse-study-finds">Same study</a></cite></li>
     </ul>
     <p class="closing-line">Spare Key does the clinic’s first job for anyone: it reads the person’s own settings and lists who still has a way in. Then it gives the two warnings the chatbots left out, every time.</p>
@@ -88,7 +88,7 @@ export default function why({ numbers, drift = null, android = null, grade = nul
 <section class="block" id="clinic" aria-labelledby="clinic-title">
   <div class="wrap">
     <h2 id="clinic-title">Measured against what real clinics found</h2>
-    <p class="lead">Researchers from Cornell and NYU sat with 44 survivors at New York City’s Family Justice Centers and checked their phones and accounts by hand. For 23 of the 44 (52%), they found a real risk. Here is what they found, and where Spare Key looks for it.</p>
+    <p class="lead">Researchers from Cornell and NYU sat with 44 survivors at New York City’s Family Justice Centers and checked their phones and accounts, by hand and with a spyware scanner. For 23 of the 44 (52%), they found a real risk. Here is what they found, and where Spare Key looks for it.</p>
     <div class="table-wrap" tabindex="0" role="region" aria-label="Clinic findings: table, scrolls sideways on small screens"><table>
       <thead><tr><th>What the clinic found</th><th>Clients</th><th>Where Spare Key looks</th></tr></thead>
       <tbody>

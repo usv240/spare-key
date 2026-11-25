@@ -1,16 +1,16 @@
 {
- "at": "2026-11-25T17:59:21.554Z",
+ "at": "2026-11-25T18:19:09.462Z",
  "tool": "node tools/told-eval.mjs",
  "cases": "tools/told-cases.json",
  "keyword": {
   "cases": 40,
-  "exact": 37,
+  "exact": 36,
   "codes": {
-   "found": 26,
+   "found": 25,
    "wrongAdded": 0,
-   "missed": 3,
+   "missed": 4,
    "precision": 1,
-   "recall": 0.897
+   "recall": 0.862
   },
   "situation": {
    "right": 12,
@@ -37,6 +37,21 @@
     "i": 14,
     "want": [
      "google.family.manager_other"
+    ],
+    "got": [],
+    "living": [
+     "unclear",
+     "unclear"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 30,
+    "want": [
+     "device.given_by_other"
     ],
     "got": [],
     "living": [

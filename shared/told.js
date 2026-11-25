@@ -71,6 +71,10 @@ const RULES = [
 ];
 const OVER = /\b(turned (it )?off|turn(ed)? off|deleted|removed|used to|no longer|stopped|changed it)\b/i;
 const UNSURE = /\b(i think|somehow|maybe|might|not sure)\b/i;
+// A sentence that says a way in is not there ("I do not have an AirTag", "he never bought me a phone") names no code.
+// Phrases that say it IS there are taken out first: "never turned it off", "an app I did not install".
+const NEGATION = /\b(not|never|no|don.t|doesn.t|didn.t|isn.t|aren.t|wasn.t|haven.t|hasn.t)\b/i;
+const STILL_THERE = /\bnever (turned|changed|took|signed)\b[^.]*|\b(didn.t|did not|never) (install|download|add|put)\b[^.]*|\bno idea\b/gi;
 
 /** The keyword reader. Returns { codes, living, children_shared } in the same shape as Gemini Nano's answer. */
 export function keywordTold(text) {
@@ -79,6 +83,7 @@ export function keywordTold(text) {
   for (const s of sentences) {
     if (OVER.test(s) && !/\bnever (turned|changed)\b/i.test(s)) continue;
     if (UNSURE.test(s)) continue;
+    if (NEGATION.test(s.replace(STILL_THERE, ' '))) continue;
     for (const [code, re] of RULES) if (re.test(s) && !out.codes.includes(code)) out.codes.push(code);
   }
   // The family manager rule wins over the member rule when both match the same words.
@@ -115,11 +120,16 @@ export function toldFindings(answer, { existing = [], refStart = 0, howFound = '
   }));
 }
 
-/** The situation answers the words gave, only where the person has not answered the question themselves. */
+/**
+ * The situation answers the words gave, only where the person has not answered the question themselves, and only the
+ * more careful answer: words can say "we live together" (changes they may notice wait) and "we share children" (a step
+ * for the children's devices), never "apart" or "no children". A reader that misreads the words can then only make the
+ * plan more careful, never less.
+ */
 export function toldSituation(answer, situation = {}) {
   const a = cleanTold(answer);
   const out = {};
-  if (!situation.living && a.living !== 'unclear') out.living = a.living;
-  if (!situation.children_shared && a.children_shared !== 'unclear') out.children_shared = a.children_shared;
+  if (!situation.living && a.living === 'together') out.living = 'together';
+  if (!situation.children_shared && a.children_shared === 'yes') out.children_shared = 'yes';
   return out;
 }

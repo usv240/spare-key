@@ -20,10 +20,10 @@ account, mail quietly forwarded to the partner's address, a forgotten location s
 them means a dozen settings pages. Then comes the harder part: removing access can alert the other person, and that is
 most dangerous right after leaving.
 
-A Cornell and NYU team checked 44 survivors' phones and accounts by hand at New York City's Family Justice Centers and
-found a real risk for 23 of them (USENIX Security 2019). There are three dedicated tech-abuse clinics in the US. And
-when researchers asked AI chatbots 193 real questions from survivors, 60% of the answers left out critical safety
-warnings. A chatbot also cannot see your settings: pasting them in sends the very names that are the danger.
+A Cornell and NYU team checked 44 survivors' phones and accounts in person at New York City's Family Justice Centers,
+by hand and with a spyware scanner, and found a real risk for 23 of them (USENIX Security 2019). Researchers count
+three dedicated tech-abuse clinics in the US. And when researchers asked AI chatbots 193 real questions survivors had
+asked online and in published studies, 60% of the answers left out critical safety warnings. A chatbot also cannot see your settings: pasting them in sends the very names that are the danger.
 
 ## What it does
 
@@ -44,9 +44,10 @@ Spare Key is a free, read-only Chrome extension, an Android app, and a step-by-s
    the abuser buying the devices, which 20 participants described in the CHI 2018 study.
 6. **Quick exit** is on every screen, and nothing is kept unless the person asks.
 
-It looks for all 6 kinds of problem the Cornell and NYU clinic found: signs a password was known (14 clients),
-unknown signed-in devices (12), a shared family or phone plan (4), possible spyware (3), browser extensions the
-person did not install (2) and a rooted phone (1). A phone that may be rooted is treated like one an app is watching:
+It has a check for each of the 6 kinds of problem the Cornell and NYU clinic found, some in full and some in part:
+unknown signed-in devices (12 clients; Google read, Apple through the guided check, social media next), signs a
+password was known (14; through what a known password leads to), a shared family or phone plan (4), possible spyware
+(3), browser extensions the person did not install (2) and a rooted phone (1). A phone that may be rooted is treated like one an app is watching:
 it comes first in the plan, and every other step says to use a device the other person never had. By hand the same check is 13 settings pages on 4 sites
 and about an hour of reading official help pages; Spare Key reads the 12 checks in one pass.
 
@@ -81,7 +82,7 @@ by design: an account would tie a person to a safety check.
 
 **Every step has a backup, and the last one never needs the cloud**: two templates on two models, the direct call,
 then the plan made by code, which is on screen before any of them answer. On the phone: Gemini Nano 4 Fast, Nano 4
-Full, then the phone's own Nano, each asked one tiny question first, so a model still downloading is skipped.
+Full, then the phone's own Nano, each asked one tiny question first, so a model that does not answer yet is skipped.
 
 ## Challenges we ran into
 
@@ -95,13 +96,14 @@ Full, then the phone's own Nano, each asked one tiny question first, so a model 
 ## Accomplishments that we're proud of
 
 - A plain chatbot on the same model told the person to record their settings before changing anything in 7 of 38
-  situations and said something risky in 14. Every plan Spare Key shows starts with the record: 38 of 38.
+  situations and said something risky in 14 (each answer graded against a written rubric by an AI reviewer). Every plan Spare Key shows starts with the record: 38 of 38.
 - Android: 34 of 34 end-to-end checks with a planted test app; the plan made by code is on screen in 2.3 seconds and
   Gemini reorders it through the template by 8.3 seconds. On the builder's own phone, Gemini Nano read all 13 listed
   apps in 7.5 to 10 seconds; Android's own AICore record shows those calls ran on Gemini Nano 4 (nano-v4-full):
-  51 finished calls, a median of 0.7 seconds each. In the latest run, the two Nano 4 previews were not downloaded yet,
-  so Spare Key skipped them after one tiny question each and Nano 4 Full sorted all 13 apps in 9.6 seconds; both plan
-  templates answered "high demand", and the direct call ordered the plan. Every backup in the chain ran once, on a real
+  51 finished calls, a median of 0.7 seconds each. In the latest run, the two Nano 4 previews were listed but did not
+  answer (AICore: not on this phone yet), so Spare Key skipped them after one tiny question each and Nano 4 Full sorted
+  all 13 apps in 9.6 seconds; both plan templates returned a server error ("high demand"), and the direct call ordered
+  the plan. Every backup in the chain ran once, on a real
   phone.
 - On a real account, read-only, real pages differed from what we expected in 5 of 12 checks; after the fixes, every
   check Spare Key could read matched what the site shows.
