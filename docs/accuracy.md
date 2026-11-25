@@ -297,9 +297,9 @@ these numbers, not the keyword ones.
 Speed: see section 1. On this PC, loading Gemini Nano the first time took 104 to 133 s; after that, each check took 4 to
 19 s with Nano and about 1 s with code only. The PC had little free memory during these runs, so these are slow numbers.
 
-Reading level (`tools/reading-grade.mjs`, `docs/evidence/reading-grade.json`, November 24): the Flesch-Kincaid grade
+Reading level (`tools/reading-grade.mjs`, `docs/evidence/reading-grade.json`, November 25): the Flesch-Kincaid grade
 of the words on the 14 site pages and the side panel (paragraphs, list items, headings and buttons; code, number tables
-and menus left out). Median grade 4.2; the highest page is 6.5 (`built-with.html`). The
+and menus left out). Median grade 4.3; the highest page is 6.4 (`built-with.html`). The
 goal is grade 6 to 8 or lower. An earlier one-off scoring of the panel's 257 strings on November 22 (not saved as a
 script) gave median 4.3, with 5 short steps that name a menu, such as "Open Gmail settings, then Forwarding and
 POP/IMAP.", between grade 8 and 9.1.
@@ -343,8 +343,8 @@ Scope: one made-up screen in no real app's look. Real Life360 and Find My screen
 
 The test installs a second app that does nothing but hold the access a phone-watching app asks for (screen reading,
 device admin, notifications, texts, location all the time, usage access), turns each one on through adb, and drives
-the real app on an Android 16 emulator: **34 of 34 checks passed**. The check took 8.7 s.
-The plan made by code was on the screen 2.8 s after the button was pressed, and Gemini in the cloud reordered it 9.3 s after the button was pressed, with rule R10 applied by code.
+the real app on an Android 16 emulator: **34 of 34 checks passed** (November 25). The check took 2.4 s.
+The plan made by code was on the screen 2.3 s after the button was pressed, and Gemini in the cloud, through the server prompt template, reordered it 8.3 s after the button was pressed, with rule R10 applied by code.
 
 Where the traffic went (`tools/android-net.mjs`, `docs/evidence/android-net.json`): the emulator records every packet
 from outside Android, and Wi-Fi is turned off for the run so nothing can go another way. The hosts Spare Key is built

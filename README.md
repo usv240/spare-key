@@ -66,7 +66,7 @@ with them.
 
 | What | Code alone | With Gemini |
 |---|---|---|
-| Read settings pages a site has changed (all four kinds of change at once) | 6 of 24 ways in shown | 18 of 24 with Gemini Nano on the computer |
+| Read settings pages a site has changed (all four kinds of change at once) | 6 of 24 ways in shown | 18 of 24 shown (16 as the right kind) with Gemini Nano on the computer |
 | Read a phone app's sharing screen from a screenshot | code cannot read a picture | every made-up person, with "Me" left out, in 1 of 3 test runs and on the website run ([details](docs/accuracy.md)) |
 | Order the plan and say why, in plain words | one fixed order and stock sentences | an order and wording for the answers the person chose to share |
 
@@ -91,7 +91,7 @@ The last backup never needs the cloud.
 |---|---|
 | Ordering the plan | Template 1, template 2 on a second model, the direct call to two models, then the plan made by code, which is on screen before any of them answer |
 | Gemini Nano on the computer | Nano, then code's own reader. A page neither can read is listed as not checked |
-| Gemini Nano on the phone | Nano 4 Fast, Nano 4 Full, the phone's own Nano, then code's sorting (a Remote Config list) |
+| Gemini Nano on the phone | Nano 4 Fast and Nano 4 Full where the phone offers them, the phone's own Nano (the one that ran on the builder's phone), then code's sorting (a Remote Config list) |
 | Reading a settings page | A reader fixed through Remote Config, the bundled reader, Gemini Nano, then "Not checked" with the page to check by hand |
 | The rules engine on Android | Jetpack's JavaScript sandbox, then the same file in a locked-down hidden WebView. Both gave the same result on a real phone: 72 apps read, 13 listed, the same 7-step plan |
 | App Check | The bridge page on spare-key-app.web.app, a fresh copy, then spare-key-app.firebaseapp.com; with no token, the plan made by code |
@@ -115,7 +115,7 @@ From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved
   an AI reviewer). Every plan Spare Key shows starts with the record and warns that a change may be noticed: 38 of 38
   ([evidence](docs/evidence/chatbot-hand-grade.json)).
 - **Android:** the planted test app on an emulator passed 34 of 34 checks, including the cloud plan through the
-  template, Quick exit, 48dp buttons, and a packet capture showing only Firebase hosts reached
+  template, Quick exit, 48dp buttons, and a packet capture showing only Firebase, reCAPTCHA (www.google.com, www.gstatic.com) and Spare Key's own site reached
   ([evidence](docs/evidence/android-e2e.json), [network](docs/evidence/android-net.json)). On the builder's own
   Android 17 phone, Gemini Nano read 13 of 13 listed apps in 7.5 to 10 s ([evidence](docs/evidence/android-real.json)).
 - **Phone check:** 14 of 14 browser checks, including that the page sends nothing after it loads.

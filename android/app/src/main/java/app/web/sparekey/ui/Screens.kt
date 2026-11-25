@@ -144,8 +144,8 @@ fun ResultsScreen(m: AppModel) {
     if (m.practice) Section(tone = Ink.tint, edge = Ink.tint) { Body("Practice check. This is a made-up phone for a person called Jordan. Nothing on this phone was read.") }
     Body(when {
         m.findings.isEmpty() -> "Spare Key did not find an app here that could watch this phone. That is not the same as nothing being there: it did not check everything. See Not checked below."
-        m.findings.size == 1 -> "Spare Key read ${m.appsSeen} apps with special access and listed 1 thing that could let someone watch this phone."
-        else -> "Spare Key read ${m.appsSeen} apps with special access and listed ${m.findings.size} things that could let someone watch this phone."
+        m.findings.size == 1 -> "Spare Key read ${m.appsSeen} apps with special access and listed 1 to look at. It is grouped below by what it can do."
+        else -> "Spare Key read ${m.appsSeen} apps with special access and listed ${m.findings.size} to look at. They are grouped below by what each can do."
     })
     Muted(listOfNotNull(m.checkedAt.ifEmpty { null }, if (m.nanoSorted > 0) "Gemini Nano sorted ${m.nanoSorted} apps on this phone" else "Sorted by Spare Key's rules on this phone").joinToString(" · "))
 

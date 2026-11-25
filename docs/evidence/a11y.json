@@ -1,5 +1,5 @@
 {
- "at": "2026-11-25T04:45:11.480Z",
+ "at": "2026-11-25T14:25:28.588Z",
  "axe": "4.10.2",
  "rules": [
   "wcag2a",
@@ -7,8 +7,8 @@
   "wcag21aa",
   "best-practice"
  ],
- "sitePages": 15,
- "runs": 74,
+ "sitePages": 16,
+ "runs": 78,
  "violationNodes": 0,
  "results": [
   {
@@ -258,6 +258,34 @@
   },
   {
    "where": "panel-demo.html",
+   "width": 1280,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "phone-check.html",
+   "width": 375,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "phone-check.html",
+   "width": 375,
+   "scheme": "dark",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "phone-check.html",
+   "width": 1280,
+   "scheme": "light",
+   "violations": [],
+   "overflow": 0
+  },
+  {
+   "where": "phone-check.html",
    "width": 1280,
    "scheme": "dark",
    "violations": [],

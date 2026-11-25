@@ -60,7 +60,7 @@ pages and the result says so. The cloud only ever sees the kind of thing that wa
 
 **What Gemini does that code cannot.** Sites redesign their pages. When we changed the 13 practice pages five ways by
 script, code alone found 79 of 120 planted ways in; with Gemini Nano reading the changed page on the device, 105 (counting
-only ways in listed as the right kind). With four changes at once it was 6 of 24 by code and 16 with Gemini Nano, and a Remote Config fix restored all 24 with no
+only ways in listed as the right kind). With four changes at once it was 6 of 24 shown by code and 18 with Gemini Nano (16 as the right kind), and a Remote Config fix restored all 24 with no
 update.
 
 **What code does that a model must not.** One file, `shared/cloud-safe.js`, is the only exit to the cloud: it builds
@@ -75,8 +75,8 @@ the Android app send only the template's id and the codes. The template's input 
 `cloud-safe.js`, so the server is a second gate: a request with a name where a code goes, a name as a ref, or an
 address in an answer was refused with HTTP 400 before any model saw it (`docs/evidence/template-check.json`). Backups: a second template on a second
 model, then the direct call through the same gate; which templates to use is a Remote Config key. On Android, which
-on-device model to use is a Remote Config list too: Gemini Nano 4 Fast and Full (previews built on Gemma 4) first,
-then the Gemini Nano a phone ships with.
+on-device model to use is a Remote Config list too: Gemini Nano 4 Fast and Full (previews built on Gemma 4) where a
+phone offers them, then the Gemini Nano a phone ships with, which is the one that ran on the builder's phone.
 
 **One rules engine, two platforms.** The extension's own JavaScript (finding codes, the cloud gate, the plan, the
 safety rules) runs unchanged inside Jetpack's JavaScript sandbox on Android, so the two cannot drift apart.
@@ -121,12 +121,13 @@ then 911. Settings, page readers and the steps library each fall back to the cop
   situations where it applied.
 - "What they see when you change it": 30 kinds of access, 22 with the official help page quoted.
 - Android: 34 of 34 end-to-end checks on an Android 16 emulator, with a test app that holds the
-  access a phone-watching app asks for. The plan made by code is on the screen in 3 seconds, and Gemini, through the
-  server prompt template, reordered it 9.8 seconds after the button was pressed. If the cloud is slow, the app keeps the
+  access a phone-watching app asks for. The plan made by code is on the screen in 2.3 seconds, and Gemini, through the
+  server prompt template, reordered it 8.3 seconds after the button was pressed. If the cloud is slow, the app keeps the
   plan made by code and says so. The emulator's own packet capture of the run shows no reporting host reached.
 - The whole hybrid path on a real phone: on the builder's own Android 17 phone with 703 apps, 72 held some special access; Spare
   Key listed 13 and counted the 59 that came with the phone. Gemini Nano read all 13 on the phone in 7.5 to 10 seconds, and
-  Gemini in the cloud ordered the plan from finding types in 2.3 to 8.5 seconds (on 4 of 7 runs, the last 3 through the
+  Gemini in the cloud ordered the plan from finding types: 2.3 to 3.8 seconds for the cloud call, 4.6 to 8.5 seconds
+  from the button (on 4 of 7 runs, the last 3 through the
   server prompt template; on the other 3 the plan made by code, already on screen, was the one shown).
   Gemini Nano's first run there raised a caution on 10 of the 13, so a caution now has to be backed up by something
   code can check: 2 were kept and 6 set aside.
@@ -174,7 +175,7 @@ Code and Firebase Agent Skills.
 4. **The Android app (optional):** build it from `android/` (README, "Install") and choose **Try a practice phone
    first**. Nothing on the phone is read in a practice check.
 
-## Code reused from before the submission period
+## Code shared with the author's other entry
 
 The Firebase AI Logic wrapper pattern and the App Check bridge for a Chrome extension come from the author's other
 #BuildHybridAI entry, Still Recalled, as does the Android shell (the Firebase AI Logic wrapper for Android, the App
