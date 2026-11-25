@@ -94,7 +94,10 @@ Full, then the phone's own Nano, each asked one tiny question first, so a model 
 - Android: 34 of 34 end-to-end checks with a planted test app; the plan made by code is on screen in 2.3 seconds and
   Gemini reorders it through the template by 8.3 seconds. On the builder's own phone, Gemini Nano read all 13 listed
   apps in 7.5 to 10 seconds; Android's own AICore record shows those calls ran on Gemini Nano 4 (nano-v4-full):
-  51 finished calls, a median of 0.7 seconds each.
+  51 finished calls, a median of 0.7 seconds each. In the latest run, the two Nano 4 previews were not downloaded yet,
+  so Spare Key skipped them after one tiny question each and Nano 4 Full sorted all 13 apps in 9.6 seconds; both plan
+  templates answered "high demand", and the direct call ordered the plan. Every backup in the chain ran once, on a real
+  phone.
 - On a real account, read-only, real pages differed from what we expected in 5 of 12 checks; after the fixes, every
   check Spare Key could read matched what the site shows.
 - 0 accessibility violations in 78 axe-core runs; median reading grade 4.3.

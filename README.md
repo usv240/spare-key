@@ -127,7 +127,9 @@ From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved
   ([evidence](docs/evidence/android-e2e.json), [network](docs/evidence/android-net.json)). On the builder's own
   Android 17 phone, Gemini Nano read 13 of 13 listed apps in 7.5 to 10 s ([evidence](docs/evidence/android-real.json)),
   and Android's own AICore record shows those calls ran on Gemini Nano 4 (nano-v4-full): 51 finished calls, a median of
-  0.7 s each ([evidence](docs/evidence/aicore-record.json)).
+  0.7 s each ([evidence](docs/evidence/aicore-record.json)). In the latest run the two Nano 4 previews were still
+  downloading, so Spare Key skipped them and Nano 4 Full sorted all 13 apps in 9.6 s; both plan templates answered
+  "high demand" and the direct call ordered the plan.
 - **Phone check:** 14 of 14 browser checks, including that the page sends nothing after it loads.
 - **Accessibility and reading level:** 78 axe runs with 0 issues; median reading grade 4.3.
 
