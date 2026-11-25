@@ -317,6 +317,27 @@ root tool on the phone, a rooting app, Android built with test keys), each teste
 `tests/rooted.test.mjs`. None proves rooting, and a hidden root shows none of them, so the result says "may be". Freed and others, *A Stalker's
 Paradise*, CHI 2018: 39 survivors and 50 professionals, with "numerous (n=47) accounts" of location tracking.
 
+In your own words (`tools/told-eval.mjs`, November 25). Two sets of statements a person might type, with made-up
+names: 40 for development (`tools/told-cases.json`, written by the builder before either reader; the keyword reader's
+rules were written after reading them), and 60 held out (`tools/told-heldout.json`, written by an agent that did not
+see the code, committed before any run on it). On the held-out set:
+
+| Reader | Ways in found (of 52) | Extra codes | Situation answers right (of 14) | Median time |
+|---|---|---|---|---|
+| Code's keyword reader | 34 | 2 | 11 | under 1 ms |
+| Gemini Nano, first prompt, no guard | 51 | 126 | 14 | 2.5 s |
+| Gemini Nano, final prompt and guard | 50 | 13 | 14 | 2.8 s |
+
+The first Nano run listed 10 to 17 codes for a few statements that named none. The development set showed the same
+(all 17 codes for "I moved out last month. No kids."), and two changes were made from it: the prompt says to return an
+empty list when nothing is named, and an answer naming more than 3 ways in is not used (the keyword reader's is used
+instead; it was used for 2 of the 60). The final run is the second run on the held-out set, after the changes; the
+first is kept (`docs/evidence/told-eval-told-heldout-v1-first-prompt.json`). An extra code adds a step; it never
+removes one. Gemini Nano also fills the living and children answers when the words do not say (43 times), but only
+the careful answers are used ("together", "shared children"): 9 would reach a plan, 8 of them right. The keyword reader
+skips a sentence that says a way in is not there ("I do not have an AirTag"), added after judge round 10, which left
+its held-out score unchanged.
+
 Effort by hand (`tools/effort.mjs`, `docs/evidence/effort.json`): 13 settings pages on 4 sites from the check
 catalogue, and the 18 official help pages the steps library cites for the account checks. The 15 that could be fetched
 (Amazon refused 3) hold 12,640 words, about 63 minutes at 200 words per minute, before any time spent finding a setting

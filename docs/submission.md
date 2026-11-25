@@ -67,7 +67,9 @@ other person, so the model that reads them runs on the device. The cloud only ev
 
 **What Gemini does that code cannot.** Sites redesign their pages. With the 13 practice pages changed four ways at
 once, code showed 6 of 24 planted ways in and Gemini Nano, reading the changed pages on the device, 18; a Remote Config
-fix restored all 24 with no update.
+fix restored all 24 with no update. And people say things in their own way: on 60 statements written by an agent that
+never saw the code ("hes the one paying for my cell"), Gemini Nano found 50 of 52 ways in on the device, against 34
+for code's keyword reader, in a median 2.8 seconds.
 
 **What code does that a model must not.** `shared/cloud-safe.js` is the only exit to the cloud: it builds each request
 from an allow-list of codes and checks it again before it is sent. The server prompt template's input schema is the

@@ -111,9 +111,10 @@ From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved
   Verification), a shared family or phone plan (4), possible spyware (3; Android), browser extensions the person did
   not install (2) and a rooted phone (1; Android, tested on made-up phone facts).
 - **In your own words:** a box where the person types what no settings page shows ("he bought this phone", "we're on
-  his plan"). On 60 statements written by an agent that never saw the code, the keyword reader found 34 of 52 ways in
-  with 2 wrong, and 39 of 60 statements fully right; Gemini Nano's run on the same set is next
-  ([evidence](docs/evidence/told-eval-told-heldout.json), `tools/told-eval.mjs`).
+  his plan"). On 60 statements written by an agent that never saw the code, Gemini Nano on
+  the computer found 50 of 52 ways in (13 extra), code's keyword reader 34 of 52 (2 extra); Nano took a median 2.8 s.
+  An extra code can only add a step, and typed words can only fill the careful answers ("together", "shared
+  children"), never "apart" ([evidence](docs/evidence/told-eval-told-heldout.json), `tools/told-eval.mjs`).
 - **Effort saved:** by hand, the same check is 13 settings pages on 4 sites and 18 official help pages (12,640 words
   in the 15 that could be counted, about an hour of reading). Spare Key reads the 12 checks in one pass, 13 seconds on
   the practice pages ([evidence](docs/evidence/effort.json), `tools/effort.mjs`).

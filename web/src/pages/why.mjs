@@ -24,6 +24,15 @@ function nanoAdds(drift) {
   return `<li><span class="n">${sum(nano, 'found')} of ${sum(nano, 'of')}</span><p>planted ways in found with Gemini Nano reading the changed page on the computer, when the practice pages were changed five ways, the way a site redesign changes them. Code alone found ${sum(code, 'found')}. This is the part code cannot do. ${esc(drift.nanoDate || drift.date)}.</p></li>`;
 }
 
+// What Gemini Nano adds when a person types what they know in their own words (tools/told-eval.mjs, held-out set).
+function toldItem(t) {
+  const n = t?.nano, k = t?.keyword;
+  if (!n?.codes || !k?.codes) return '';
+  const of = n.codes.found + n.codes.missed;
+  const date = new Date(t.at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York' });
+  return `<li><span class="n">${n.codes.found} of ${of}</span><p>ways in found by Gemini Nano on the computer in what a person typed in their own words, like “hes the one paying for my cell”, on ${n.cases} statements written by an agent that never saw the code. Code’s keyword reader found ${k.codes.found}. Nano added ${n.codes.wrongAdded} codes the words did not name, each of which can only add a step. The words never left the computer. ${esc(date)}.</p></li>`;
+}
+
 function androidProof(a) {
   if (!a || !a.passed || a.failed) return '';
   const date = new Date(a.at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York' });
@@ -55,7 +64,7 @@ function realPhone(real) {
   return `<li><span class="n">${r.appsWithAccess} to ${r.listed}</span><p>On a real phone with ${r.appsInstalled} apps, ${r.appsWithAccess} held some special access. Spare Key listed ${r.listed} for the person to look at and counted the ${r.appsWithAccess - r.listed} that came with the phone, in about a second, by its rules.${took ? ` Gemini Nano then read all ${took[1]} on the phone itself in ${took[2]} seconds${/^Ordered by/.test(n.planNote || '') ? `, and Gemini in the cloud ordered the plan from finding types ${n.planSeconds} seconds after the button was pressed (on ${runs.filter(x => /^Ordered by/.test(x.planNote || '')).length} of ${runs.length} runs; on the others the free-tier model did not answer in time and the plan made by code stayed)` : ''}.` : ''} Nothing was planted on it. <a href="/accuracy.html#android-real">What that run showed</a></p></li>`;
 }
 
-export default function why({ numbers, drift = null, android = null, grade = null, real = null }) {
+export default function why({ numbers, drift = null, android = null, grade = null, real = null, told = null }) {
   const n = numbers;
   const plan = n.planSafety;
   const body = `
@@ -131,6 +140,7 @@ export default function why({ numbers, drift = null, android = null, grade = nul
     <ul class="ledger">
       ${n.practice ? `<li><span class="n">${n.practice.found} of ${n.practice.of}</span><p>planted ways in found on the 13 made-up practice pages, and none of the 4 that belong to the person flagged, with code only and with Gemini Nano. ${esc(n.practice.date)}.</p></li>` : ''}
       ${nanoAdds(drift)}
+      ${toldItem(told)}
       ${driftItem(drift)}
       ${n.privacy ? `<li><span class="n">${n.privacy.withPrivate} of ${n.privacy.requests}</span><p>requests from the extension held a name, email address, phone number or device, in a full practice check with every cloud step on. ${esc(n.privacy.date)}.</p></li>` : ''}
       ${grade ? `<li><span class="n">${grade.totals.document_first.yes} of ${grade.of}</span><p>answers from a plain chatbot told the person to record their settings before changing anything, on ${grade.of} made-up situations. None made it the first thing to do, ${grade.totals.first_instruction.change} began with a change, and ${grade.totals.unsafe} said something risky, such as “now is the absolute best time to make changes” to a person who was not sure. It warned clearly that a change may be noticed in ${grade.totals.alert_warning.yes}. Every plan Spare Key shows starts with the record and carries the warning. Each answer was read in full against a written rubric by an AI reviewer; a person’s review of the grades is next (<a href="https://github.com/usv240/spare-key/blob/main/docs/evidence/chatbot-hand-grade.json">the grades, with a quote for each</a>). ${esc(plan?.date || '')}.</p></li>` : ''}
