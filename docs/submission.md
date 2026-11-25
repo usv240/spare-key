@@ -4,187 +4,132 @@ Paste each section into the matching field of the Devpost form. Platform: **Web 
 from `docs/accuracy.md` and the saved runs in `docs/evidence/`; check them again on the day you submit.
 
 - Project name: Spare Key
-- Tagline (under 60 characters): Find out who still has a key to your accounts.
+- Tagline: Find out who still has a key to your accounts.
 - Site: https://spare-key-app.web.app
 - Try it in any browser: https://spare-key-app.web.app/try.html
 - The case and the proof on one page: https://spare-key-app.web.app/why.html
 - Code: https://github.com/usv240/spare-key (Apache-2.0)
-- Video: (YouTube link, public; made by `tools/record-demo.mjs` and `tools/make-video.mjs` from the real extension
-  on the practice pages; upload steps in `docs/video.md`)
+- Video: (YouTube link, public; upload steps in `docs/video.md`)
 
 ---
 
 ## Inspiration
 
 When someone leaves an abusive partner, the partner often still has a way in: a phone signed in to their Google
-account, mail quietly forwarded to the partner's address, a forgotten location share, an app on their phone. Finding them means a dozen
-settings pages. Then comes the harder part: removing access can alert the other person, and that is most dangerous
-right after leaving.
+account, mail quietly forwarded to the partner's address, a forgotten location share, an app on their phone. Finding
+them means a dozen settings pages. Then comes the harder part: removing access can alert the other person, and that is
+most dangerous right after leaving.
 
-Researchers at NYU asked AI chatbots 193 real questions from survivors; 60% of the answers left out critical safety
-warnings. The same study counts three dedicated tech-abuse clinics in the US. And a chatbot cannot see your settings:
-pasting them in sends the very names and addresses that are the danger.
-
-We measured Spare Key against what a real clinic found. A Cornell and NYU team checked 44 survivors' phones and
-accounts by hand at New York City's Family Justice Centers and found a real risk for 23 of them (USENIX Security 2019).
-Spare Key looks for 5 of the 6 kinds of problem they found: signs a password was known (14 clients), unknown signed-in
-devices (12), a shared family or phone plan (4), possible spyware (3) and browser extensions the person did not install
-(2). A rooted-phone check (1) is next. By hand, the same check is 13 settings pages on 4 sites and 18 official help
-pages, about an hour of reading; Spare Key reads the 12 checks in one pass.
+A Cornell and NYU team checked 44 survivors' phones and accounts by hand at New York City's Family Justice Centers and
+found a real risk for 23 of them (USENIX Security 2019). There are three dedicated tech-abuse clinics in the US. And
+when researchers asked AI chatbots 193 real questions from survivors, 60% of the answers left out critical safety
+warnings. A chatbot also cannot see your settings: pasting them in sends the very names that are the danger.
 
 ## What it does
 
-Spare Key is a free, read-only Chrome extension, an Android app, and a step-by-step phone check that works on any phone.
+Spare Key is a free, read-only Chrome extension, an Android app, and a step-by-step phone check for any phone.
 
 1. **It checks.** The extension reads the person's own settings pages for Google, Gmail, Google Photos, Amazon and
-   Chrome. The Android app asks the phone which apps hold the access a phone-watching app needs. Neither ever clicks,
-   changes or removes anything.
-2. **It shows what it found**, grouped by what the other person could do: see your location, read your mail, get into
-   your account, watch your phone. Anything it could not read is listed under "Not checked", never shown as empty.
+   Chrome. The Android app lists the apps that hold the access a phone-watching app needs. The phone check walks an
+   iPhone or Android owner through Find My, Apple family, Life360, tracker alerts and the phone plan. Nothing is ever
+   clicked or changed.
+2. **It shows what it found**, grouped by what the other person could do. A page it could not read is listed under
+   "Not checked", never shown as empty.
 3. **It makes a plan in the order the field teaches**: screenshot first, talk to an advocate, then each change, with
-   what the other person will see if you make it, quoted from the company's own help page where one says. Changes they
-   may notice wait for a better time.
-4. **The phone, any phone.** The step-by-step phone check (https://spare-key-app.web.app/phone-check.html) walks an
-   iPhone or Android owner through Find My, Apple family, Life360, tracker alerts, the phone plan and the apps that can
-   watch a phone. The person looks; the same plan code runs in the page, and nothing is sent.
-5. **For advocates:** a printed record of what was found, with the date, time, page and how it was read, for the case
-   file, and a one-page session checklist.
-6. **Quick exit** is on every screen, and nothing is kept unless the person asks.
+   what the other person will see, quoted from the company's own help page. Changes they may notice wait.
+4. **It closes the loop.** After a change, the person checks again, and "Since your last check", compared with a locked
+   copy kept on the computer, shows what is gone and anything new. For advocates, a printed record of what was found goes in the case file.
+5. **Quick exit** is on every screen, and nothing is kept unless the person asks.
 
-## How we built it: the data decides where the model runs
+It covers 5 of the 6 kinds of problem the Cornell and NYU clinic found: signs a password was known (14 clients),
+unknown signed-in devices (12), a shared family or phone plan (4), possible spyware (3) and browser extensions the
+person did not install (2). A rooted-phone check (1) is next. By hand the same check is 13 settings pages on 4 sites
+and about an hour of reading official help pages; Spare Key reads the 12 checks in one pass.
+
+## How we used Firebase AI Logic: the data decides where the model runs
 
 Most hybrid apps treat the cloud as the fallback. Here the fallback is refused on purpose. The settings pages name the
-other person, so the model that reads them has to run on the device. When Gemini Nano is not there, code reads the
-pages and the result says so. The cloud only ever sees the kind of thing that was found.
+other person, so the model that reads them runs on the device. The cloud only ever sees the kind of thing found.
 
 | Step | Where | Firebase AI Logic mode |
 |---|---|---|
-| Read and sort the private pages; read a page a site has changed; read a phone screenshot | Gemini Nano | `ONLY_ON_DEVICE`, no cloud fallback |
-| Order the plan from finding codes | Gemini in the cloud | `ONLY_IN_CLOUD` with function calling: the cloud asks the device yes or no questions (`ask_device`), asks the person (`ask_user`) and reads the public steps (`get_steps`) |
+| Read and sort the private pages; read a page a site changed; read a phone screenshot | Gemini Nano | `ONLY_ON_DEVICE`, no cloud fallback |
+| Order the plan from finding codes | Gemini in the cloud, through a server prompt template | `ONLY_IN_CLOUD` with function calling: `ask_device`, `ask_user`, `get_steps` |
 | Two voices argue ("close the doors" against "stay hidden"), a third settles | Gemini in the cloud, codes only | `ONLY_IN_CLOUD` |
 | Put a public step in simpler words; the website's practice check | Gemini Nano, else the cloud | `PREFER_ON_DEVICE`, only for text that names no one |
-| On Android: the same three modes through Firebase AI Logic for Android | Gemini Nano through AICore; Gemini in the cloud | `InferenceMode.ONLY_ON_DEVICE`, `ONLY_IN_CLOUD`, `PREFER_ON_DEVICE` |
+| Android: sort apps on the phone, plan in the cloud, simpler words | AICore and the cloud | The same three modes in the Android SDK |
 
-**What Gemini does that code cannot.** Sites redesign their pages. When we changed the 13 practice pages five ways by
-script, code alone found 79 of 120 planted ways in; with Gemini Nano reading the changed page on the device, 105 (counting
-only ways in listed as the right kind). With four changes at once it was 6 of 24 shown by code and 18 with Gemini Nano (16 as the right kind), and a Remote Config fix restored all 24 with no
-update.
+**What Gemini does that code cannot.** Sites redesign their pages. With the 13 practice pages changed four ways at
+once, code showed 6 of 24 planted ways in and Gemini Nano, reading the changed pages on the device, 18; a Remote Config
+fix restored all 24 with no update.
 
-**What code does that a model must not.** One file, `shared/cloud-safe.js`, is the only exit to the cloud: it builds
-each request from an allow-list of codes and enums, and checks it again before it is sent. Eleven safety rules in code
-check any plan a model writes. Gemini Nano's plans needed 103 fixes on 35 situations and the cloud's 63 on 38, so the
-rules, not the model, decide what a person in danger is told.
+**What code does that a model must not.** `shared/cloud-safe.js` is the only exit to the cloud: it builds each request
+from an allow-list of codes and checks it again before it is sent. The server prompt template's input schema is the
+same allow-list, so a request with a name where a code goes was refused with HTTP 400 before any model saw it. Eleven
+safety rules in code check every plan a model writes: the cloud's plans needed 63 fixes on 38 situations before the
+rules ran, Gemini Nano's 103 on 35. One rules engine, the extension's own JavaScript, runs unchanged in Jetpack's
+JavaScript sandbox on Android.
 
-**The prompt lives on Firebase's server, and the server checks the codes too.** The plan is asked through a Firebase AI
-Logic server prompt template (`shared/plan/template.js`, created by `tools/templates.mjs` from the same shared code).
-Its instructions, answer format and the three functions stay on Firebase's server; the extension, the website and
-the Android app send only the template's id and the codes. The template's input schema is the same allow-list as
-`cloud-safe.js`, so the server is a second gate: a request with a name where a code goes, a name as a ref, or an
-address in an answer was refused with HTTP 400 before any model saw it (`docs/evidence/template-check.json`). Backups: a second template on a second
-model, then the direct call through the same gate; which templates to use is a Remote Config key. On Android, which
-on-device model to use is a Remote Config list too: Gemini Nano 4 Fast and Full (previews built on Gemma 4) where a
-phone offers them, then the Gemini Nano a phone ships with, which is the one that ran on the builder's phone.
+Also used: App Check with reCAPTCHA Enterprise, Remote Config (page readers, model order, templates and hotline
+numbers, changed without a store update), Cloud Firestore (the public steps library) and Firebase Hosting. No sign-in,
+by design: an account would tie a person to a safety check.
 
-**One rules engine, two platforms.** The extension's own JavaScript (finding codes, the cloud gate, the plan, the
-safety rules) runs unchanged inside Jetpack's JavaScript sandbox on Android, so the two cannot drift apart.
-
-Also used: **App Check** with reCAPTCHA Enterprise, **Remote Config** (page readers fixed for every install without a
-store update, the templates and the on-device model order), **Cloud Firestore** (the public steps library), **Firebase Hosting** (the site, the practice pages and a
-free Steps API), and an MCP server so an advocate's AI assistant gives the current steps with the warnings attached.
-**Works with no account, by design.** An account would be a record that ties a person to a safety check, and a
-sign-in can send an alert, so Firebase Authentication is left out on purpose and App Check guards the quota.
-
-**Shaped by an advocate's and a survivor's eyes.** Two AI agents role-played a tech-safety advocate and a survivor
-and walked through the product (a simulation, labelled as one; real review is the next step). Their findings became
-code: rule R11 keeps a change that tells the other person, and an app that watches the phone, waiting when the person
-may still live with them; a change that cuts off access all at once says to plan that day with an advocate; shared
-children add a step for their devices; the plan says where screenshots go; and the printed record and checklist above.
-
-**Every step has a backup, and the last one never needs the cloud.** The plan: two server prompt templates on two
-models, then the direct call, then the plan made by code. Gemini Nano on Android: Nano 4 Fast, Nano 4 Full, then the
-stable Nano. The Android rules engine: Jetpack's JavaScript sandbox, then a hidden WebView with the network off. App
-Check: the bridge page on two Hosting domains. The hotline: the National Domestic Violence Hotline, then loveisrespect,
-then 911. Settings, page readers and the steps library each fall back to the copy built into the app.
+**Every step has a backup, and the last one never needs the cloud**: two templates on two models, the direct call,
+then the plan made by code, which is on screen before any of them answer.
 
 ## Challenges we ran into
 
-- **Proving nothing leaks.** A test captures every network request the extension makes and searches it for 30 made-up
-  names, emails, phones and places in four encodings: 0 of 20 requests held one. On Android, a second check in Kotlin
-  looks for app names at the call site, and the emulator's own packet capture shows where traffic went (see
-  `docs/accuracy.md`).
-- **Sites change their pages.** On the first, blind run a check said it was done while missing a way in 24 times. Now
-  it does so 0 times: a page it cannot read is listed as "looked different".
+- **Proving nothing leaks.** A test captured every request the extension made and searched it for 30 made-up names,
+  emails, phones and places in four encodings: 0 of 20 requests held one.
+- **Sites change their pages.** On the first blind run, a check said it was done while missing a way in 24 times. Now 0:
+  a page it cannot read is listed as "looked different".
 - **Small models need guardrails.** In a live run, Gemini Nano called four household members the person's own, which
-  would have hidden them. Now only the page's own words can mark an entry as yours, and Gemini Nano can raise a
-  concern but never lower one.
+  would have hidden them. Now only the page's own words can mark an entry as yours.
 
 ## Accomplishments that we're proud of
 
-- A plain chatbot told the person to record their settings before changing anything in 7 of 38 answers, each read in full
-  against a written rubric by an AI reviewer (Claude), with a quote saved for every grade; the record was the first step in 0 and 14 said something risky, like urging changes at once on someone who was
-  not sure. Every plan Spare Key shows starts with the record, because a safety rule in code puts it first (38 of 38).
-- Rule R9: when mail is copied to someone else, or someone else may hold the recovery email or phone, deal with that
-  before any change Google would tell them about. By keyword position, the chatbot got the mail order wrong in 3 of 7
-  situations where it applied.
-- "What they see when you change it": 30 kinds of access, 22 with the official help page quoted.
-- Android: 34 of 34 end-to-end checks on an Android 16 emulator, with a test app that holds the
-  access a phone-watching app asks for. The plan made by code is on the screen in 2.3 seconds, and Gemini, through the
-  server prompt template, reordered it 8.3 seconds after the button was pressed. If the cloud is slow, the app keeps the
-  plan made by code and says so. The emulator's own packet capture of the run shows no reporting host reached.
-- The whole hybrid path on a real phone: on the builder's own Android 17 phone with 703 apps, 72 held some special access; Spare
-  Key listed 13 and counted the 59 that came with the phone. Gemini Nano read all 13 on the phone in 7.5 to 10 seconds, and
-  Gemini in the cloud ordered the plan from finding types: 2.3 to 3.8 seconds for the cloud call, 4.6 to 8.5 seconds
-  from the button (on 4 of 7 runs, the last 3 through the
-  server prompt template; on the other 3 the plan made by code, already on screen, was the one shown).
-  Gemini Nano's first run there raised a caution on 10 of the 13, so a caution now has to be backed up by something
-  code can check: 2 were kept and 6 set aside.
-- The step-by-step phone check passed 14 of 14 browser checks on an iPhone path and an Android path, including that the
-  page sends nothing after it loads.
-- Accessibility: axe-core finds 0 violations in 78 runs across the site and the panel; median reading grade 4.3.
-- A real account, read-only: real Google and Amazon pages differed from what we expected in 5 of 12 checks. After the
-  fixes, every check Spare Key could read matched what the site shows.
-- On the free tier, the cloud ordered the plan in 40 of 40 test situations across two runs, and the two voices finished
-  in 38. The plan made by code is on screen first either way.
+- A plain chatbot on the same model told the person to record their settings before changing anything in 7 of 38
+  situations and said something risky in 14. Every plan Spare Key shows starts with the record: 38 of 38.
+- Android: 34 of 34 end-to-end checks with a planted test app; the plan made by code is on screen in 2.3 seconds and
+  Gemini reorders it through the template by 8.3 seconds. On the builder's own phone, Gemini Nano read all 13 listed
+  apps in 7.5 to 10 seconds.
+- On a real account, read-only, real pages differed from what we expected in 5 of 12 checks; after the fixes, every
+  check Spare Key could read matched what the site shows.
+- 0 accessibility violations in 78 axe-core runs; median reading grade 4.3.
 
 ## What we learned
 
 The field's advice (document first, an advocate before any change, warn that a change may be noticed) is easy to state
-and easy for a model to drop. Putting it in code, and letting models only read, order and explain within it, made the
+and easy for a model to drop. Putting it in code, and letting models read, order and explain within it, made the
 product more useful and more honest about what each part does.
 
 ## What's next
 
-- Review by advocates at tech-abuse clinics and by survivors: the questions are at
-  https://spare-key-app.web.app/advocates.html.
-- Plant known ways in on real test accounts, and watch "what they see" between two accounts.
-- Real stalkerware samples for the Android app, in a lab setting.
-- A Chrome Web Store listing and a signed Android release, so no Developer mode is needed.
-- Readers for more services, starting with the ones the phone check covers by hand today.
+- Review by advocates and survivors: the questions are at https://spare-key-app.web.app/advocates.html.
+- A rooted-phone check, and readers for social media sign-ins.
+- A Chrome Web Store listing and a signed Android release.
 
 ## Built with
 
-Firebase AI Logic (web and Android, hybrid inference and server prompt templates), Gemini Nano (Chrome built-in AI and
-AICore), Gemini Developer API, Firebase App Check with reCAPTCHA Enterprise, Firebase Remote Config, Cloud Firestore, Firebase Hosting, Chrome Extensions
-(Manifest V3, side panel), Kotlin with Jetpack Compose and JavaScriptSandbox, Model Context Protocol. Built with Claude
-Code and Firebase Agent Skills.
+Firebase AI Logic, Gemini Nano, Gemini API, Firebase App Check, Firebase Remote Config, Cloud Firestore, Firebase
+Hosting, Chrome Extensions, Kotlin, Jetpack Compose.
 
 ## Testing instructions (for judges)
 
 1. **No install, 2 minutes:** open https://spare-key-app.web.app/try.html and press Start the practice check. It reads
-   13 made-up settings pages for a person called Jordan. Gemini Nano sorts the entries if your Chrome has it, Gemini in
-   the cloud if not (made-up data only). Open "Break the pages first" to see what happens when a site changes its pages.
-   Very private or automated browsers may be refused by App Check; the page says so, and the check still runs with code.
-2. **The extension:** download https://spare-key-app.web.app/downloads/spare-key-extension.zip, unzip it, open
-   `chrome://extensions`, turn on Developer mode, Load unpacked, choose the `spare-key` folder, then click the puzzle
-   piece and the key. Choose **Try a practice check first** to run it on the made-up pages with nothing of yours opened.
-3. **Any phone, 3 minutes:** open https://spare-key-app.web.app/phone-check.html, choose iPhone or Android, answer a
+   13 made-up settings pages for a person called Jordan. Open "Break the pages first" to see what happens when a site
+   changes its pages. Very private or automated browsers may be refused by App Check; the check still runs with code.
+2. **Any phone, 3 minutes:** open https://spare-key-app.web.app/phone-check.html, choose iPhone or Android, answer a
    few questions, and get the plan, made in the page with nothing sent.
+3. **The extension:** download https://spare-key-app.web.app/downloads/spare-key-extension.zip, unzip it, open
+   `chrome://extensions`, turn on Developer mode, Load unpacked, choose the `spare-key` folder, then click the puzzle
+   piece and the key. Choose **Try a practice check first** to run it on the made-up pages.
 4. **The Android app (optional):** build it from `android/` (README, "Install") and choose **Try a practice phone
-   first**. Nothing on the phone is read in a practice check.
+   first**.
 
 ## Code shared with the author's other entry
 
-The Firebase AI Logic wrapper pattern and the App Check bridge for a Chrome extension come from the author's other
-#BuildHybridAI entry, Still Recalled, as does the Android shell (the Firebase AI Logic wrapper for Android, the App
-Check bridge through a WebView, and running shared JavaScript in Jetpack's sandbox). The checks, the rules, the plan,
-the screens, the practice pages, the planted test app and every test are new.
+The Firebase AI Logic wrapper pattern, the App Check bridge for a Chrome extension and the Android shell (the wrapper,
+the App Check bridge through a WebView, and shared JavaScript in Jetpack's sandbox) come from the author's other
+#BuildHybridAI entry, Still Recalled. The checks, the rules, the plan, the screens, the practice pages, the planted test
+app and every test are new.
