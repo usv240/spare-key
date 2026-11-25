@@ -39,7 +39,10 @@ Spare Key is a free, read-only Chrome extension, an Android app, and a step-by-s
    what the other person will see, quoted from the company's own help page. Changes they may notice wait.
 4. **It closes the loop.** After a change, the person checks again, and "Since your last check", compared with a locked
    copy kept on the computer, shows what is gone and anything new. For advocates, a printed record of what was found goes in the case file.
-5. **Quick exit** is on every screen, and nothing is kept unless the person asks.
+5. **In your own words.** The person can type what no settings page shows: "he bought this phone", "we're on his
+   plan". Gemini Nano turns the words into finding codes on the device, and only the codes reach the plan. This covers
+   the abuser buying the devices, which 20 participants described in the CHI 2018 study.
+6. **Quick exit** is on every screen, and nothing is kept unless the person asks.
 
 It looks for all 6 kinds of problem the Cornell and NYU clinic found: signs a password was known (14 clients),
 unknown signed-in devices (12), a shared family or phone plan (4), possible spyware (3), browser extensions the
@@ -55,6 +58,7 @@ other person, so the model that reads them runs on the device. The cloud only ev
 | Step | Where | Firebase AI Logic mode |
 |---|---|---|
 | Read and sort the private pages; read a page a site changed; read a phone screenshot | Gemini Nano | `ONLY_ON_DEVICE`, no cloud fallback |
+| Read what the person types in their own words ("he bought this phone") into finding codes | Gemini Nano, else code's keyword reader | `ONLY_ON_DEVICE`: the words never leave |
 | Order the plan from finding codes | Gemini in the cloud, through a server prompt template | `ONLY_IN_CLOUD` with function calling: `ask_device`, `ask_user`, `get_steps` |
 | Two voices argue ("close the doors" against "stay hidden"), a third settles | Gemini in the cloud, codes only | `ONLY_IN_CLOUD` |
 | Put a public step in simpler words; the website's practice check | Gemini Nano, else the cloud | `PREFER_ON_DEVICE`, only for text that names no one |

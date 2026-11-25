@@ -48,6 +48,7 @@ name a person stays on the device; finding types go where the person chooses; pu
 |---|---|---|---|
 | Read the settings pages, sort each entry, read a page a site changed | Gemini Nano | `ONLY_ON_DEVICE` | The pages name the other person, so there is no cloud fallback, on purpose |
 | Read a screenshot of a phone location app | Gemini Nano, image input | `ONLY_ON_DEVICE` | A screenshot shows names |
+| Read what the person types about their situation ("he bought this phone") into finding codes | Gemini Nano, else code's keyword reader | `ONLY_ON_DEVICE` | The words name people. Only the codes go on, and they can add a step, never remove one |
 | Order and explain the plan | Gemini in the cloud with plan help on; Gemini Nano with it off | `ONLY_IN_CLOUD` with function calling, or `ONLY_ON_DEVICE` | Finding codes only. The cloud asks the device yes/no questions (`ask_device`), the person (`ask_user`), and reads the public steps (`get_steps`) |
 | Two voices ("close the doors" against "stay hidden", then settle) | Gemini in the cloud | `ONLY_IN_CLOUD` | Codes only, arguing from the steps library |
 | Check a step still matches the official help page | Gemini in the cloud | `ONLY_IN_CLOUD`, URL context | A code and a public page |
@@ -107,6 +108,10 @@ From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved
   of problem they found: signs a password was known (14 clients), unknown signed-in devices (12), a shared family or
   phone plan (4), possible spyware (3), browser extensions the person did not install (2) and a rooted phone (1). The
   rooted-phone check is tested on made-up phone facts; a real rooted phone is the next test.
+- **In your own words:** a box where the person types what no settings page shows ("he bought this phone", "we're on
+  his plan"). On 60 statements written by an agent that never saw the code, the keyword reader found 34 of 52 ways in
+  with 2 wrong, and 39 of 60 statements fully right; Gemini Nano's run on the same set is next
+  ([evidence](docs/evidence/told-eval-told-heldout.json), `tools/told-eval.mjs`).
 - **Effort saved:** by hand, the same check is 13 settings pages on 4 sites and 18 official help pages (12,640 words
   in the 15 that could be counted, about an hour of reading). Spare Key reads the 12 checks in one pass, 13 seconds on
   the practice pages ([evidence](docs/evidence/effort.json), `tools/effort.mjs`).

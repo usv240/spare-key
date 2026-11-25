@@ -147,7 +147,7 @@ export default function why({ numbers, drift = null, android = null, grade = nul
     <div class="table-wrap" tabindex="0" role="region" aria-label="Table, scrolls sideways on small screens"><table>
       <thead><tr><th>Piece</th><th>Runs</th><th>Why it is used</th></tr></thead>
       <tbody>
-        <tr><td>Gemini Nano through Firebase AI Logic (only on device)</td><td>This computer</td><td>Reads and sorts the private settings pages, reads a page a site has changed, reads a screenshot of a phone location app, and orders the plan when plan help from the cloud is off</td></tr>
+        <tr><td>Gemini Nano through Firebase AI Logic (only on device)</td><td>This computer</td><td>Reads and sorts the private settings pages, reads a page a site has changed, reads a screenshot of a phone location app, turns what the person types in their own words into finding codes, and orders the plan when plan help from the cloud is off</td></tr>
         <tr><td>Gemini through Firebase AI Logic (only in the cloud, function calling)</td><td>Google’s cloud</td><td>Orders the plan from finding types only, and asks the device yes or no questions</td></tr>
         <tr><td>Hybrid inference (prefer on device)</td><td>Either</td><td>Only text that names no one: the practice check on this site, and putting a public step in simpler words</td></tr>
         <tr><td>Firebase AI Logic on Android (Gemini Nano on device, Gemini in the cloud)</td><td>The phone, and Google’s cloud</td><td>Gemini Nano says what kind of app each one seems to be, on the phone. The cloud orders the plan from finding types and asks the phone yes or no questions</td></tr>
