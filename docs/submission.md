@@ -16,8 +16,8 @@ from `docs/accuracy.md` and the saved runs in `docs/evidence/`; check them again
 
 ## Inspiration
 
-When someone leaves an abusive partner, the partner often still has a way in: a phone signed in to her Google account,
-mail quietly forwarded to his address, a location share she forgot, an app on her phone. Finding them means a dozen
+When someone leaves an abusive partner, the partner often still has a way in: a phone signed in to their Google
+account, mail quietly forwarded to the partner's address, a forgotten location share, an app on their phone. Finding them means a dozen
 settings pages. Then comes the harder part: removing access can alert the other person, and that is most dangerous
 right after leaving.
 
@@ -124,16 +124,19 @@ then 911. Settings, page readers and the steps library each fall back to the cop
   access a phone-watching app asks for. The plan made by code is on the screen in 3 seconds, and Gemini, through the
   server prompt template, reordered it 9.8 seconds after the button was pressed. If the cloud is slow, the app keeps the
   plan made by code and says so. The emulator's own packet capture of the run shows no reporting host reached.
-- The whole hybrid path on a real phone: on the builder's own Pixel with 703 apps, 72 held some special access; Spare
+- The whole hybrid path on a real phone: on the builder's own Android 17 phone with 703 apps, 72 held some special access; Spare
   Key listed 13 and counted the 59 that came with the phone. Gemini Nano read all 13 on the phone in 7.5 to 10 seconds, and
   Gemini in the cloud ordered the plan from finding types in 2.3 to 8.5 seconds (on 4 of 7 runs, the last 3 through the
   server prompt template; on the other 3 the plan made by code, already on screen, was the one shown).
   Gemini Nano's first run there raised a caution on 10 of the 13, so a caution now has to be backed up by something
   code can check: 2 were kept and 6 set aside.
-- Accessibility: axe-core finds 0 violations in 74 runs across the site and the panel; median reading grade
-  4.3
+- The step-by-step phone check passed 14 of 14 browser checks on an iPhone path and an Android path, including that the
+  page sends nothing after it loads.
+- Accessibility: axe-core finds 0 violations in 78 runs across the site and the panel; median reading grade 4.3.
 - A real account, read-only: real Google and Amazon pages differed from what we expected in 5 of 12 checks. After the
   fixes, every check Spare Key could read matched what the site shows.
+- On the free tier, the cloud ordered the plan in 40 of 40 test situations across two runs, and the two voices finished
+  in 38. The plan made by code is on screen first either way.
 
 ## What we learned
 
@@ -141,20 +144,12 @@ The field's advice (document first, an advocate before any change, warn that a c
 and easy for a model to drop. Putting it in code, and letting models only read, order and explain within it, made the
 product more useful and more honest about what each part does.
 
-## Where it stands
-
-- Tested on 13 made-up settings pages, a planted test app on an Android emulator, the builder's own real Google and
-  Amazon account (read-only), and the builder's own phone, where Gemini Nano read 13 of 13 listed apps in 7.5 to 10
-  seconds on 6 runs.
-- The cloud model runs on the free tier. In the 40 test situations the cloud ordered the plan in 40 of 40 across both
-  runs, and the two voices finished in 38. Whatever the cloud does, the plan made by code is on screen at once.
-- The next step is review by advocates and survivors, through the request on the advocates page.
-
 ## What's next
 
-- Review by advocates at tech-abuse clinics: the request and the questions are at
+- Review by advocates at tech-abuse clinics and by survivors: the questions are at
   https://spare-key-app.web.app/advocates.html.
-- Plant known ways in on real test accounts, and test "what they see" between two accounts.
+- Plant known ways in on real test accounts, and watch "what they see" between two accounts.
+- Real stalkerware samples for the Android app, in a lab setting.
 - A Chrome Web Store listing and a signed Android release, so no Developer mode is needed.
 - Readers for more services, starting with the ones the phone check covers by hand today.
 
@@ -174,8 +169,10 @@ Code and Firebase Agent Skills.
 2. **The extension:** download https://spare-key-app.web.app/downloads/spare-key-extension.zip, unzip it, open
    `chrome://extensions`, turn on Developer mode, Load unpacked, choose the `spare-key` folder, then click the puzzle
    piece and the key. Choose **Try a practice check first** to run it on the made-up pages with nothing of yours opened.
-3. **The Android app (optional):** build it from `android/` (README, "The Android app") and choose **Try a practice
-   phone first**. Nothing on the phone is read in a practice check.
+3. **Any phone, 3 minutes:** open https://spare-key-app.web.app/phone-check.html, choose iPhone or Android, answer a
+   few questions, and get the plan, made in the page with nothing sent.
+4. **The Android app (optional):** build it from `android/` (README, "Install") and choose **Try a practice phone
+   first**. Nothing on the phone is read in a practice check.
 
 ## Code reused from before the submission period
 

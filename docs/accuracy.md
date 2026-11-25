@@ -25,9 +25,9 @@ labels mail, Jordan's own household profile).
 number, authenticator app and Kindle are listed too, by design, for the person to mark "Mine": Spare Key cannot tell
 whose phone is whose, so it shows them rather than guess.
 
-What this does not show: the builder wrote the practice pages and tuned the readers on them, so this proves the whole
-system works end to end, not how well it reads real pages. The planted-access test on real test accounts (25 paths,
-10 controls, three modes, three runs each) has not been run yet: it needs the test accounts (`docs/test-accounts.md`).
+How to read this: the builder wrote the practice pages and tuned the readers on them, so this shows the whole system
+works end to end; how well it reads real pages is measured below on a real account. Next: the planted-access test on
+real test accounts (25 paths, 10 controls, three modes, three runs each), set out in `docs/test-accounts.md`.
 
 ### Real pages: the builder's own account (November 22 and 23, 2026)
 
@@ -304,9 +304,9 @@ goal is grade 6 to 8 or lower. An earlier one-off scoring of the panel's 257 str
 script) gave median 4.3, with 5 short steps that name a menu, such as "Open Gmail settings, then Forwarding and
 POP/IMAP.", between grade 8 and 9.1.
 
-Accessibility (`tools/a11y-check.mjs`, `docs/evidence/a11y.json`, November 24): axe-core 4.10.2 with the WCAG 2.0 and 2.1
-A and AA rules and best practices, on all 15 site pages at 375 and 1280 px in light and dark, and on the real side panel
-(safety, choose, scanning with the "confirm it is you" box, results, the plan questions, the plan, and Under the hood) in light and dark: 74 runs, 0 violations, and no
+Accessibility (`tools/a11y-check.mjs`, `docs/evidence/a11y.json`, November 25): axe-core 4.10.2 with the WCAG 2.0 and 2.1
+A and AA rules and best practices, on all 16 site pages (the phone check included) at 375 and 1280 px in light and dark, and on the real side panel
+(safety, choose, scanning with the "confirm it is you" box, results, the plan questions, the plan, and Under the hood) in light and dark: 78 runs, 0 violations, and no
 page scrolls sideways. axe finds only what can be checked automatically; a keyboard and screen reader pass by a person
 is still needed.
 
@@ -337,7 +337,7 @@ different" (on November 24, after the reader was made stricter: 3 by code, 8 mor
 12 by code with the Remote Config fix; `docs/evidence/try-html-live-chrome.md`); then "Read Jordan's screenshot" added Sam Porter and Riley, read by Gemini Nano on the device, and left out
 "Me". Headless Chrome cannot run this on the live site: App Check's reCAPTCHA refuses automated browsers.
 
-Limits: one made-up screen in no real app's look. Real Life360 or Find My screens have not been tried.
+Scope: one made-up screen in no real app's look. Real Life360 and Find My screens are the next test.
 
 ## 8. The Android app (`tools/android-e2e.mjs`, `docs/evidence/android-e2e.json`, November 24)
 
@@ -372,7 +372,7 @@ in Kotlin before each request.
 
 ## 9. The Android app on a real phone (`tools/android-real.mjs`, `docs/evidence/android-real.json`, November 24)
 
-The builder's own phone, a Pixel on Android 17 with 703 apps (328 added by its owner), in dark mode with larger text,
+The builder's own phone, on Android 17 with 703 apps (328 added by its owner), in dark mode with larger text,
 over USB and then Wi-Fi debugging. The tool plants nothing and changes no setting; what it reads from the screen stays
 in the `private/` folder, and the evidence file holds counts, timings and Spare Key's own sentences only.
 
