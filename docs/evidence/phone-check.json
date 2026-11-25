@@ -1,8 +1,8 @@
 {
- "at": "2026-11-25T14:25:32.044Z",
+ "at": "2026-11-25T18:01:56.426Z",
  "tool": "node tools/phone-check-test.mjs",
- "passed": 14,
- "of": 14,
+ "passed": 22,
+ "of": 22,
  "results": [
   {
    "name": "iphone: the plan starts with the record, then an advocate",
@@ -71,6 +71,46 @@
   },
   {
    "name": "android: nothing was sent after the page loaded",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "iphone: the plan starts with the record, then an advocate",
+   "ok": true,
+   "note": "document > talk_to_advocate > wait > check_manually"
+  },
+  {
+   "name": "iphone: every place marked yes or not sure is in the plan (1)",
+   "ok": true,
+   "note": "The other person gave you or set up a device"
+  },
+  {
+   "name": "iphone: no \"safe\", \"secure\" or \"all clear\" in the plan",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "iphone: the backup hotline is in the plan",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "told: the typed words add a step for the device they gave",
+   "ok": true,
+   "note": "The other person gave you or set up a device"
+  },
+  {
+   "name": "told: \"we still live together\" fills the question left blank, so changes they may notice wait",
+   "ok": true,
+   "note": "document > talk_to_advocate > wait > check_manually"
+  },
+  {
+   "name": "told: the typed words are not in the plan",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "iphone: nothing was sent after the page loaded",
    "ok": true,
    "note": ""
   }

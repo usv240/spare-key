@@ -256,6 +256,10 @@ kbd {
 .plan-q-title { margin: 24px 0 4px; font-size: 18px; }
 .question { margin: 16px 0 0; padding: 0; border: 0; }
 .question legend { padding: 0; margin-bottom: 8px; font-weight: 600; }
+.told .told-label { display: block; font-weight: 600; margin-bottom: 4px; }
+.told .muted { margin: 0 0 8px; }
+.told textarea { display: block; width: 100%; box-sizing: border-box; min-height: 96px; padding: 10px 12px; font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--control); border-radius: var(--radius-control); resize: vertical; }
+.told textarea:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .choices { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--control); border-radius: var(--radius-control); overflow: hidden; }
 .choice { position: relative; display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 4px 6px; border-left: 1px solid var(--control); background: var(--surface); text-align: center; font-size: 15px; line-height: 1.2; cursor: pointer; }
 .choice:first-child { border-left: 0; }

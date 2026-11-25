@@ -5,7 +5,10 @@
 // makes no network request after it loads: no model is needed, because the person already did the reading.
 import { initInfo, closeInfo, isInfoOpen } from '../../extension/src/ui/info.js';
 import { h, put } from '../../extension/src/ui/results.js';
-import { renderPlan, QUESTIONS } from '../../extension/src/ui/plan.js';
+import { renderPlan, QUESTIONS, toldBox } from '../../extension/src/ui/plan.js';
+import { toldFindings, toldSituation } from '../../shared/told.js';
+import { CODE_TEXT } from '../../shared/findings.js';
+import { readTold } from './told-device.js';
 import { buildPlan } from '../../shared/plan/engine.js';
 import { applyInvariants } from '../../shared/plan/invariants.js';
 import { libraryMap } from '../../shared/steps-schema.js';
@@ -42,6 +45,8 @@ const ANSWERS = [['yes', 'Yes'], ['no', 'No'], ['not_sure', 'Not sure']];
 let os = null;
 const answers = {};
 const situation = {};
+// What the person typed under "Anything else you know?": in this page's memory only.
+let toldText = '';
 
 function choices(name, list, value, onPick) {
   return h('div', { class: 'choices' }, list.map(([v, word]) => {
@@ -68,7 +73,8 @@ function drawPlaces() {
     h('p', { class: 'muted', text: 'They change the order of the plan, and stay on this page. You can skip any of them.' }),
     ...QUESTIONS.map(q => h('fieldset', { class: 'question' },
       h('legend', { text: q.text }),
-      choices(`q-${q.key}`, q.answers, situation[q.key], v => { situation[q.key] = v; }))));
+      choices(`q-${q.key}`, q.answers, situation[q.key], v => { situation[q.key] = v; }))),
+    toldBox({ text: toldText, onTold: t => { toldText = t; }, where: 'this phone or computer' }));
   $('situation').hidden = false;
   $('ask-actions').hidden = false;
   count();
@@ -87,10 +93,20 @@ function count() {
   $('found-line').textContent = `${n} to look at so far${left ? `, ${left} ${left === 1 ? 'place' : 'places'} not answered yet` : ''}. You can make the plan at any time.`;
 }
 
-function makePlan() {
-  const fs = findings();
+async function makePlan() {
+  const found = findings();
+  // "Anything else you know?": read here (Gemini Nano on this device, or the keyword reader). It can add a step and fill a
+  // question left blank, never take a step away.
+  let told = [], toldValues = {};
+  if (toldText.trim()) {
+    const r = await readTold(toldText);
+    const words = Object.fromEntries(Object.entries(CODE_TEXT).map(([c, t]) => [c, t[0]]));
+    told = toldFindings(r.answer, { existing: found, howFound: r.how === 'nano' ? 'nano' : 'reader', words });
+    toldValues = toldSituation(r.answer, situation);
+  }
+  const fs = [...found, ...told];
   const notChecked = ['other_services'];
-  const ctx = { findings: fs, situation, notChecked, library: LIBRARY };
+  const ctx = { findings: fs, situation: { ...toldValues, ...situation }, notChecked, library: LIBRARY };
   const { plan, fired } = applyInvariants(buildPlan(ctx), ctx);
   const byRef = new Map(fs.map(f => [f.ref, f]));
   renderPlan($('plan'), { plan, fired, byRef, library: LIBRARY, source: 'page', onOpen: () => {} });
@@ -105,6 +121,7 @@ function makePlan() {
 function clearAll() {
   for (const k of Object.keys(answers)) delete answers[k];
   for (const k of Object.keys(situation)) delete situation[k];
+  toldText = '';
   os = null;
   for (const r of document.querySelectorAll('input[name="os"]')) r.checked = false;
   put($('places'));

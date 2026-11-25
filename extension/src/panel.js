@@ -23,6 +23,7 @@ import { libraryMap } from '../../shared/steps-schema.js';
 import { CODES, CODE_TEXT, SITUATION, SITUATION_DEFAULTS, OWNERSHIP, RECENCY, HOW_FOUND } from '../../shared/findings.js';
 import STEPS from '../../data/steps.json';
 import { lock, unlock } from '../../shared/lockedfile.js';
+import { toldFindings, toldSituation } from '../../shared/told.js';
 
 // The steps library: the bundled copy, replaced for this session by a newer one from Firestore if there is one.
 let LIBRARY = libraryMap(STEPS);
@@ -49,6 +50,7 @@ let scanAbort = null;
 async function quickExit() {
   if (exiting) return;
   exiting = true;
+  toldText = '';
   scanAbort?.abort();
   document.body.replaceChildren();
   document.documentElement.style.background = '#fff';
@@ -424,6 +426,7 @@ async function renderSince(record) {
 $('check-again').addEventListener('click', () => show('choose', { focus: 'choose-title' }));
 async function clearAll() {
   reveal.clear();
+  toldText = '';
   await chrome.storage.session.remove(['scan', 'sentLog', 'situation', 'plan']);
   announce('Everything from this check was cleared from this computer.');
   show('choose', { focus: 'choose-title' });
@@ -438,6 +441,9 @@ $('clear-all-2').addEventListener('click', clearAll);
 // Not checked, and checked only in part: both become "check it yourself" steps in the plan.
 const notCheckedIds = scan => [...scan.outcomes.filter(o => o.status !== 'checked' || o.partly).map(o => o.id).filter(id => id !== 'screenshot'), 'other_services'];
 
+// What the person typed under "Anything else you know?": in this page's memory only, never stored or sent.
+let toldText = '';
+
 async function showQuestions() {
   const { situation = { values: {}, share: false } } = await chrome.storage.session.get('situation');
   const { cloudOn = true } = await chrome.storage.local.get('cloudOn');
@@ -445,6 +451,7 @@ async function showQuestions() {
     values, share, cloudOn,
     onChange: async (v, s) => { await chrome.storage.session.set({ situation: { values: v, share: s } }); draw(v, s); },
     onMake: () => makePlan(),
+    told: { text: toldText, onTold: t => { toldText = t; } },
   });
   draw(situation.values, situation.share);
   $('plan').replaceChildren();
@@ -495,8 +502,20 @@ async function makePlan() {
   if (!scan) return;
   const { situation = { values: {}, share: false } } = await chrome.storage.session.get('situation');
   const { cloudOn = true } = await chrome.storage.local.get('cloudOn');
-  const values = { ...SITUATION_DEFAULTS, ...situation.values };
-  const findings = scan.findings;
+  // "Anything else you know?": read on this computer (Gemini Nano, or the keyword reader), into codes and answers. It can
+  // add a step and fill a question the person left blank; it never takes a step away or changes an answer they gave.
+  let told = [];
+  let toldValues = {};
+  if (toldText.trim()) {
+    const r = await offscreen('sk:told', { text: toldText }).catch(() => null);
+    if (r?.answer) {
+      const words = Object.fromEntries(Object.entries(CODE_TEXT).map(([c, t]) => [c, t[0]]));
+      told = toldFindings(r.answer, { existing: scan.findings, howFound: r.how === 'nano' ? 'nano' : 'reader', words });
+      toldValues = toldSituation(r.answer, situation.values);
+    }
+  }
+  const values = { ...SITUATION_DEFAULTS, ...toldValues, ...situation.values };
+  const findings = [...scan.findings, ...told];
   const byRef = new Map(findings.map(f => [f.ref, f]));
   const ctx = { findings: findings.map(f => ({ ref: f.ref, code: f.code, ownership: f.ownership })), situation: values, notChecked: notCheckedIds(scan), library: LIBRARY };
 
@@ -522,7 +541,7 @@ async function makePlan() {
   const nanoStatus = cloudOn ? null : (await offscreen('sk:nano-status').catch(() => ({})))?.status;
   if (nanoStatus === 'available') {
     const all = Object.fromEntries(Object.keys(SITUATION).map(k => [k, true]));
-    const local = toCloud(findings, { situation: situation.values, shared: all, notChecked: notCheckedIds(scan) });
+    const local = toCloud(findings, { situation: { ...toldValues, ...situation.values }, shared: all, notChecked: notCheckedIds(scan) });
     draw(codeResult, 'code', { cloudNote: 'Asking Gemini Nano on this computer to order this. Nothing is sent anywhere.' });
     const d = await offscreen('sk:device-plan', { body: local.body, library: LIBRARY }).catch(e => ({ error: String(e) }));
     if (d?.answer) {
@@ -537,7 +556,7 @@ async function makePlan() {
 
   // 2. The cloud plan, from codes and the answers the person chose to share.
   const shared = situation.share ? Object.fromEntries(Object.keys(SITUATION).map(k => [k, !!situation.values[k]])) : {};
-  const { body, refs } = toCloud(findings, { situation: situation.values, shared, notChecked: notCheckedIds(scan) });
+  const { body, refs } = toCloud(findings, { situation: { ...toldValues, ...situation.values }, shared, notChecked: notCheckedIds(scan) });
   const vocabulary = JSON.stringify([STEPS, Object.keys(CODES), SITUATION, OWNERSHIP, RECENCY, HOW_FOUND, CODE_TEXT]);
   const privateStrings = privateStringsFrom({ findings, account: scan.account, vocabulary });
   pendingAsk = { scan, refs };

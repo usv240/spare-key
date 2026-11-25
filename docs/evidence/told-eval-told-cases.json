@@ -1,0 +1,70 @@
+{
+ "at": "2026-11-25T17:59:21.554Z",
+ "tool": "node tools/told-eval.mjs",
+ "cases": "tools/told-cases.json",
+ "keyword": {
+  "cases": 40,
+  "exact": 37,
+  "codes": {
+   "found": 26,
+   "wrongAdded": 0,
+   "missed": 3,
+   "precision": 1,
+   "recall": 0.897
+  },
+  "situation": {
+   "right": 12,
+   "of": 12,
+   "filledWhenNotSaid": 0
+  },
+  "misses": [
+   {
+    "i": 11,
+    "want": [
+     "maps.sharing.person"
+    ],
+    "got": [],
+    "living": [
+     "unclear",
+     "unclear"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 14,
+    "want": [
+     "google.family.manager_other"
+    ],
+    "got": [],
+    "living": [
+     "unclear",
+     "unclear"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 35,
+    "want": [
+     "phone.app.control"
+    ],
+    "got": [],
+    "living": [
+     "unclear",
+     "unclear"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   }
+  ]
+ },
+ "nano": null,
+ "nanoRaw": null
+}

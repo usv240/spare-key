@@ -17,7 +17,21 @@ export const QUESTIONS = [
 ];
 
 /** The optional questions. `values` are the current answers; `onChange(values, share)` saves them. */
-export function renderQuestions(root, { values, share, cloudOn, onChange, onMake }) {
+/**
+ * "In your own words": an optional box for what the person knows that no settings page shows. The words stay on the
+ * device (Gemini Nano, or code's keyword reader); `onTold(text)` keeps them in memory only.
+ */
+export function toldBox({ text = '', onTold, where = 'this computer' }) {
+  const box = h('textarea', { id: 'told-text', rows: '4', maxlength: '1500', 'aria-describedby': 'told-help' });
+  box.value = text;
+  box.addEventListener('input', () => onTold(box.value));
+  return h('div', { class: 'question told' },
+    h('label', { for: 'told-text', class: 'told-label', text: 'Anything else you know? (optional)' }),
+    h('p', { id: 'told-help', class: 'muted', text: `For example: “he bought this phone” or “we are on his phone plan.” Your words stay on ${where}. Gemini Nano reads them here, or Spare Key’s own code if Nano is not ready, and only what they point to is used.` }),
+    box);
+}
+
+export function renderQuestions(root, { values, share, cloudOn, onChange, onMake, told = null }) {
   registerInfo('situation', {
     title: 'Why these questions',
     what: 'Your answers change the order of the plan. For example, if now is not a good time, changes that may be noticed wait.',
@@ -42,6 +56,7 @@ export function renderQuestions(root, { values, share, cloudOn, onChange, onMake
     h('h1', { text: 'Your plan' }),
     h('div', { class: 'with-info' }, h('h2', { class: 'plan-q-title', text: 'Want the plan ordered for your situation? These answers are optional.' }), infoButton('situation', 'About these questions')),
     ...fieldsets,
+    told ? toldBox(told) : null,
     h('label', { class: 'share-line' }, shareBox, h('span', { text: cloudOn ? 'Let plan help in the cloud see my choices' : 'Plan help from the cloud is off, so your choices stay here' })),
     h('div', { class: 'actions' }, h('button', { class: 'btn btn-primary btn-block', type: 'button', id: 'make-plan', onclick: onMake }, 'Make my plan')),
   );

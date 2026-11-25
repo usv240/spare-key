@@ -16,6 +16,8 @@ try {
   for (const run of [
     { os: 'iphone', yes: ['Find My'], unsure: ['Family'], situation: { living: 'together', safe_to_change_now: 'yes', children_shared: 'yes' } },
     { os: 'android', yes: ['Accessibility', 'Your phone plan'], unsure: [], situation: { living: 'apart', safe_to_change_now: 'yes' } },
+    // "Anything else you know?": typed words, read on the device (the keyword reader here: headless Chrome has no Nano).
+    { os: 'iphone', yes: [], unsure: [], situation: { safe_to_change_now: 'not_sure' }, told: 'He bought me this phone and set it up. We still live together.' },
   ]) {
     const page = await browser.newPage();
     await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
@@ -35,6 +37,7 @@ try {
       }
       for (const [k, v] of Object.entries(run.situation)) document.querySelector(`input[name="q-${k}"][value="${v}"]`).click();
     }, run);
+    if (run.told) await page.type('#told-text', run.told);
     if (shots) { mkdirSync('tools/out/phone-check', { recursive: true }); await page.screenshot({ path: `tools/out/phone-check/${run.os}-ask.png`, fullPage: true }); }
     await page.click('#make-plan');
     await page.waitForSelector('#plan .plan');
@@ -44,12 +47,16 @@ try {
       text: document.querySelector('#plan').textContent,
     }));
     if (shots) await page.screenshot({ path: `tools/out/phone-check/${run.os}-plan.png`, fullPage: true });
-    const n = run.yes.length + run.unsure.length;
+    const n = run.yes.length + run.unsure.length + (run.told ? 1 : 0);
     step(`${run.os}: the plan starts with the record, then an advocate`, plan.kinds[0] === 'document' && plan.kinds[1] === 'talk_to_advocate', plan.kinds.join(' > '));
     step(`${run.os}: every place marked yes or not sure is in the plan (${n})`, plan.titles.length === n, plan.titles.join('; '));
     step(`${run.os}: no "safe", "secure" or "all clear" in the plan`, !/\b(safe|safely|secure|all clear)\b/i.test(plan.text));
     step(`${run.os}: the backup hotline is in the plan`, /1-866-331-9474/.test(plan.text));
-    if (run.os === 'iphone') {
+    if (run.told) {
+      step('told: the typed words add a step for the device they gave', /gave you or set up a device/i.test(plan.text), plan.titles.join('; '));
+      step('told: "we still live together" fills the question left blank, so changes they may notice wait', !plan.kinds.includes('change_now'), plan.kinds.join(' > '));
+      step('told: the typed words are not in the plan', !plan.text.includes('He bought me this phone'));
+    } else if (run.os === 'iphone') {
       step('iphone: what the other person sees, from Apple’s own guide, is on the Find My step', /disappear from their Find My/.test(plan.text));
       step('iphone: shared children: a step for their devices', /Your children’s devices/.test(plan.text));
     } else {
