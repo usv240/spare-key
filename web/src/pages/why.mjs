@@ -37,7 +37,7 @@ function voicesBlock(v) {
   const line = (label, text) => { const c = cleanText(text); return `<div><dt>${label}</dt><dd>${c.text ? esc(c.text) : `<span class="muted">Removed by rule 6. The model wrote: “${esc(text)}” A plan cannot promise that.</span>`}</dd></div>`; };
   return `<div class="voices-note" id="voices">
       <h3>An optional second look: two voices</h3>
-      <p>Closing a door fast and staying hidden pull against each other. When plan help is on, one model voice argues for each and a third settles it, from finding types only. The plan made by code is already on the screen, and the ten rules check whatever the voices write. From the practice check for Jordan, ${esc(v.date)}:</p>
+      <p>Closing a door fast and staying hidden pull against each other. When plan help is on, one model voice argues for each and a third settles it, from finding types only. The plan made by code is already on the screen, and the eleven rules check whatever the voices write. From the practice check for Jordan, ${esc(v.date)}:</p>
       <dl class="voices-lines">${line('Close the doors', v.close)}${line('Stay hidden', v.hidden)}${line('How they settled it', v.settled)}</dl>
     </div>`;
 }
@@ -81,7 +81,7 @@ export default function why({ numbers, drift = null, android = null, grade = nul
       <li class="fact rise"><span class="fact-n">3</span><p>There are only three dedicated tech-abuse clinics in the US, to the researchers’ knowledge. They do this check by hand, account by account.</p><cite><a href="https://engineering.nyu.edu/news/ai-chatbots-often-give-unsafe-or-incomplete-advice-survivors-tech-enabled-abuse-study-finds">Same study</a></cite></li>
     </ul>
     <p class="closing-line">Spare Key does the clinic’s first job for anyone: it reads the person’s own settings and lists who still has a way in. Then it gives the two warnings the chatbots left out, every time.</p>
-    <p class="muted stakes">Why the order of the plan matters: nearly 2,400 women were killed by men in 2024, and of those who knew their killer, 57.6% were his wife or intimate partner (<a href="https://vpc.org/press/nearly-nine-out-of-10-women-murdered-by-men-are-killed-by-someone-they-know-and-almost-two-thirds-die-by-gunfire-new-violence-policy-center-study-finds/">Violence Policy Center</a>, September 16, 2026). A change the other person notices can be the dangerous moment, so Spare Key says which changes those are before anything is touched.</p>
+    <p class="stakes">A change the other person notices can make things worse. That is why the plan tells you which changes they may notice before you touch anything.</p>
   </div>
 </section>
 
@@ -140,6 +140,22 @@ export default function why({ numbers, drift = null, android = null, grade = nul
   </div>
 </section>
 
+<section class="block" id="fits" aria-labelledby="fits-title">
+  <div class="wrap">
+    <h2 id="fits-title">How it fits with the tools people already use</h2>
+    <p class="lead">Spare Key adds two things to the checks that exist: one look across several companies at once, and, for each thing it finds, what the other person may notice and which to change first.</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Other tools: table, scrolls sideways on small screens"><table>
+      <thead><tr><th>Tool</th><th>What it does well</th><th>What Spare Key adds</th></tr></thead>
+      <tbody>
+        <tr><td>Apple Safety Check</td><td>On an iPhone, reviews and stops sharing with people and apps, in one place</td><td>The same kind of review for Google, Gmail, Google Photos, Amazon, Chrome and Android phones, and a plan that says what each change shows the other person</td></tr>
+        <tr><td>Google Security Checkup</td><td>Reviews one Google account’s devices, recovery details and connected apps</td><td>Reads Gmail forwarding, filters and delegates, location sharing and Amazon too, and puts the changes that may be noticed last, after a record and an advocate</td></tr>
+        <tr><td>Cornell’s Clinic to End Tech Abuse and its phone scanner</td><td>Trained volunteers check a survivor’s accounts and phone with them, and a scanner looks for spyware on a connected phone</td><td>The clinic’s first job, finding who still has a way in, for anyone, at any hour, with a record an advocate can use in a session</td></tr>
+        <tr><td>A chatbot</td><td>Answers questions in plain words</td><td>Reads the settings itself, so the person never pastes names or addresses into a chat, and code makes sure every plan starts with the record and an advocate</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
 <section class="block" id="builders" aria-labelledby="builders-title">
   <div class="wrap">
     <h2 id="builders-title">For advocates and developers</h2>
@@ -148,6 +164,7 @@ export default function why({ numbers, drift = null, android = null, grade = nul
         <p>An advocate can run the check with someone, read the findings together, and print the plan, with addresses hidden unless the person chooses to show them. <a href="/advocates.html">How to use it in a session</a></p>
         <p>The steps library, checked against official help pages, is a free, open API, and an MCP server lets an AI assistant give the current steps with the warnings attached.</p>
         <p><a href="/api.html">The Steps API and the MCP server</a> · <a href="/what-they-see.html">What they see when you change it</a></p>
+    <p class="muted stakes">For advocates and judges, why the order matters: nearly 2,400 women were killed by men in 2024, and of those who knew their killer, 57.6% were his wife or intimate partner (<a href="https://vpc.org/press/nearly-nine-out-of-10-women-murdered-by-men-are-killed-by-someone-they-know-and-almost-two-thirds-die-by-gunfire-new-violence-policy-center-study-finds/">Violence Policy Center</a>, September 16, 2026). A change the other person notices can be the dangerous moment, so Spare Key says which changes those are before anything is touched.</p>
       </div>
       <pre tabindex="0" aria-label="Example request to the Steps API"><code>GET https://spare-key-app.web.app/api/v1/steps/google.recovery.email_other.json
 

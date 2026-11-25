@@ -164,6 +164,18 @@ try {
     step('the plan was asked through the server prompt template first', /^template /.test(via[0] || ''), via.join(' -> '));
     if (screens) await panel.screenshot({ path: path.join(out, `plan${nano ? '-nano' : ''}.png`), fullPage: true });
 
+    // The record of what was found, for an advocate: printing is stubbed, and the record's rows are read instead.
+    const record = await panel.evaluate(async () => {
+      window.print = () => {};
+      document.getElementById('print-record').click();
+      await new Promise(r => setTimeout(r, 300));
+      const el = document.getElementById('findings-record');
+      const out = { rows: el.querySelectorAll('tbody tr').length, text: el.textContent };
+      dispatchEvent(new Event('afterprint'));
+      return out;
+    });
+    step('the record of what was found lists every finding, with email addresses partly hidden', record.rows === scan.findings.length && !/sam\.porter@/i.test(record.text) && /•/.test(record.text), `${record.rows} rows`);
+
     // The locked copy: save it, clear everything, open it with a wrong password, then the right one.
     const downloads = path.join(profile, 'downloads');
     mkdirSync(downloads, { recursive: true });

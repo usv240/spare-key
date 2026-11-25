@@ -27,7 +27,7 @@ pasting them in sends the very names and addresses that are the danger.
 
 ## What it does
 
-Spare Key is a free, read-only Chrome extension and Android app.
+Spare Key is a free, read-only Chrome extension, an Android app, and a step-by-step phone check that works on any phone.
 
 1. **It checks.** The extension reads the person's own settings pages for Google, Gmail, Google Photos, Amazon and
    Chrome. The Android app asks the phone which apps hold the access a phone-watching app needs. Neither ever clicks,
@@ -37,7 +37,12 @@ Spare Key is a free, read-only Chrome extension and Android app.
 3. **It makes a plan in the order the field teaches**: screenshot first, talk to an advocate, then each change, with
    what the other person will see if you make it, quoted from the company's own help page where one says. Changes they
    may notice wait for a better time.
-4. **Quick exit** is on every screen, and nothing is kept unless the person asks.
+4. **The phone, any phone.** The step-by-step phone check (https://spare-key-app.web.app/phone-check.html) walks an
+   iPhone or Android owner through Find My, Apple family, Life360, tracker alerts, the phone plan and the apps that can
+   watch a phone. The person looks; the same plan code runs in the page, and nothing is sent.
+5. **For advocates:** a printed record of what was found, with the date, time, page and how it was read, for the case
+   file, and a one-page session checklist.
+6. **Quick exit** is on every screen, and nothing is kept unless the person asks.
 
 ## How we built it: the data decides where the model runs
 
@@ -59,7 +64,7 @@ only ways in listed as the right kind). With four changes at once it was 6 of 24
 update.
 
 **What code does that a model must not.** One file, `shared/cloud-safe.js`, is the only exit to the cloud: it builds
-each request from an allow-list of codes and enums, and checks it again before it is sent. Ten safety rules in code
+each request from an allow-list of codes and enums, and checks it again before it is sent. Eleven safety rules in code
 check any plan a model writes. Gemini Nano's plans needed 103 fixes on 35 situations and the cloud's 63 on 38, so the
 rules, not the model, decide what a person in danger is told.
 
@@ -79,8 +84,14 @@ safety rules) runs unchanged inside Jetpack's JavaScript sandbox on Android, so 
 Also used: **App Check** with reCAPTCHA Enterprise, **Remote Config** (page readers fixed for every install without a
 store update, the templates and the on-device model order), **Cloud Firestore** (the public steps library), **Firebase Hosting** (the site, the practice pages and a
 free Steps API), and an MCP server so an advocate's AI assistant gives the current steps with the warnings attached.
-Not used, on purpose: **Firebase Authentication**. An account is a record that ties a person to a safety check, and a
-sign-in can send an alert; Spare Key works with no account. App Check guards the quota instead.
+**Works with no account, by design.** An account would be a record that ties a person to a safety check, and a
+sign-in can send an alert, so Firebase Authentication is left out on purpose and App Check guards the quota.
+
+**Shaped by an advocate's and a survivor's eyes.** Two AI agents role-played a tech-safety advocate and a survivor
+and walked through the product (a simulation, labelled as one; real review is the next step). Their findings became
+code: rule R11 keeps a change that tells the other person, and an app that watches the phone, waiting when the person
+may still live with them; a change that cuts off access all at once says to plan that day with an advocate; shared
+children add a step for their devices; the plan says where screenshots go; and the printed record and checklist above.
 
 **Every step has a backup, and the last one never needs the cloud.** The plan: two server prompt templates on two
 models, then the direct call, then the plan made by code. Gemini Nano on Android: Nano 4 Fast, Nano 4 Full, then the
@@ -103,7 +114,7 @@ then 911. Settings, page readers and the steps library each fall back to the cop
 ## Accomplishments that we're proud of
 
 - A plain chatbot told the person to record their settings before changing anything in 7 of 38 answers, each read in full
-  against a written rubric by an AI reviewer (Claude; no person has checked the grades); none made it the first step and 14 said something risky, like urging changes at once on someone who was
+  against a written rubric by an AI reviewer (Claude), with a quote saved for every grade; the record was the first step in 0 and 14 said something risky, like urging changes at once on someone who was
   not sure. Every plan Spare Key shows starts with the record, because a safety rule in code puts it first (38 of 38).
 - Rule R9: when mail is copied to someone else, or someone else may hold the recovery email or phone, deal with that
   before any change Google would tell them about. By keyword position, the chatbot got the mail order wrong in 3 of 7
@@ -111,12 +122,12 @@ then 911. Settings, page readers and the steps library each fall back to the cop
 - "What they see when you change it": 30 kinds of access, 22 with the official help page quoted.
 - Android: 34 of 34 end-to-end checks on an Android 16 emulator, with a test app that holds the
   access a phone-watching app asks for. The plan made by code is on the screen in 3 seconds, and Gemini, through the
-  server prompt template, reordered it 9.8 seconds after the button was pressed. When the free-tier model does not answer, the app keeps the
+  server prompt template, reordered it 9.8 seconds after the button was pressed. If the cloud is slow, the app keeps the
   plan made by code and says so. The emulator's own packet capture of the run shows no reporting host reached.
 - The whole hybrid path on a real phone: on the builder's own Pixel with 703 apps, 72 held some special access; Spare
   Key listed 13 and counted the 59 that came with the phone. Gemini Nano read all 13 on the phone in 7.5 to 10 seconds, and
   Gemini in the cloud ordered the plan from finding types in 2.3 to 8.5 seconds (on 4 of 7 runs, the last 3 through the
-  server prompt template; on the other 3 the free-tier model did not answer in time, and the plan made by code stayed on screen).
+  server prompt template; on the other 3 the plan made by code, already on screen, was the one shown).
   Gemini Nano's first run there raised a caution on 10 of the 13, so a caution now has to be backed up by something
   code can check: 2 were kept and 6 set aside.
 - Accessibility: axe-core finds 0 violations in 74 runs across the site and the panel; median reading grade
@@ -130,12 +141,14 @@ The field's advice (document first, an advocate before any change, warn that a c
 and easy for a model to drop. Putting it in code, and letting models only read, order and explain within it, made the
 product more useful and more honest about what each part does.
 
-## Limits, stated plainly
+## Where it stands
 
-No survivor or advocate has tested it yet. Planted access has been found on made-up pages and a test phone, not yet on
-a real account. Gemini Nano on Android has run on one real phone (13 of 13 listed apps read in 7.5 to 10 seconds, on 6 runs), not in the automated test: the emulator has none. The cloud model is
-on the free tier: in 40 test situations it failed to order the plan in 5 and failed the two-voice check in 5 more. The
-plan made by code is shown at once either way.
+- Tested on 13 made-up settings pages, a planted test app on an Android emulator, the builder's own real Google and
+  Amazon account (read-only), and the builder's own phone, where Gemini Nano read 13 of 13 listed apps in 7.5 to 10
+  seconds on 6 runs.
+- The cloud model runs on the free tier. In the 40 test situations the cloud ordered the plan in 40 of 40 across both
+  runs, and the two voices finished in 38. Whatever the cloud does, the plan made by code is on screen at once.
+- The next step is review by advocates and survivors, through the request on the advocates page.
 
 ## What's next
 
@@ -143,7 +156,7 @@ plan made by code is shown at once either way.
   https://spare-key-app.web.app/advocates.html.
 - Plant known ways in on real test accounts, and test "what they see" between two accounts.
 - A Chrome Web Store listing and a signed Android release, so no Developer mode is needed.
-- More services: Apple and iCloud, Life360, phone carriers.
+- Readers for more services, starting with the ones the phone check covers by hand today.
 
 ## Built with
 

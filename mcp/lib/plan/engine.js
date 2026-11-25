@@ -27,6 +27,15 @@ export const ALERT_NOTE = 'Google sends security alerts to your recovery email a
 export const PHONE_WATCH = new Set(['phone.app.control', 'phone.app.accessibility', 'phone.app.device_admin', 'phone.app.notifications', 'phone.app.messages']);
 export const PHONE_NOTE = 'An app on your phone may be able to see what you do on it. Make other changes from a phone or computer the other person has never had.';
 export const PHONE_CALL_NOTE = 'An app on this phone may be able to see your calls and texts. Call or text from another phone if you can.';
+// Rule R11 (added November 25, 2026, from a simulated advocate review). When the person lives with the other person, or
+// did not say, a change the library says sends the other person a notice, and an app watching the phone, wait even when
+// now is a good time: "now is a good time" is one quick answer, and the person may still be within reach.
+export const TOGETHER_NOTE = 'They would be told about this change. You may still be within their reach, so leave it until you and an advocate have a plan for that day.';
+// Changes that cut off access all at once (a sign-out, a new password, a new recovery address). Planned as one day.
+export const CUTOFF = new Set(['google.devices.other', 'google.2sv.other_device', 'google.recovery.email_other', 'google.recovery.phone_unconfirmed']);
+export const CUTOFF_NOTE = 'This cuts off their access all at once, and they may notice within hours. Plan the day with an advocate, and do these changes together.';
+// Shared children: their devices can share where they are, and travel between homes.
+export const KIDS_CHECK = 'kids_devices';
 export const LINKED_NOTE = 'Your mail is copied to someone else. Any email Google sends you about this change, like a security alert or a code, would reach them too. Deal with the mail copying first.';
 
 /** How likely a change is to be noticed, from the library. Unknown counts as noticeable. */
@@ -45,6 +54,7 @@ export const noticeOf = (library, code) => {
 export function buildPlan({ findings = [], situation = {}, notChecked = [], library = {} }) {
   const s = { ...SITUATION_DEFAULTS, ...situation };
   const goodTime = s.safe_to_change_now === 'yes';
+  const apart = s.living === 'apart';
   const open = findings.filter(f => f.ownership !== 'mine');
   const actions = [];
 
@@ -66,24 +76,26 @@ export function buildPlan({ findings = [], situation = {}, notChecked = [], libr
   const mailOut = codes.some(c => MAIL_OUT.has(c));
   const watched = codes.some(c => PHONE_WATCH.has(c));
   const alertsTo = codes.some(c => ALERTS_TO.has(c));
-  // On a phone that may be watched a screenshot is the wrong record: it stays on the phone and may back up.
-  const record = code => (code.startsWith('phone.') ? 'Take a picture of it with another phone, or write it down,' : 'Screenshot it');
   for (const code of codes) {
     const refs = byCode.get(code);
     const notice = noticeOf(library, code);
     const linked = mailOut && EMAILS_ABOUT.has(code) ? { linked: LINKED_NOTE } : alertsTo && ALERTED.has(code) ? { linked: ALERT_NOTE } : watched && !PHONE_WATCH.has(code) ? { linked: PHONE_NOTE } : {};
-    if (notice === 'unlikely' && TAKEOVER.has(code) && goodTime) {
+    const cutoff = CUTOFF.has(code) ? { cutoff: CUTOFF_NOTE } : {};
+    if (goodTime && !apart && (notice === 'notifies' || PHONE_WATCH.has(code))) {
+      actions.push({ action: 'wait', refs, code, ...linked, why: TOGETHER_NOTE });
+    } else if (notice === 'unlikely' && TAKEOVER.has(code) && goodTime) {
       actions.push({ action: 'change_now', refs, code, ...linked, why: 'This gives someone a quiet way into your account, and changing it is unlikely to be noticed.' });
     } else if (goodTime) {
-      actions.push({ action: 'change_now', refs, code, ...linked, why: 'You said now is a good time. Removing this may be noticed, so read the warning first.' });
+      actions.push({ action: 'change_now', refs, code, ...linked, ...cutoff, why: 'You said now is a good time. Removing this may be noticed, so read the warning first.' });
     } else {
       actions.push({ action: 'wait', refs, code, ...linked, why: notice === 'unlikely'
-        ? `Changing this is unlikely to be noticed, but you said now may not be a good time. ${record(code)} and come back to it.`
-        : `Removing this may be noticed. ${record(code)} and leave it until a better time, after talking to an advocate.` });
+        ? 'Changing this is unlikely to be noticed, but you said now may not be a good time. Keep your record of it from step 1, and come back to it.'
+        : 'Removing this may be noticed. Leave it as it is until a better time, after talking to an advocate.' });
     }
   }
 
-  // 5. Everything that was not checked: how to check it yourself.
+  // 5. Everything that was not checked: how to check it yourself. Shared children first: their devices.
+  if (s.children_shared === 'yes') actions.push({ action: 'check_manually', refs: [], code: null, check: KIDS_CHECK, why: 'Devices that go with your children between homes can share where they are. Check them, or ask an advocate to help.' });
   for (const id of notChecked) actions.push({ action: 'check_manually', refs: [], code: null, check: id, why: 'Spare Key did not check this. A trusted guide shows how to check it yourself.' });
 
   return { actions };

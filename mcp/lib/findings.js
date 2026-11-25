@@ -55,6 +55,13 @@ export const CODES = {
   'phone.app.usage_access': { group: 'phone', check: 'phone.apps' },
   'phone.app.location_always': { group: 'location', check: 'phone.apps' },
   'phone.usb_debugging': { group: 'phone', check: 'phone.settings' },
+  // The guided phone check on the website (web/src/phone-check.js): the person answers, on any phone; nothing is read.
+  'apple.findmy.sharing': { group: 'location', check: 'phone.guided' },
+  'apple.family.organizer_other': { group: 'account', check: 'phone.guided' },
+  'apple.account.device_other': { group: 'account', check: 'phone.guided' },
+  'tracker.alert': { group: 'location', check: 'phone.guided' },
+  'life360.circle.member': { group: 'location', check: 'phone.guided' },
+  'carrier.plan.holder_other': { group: 'account', check: 'phone.guided' },
 };
 
 // Every check id, including the services Spare Key does not check yet. A "not checked" item carries only one of
@@ -64,7 +71,7 @@ export const CHECK_IDS = [
   'gmail.forwarding', 'gmail.filters', 'gmail.delegates',
   'maps.sharing', 'chrome.extensions', 'chrome.sync',
   'amazon.household', 'amazon.devices', 'google.family', 'photos.sharing', 'screenshot',
-  'phone.apps', 'phone.settings',
+  'phone.apps', 'phone.settings', 'phone.guided',
 ];
 // other_services stands for every service Spare Key does not cover, as one "check it yourself" step.
 export const UNCHECKED_SERVICES = ['ring', 'life360', 'phone_carrier', 'apple', 'facebook', 'snapchat', 'your_phone', 'other_services'];
@@ -118,6 +125,12 @@ export const CODE_TEXT = {
   'phone.app.usage_access': ['An app can see which apps you use', 'This app can see which apps you open and for how long.'],
   'phone.app.location_always': ['An app can see your location all the time', 'This app can see where you are even when you are not using it.'],
   'phone.usb_debugging': ['USB debugging is on', 'A computer connected to this phone by cable can install and control apps on it.'],
+  'apple.findmy.sharing': ['Someone can see your location in Find My', 'This person can see where your iPhone is.'],
+  'apple.family.organizer_other': ['Someone else runs your Apple family group', 'The organizer can see what the family buys, and may see your location and screen time.'],
+  'apple.account.device_other': ['A device you do not know is signed in to your Apple Account', 'Whoever has this device may see your messages, photos and where you are.'],
+  'tracker.alert': ['Your phone warned you about a tracker moving with you', 'A tracker, like an AirTag, may be in your bag, your car or something you carry.'],
+  'life360.circle.member': ['Someone can see your location in Life360', 'People in your Life360 circle can see where you are and where you have been.'],
+  'carrier.plan.holder_other': ['Someone else holds your phone plan', 'The account holder can see who you call and text, and may be able to locate the phone or move the number.'],
 };
 
 export const isCode = c => Object.hasOwn(CODES, c);

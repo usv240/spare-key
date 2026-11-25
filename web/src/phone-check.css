@@ -1,0 +1,14 @@
+/* The guided phone check: the panel's own styles, set as a page a phone can hold. Panel tokens only. */
+body.phone-check main { max-width: 40rem; margin: 0 auto; }
+body.phone-check .bar .mark { color: inherit; text-decoration: none; }
+.phone-check .note-line { margin: 0 0 20px; color: var(--ink-2); }
+.phone-check #places h2, .phone-check #situation h2 { margin: 32px 0 4px; font-size: 20px; line-height: 1.3; }
+.phone-check .place .where { margin: 4px 0 6px; }
+.phone-check .place .pc-ask { margin: 0 0 10px; font-weight: 600; }
+.phone-check #which-phone .choices { grid-template-columns: repeat(2, 1fr); }
+.phone-check #ask-actions { margin-top: 24px; }
+.phone-check #found-line { margin: 10px 0 0; }
+.phone-check .pc-foot { max-width: 40rem; margin: 40px auto 0; padding: 0 0 24px; font-size: 15px; }
+@media print {
+  .phone-check .bar, .phone-check .actions, .phone-check .pc-foot { display: none; }
+}

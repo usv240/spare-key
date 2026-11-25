@@ -279,7 +279,7 @@ class AppModel(app: Application) : AndroidViewModel(app) {
             val settings = try { LiveSettings.get() } catch (_: Throwable) { null }
             // The two answers go to the cloud only when the person says so (off by default, as in the extension).
             // Either way Spare Key's rules use them here, on the phone.
-            val shared = JSONObject().put("safe_to_change_now", shareAnswers).put("has_advocate", shareAnswers)
+            val shared = JSONObject().put("safe_to_change_now", shareAnswers).put("has_advocate", shareAnswers).put("living", shareAnswers).put("children_shared", shareAnswers)
             val cloud = cloudOn && settings?.cloudOn == true && !practice
             try {
                 if (cloud) {

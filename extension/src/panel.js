@@ -8,7 +8,7 @@ import { SERVICES, catalogue, pageUrl, PRACTICE_ORIGIN, readerVersion } from './
 const reportStates = {};
 import { setRemoteOverrides } from './scan/overrides.js';
 import { runScan, ScanStopped } from './scan/engine.js';
-import { codeClassify, toFinding } from './scan/rules.js';
+import { codeClassify, toFinding, displayLabel } from './scan/rules.js';
 
 // The phone screenshot check (below): not a page the scan opens, so not in the catalogue.
 const SHOT_CHECK = { id: 'screenshot', service: 'phone', label: 'A location app on your phone, from a screenshot', pages: [] };
@@ -462,6 +462,33 @@ $('back-results').addEventListener('click', async () => {
   if (scan) showResults(scan);
 });
 $('print-plan').addEventListener('click', () => print());
+// A record of what was found, for an advocate or a case file: what each settings page showed, when, how it was read,
+// and the person's own mark. Names and addresses stay hidden unless the person chose to show them.
+$('print-record').addEventListener('click', async () => {
+  const { scan } = await chrome.storage.session.get('scan');
+  if (!scan) return;
+  const labels = Object.fromEntries(catalogue().map(c => [c.id, c.label]));
+  const when = new Date(scan.at || Date.now()).toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' });
+  const mark = { mine: 'Mine', not_mine: 'Not mine', unsure: 'Not sure' };
+  const how = { reader: 'Read by code', nano: 'Read by Gemini Nano on this computer', both: 'Read by code and Gemini Nano', cloud: 'Read in the cloud (practice data)' };
+  const rows = scan.findings.map(f => h('tr', {},
+    h('td', { text: labels[f.check] || f.check }),
+    h('td', { text: (CODE_TEXT[f.code] || [f.code])[0] }),
+    h('td', { text: displayLabel(f, reveal.has(f.ref)) }),
+    h('td', { text: how[f.howFound] || '' }),
+    h('td', { text: mark[f.ownership] || 'Not marked' })));
+  const notChecked = scan.outcomes.filter(o => o.status !== 'checked' || o.partly).map(o => labels[o.id] || o.id);
+  put($('findings-record'),
+    h('h1', { text: 'A record of what these settings pages showed' }),
+    h('p', { text: `${when}. ${scan.mode === 'practice' ? 'A practice check on made-up pages. ' : ''}It shows what was set up when the pages were read, not who set it up.` }),
+    h('table', {}, h('thead', {}, h('tr', {}, ['Page', 'What was found', 'Entry', 'How it was read', 'Marked'].map(t => h('th', { text: t })))), h('tbody', {}, rows)),
+    notChecked.length ? h('p', { text: `Not checked, or checked in part: ${notChecked.join(', ')}.` }) : null,
+    h('p', { text: 'Made by Spare Key on this computer. It only read these pages and changed nothing. Email addresses and phone numbers are partly hidden unless the person chose to show them. Screenshots of each page are the stronger record. Keep this where the other person cannot reach it.' }));
+  document.body.classList.add('printing-record');
+  $('findings-record').hidden = false;
+  addEventListener('afterprint', () => { document.body.classList.remove('printing-record'); $('findings-record').hidden = true; put($('findings-record')); }, { once: true });
+  print();
+});
 
 async function makePlan() {
   const { scan } = await chrome.storage.session.get('scan');

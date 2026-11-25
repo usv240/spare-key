@@ -3,10 +3,11 @@
 //   4. Leave these for a better time, grouped by service and folded   5. Check the rest yourself
 // Each block shows the steps library's own words, including what the other person would see (from a quoted official
 // page where one exists). A model's words appear only in "why" and the summary, after the safety rules have run.
-import { h, put, infoButton, UNCHECKED } from './results.js';
+import { h, put, infoButton, UNCHECKED, KIDS_GUIDES } from './results.js';
 import { registerInfo } from './info.js';
 import { hotlines, EMERGENCY } from './hotline.js';
 import { CODE_TEXT } from '../../../shared/findings.js';
+import { KIDS_CHECK } from '../../../shared/plan/engine.js';
 
 export const QUESTIONS = [
   { key: 'living', text: 'Do you live with the other person?', answers: [['together', 'Yes'], ['apart', 'No'], ['prefer_not_to_say', 'Prefer not to say']] },
@@ -50,6 +51,7 @@ const WHERE = {
   cloud: model => [`Ordered with help from Gemini in the cloud, which saw finding types only.`, `Ordered by Gemini in the cloud (${model}) from finding types only, then checked by Spare Key’s safety rules on this computer.`],
   device: model => [`Ordered by Gemini Nano on this computer. Nothing was sent anywhere.`, `Ordered by Gemini Nano on this computer (${model}), then checked by Spare Key’s safety rules. Nothing was sent anywhere.`],
   code: () => [`Made on this computer from Spare Key’s steps library.`, `Made on this computer from Spare Key’s steps library, with no AI.`],
+  page: () => [`Made in this page from your answers and Spare Key’s steps library. Nothing was sent anywhere.`, `Made in this page by Spare Key’s rules, the same code the extension and the Android app use, with no AI: you did the reading, so no model was needed.`],
 };
 
 /**
@@ -57,7 +59,7 @@ const WHERE = {
  * `source` is 'code', 'device' or 'cloud'; `fired` lists the safety rules that changed it; `onOpen(url)` opens a setting.
  */
 export function renderPlan(root, { plan, byRef, library, source, model, calls = null, fired = [], cloudNote = '', voices = null, freshDays = 45, freshness = {}, onCheckFresh = null, simpler = {}, onSimpler = null, onOpenCheck = null, checkLabels = {}, onOpen }) {
-  const ctx = { byRef, library, onOpen, freshDays, freshness, onCheckFresh, simpler, onSimpler, onOpenCheck, checkLabels };
+  const ctx = { byRef, library, onOpen, freshDays, freshness, onCheckFresh, simpler, onSimpler, onOpenCheck, checkLabels, phoneOnly: [...byRef.values()].every(f => f.service === 'phone') };
   const acts = plan.actions;
   const docs = acts.filter(a => a.action === 'document');
   const adv = acts.find(a => a.action === 'talk_to_advocate');
@@ -129,6 +131,8 @@ function ruleWords(f) {
     R7: 'Spare Key removed a sentence with contact details or a link.',
     R8: 'Spare Key added a "Check it yourself" step for something not checked.',
     R9: 'Spare Key put the mail copying first. Google’s emails about the other changes would reach them.',
+    R10: 'Spare Key put the app that can watch your phone first, and added a note to make other changes from another device.',
+    R11: 'Spare Key moved a change that tells the other person to “Leave for a better time”, because you may still be within their reach.',
   }[f.rule] || 'Spare Key adjusted this plan.';
 }
 
@@ -138,12 +142,15 @@ const groupBy = (list, key) => list.reduce((m, x) => m.set(key(x), [...(m.get(ke
 const section = (kind, title, ...body) => h('li', { class: `step step-${kind}`, 'data-action': kind },
   h('div', { class: 'step-head' }, h('span', { class: 'step-n num' }), h('h2', { class: `step-kind kind-${kind}`, text: title })), ...body);
 
-function screenshotSection(docs, { byRef }) {
+function screenshotSection(docs, { byRef, phoneOnly }) {
   const items = [...new Set(docs.flatMap(a => a.refs))].map(r => byRef.get(r)).filter(Boolean);
   const byCode = groupBy(items, f => f.code);
   const list = h('ul', { class: 'step-list' }, [...byCode].map(([code, fs]) => h('li', {},
     h('strong', { text: `${(CODE_TEXT[code] || [code])[0]}${fs.length > 1 ? ` (${fs.length})` : ''}` }),
     ...fs.map(f => h('span', { class: 'muted', text: f.label })))));
+  if (phoneOnly) return section('document', `Make a record of these first (${items.length})`,
+    h('p', { text: 'A record of what is set up now helps you and an advocate, and it is gone once a setting changes. Take a picture of each one with another phone, or write it on paper with the date. A screenshot stays on this phone and may back up to photos the other person can see.' }),
+    byCode.size > 4 ? h('details', { class: 'later shot-list' }, h('summary', { text: `See all ${items.length}, in ${byCode.size} kinds` }), list) : list);
   return section('document', `Screenshot these first (${items.length})`,
     h('p', { text: 'A record of what is set up now helps you and an advocate, and it is gone once a setting changes. Keep the screenshots where the other person cannot see them. Do not mail them from this account: a copy stays in Sent, where anyone who can read this mail can see it. If your photos back up to an account they can see, or Google Photos partner sharing is on, write the list on paper or take a picture with another phone instead.' }),
     h('p', { class: 'muted', text: 'Spare Key also kept the words on each page it read, with the date and time. They are under "What we found", and in a locked copy if you save one. Screenshots are still the stronger record.' }),
@@ -152,13 +159,17 @@ function screenshotSection(docs, { byRef }) {
 }
 
 // The first three things to do, before the full plan: screenshot, an advocate, and the most urgent kind.
-function startHere({ docs, adv, nows, waits }, { library }) {
+function startHere({ docs, adv, nows, waits }, { library, phoneOnly }) {
   const first = [...nows, ...waits][0];
   const kind = first ? (library[first.code]?.title || (CODE_TEXT[first.code] || [first.code])[0]) : '';
   const lines = [
-    docs.length ? `Screenshot the ${docs[0].refs.length} ${docs[0].refs.length === 1 ? 'setting' : 'settings'} in step 1, and keep the pictures where the other person cannot see them.` : '',
+    docs.length ? (phoneOnly
+      ? `Make a record of the ${docs[0].refs.length} ${docs[0].refs.length === 1 ? 'setting' : 'settings'} in step 1, with another phone or on paper.`
+      : `Screenshot the ${docs[0].refs.length} ${docs[0].refs.length === 1 ? 'setting' : 'settings'} in step 1, and keep the pictures where the other person cannot see them.`) : '',
     adv ? (({ main }) => `Call or text an advocate: ${main.call.replace(/-/g, '‑')}, or text ${main.word} to ${main.to}. It is free and open all day, every day.`)(hotlines()) : '',
-    first ? `Then the most urgent kind: ${kind.charAt(0).toLowerCase()}${kind.slice(1)}. ${first.action === 'change_now' ? 'You said now is a good time.' : 'Leave it for a better time, and ask the advocate when.'}` : '',
+    first ? (first.action === 'change_now'
+      ? `Then the first change, since you said now is a good time: ${kind.charAt(0).toLowerCase()}${kind.slice(1)}.`
+      : `One to talk over with your advocate first: ${kind.charAt(0).toLowerCase()}${kind.slice(1)}. Leave it as it is for now.`) : '',
   ].filter(Boolean);
   return lines.length ? h('div', { class: 'start-here' }, h('h2', { text: 'Start here' }), h('ol', {}, lines.map(t => h('li', { text: t })))) : null;
 }
@@ -204,13 +215,18 @@ function waitSection(waits, ctx) {
 // The checks Spare Key could not read, or read only in part, by name, each with a way to open it; then the guides for
 // everything it does not cover.
 function checkSection(checks, { checkLabels = {}, onOpenCheck = null }) {
-  const named = [...new Set(checks.map(a => a.check).filter(id => id && id !== 'other_services'))];
+  const kids = checks.some(a => a.check === KIDS_CHECK);
+  const named = [...new Set(checks.map(a => a.check).filter(id => id && id !== 'other_services' && id !== KIDS_CHECK))];
   return section('check_manually', 'Check the rest yourself',
+    kids ? h('div', { class: 'kids-check' },
+      h('h3', { text: 'Your children’s devices' }),
+      h('p', { text: 'Phones, tablets, watches and toys that go with your children between homes can share where they are. Look for a parent account you did not set up, and for a tracker in a bag or a toy. An advocate can help you plan what to change, and when.' }),
+      h('ul', { class: 'guides' }, KIDS_GUIDES.map(g => h('li', {}, h('a', { href: g.url, target: '_blank', rel: 'noopener noreferrer', text: g.title }))))) : null,
     named.length ? h('p', { text: 'Spare Key could not read all of these. Open each one and look for anyone or anything you do not know.' }) : null,
     named.length ? h('ul', { class: 'step-list' }, named.map(id => h('li', {},
       h('strong', { text: checkLabels[id] || id }),
       onOpenCheck ? h('button', { type: 'button', class: 'link-button', onclick: () => onOpenCheck(id) }, 'Open it') : null))) : null,
-    h('p', { text: 'Spare Key does not check other apps or your phone. These guides show how to check them yourself.' }),
+    h('p', { text: 'These guides show how to check other apps, your phone, your car and your home devices yourself.' }),
     h('ul', { class: 'guides' }, UNCHECKED.guides.map(g => h('li', {}, h('a', { href: g.url, target: '_blank', rel: 'noopener noreferrer', text: g.title })))));
 }
 
@@ -245,6 +261,7 @@ function codeBlock(a, { byRef, library, onOpen, freshDays, freshness, onCheckFre
     items.length ? h('ul', { class: 'step-list items' }, items.map(x => h('li', { class: 'muted', text: x.label }))) : null,
     h('p', { class: 'caution-line' }, h('span', { text: a.action === 'change_now' ? `${see} If now is not a good time, leave it and screenshot it.` : see })),
     a.linked ? h('p', { class: 'caution-line linked-line' }, h('span', { text: a.linked })) : null,
+    a.cutoff ? h('p', { class: 'caution-line linked-line' }, h('span', { text: a.cutoff })) : null,
     a.why && !STOCK.test(a.why) ? h('p', { text: a.why }) : null,
     a.action === 'wait' && e.if_not_safe_yet ? h('p', {}, h('strong', { text: 'For now: ' }), e.if_not_safe_yet) : null,
     a.action === 'change_now'

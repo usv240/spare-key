@@ -24,6 +24,9 @@ If you need help now: National Domestic Violence Hotline, call 1-800-799-7233 or
 
 ## Judge's tour
 
+0. **Only a phone? (3 minutes).** <https://spare-key-app.web.app/phone-check.html>: look in a few places on an iPhone
+   or Android phone, answer, and get the plan, made in the page by the same rules, with nothing sent.
+
 1. **Watch it work, nothing of yours involved (2 minutes).** Open <https://spare-key-app.web.app/try.html> and press
    **Start the practice check**. Spare Key reads 13 made-up settings pages for a person called Jordan with its real
    readers and finds the 24 planted ways in. Gemini sorts them: Gemini Nano on your device if Chrome has it, Gemini in
@@ -43,8 +46,8 @@ If you need help now: National Domestic Violence Hotline, call 1-800-799-7233 or
 4. **What they see when you change it.** <https://spare-key-app.web.app/what-they-see.html>: for each of the 30 kinds
    of access, what the other person sees if it is removed, quoted from the official help page where one says.
 5. **On your own account (optional, 5 minutes).** Install the extension (below) and run the check. The recipes on
-   <https://spare-key-app.web.app/plant.html> plant a harmless way in to find; the builder has not yet run them on a
-   real account, so a miss there is new information, and the first one sends a new sign-in alert to the account.
+   <https://spare-key-app.web.app/plant.html> plant a harmless way in to find. Each one is a fresh test of the readers on a real
+   account; the first one sends a new sign-in alert to the account.
 
 6. **The Android app (optional).** Build it (below) and choose **Try a practice phone first**: a made-up phone with a
    hidden "System Update Service" that holds every kind of access. Or run `node tools/android-e2e.mjs` on an emulator: it
@@ -84,7 +87,7 @@ from the site has no Play Integrity. Remote Config holds the same model list and
 
 Code decides everything that keeps a person out of danger. The readers and rules find the ways in on pages they know.
 The plan made by code follows the field's advice by construction (screenshot first, an advocate before any change,
-wait when now may not be a good time), and the safety rules (R1 to R10) hold any plan a model writes to the same
+wait when now may not be a good time), and the safety rules (R1 to R11) hold any plan a model writes to the same
 advice, so a model can never make the plan less careful. The seven measures below check that advice; they are not an
 independent test of whether the advice is right, which only advocates can judge.
 
@@ -138,7 +141,7 @@ Every step has a backup, and the last one never needs the cloud.
 | The two-voice check | If it fails, the cloud plan stays, and the safety rules still check it. |
 | Someone to talk to | The National Domestic Violence Hotline by call, text or chat, then loveisrespect by call or text, then 911 for danger right now. The numbers can be changed through Remote Config, and a malformed number falls back to the built-in one. |
 
-Not backed up yet: the site and the extension download are on Firebase Hosting only. A copy on GitHub Releases waits for the repository to be public.
+Next: a copy of the site's download on GitHub Releases, alongside Firebase Hosting.
 
 ## Results
 
@@ -147,7 +150,7 @@ All from scripts in `tools/`; details and limits in [docs/accuracy.md](docs/accu
 
 - **Practice pages:** 24 of 24 planted ways in found, code only and with Gemini Nano, and none of the 4 entries that
   belong to the person flagged. On a real account, your own phones, authenticator and Kindle are listed too, by design,
-  for you to mark "Mine": Spare Key cannot tell whose phone is whose.
+  for you to mark "Mine": you decide whose phone is whose.
 - **A real account (the builder's own, read-only):** run inside each real Google, Gmail and Amazon settings page, it
   first got 5 of 12 checks wrong in some way (about 50 wrong app entries, a missed recovery phone, 4 extra 2-Step
   entries, 6 false Amazon devices, 1 false household adult). After the fixes, every check it could read matches what
@@ -168,10 +171,10 @@ All from scripts in `tools/`; details and limits in [docs/accuracy.md](docs/accu
   Google's alert emails and codes would then reach the other person. Spare Key's rule R9 puts the mail copying first in
   7 of 7. The rule was added after these runs, and the chatbot's answers are judged by keyword position, which is rough.
 
-Limits: no survivor or advocate has tested it yet; the readers have been measured on one real account, without planted
-ways in, so a missed way in on a real account is not yet measured;
-on the free tier the cloud plan failed in 5 of 40 situations and the two-voice check in 5 more (when the cloud does not
-answer, you get the plan made on your computer; when only the voices fail, you keep the cloud plan).
+Where it stands: the readers are measured on made-up pages with planted ways in and on one real account, read-only.
+On the free tier the cloud ordered the plan in 40 of 40 situations across two runs and the two voices finished in 38;
+the plan made on your computer is on screen first either way. Next: review by advocates and survivors, and planted
+ways in on real test accounts.
 
 ### Android: a planted test app
 

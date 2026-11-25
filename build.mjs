@@ -45,10 +45,11 @@ await build({
 await rm('web/dist', { recursive: true, force: true });
 await mkdir('web/dist/build', { recursive: true });
 const site = { ...common, define: { __APPCHECK_DEBUG_TOKEN__: '""', __BRIDGE_URL__: '""' }, format: 'esm', outdir: 'web/dist/build', splitting: true };
-await build({ ...site, entryPoints: { bridge: 'web/src/bridge.js', site: 'web/src/site.js', 'web-panel': 'web/src/web-panel.js' } });
+await build({ ...site, entryPoints: { bridge: 'web/src/bridge.js', site: 'web/src/site.js', 'web-panel': 'web/src/web-panel.js', 'phone-check': 'web/src/phone-check.js' } });
 for (const f of await readdir('web')) if (f.endsWith('.html')) await cp(`web/${f}`, `web/dist/${f}`);
 if (existsSync('web/public')) await cp('web/public', 'web/dist', { recursive: true });
 await cp('web/src/site.css', 'web/dist/build/site.css');
+await cp('web/src/phone-check.css', 'web/dist/build/phone-check.css');
 await mkdir('web/dist/panel', { recursive: true });
 await cp('extension/src/panel.css', 'web/dist/panel/panel.css');
 await cp('extension/fonts', 'web/dist/fonts', { recursive: true });

@@ -437,3 +437,13 @@ kbd {
 
 /* ---------- The words on each page (a dated record) ---------- */
 .page-record .page-text { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; max-height: 320px; overflow: auto; padding: 8px; border: 1px solid var(--line); border-radius: 6px; }
+
+/* ---------- Plan end: leaving this computer; the children's devices step ---------- */
+.print-note { margin: 4px 0 0; font-size: 15px; }
+.leave-steps { margin-top: 4px; }
+.kids-check { margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--surface); }
+.kids-check h3 { margin: 0 0 6px; font-size: 17px; }
+.kids-check p { margin: 0 0 8px; }
+.findings-record table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.findings-record th, .findings-record td { border: 1px solid #999; padding: 4px 6px; text-align: left; vertical-align: top; }
+@media print { body.printing-record main > *:not(#findings-record) { display: none !important; } }

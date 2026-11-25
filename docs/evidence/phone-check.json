@@ -1,0 +1,78 @@
+{
+ "at": "2026-11-25T05:32:37.541Z",
+ "tool": "node tools/phone-check-test.mjs",
+ "passed": 14,
+ "of": 14,
+ "results": [
+  {
+   "name": "iphone: the plan starts with the record, then an advocate",
+   "ok": true,
+   "note": "document > talk_to_advocate > change_now > check_manually"
+  },
+  {
+   "name": "iphone: every place marked yes or not sure is in the plan (2)",
+   "ok": true,
+   "note": "Someone can see your location in Find My; Someone else runs your Apple family group"
+  },
+  {
+   "name": "iphone: no \"safe\", \"secure\" or \"all clear\" in the plan",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "iphone: the backup hotline is in the plan",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "iphone: what the other person sees, from Apple’s own guide, is on the Find My step",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "iphone: shared children: a step for their devices",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "iphone: nothing was sent after the page loaded",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "android: the plan starts with the record, then an advocate",
+   "ok": true,
+   "note": "document > talk_to_advocate > change_now > check_manually"
+  },
+  {
+   "name": "android: every place marked yes or not sure is in the plan (2)",
+   "ok": true,
+   "note": "An app can read and control your screen; Someone else holds your phone plan"
+  },
+  {
+   "name": "android: no \"safe\", \"secure\" or \"all clear\" in the plan",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "android: the backup hotline is in the plan",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "android: living apart, now a good time: the person can change things now",
+   "ok": true,
+   "note": "document > talk_to_advocate > change_now > check_manually"
+  },
+  {
+   "name": "android: an app that may watch the phone comes first, with the note to use another device",
+   "ok": true,
+   "note": "An app can read and control your screen"
+  },
+  {
+   "name": "android: nothing was sent after the page loaded",
+   "ok": true,
+   "note": ""
+  }
+ ]
+}

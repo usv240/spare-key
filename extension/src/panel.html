@@ -136,7 +136,7 @@
         <h2 id="phone-shot-title">Check a location app on your phone</h2>
         <button class="info" type="button" data-info="phone-shot" aria-label="About reading a screenshot"><svg aria-hidden="true"><use href="#i-info"/></svg></button>
       </div>
-      <p>Apps like Life360 or Find My live on your phone. Take a screenshot of the app’s sharing screen, move it to this computer, and choose it here. Gemini Nano reads it on this computer.</p>
+      <p>Apps like Life360 or Find My live on your phone. Take a screenshot of the app’s sharing screen, move it to this computer, and choose it here. Gemini Nano reads it on this computer. Then delete the screenshot from the phone, and from Google Photos or iCloud if your photos back up there.</p>
       <label class="btn btn-secondary btn-block file-button" id="phone-shot-label"><input type="file" id="phone-shot-file" accept="image/png,image/jpeg,image/webp" class="visually-hidden">Choose a screenshot</label>
       <p class="muted" id="phone-shot-status" role="status"></p>
     </section>
@@ -154,11 +154,25 @@
     <div id="ask-user" class="ask" hidden></div>
     <div class="actions" id="plan-actions" hidden>
       <button class="btn btn-secondary btn-block" type="button" id="print-plan">Print</button>
+      <button class="btn btn-secondary btn-block" type="button" id="print-record">Print a record of what was found</button>
       <button class="btn btn-secondary btn-block" type="button" id="save-locked">Save a locked copy</button>
       <button class="btn btn-secondary btn-block" type="button" id="back-results">Back to what we found</button>
       <button class="btn btn-secondary btn-block" type="button" id="clear-all-2">Clear everything</button>
+      <p class="muted print-note">A printed copy can stay in the printer’s list of jobs. A locked copy is a file: keep it where the other person cannot reach it.</p>
+      <details class="later leave-steps">
+        <summary>Before you leave this computer</summary>
+        <ol class="how">
+          <li>Press Clear everything. It removes this check from this Chrome.</li>
+          <li>If you turned on the history cleanup, the pages Spare Key opened are gone from Chrome’s history. If not, remove them from History yourself.</li>
+          <li>If the other person uses this computer, remove Spare Key: open chrome://extensions and press Remove under Spare Key.</li>
+          <li>Delete the file you downloaded to install it, and empty the Recycle Bin or Trash.</li>
+        </ol>
+      </details>
     </div>
   </section>
+
+  <!-- A record of what was found, for an advocate or a case file. Filled and shown only while printing. -->
+  <section id="findings-record" class="findings-record" hidden></section>
 
   <!-- 6. Under the hood. -->
   <section class="screen" data-screen="hood" id="screen-hood" role="tabpanel" aria-labelledby="tab-hood" hidden>

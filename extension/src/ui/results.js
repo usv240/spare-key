@@ -52,15 +52,29 @@ const WHY = {
   stopped: () => 'You stopped the check before it got here.',
 };
 
-// Services Spare Key does not check, with trusted guides for checking them by hand (links checked November 21, 2026).
+// Services to check by hand, with trusted guides (links checked November 21 and 25, 2026).
 export const UNCHECKED = {
-  services: 'Ring, Life360, your phone carrier, Apple, Facebook, Snapchat, and your phone itself',
+  services: 'Apple and Find My, Life360, your phone plan, your car, Ring and smart home devices, Facebook, Snapchat, and your phone itself',
   guides: [
     { title: 'Safety Net (NNEDV): guides for survivors, app by app', url: 'https://www.techsafety.org/resources-survivors' },
-    { title: 'Apple: Personal Safety User Guide, including Safety Check', url: 'https://support.apple.com/guide/personal-safety/welcome/web' },
+    { title: 'Apple: Personal Safety User Guide, including Safety Check and Find My', url: 'https://support.apple.com/guide/personal-safety/welcome/web' },
+    { title: 'Safety Net: location tracking, including Life360 and trackers', url: 'https://www.techsafety.org/location-tracking' },
+    { title: 'Google: find unknown trackers near you (Android)', url: 'https://support.google.com/android/answer/13658562' },
+    { title: 'Google: Find My Device, who can locate your Android phone', url: 'https://support.google.com/android/answer/6160491' },
+    { title: 'Google Maps: your Timeline, where you have been', url: 'https://support.google.com/maps/answer/6258979' },
+    { title: 'Safety Net: your phone and your phone plan', url: 'https://www.techsafety.org/resources-survivors/cell-phone-safety-plan' },
+    { title: 'Safety Net: connected cars', url: 'https://www.techsafety.org/connected-cars-privacy' },
+    { title: 'Safety Net: smart home devices, like cameras, doorbells and speakers', url: 'https://www.techsafety.org/smart-home' },
+    { title: 'Safety Net: keeping a record (documentation tips)', url: 'https://www.techsafety.org/documentationtips' },
     { title: 'Cornell Clinic to End Tech Abuse: resources', url: 'https://ceta.tech.cornell.edu/resources' },
   ],
 };
+// The children's devices step (rule R8, when the person shares children).
+export const KIDS_GUIDES = [
+  { title: 'Google Family Link: who manages a child’s Google account', url: 'https://support.google.com/families/answer/7101025' },
+  { title: 'Safety Net: smart toys', url: 'https://www.techsafety.org/smart-toys' },
+  { title: 'Google: find unknown trackers near you (Android)', url: 'https://support.google.com/android/answer/13658562' },
+];
 
 /**
  * Render the results into `root`.

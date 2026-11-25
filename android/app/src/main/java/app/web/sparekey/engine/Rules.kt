@@ -21,7 +21,7 @@ import kotlin.coroutines.resume
 /**
  * The rules engine: the Chrome extension's own shared modules (shared/, bundled by build.mjs into assets/engine.js),
  * running in Jetpack's JavaScript sandbox, an isolated process with no network, no files and no access to the app.
- * Which apps become findings, the cloud gate (toCloud, checkOutgoing), the plan made by code and the ten safety rules
+ * Which apps become findings, the cloud gate (toCloud, checkOutgoing), the plan made by code and the eleven safety rules
  * are the same code the extension and the website run and the tests cover; only reading the phone and the model calls
  * are Kotlin. Pattern reused from the author's Still Recalled entry.
  *

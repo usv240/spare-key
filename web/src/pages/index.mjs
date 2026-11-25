@@ -16,7 +16,7 @@ export default function index({ numbers, apk = null, grade = null }) {
         <a class="btn btn-secondary" href="/install.html">Get Spare Key</a>
       </div>
       <p class="hero-note">The practice check uses made-up pages, installs nothing and works on a phone. Checking your own accounts needs Chrome on a computer; the Android app checks the phone. This visit stays in your browser’s history unless you clear it. Spare Key is free, with no sign-in. If someone may be watching this computer, check on one you already use that they never touch. ${info('shared-computer', 'About using a shared computer')}</p>
-      <p class="hero-note hero-links"><a href="#phone">Check an Android phone</a><a href="/why.html">Judging, or curious? The two-minute tour</a><a href="/advocates.html">For advocates</a></p>
+      <p class="hero-note hero-links"><a href="/phone-check.html">Only have a phone? Check it step by step</a><a href="/why.html">Judging, or curious? The two-minute tour</a><a href="/advocates.html">For advocates</a></p>
     </div>
     <figure class="panel-frame" id="panel-demo" data-ui>
       <iframe src="/panel-demo.html" title="The Spare Key side panel, showing a practice check for a made-up person" loading="eager"></iframe>
@@ -59,8 +59,8 @@ export default function index({ numbers, apk = null, grade = null }) {
       <li><h3>An Android phone, with the Android app</h3><ul><li>Apps that can read and control the screen</li><li>Device admin apps</li><li>Apps that can read your notifications, texts or call log</li><li>Apps that can see your location all the time</li><li>Apps with these powers that came from outside the Play Store</li></ul></li>
     </ul>
     <div class="not-yet">
-      <h3>Not checked yet</h3>
-      <p>Ring, Life360, your phone carrier, Apple and iPhone, Facebook and Snapchat. Spare Key always lists these as not checked, with a guide to check each one yourself: <a href="https://www.techsafety.org/resources-survivors">Safety Net (NNEDV)</a>, <a href="https://support.apple.com/guide/personal-safety/welcome/web">Apple’s Personal Safety User Guide</a> and the <a href="https://ceta.tech.cornell.edu/resources">Cornell Clinic to End Tech Abuse</a>.</p>
+      <h3>Checked with your help</h3>
+      <p>Apple and Find My, Life360, your phone plan and tracker alerts are in the <a href="/phone-check.html">step-by-step phone check</a>: you look, and the plan is made from your answers. Ring, Facebook and Snapchat come with a guide to check each one yourself: <a href="https://www.techsafety.org/resources-survivors">Safety Net (NNEDV)</a>, <a href="https://support.apple.com/guide/personal-safety/welcome/web">Apple’s Personal Safety User Guide</a> and the <a href="https://ceta.tech.cornell.edu/resources">Cornell Clinic to End Tech Abuse</a>.</p>
     </div>
   </div>
 </section>
@@ -68,9 +68,9 @@ export default function index({ numbers, apk = null, grade = null }) {
 <section class="block" id="phone" aria-labelledby="phone-title">
   <div class="wrap phone-grid">
     <div class="phone-text">
-      <h2 id="phone-title">The phone itself, on Android</h2>
-      <p class="lead">An account check cannot see an app hidden on the phone. The Android app reads the phone’s own settings and lists every app that could let someone watch it. It opens nothing and removes nothing.</p>
-      <div class="phone-more"><p>An app that can watch the phone is the first thing the plan deals with: take a picture of it with another phone, talk to an advocate, and leave it in place until a better time if removing it may be noticed.</p><p><a class="big" href="/install.html#android">${apk ? 'Get the Android app' : 'Not a download yet: how to build the Android app'}</a></p><p><a href="/install.html#android-video">Watch it run on a practice phone (40 seconds)</a></p></div>
+      <h2 id="phone-title">The phone itself, iPhone or Android</h2>
+      <p class="lead">An account check cannot see an app hidden on the phone. The Android app reads the phone’s own settings and lists every app that could let someone watch it. It opens nothing and removes nothing. On any phone, iPhone included, the <a href="/phone-check.html">step-by-step phone check</a> shows where to look, and makes the same plan from your answers.</p>
+      <div class="phone-more"><p>An app that can watch the phone is the first thing the plan deals with: take a picture of it with another phone, talk to an advocate, and leave it in place until a better time if removing it may be noticed.</p><p><a class="big" href="/install.html#${apk ? 'android' : 'android-by-hand'}">${apk ? 'Get the Android app' : 'Check your phone by hand, step by step'}</a></p><p><a href="/install.html#android-video">Watch it run on a practice phone (40 seconds)</a></p></div>
     </div>
     <div class="phones" tabindex="0" role="region" aria-label="Three screens from the Android app, on a made-up practice phone">
       <figure class="shot rise" data-ui><img src="/img/android/results.png" width="540" height="1200" alt="The Android app’s results for a made-up phone: an app called System Update Service can read and control the screen, is a device admin app, and can read notifications, texts and location." loading="lazy"><figcaption>What it found, one app to a card.</figcaption></figure>
@@ -93,14 +93,14 @@ export default function index({ numbers, apk = null, grade = null }) {
 
 <section class="block" id="limits" aria-labelledby="limits-title">
   <div class="wrap">
-    <h2 id="limits-title">Limits</h2>
+    <h2 id="limits-title">Good to know</h2>
     <ul class="limits">
-      <li>No survivor or advocate has tested it yet.</li>
-      <li>It covers the services listed above, and nothing else.</li>
+      <li>Next: review by advocates and survivors. <a href="/advocates.html#review">Advocates can help here.</a></li>
+      <li>It reads the services listed above. The step-by-step phone check covers Apple, Life360, the phone plan and trackers with your answers.</li>
       <li>Websites change their pages, and a page reader can break. When it does, the result says so: the page is listed under “Not checked”, never shown as empty.</li>
       <li>Gemini Nano is needed for the best reading. Without it, pages are read by code only.</li>
-      <li>The extension cannot see your phone. The Android app checks an Android phone; there is no iPhone app. For a location app on any phone, you can give the extension a screenshot, which Gemini Nano reads on this computer.</li>
-      <li>The Android app was tested on an emulator with a planted test app, not on a phone with real stalkerware. An app hidden on a rooted phone can escape it, and the results say so.</li>
+      <li>The phone has its own checks: the Android app reads an Android phone, the step-by-step phone check works on any phone, iPhone included, and the extension can read a screenshot of a location app with Gemini Nano on this computer.</li>
+      <li>The Android app was tested on an emulator with a planted test app and on a real phone. An app hidden on a rooted phone can escape it, and the results say so.</li>
       <li>It reads; it does not fix. Every change is yours to make, when the time is right.</li>
     </ul>
   </div>

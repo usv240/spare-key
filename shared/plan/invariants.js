@@ -1,8 +1,9 @@
 // The safety rules every plan passes, from code or from the cloud (TECHNICAL-DESIGN.md section 8, rules R1 to R8, and R9
-// for linked findings, added November 22, 2026, and R10 for a watched phone, added November 24, 2026).
+// for linked findings, added November 22, 2026, R10 for a watched phone, added November 24, 2026, and R11 for a person
+// who may live with the other person, added November 25, 2026).
 // Code enforces them whatever a model wrote, and records each time one had to change the plan, so the panel can show
 // "Spare Key added this warning" and the evaluation can count how often the cloud needed fixing.
-import { ACTIONS, noticeOf, MAIL_OUT, EMAILS_ABOUT, LINKED_NOTE, ALERTS_TO, ALERTED, ALERT_NOTE, PHONE_WATCH, PHONE_NOTE, PHONE_CALL_NOTE } from './engine.js';
+import { ACTIONS, noticeOf, MAIL_OUT, EMAILS_ABOUT, LINKED_NOTE, ALERTS_TO, ALERTED, ALERT_NOTE, PHONE_WATCH, PHONE_NOTE, PHONE_CALL_NOTE, TOGETHER_NOTE, CUTOFF, CUTOFF_NOTE, KIDS_CHECK } from './engine.js';
 import { SITUATION_DEFAULTS } from '../findings.js';
 
 // R6: words a plan must never use.
@@ -89,6 +90,20 @@ export function applyInvariants(plan, { findings = [], situation = {}, notChecke
       }
     }
   }
+
+  // R11: when the person lives with the other person, or did not say, a change that sends them a notice and an app
+  // watching the phone wait, even when now is a good time.
+  if (s.living !== 'apart') {
+    for (const a of actions) {
+      if (a.action === 'change_now' && (noticeOf(library, a.code) === 'notifies' || PHONE_WATCH.has(a.code))) {
+        a.action = 'wait';
+        a.why = `Spare Key moved this to wait. ${TOGETHER_NOTE}`;
+        fired.push({ rule: 'R11', ref: a.refs[0], detail: 'change that notifies moved to wait: may live together' });
+      }
+    }
+  }
+  // A change that cuts off access all at once says so, whatever the model wrote.
+  for (const a of actions) if (a.action === 'change_now' && CUTOFF.has(a.code)) a.cutoff = CUTOFF_NOTE;
 
   // R3: every change that is not unlikely to be noticed carries the library's warning, whatever the model wrote.
   for (const a of actions) {
@@ -203,6 +218,13 @@ export function applyInvariants(plan, { findings = [], situation = {}, notChecke
       fired.push({ rule: 'R8', detail: `check_manually added for ${id}` });
     }
   }
+  // Shared children: a step for their devices (R8 too: a model sees only codes and cannot know to add it).
+  if (s.children_shared === 'yes' && !actions.some(a => a.action === 'check_manually' && a.check === KIDS_CHECK)) {
+    const spare = free.shift();
+    if (spare) spare.check = KIDS_CHECK;
+    else actions.push({ action: 'check_manually', refs: [], code: null, check: KIDS_CHECK, why: 'Devices that go with your children between homes can share where they are. Check them, or ask an advocate to help.' });
+    fired.push({ rule: 'R8', detail: 'check_manually added for the children’s devices' });
+  }
   // Check steps beyond the not-checked list say nothing new.
   actions = actions.filter(a => a.action !== 'check_manually' || a.check);
   // The "check it yourself" steps go last.
@@ -234,6 +256,8 @@ export function planPasses(plan, { findings = [], situation = {}, library = {} }
   const covered = open.every(f => acts.some(a => ['change_now', 'wait'].includes(a.action) && a.refs.includes(f.ref)));
   const warned = acts.filter(a => a.action === 'change_now' && noticeOf(library, a.code) !== 'unlikely').every(a => a.warning);
   const order = s.safe_to_change_now === 'yes' || acts.every(a => a.action !== 'change_now' || noticeOf(library, a.code) === 'unlikely');
+  // R11's measure: unless the person lives apart, nothing that notifies the other person, and no watching app, is changed now.
+  const together = s.living === 'apart' || acts.every(a => a.action !== 'change_now' || (noticeOf(library, a.code) !== 'notifies' && !PHONE_WATCH.has(a.code)));
   const words = [plan.summary || '', ...acts.map(a => a.why)].join(' ');
   // R9's measure: with mail copied elsewhere, every account change Google emails about comes after the mail copying, and
   // none happens now while the copying waits. Passes trivially when the plan has no such pair.
@@ -257,5 +281,6 @@ export function planPasses(plan, { findings = [], situation = {}, library = {} }
     coverage: covered,
     order,
     linked_order: linkedOrder && alertOrder,
+    together,
   };
 }

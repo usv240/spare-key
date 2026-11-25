@@ -24,7 +24,7 @@ says what the other person may notice if you remove it, quoted from the company'
 read is listed as not checked, never shown as empty.
 
 Then it makes a plan that follows the field's advice: take screenshots first, talk to an advocate, and leave changes
-the other person may notice for a time that is right for you. Code checks every plan against ten safety rules.
+the other person may notice for a time that is right for you. Code checks every plan against eleven safety rules.
 
 What it never does:
 - It never clicks, changes, removes or submits anything on a settings page.

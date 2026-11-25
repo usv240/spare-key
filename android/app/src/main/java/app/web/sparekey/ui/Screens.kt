@@ -260,15 +260,17 @@ fun PlanScreen(m: AppModel) {
     val codeText = lib.optJSONObject("codeText") ?: JSONObject()
     Title("Your plan")
     if (m.plan == null) {
-        Body("Two questions help put the steps in an order that fits you. You can skip them.")
+        Body("A few questions help put the steps in an order that fits you. You can skip any of them.")
         Question(m, "safe_to_change_now", "Is now a good time to make changes the other person might notice?", listOf("yes" to "Yes", "no" to "No", "not_sure" to "Not sure"))
+        Question(m, "living", "Do you live with the other person?", listOf("together" to "Yes", "apart" to "No", "prefer_not_to_say" to "Prefer not to say"))
+        Question(m, "children_shared", "Do you share children with them?", listOf("yes" to "Yes", "no" to "No", "prefer_not_to_say" to "Prefer not to say"))
         Question(m, "has_advocate", "Do you have an advocate helping you?", listOf("yes" to "Yes", "no" to "No", "prefer_not_to_say" to "Prefer not to say"))
         if (m.cloudOn && !m.practice) {
             Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).toggleable(m.shareAnswers, role = Role.Switch) { m.setShare(it) },
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Column(Modifier.weight(1f)) {
-                    Text("Share these two answers with plan help", style = MaterialTheme.typography.titleSmall, color = Ink.text)
-                    Muted(if (m.shareAnswers) "On. Gemini in the cloud sees your two answers and the finding types." else "Off. Your answers stay on this phone, where Spare Key's rules use them.")
+                    Text("Share these answers with plan help", style = MaterialTheme.typography.titleSmall, color = Ink.text)
+                    Muted(if (m.shareAnswers) "On. Gemini in the cloud sees your answers, like \"not sure\", and the finding types." else "Off. Your answers stay on this phone, where Spare Key's rules use them.")
                 }
                 Switch(m.shareAnswers, null, colors = SwitchDefaults.colors(checkedTrackColor = Ink.accent, checkedThumbColor = Ink.onAccent))
             }
@@ -306,7 +308,7 @@ fun PlanScreen(m: AppModel) {
             "talk_to_advocate" -> "Talk to an advocate"
             "change_now" -> "Change now: $title"
             "wait" -> "Leave for a better time: $title"
-            else -> "Check it yourself"
+            else -> if (a.optString("check") == "kids_devices") "Your children's devices" else "Check it yourself"
         }
         n++
         Section(tone = if (wait) Ink.cautionBg else Ink.surface, edge = if (wait) Ink.cautionBg else Ink.line) {
@@ -317,6 +319,7 @@ fun PlanScreen(m: AppModel) {
             if (about.isNotEmpty() && a.optString("action") != "talk_to_advocate") Muted(about.distinct().joinToString(", "))
             Body(a.optString("why"))
             if (a.optString("linked").isNotEmpty()) Caution(a.optString("linked"))
+            if (a.optString("cutoff").isNotEmpty()) Caution(a.optString("cutoff"))
             // The field's advice is "screenshot first". On a phone that may be watched, say where not to keep them.
             if (a.optString("action") == "document") Caution("On this phone, do not use a screenshot: it stays here and may back up to shared photos. Take a picture with another phone, or write a list on paper.")
             if (a.optString("action") == "talk_to_advocate") Muted("Call 1-800-799-7233, or text START to 88788. Free, all day, every day. Line busy? loveisrespect: 1-866-331-9474, or text LOVEIS to 22522. In danger now, call 911.")

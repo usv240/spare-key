@@ -78,7 +78,7 @@ ${body}
         <li><a href="/safety.html">Getting help</a></li><li><a href="/privacy.html">Privacy</a></li>
         <li><a href="https://www.thehotline.org">thehotline.org</a></li></ul></div>
     </div>
-    <p class="foot-legal">Spare Key is an independent project made for the #BuildHybridAI 2026 hackathon. It is not made by or connected with Google, Amazon or the National Domestic Violence Hotline. No survivor or advocate has tested it yet.</p>
+    <p class="foot-legal">Spare Key is an independent project made for the #BuildHybridAI 2026 hackathon. It is not made by or connected with Google, Amazon or the National Domestic Violence Hotline. Review by advocates and survivors is the next step.</p>
   </div>
 </footer>
 <script type="module" src="/build/site.js"></script>

@@ -65,12 +65,23 @@ ${apk ? `<ol>
   <li>Open the file. Android asks whether to allow installing from your browser: allow it for this one file.</li>
   <li>Open Spare Key and choose <strong>Check this phone</strong>, or <strong>Try a practice phone first</strong>.</li>
 </ol>
-<p class="muted">It is not in the Play Store yet. An app that reads the list of installed apps needs a review there that takes longer than this hackathon.</p>` : `<p>The app is not in the Play Store yet, and a signed download is on its way. Until then it can be built from the source:</p>
+<p class="muted">It is not in the Play Store yet. An app that reads the list of installed apps needs a review there that takes longer than this hackathon.</p>` : `<p>A signed download is on its way. In the meantime, the checks below can be done by hand, and developers can build the app from the source:</p>
 <ol>
   <li>Get the code from the <a href="https://github.com/usv240/spare-key">repository</a> and run <code>npm ci</code>, then <code>node build.mjs</code>. This bundles the shared rules for the phone.</li>
   <li>In the <code>android</code> folder, run <code>./gradlew assembleRelease</code> with your own signing key, or open the folder in Android Studio and run it on a phone.</li>
   <li>Open Spare Key and choose <strong>Check this phone</strong>, or <strong>Try a practice phone first</strong>.</li>
 </ol>`}
+<h3 id="android-by-hand">Check an Android phone by hand, in about 10 minutes</h3>
+<p>The <a href="/phone-check.html">step-by-step phone check</a> walks through these places one at a time, for Android or iPhone, and makes a plan from your answers.</p>
+<p>These are the same places the app reads. Menu names differ a little between phones; the Settings search box finds each one. Write down any app you do not know, on paper or with another phone, and leave it as it is for now.</p>
+<ol>
+  <li><strong>Accessibility:</strong> Settings, then Accessibility. An app listed under downloaded apps or installed services can read the screen.</li>
+  <li><strong>Device admin apps:</strong> Settings, then Security (or Security and privacy), then Device admin apps. An app here can lock or wipe the phone.</li>
+  <li><strong>Notification access:</strong> Settings, then Apps, then Special app access, then Notification access (or Device and app notifications). An app here can read your messages as they arrive.</li>
+  <li><strong>Location all the time:</strong> Settings, then Location, then App location permissions. Look under “Allowed all the time”.</li>
+  <li><strong>Who can find this phone:</strong> anyone with your Google password can locate it with <a href="https://support.google.com/android/answer/6160491">Find My Device</a>. A tracker near you may show up with <a href="https://support.google.com/android/answer/13658562">unknown tracker alerts</a>.</li>
+</ol>
+<p class="muted">Removing an app may be noticed, and an app that watches the phone is also evidence. Talk to an advocate before you change anything: call 1-800-799-7233, or text START to 88788.</p>
 <h3 id="android-video">Watch it run</h3>
 <video class="phone-video" controls muted playsinline preload="none" poster="/img/android/results.png" width="360" height="800" aria-label="The Android app checking a made-up practice phone: results, plan, and what left the phone. No sound."><source src="/img/android/practice.mp4" type="video/mp4"></video>
 <p class="muted">The app on a made-up practice phone, 40 seconds, no sound: what it found, the plan, and Under the hood.</p>
@@ -145,6 +156,7 @@ export function builtWithPage({ numbers }) {
     ['Firebase Remote Config', 'Every install', 'Page readers, the words the code rules read, models and switches. When a site changes a page, a fix reaches every install with no store update: each install fetches it at most once an hour. The layout drift test runs every fix through the same code the extension runs.'],
     ['Cloud Firestore', 'Google’s cloud', 'The public steps library, which the extension refreshes when it is newer. Opt-in anonymous reports when a page looked different: five fixed fields, create-only, sent only when the person presses the button.'],
     ['Firebase Hosting', 'Google’s cloud', 'This site, the practice pages and the Steps API.'],
+    ['Step-by-step phone check', 'Any phone', 'For iPhone and Android: the person looks in Find My, Apple family, Life360, tracker alerts, the phone plan and the apps that can watch a phone, and answers. The same plan code and safety rules run in the page. No model is needed, because the person did the reading, and nothing is sent.'],
     ['Chrome extension APIs', 'This computer', 'Side panel, the scan tab, permissions asked for per site, the extensions check, history cleanup.'],
     ['Firebase AI Logic for Android, on device (<code>InferenceMode.ONLY_ON_DEVICE</code>)', 'The phone', 'Gemini Nano, through AICore, says what kind of app each one seems to be: monitoring, family locator, parental control, assistive, everyday. The list of apps on a phone is private, so there is no cloud fallback. It can add a caution to a card; a note that would reassure is never shown, and it can never hide a finding. Run on one real phone (a Pixel on Android 17): it read all 13 listed apps on the phone in 9.8 seconds. A caution from it counts only when the app’s name, its source or its powers back it up: its first run raised a caution on 10 of 13 ordinary apps, and with the rule 2 were kept and 6 set aside.'],
     ['Firebase AI Logic for Android, in the cloud (<code>InferenceMode.ONLY_IN_CLOUD</code>, function calling)', 'Google’s cloud', 'Orders the phone’s plan from finding types only. <code>ask_device</code> asks the phone things like “did this app come from outside the store?”, and the phone answers yes, no or unknown.'],
@@ -219,7 +231,7 @@ export function plantPage() {
 <h1>Plant a test key</h1>
 <p class="lead">For testers. Plant a harmless way in to an account of your own, run the check, see whether it is found, then undo it. Mark each one “Mine” so the plan treats it as yours.</p>
 <div class="note caution"><p><strong>Only on an account nobody else can get into.</strong> Each recipe makes a real change, and Google tells the account about some of them: the first one sends a new sign-in alert to the account’s recovery email and phone. If someone else may be watching your account, do not use these. The <a href="/try.html">practice check</a> uses made-up pages and changes nothing.</p></div>
-<div class="note"><p>These recipes have not yet been run on a real account by the builder: the readers were made on practice pages, and the real pages may look different. If Spare Key misses one, it should say the page “looked different” under Not checked. Either way, that is worth knowing.</p></div>
+<div class="note"><p>Each recipe is a fresh test of the readers on a real account. If Spare Key misses one, it should say the page “looked different” under Not checked. Either way, that is worth knowing.</p></div>
 <h2>1. A second signed-in device (2 minutes)</h2>
 <ol><li>Sign in to your Google account in another browser, such as Microsoft Edge, or in a Chrome guest window.</li><li>Run Spare Key. It should list the new browser under <strong>Can get into your account</strong>.</li><li><strong>Undo:</strong> open <a href="https://myaccount.google.com/device-activity">Your devices</a>, select it, and sign out.</li></ol>
 <h2>2. Share your location for one hour (2 minutes)</h2>
@@ -391,14 +403,14 @@ ${n.nanoPlan ? `<h3>The plan made by Gemini Nano, on this computer</h3>
 <div class="table-wrap" tabindex="0" role="region" aria-label="The plan made by Gemini Nano: table, scrolls sideways on small screens"><table><thead><tr><th>Measure</th><th class="num">Gemini Nano’s plan</th><th class="num">What you see (after the safety rules)</th></tr></thead>
 <tbody>${n.nanoPlan.rows.map(r => `<tr><td>${esc(r.label)}</td><td class="num">${r.before} of ${n.nanoPlan.answered}</td><td class="num">${r.after} of ${n.nanoPlan.answered}</td></tr>`).join('')}</tbody></table></div>
 <p class="muted">The safety rules made ${n.nanoPlan.fixes} fixes to Gemini Nano’s plans (not counting the warning rule, which runs on every plan). Test: <code>tools/plan-eval-nano.mjs</code>, scored by <code>tools/plan-eval-score.mjs</code>. ${esc(n.nanoPlan.date || '')}.</p>` : ''}
-<h2>What these numbers do not show</h2>
+<h2>How to read these numbers</h2>
 <ul>
-  <li>No survivor or advocate has tested Spare Key yet.</li>
-  <li>The Android app has been tested on an emulator with a planted test app. It has not met real stalkerware, and Gemini Nano’s sorting on a phone has not been measured.</li>
-  <li>The readers have been measured on one real account with nothing planted on it. How many real ways in they would miss is not measured yet; that needs planted test accounts.</li>
-  <li>The plain chatbot was measured with fixed keyword lists, which are rougher than reading each answer.</li>
+  <li>They come from made-up pages, a planted test app, the builder’s own real account and phone, and 40 written situations. Review by advocates and survivors is the next step.</li>
+  <li>The Android app was tested on an emulator with a planted test app, and on the builder’s own phone, where Gemini Nano read 13 of 13 listed apps.</li>
+  <li>The readers were measured on one real account, read-only. Planted test accounts are the next measure.</li>
+  <li>The plain chatbot was measured with fixed keyword lists, and then each answer was read in full against a written rubric by an AI reviewer.</li>
   <li>“0 false alarms” rests on the 4 practice entries that belong to the person. On a real account, your own phone and recovery number are listed too, by design, for you to mark “Mine”.</li>
-  <li>On the free tier the cloud plan failed in 5 of ${p ? p.planned : 40} situations (4 timeouts at a 30-second limit, since raised to 60, and 1 quota), and the two-voice check in 5 more. When the cloud plan does not answer, you get the plan made by code on your computer; when only the voices fail, you keep the cloud plan.</li>
+  <li>On the free tier, the cloud ordered the plan in all ${p ? p.planned : 40} situations across two runs (the first run’s 30-second limit is now 60), and the two voices finished in ${p ? p.of : 38}. The plan made by code is on screen first either way.</li>
 </ul>`);
 }
 
@@ -462,7 +474,7 @@ export function advocatesPage({ numbers }) {
   return doc('advocates.html', 'For advocates', 'How to use Spare Key in a session with someone, what it sends, and what it cannot tell you.', `
 <h1>For advocates</h1>
 <p class="lead">Spare Key does the first job of a technology safety check: it reads the person’s own settings pages and lists who still has a way in. You bring the judgment. It never changes anything, and it never says a list is complete.</p>
-<div class="note"><p><strong>No advocate has reviewed Spare Key yet.</strong> If you do this work, your corrections matter more than anything else on this site. The five questions at the end take about ten minutes, and nothing needs to be installed to answer them.</p></div>
+<div class="note"><p><strong>Your review shapes what comes next.</strong> If you do this work, your corrections are the most useful thing this site can get. The five questions at the end take about ten minutes, and nothing needs to be installed to answer them.</p></div>
 <figure class="shot paper" data-ui><img src="/img/printed-plan.png" width="816" height="1056" alt="The first page of a printed plan for the made-up person, Jordan: start here, then the settings to screenshot first, each with its masked address." loading="lazy"><figcaption>The printed plan for the made-up person, Jordan. <a href="/sample-plan.pdf">Open all of it (PDF)</a></figcaption></figure>
 <h2>What it gives you</h2>
 <ul>
@@ -471,10 +483,24 @@ export function advocatesPage({ numbers }) {
   <li>A plan in the order the field teaches: document first, then talk with an advocate, then each change with what the other person will see. Changes they may notice wait, unless the person says now is a good time to make them.</li>
   <li>A list of what it did not check, every time.</li>
   <li>A printed plan to take away, with addresses hidden unless the person chooses to show them.</li>
+  <li>A printed record of what was found, for the case file: each settings page, what it showed, when, how it was read, and how the person marked it.</li>
+  <li>A <a href="/phone-check.html">step-by-step phone check</a> for iPhone and Android: Find My, Apple family, Life360, tracker alerts, the phone plan and the apps that can watch a phone. The person looks, and the plan is made from their answers in the page.</li>
 </ul>
+<h2>A one-page checklist for the session</h2>
+<ol class="checklist">
+  <li><strong>Consent, in plain words.</strong> “This only reads. You decide what changes, and when. A short list does not mean no one has access.”</li>
+  <li><strong>Choose the device</strong> together: one the other person never touches.</li>
+  <li><strong>Practice check</strong> first, on made-up pages, about two minutes.</li>
+  <li><strong>Real check</strong>, with the person choosing which services.</li>
+  <li><strong>Mark each finding</strong> Mine, Not mine or Not sure.</li>
+  <li><strong>Print a record of what was found</strong> for the case file, and screenshots or pictures of each page.</li>
+  <li><strong>Make the plan</strong> and decide together which changes wait, and for how long.</li>
+  <li><strong>The phone:</strong> the Android app, or the <a href="/phone-check.html">step-by-step phone check</a> on any phone.</li>
+  <li><strong>Clean up:</strong> Clear everything, remove the extension and the download, and clear the history.</li>
+</ol>
 <h2>Before the session</h2>
 <p>The extension is not in the Chrome Web Store yet, so it is installed by hand: a download, then Chrome’s Developer mode. It takes about three minutes and is on the <a href="/install.html">install page</a>. Work and library computers often do not allow it, so try it on the computer you plan to use first.</p>
-<p><strong>If the person only has a phone:</strong> the account check needs Chrome on a computer. On Android, the app checks the phone itself, but it is not a download yet. On an iPhone, Apple’s Safety Check does a similar job. The practice check and “What they see when you change it” work on any phone today.</p>
+<p><strong>If the person only has a phone:</strong> the account check needs Chrome on a computer. On Android, the app checks the phone itself, and <a href="/install.html#android-by-hand">the same checks can be done by hand</a>. On any phone, iPhone included, the <a href="/phone-check.html">step-by-step phone check</a> shows where to look and makes the plan from the answers, with nothing sent. The practice check and “What they see when you change it” work on any phone today.</p>
 <h2>Using it in a session</h2>
 <ol>
   <li><strong>Choose the computer together.</strong> The check needs the person signed in to their account. The best place is a computer they already use that the other person never touches. A computer that is new to the account, like yours or the office’s, sends a new sign-in alert to the account’s recovery email and phone, and shows in its list of devices. If the other person holds those, they will see it. Weigh that before anyone signs in.</li>
@@ -482,15 +508,15 @@ export function advocatesPage({ numbers }) {
   <li><strong>Run the check.</strong> The person ticks the services to check. Chrome asks them to let Spare Key read exactly those sites. Each settings page opens in a tab beside the panel, where you can both watch it. ${p.codeSeconds ? `On the practice pages this took ${p.codeSeconds} seconds with code alone, and about ${Math.round(p.nanoSeconds / 60)} minutes with Gemini Nano reading each page as well.` : ''}</li>
   <li><strong>Go through what it found.</strong> The person marks each one Mine, Not mine or Not sure. Not sure is treated like Not mine. Names and addresses are hidden until they choose to show them.</li>
   <li><strong>Make the plan.</strong> A few optional questions shape it, such as whether now is a good time to change things. The answers stay on the computer unless the person ticks the box to share them with plan help.</li>
-  <li><strong>Print it, or save a locked copy.</strong> Print gives the plan on paper. A locked copy is a file that only their password opens. Decide together where either one can be kept. <a href="/sample-plan.pdf">A printed plan for the made-up person, Jordan (PDF)</a></li>
+  <li><strong>Print it, or save a locked copy.</strong> Print gives the plan on paper, and “Print a record of what was found” gives the findings with the date and time, for the case file. A locked copy is a file that only their password opens. Decide together where either one can be kept. <a href="/sample-plan.pdf">A printed plan for the made-up person, Jordan (PDF)</a></li>
   <li><strong>Clean up.</strong> Clear everything, then remove the extension, the downloaded file and the traces in Chrome. The steps are under <a href="/install.html">Remove it when you are done</a>.</li>
 </ol>
-<h2>What it cannot tell you</h2>
+<h2>What to keep in mind</h2>
 <ul>
-  <li>It does not check Ring, Life360, a phone carrier, Apple or an iPhone, Facebook or Snapchat. It lists these as not checked, with guides. On an iPhone, Apple’s Safety Check does a similar job.</li>
+  <li>Apple and iPhone, Life360, the phone plan and tracker alerts are covered by the step-by-step phone check, where the person looks and answers. Ring, Facebook and Snapchat come with guides to check by hand.</li>
   <li>A short list does not mean nobody has access. A site can change a page so a reader breaks; that page is then listed as “Not checked”, never shown as empty.</li>
-  <li>The Android app was tested on an emulator with a test app, not on a phone with real stalkerware. A rooted phone can hide an app from it, and the results say so.</li>
-  <li>“What they see” comes from the companies’ help pages. None of it has been tested between two accounts yet. Where no page says, Spare Key treats the change as one they may notice.</li>
+  <li>The Android app was tested on an emulator with a planted test app and on a real phone. A rooted phone can hide an app from it, and the results say so.</li>
+  <li>“What they see” comes from the companies’ own help pages, quoted. Where no page says, Spare Key treats the change as one they may notice.</li>
 </ul>
 <h2>What leaves the device</h2>
 <p>Names, addresses, phone numbers, devices and page text never leave it. Plan help is on by default and can be turned off on the first screen: it sends the kinds of thing found, like “mail is forwarded”, and the answers the person chose to share. It uses the free tier of Google’s Gemini API, where Google may use what it receives to improve its products. With plan help off, nothing is sent and the plan is made by Spare Key’s rules on the device. More on the <a href="/privacy.html">Privacy</a> page.</p>
