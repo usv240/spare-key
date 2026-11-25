@@ -339,6 +339,18 @@ object Ai {
     }
     private val probe get() = probeFor(deviceOptionName)
 
+    /** One tiny question, on the device only, to see that a model really answers before every call is sent to it. */
+    private suspend fun answers(name: String): Boolean = try {
+        withTimeout(20_000) {
+            val m = ai.generativeModel(modelName = "gemini-3.5-flash-lite",
+                onDeviceConfig = OnDeviceConfig(mode = InferenceMode.ONLY_ON_DEVICE, maxOutputTokens = 8, temperature = 0f, modelOption = OPTIONS.getValue(name)))
+            m.generateContent("Reply with the word OK.").inferenceSource == InferenceSource.ON_DEVICE
+        }
+    } catch (e: Throwable) {
+        android.util.Log.w("SpareKey", "on-device model $name did not answer: ${e.javaClass.simpleName}: ${e.message?.take(200)}")
+        false
+    }
+
     private suspend fun statusOf(name: String): String = try {
         when (probeFor(name).onDeviceExtension?.checkStatus()) {
             OnDeviceModelStatus.AVAILABLE -> "available"
@@ -356,9 +368,19 @@ object Ai {
      */
     suspend fun deviceStatus(order: List<String> = listOf("stable"), tried: (String, String) -> Unit = { _, _ -> }): String {
         val names = order.filter { it in OPTIONS }.ifEmpty { listOf("stable") }
-        val seen = names.map { it to statusOf(it).also { s -> tried(it, s) } }
-        val pick = seen.firstOrNull { it.second == "available" } ?: seen.firstOrNull { it.second == "downloading" }
-            ?: seen.firstOrNull { it.second == "downloadable" }
+        val seen = names.map { it to statusOf(it) }
+        // "Available" is what AICore reports; a model that is still being fetched in the background can report it and
+        // then fail every call. So each available model is asked one tiny question on the device before it is used,
+        // and the next one is tried when it does not answer. The question names no one.
+        var pick: Pair<String, String>? = null
+        for ((name, status) in seen) {
+            if (pick == null && status == "available") {
+                if (answers(name)) { tried(name, "available, answered"); pick = name to status; continue }
+                tried(name, "available, did not answer"); continue
+            }
+            tried(name, status)
+        }
+        pick = pick ?: seen.firstOrNull { it.second == "downloading" } ?: seen.firstOrNull { it.second == "downloadable" }
         if (pick != null) { deviceOptionName = pick.first; deviceOption = OPTIONS[pick.first]; synchronized(models) { models.clear() } }
         return pick?.second ?: "unavailable"
     }

@@ -187,7 +187,9 @@ class AppModel(app: Application) : AndroidViewModel(app) {
             val order = try { LiveSettings.get().deviceModels } catch (_: Throwable) { LiveSettings.DEFAULT_DEVICE_MODELS }
             val tried = mutableListOf<String>()
             nano = Ai.deviceStatus(order) { name, status -> tried += "$name $status" }
-            note("Gemini Nano on this phone: $nano" + (if (nano != "unavailable") ", the ${modelWords(Ai.deviceOptionName)} model" else "") + ". Asked for, in order: ${tried.joinToString(", ")}.")
+            val modelName = if (nano == "available") Ai.deviceModelName() else ""
+            note("Gemini Nano on this phone: $nano" + (if (nano != "unavailable") ", the ${modelWords(Ai.deviceOptionName)} model" else "") +
+                (if (modelName.isNotEmpty()) " ($modelName)" else "") + ". Asked for, in order: ${tried.joinToString(", ")}.")
             if (nano == "available") Ai.warmUp()
             rcFrom = try { LiveSettings.get().from } catch (_: Throwable) { "defaults" }
         }
@@ -227,7 +229,11 @@ class AppModel(app: Application) : AndroidViewModel(app) {
                         try {
                             Ai.json(Ai.Prompt(prompt.getString("system"), prompt.getJSONObject("schema")),
                                 listOf(Ai.Text(Rules.str("appKindText", a))), Ai.Mode.DEVICE_ONLY, LiveSettings.DEFAULT_MODELS)
-                        } catch (e: Throwable) { null }
+                        } catch (e: Throwable) {
+                            // The error's type and the SDK's message only: never the app's name.
+                            if (i < 2) android.util.Log.w("SpareKey", "Gemini Nano could not sort an app: ${e.javaClass.simpleName}: ${e.message?.take(240)}")
+                            null
+                        }
                     }
                     if (answer != null && answer.onDevice) {
                         kinds.put(a.getString("pkg"), Rules.obj("appKindFrom", answer.json))

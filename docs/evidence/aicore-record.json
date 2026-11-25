@@ -1,0 +1,349 @@
+{
+ "at": "2026-11-25",
+ "tool": "adb shell dumpsys activity service com.google.android.aicore (Spare Key rows only)",
+ "note": "Android AICore's own record of on-device calls on the builder's phone, filtered to Spare Key's package. Status 1 is a finished call. Rows from other apps are left out. No prompt or answer text is in AICore's record.",
+ "calls": 56,
+ "finished": 51,
+ "models": [
+  "nano-v4-full"
+ ],
+ "finishedMedianMs": 727,
+ "rows": [
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 22:46:50.701",
+   "ms": 6,
+   "status": 19
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 22:47:05.227",
+   "ms": 766,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 22:47:06.030",
+   "ms": 654,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 22:47:06.725",
+   "ms": 730,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 22:47:07.483",
+   "ms": 695,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 22:47:08.196",
+   "ms": 535,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 22:47:08.779",
+   "ms": 677,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 22:47:09.500",
+   "ms": 833,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 22:47:10.382",
+   "ms": 615,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 22:47:11.040",
+   "ms": 742,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 22:47:11.798",
+   "ms": 713,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 22:47:12.561",
+   "ms": 737,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 22:47:13.342",
+   "ms": 762,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 22:47:14.156",
+   "ms": 710,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:33:44.302",
+   "ms": 9,
+   "status": 19
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:33:58.843",
+   "ms": 762,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:33:59.677",
+   "ms": 697,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:34:00.447",
+   "ms": 778,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:34:01.249",
+   "ms": 702,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:34:01.987",
+   "ms": 593,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:34:02.645",
+   "ms": 676,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:34:03.383",
+   "ms": 799,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:34:04.223",
+   "ms": 605,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:34:04.903",
+   "ms": 737,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:34:05.701",
+   "ms": 701,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:34:06.481",
+   "ms": 700,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:34:07.257",
+   "ms": 709,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:34:08.005",
+   "ms": 699,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:37:08.887",
+   "ms": 2,
+   "status": 19
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:37:23.910",
+   "ms": 742,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:37:24.683",
+   "ms": 684,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:37:25.429",
+   "ms": 727,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:37:26.241",
+   "ms": 742,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:37:27.039",
+   "ms": 602,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:37:27.704",
+   "ms": 713,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:37:28.469",
+   "ms": 800,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:37:29.321",
+   "ms": 590,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:37:29.974",
+   "ms": 698,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:37:30.725",
+   "ms": 752,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:37:31.533",
+   "ms": 653,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:37:32.254",
+   "ms": 712,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-24 23:37:33.022",
+   "ms": 648,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-25 00:38:16.332",
+   "ms": 12,
+   "status": 19
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-25 00:38:31.261",
+   "ms": 873,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-25 00:38:32.203",
+   "ms": 729,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-25 00:38:32.976",
+   "ms": 813,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-25 00:38:33.836",
+   "ms": 746,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-25 00:38:34.625",
+   "ms": 572,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-25 00:38:35.263",
+   "ms": 765,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-25 00:38:36.094",
+   "ms": 1087,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-25 00:38:37.240",
+   "ms": 976,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-25 00:38:38.266",
+   "ms": 771,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-25 00:38:39.062",
+   "ms": 773,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-25 00:38:39.896",
+   "ms": 908,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-25 00:38:40.878",
+   "ms": 956,
+   "status": 1
+  },
+  {
+   "model": "nano-v4-full",
+   "start": "11-25 00:40:02.153",
+   "ms": 15,
+   "status": 19
+  }
+ ]
+}

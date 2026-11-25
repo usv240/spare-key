@@ -75,7 +75,8 @@ numbers, changed without a store update), Cloud Firestore (the public steps libr
 by design: an account would tie a person to a safety check.
 
 **Every step has a backup, and the last one never needs the cloud**: two templates on two models, the direct call,
-then the plan made by code, which is on screen before any of them answer.
+then the plan made by code, which is on screen before any of them answer. On the phone: Gemini Nano 4 Fast, Nano 4
+Full, then the phone's own Nano, each asked one tiny question first, so a model still downloading is skipped.
 
 ## Challenges we ran into
 
@@ -92,7 +93,8 @@ then the plan made by code, which is on screen before any of them answer.
   situations and said something risky in 14. Every plan Spare Key shows starts with the record: 38 of 38.
 - Android: 34 of 34 end-to-end checks with a planted test app; the plan made by code is on screen in 2.3 seconds and
   Gemini reorders it through the template by 8.3 seconds. On the builder's own phone, Gemini Nano read all 13 listed
-  apps in 7.5 to 10 seconds.
+  apps in 7.5 to 10 seconds; Android's own AICore record shows those calls ran on Gemini Nano 4 (nano-v4-full):
+  51 finished calls, a median of 0.7 seconds each.
 - On a real account, read-only, real pages differed from what we expected in 5 of 12 checks; after the fixes, every
   check Spare Key could read matched what the site shows.
 - 0 accessibility violations in 78 axe-core runs; median reading grade 4.3.

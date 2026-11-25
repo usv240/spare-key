@@ -192,7 +192,7 @@ report.quickExitLeft = !shell('dumpsys activity activities | grep -m1 topResumed
 shell('input keyevent KEYCODE_HOME');
 
 mkdirSync(resolve(ROOT, 'private'), { recursive: true });
-writeFileSync(resolve(ROOT, 'private/android-real.json'), JSON.stringify({ report, raw }, null, 1));
+writeFileSync(resolve(ROOT, 'private/android-real.json'), JSON.stringify({ report, raw, ownLog }, null, 1));
 mkdirSync(resolve(ROOT, 'docs/evidence'), { recursive: true });
 // Every run is kept, so a change between runs (Gemini Nano downloaded, a rule changed) can be seen.
 const evidence = resolve(ROOT, 'docs/evidence/android-real.json');
