@@ -105,16 +105,18 @@ From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved
 
 - **Against what real clinics found:** a Cornell and NYU team checked 44 survivors' phones and accounts in person, by
   hand and with a spyware scanner, and found a real risk for 23 (Havron and others, USENIX Security 2019, Figure 3).
-  Spare Key has a check for each of the 6 kinds of problem they found, some in full and some in part: unknown
-  signed-in devices (12 clients; Google read, Apple through the guided phone check, social media next), signs a
-  password was known (14; through what a known password leads to: signed-in devices, recovery details, 2-Step
-  Verification), a shared family or phone plan (4), possible spyware (3; Android), browser extensions the person did
-  not install (2) and a rooted phone (1; Android, tested on made-up phone facts).
+  Spare Key looks for 5 of the 6 kinds of problem they found: unknown signed-in devices (12 clients; Google read,
+  Apple through the guided phone check, social media next), a shared family or phone plan (4), possible spyware (3;
+  Android, judged by the access an app holds), browser extensions the person did not install (2) and a rooted phone
+  (1; Android, tested on made-up phone facts). For the sixth, signs a password was known (14), it checks what a known
+  password opens: signed-in devices, recovery details and 2-Step Verification.
 - **In your own words:** a box where the person types what no settings page shows ("he bought this phone", "we're on
-  his plan"). On 60 statements written by an agent that never saw the code, Gemini Nano on
-  the computer found 50 of 52 ways in (13 extra), code's keyword reader 34 of 52 (2 extra); Nano took a median 2.8 s.
-  An extra code can only add a step, and typed words can only fill the careful answers ("together", "shared
-  children"), never "apart" ([evidence](docs/evidence/told-eval-told-heldout.json), `tools/told-eval.mjs`).
+  his plan"). On 60 new statements written by an agent that never saw the code, committed before either reader ran on
+  them and run once, Gemini Nano on the computer found 93 of 99 ways in, code's keyword reader 75. Nano added 17
+  codes the words did not name, the keyword reader 4. Nano got exactly the right codes for 46 of the 60 statements,
+  the keyword reader 40. Median 2.4 s. An extra code can only add a step, and typed words can only fill the careful
+  answers ("together", "shared children"), never "apart". On phones, where Chrome has no Gemini Nano, the keyword
+  reader does this ([evidence](docs/evidence/told-eval-told-fresh.json), `tools/told-eval.mjs`).
 - **Effort saved:** by hand, the same check is 13 settings pages on 4 sites and 18 official help pages (12,640 words
   in the 15 that could be counted, about an hour of reading). Spare Key reads the 12 checks in one pass, 13 seconds on
   the practice pages ([evidence](docs/evidence/effort.json), `tools/effort.mjs`).
@@ -124,8 +126,9 @@ From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved
   fixes found on that account (about 50 wrong app entries, a missed recovery phone and others, all fixed).
 - **When a site changes its pages:** five kinds of change to the 13 practice pages. A check now says "done" while
   missing a way in 0 times, down from 24 on the first blind run.
-- **Privacy:** 0 of 20 requests held a name, email, phone number, device or place, with every cloud step on; all 9
-  model requests matched "What left this computer" word for word.
+- **Privacy:** 0 of 20 requests held a name, email, phone number, device or place, with every cloud step on and typed
+  words naming a made-up person and town in the box; only their 3 codes reached the cloud. All 6 model requests matched
+  "What left this computer" word for word.
 - **Plan safety (40 situations written before any run):** a plain chatbot on the same model told the person to record
   their settings first in 7 of 38 answers and said something risky in 14 (each answer read against a written rubric by
   an AI reviewer). Every plan Spare Key shows starts with the record and warns that a change may be noticed: 38 of 38

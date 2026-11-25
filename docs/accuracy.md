@@ -139,7 +139,7 @@ value), not how well a first guess reads a new page. Whether a fix reaches every
 
 ## 3. Privacy: nothing that names a person leaves (EVALUATION.md section 3)
 
-`tools/privacy-test.mjs`, last run November 22, 2026 (an earlier run that day: 0 of 17): a full practice check with every cloud step on (the cloud plan
+`tools/privacy-test.mjs`, last run November 25, 2026 (earlier runs: 0 of 20 and 0 of 17 on November 22). Since November 25 the run also types words naming a made-up person and town into "Anything else you know?" (they are in the list it searches for); only their 3 codes reached the cloud plan: a full practice check with every cloud step on (the cloud plan
 with function calling, the two voices, every situation answer shared, two findings answered, and the setup probe). Every
 network request from the extension's service worker, hidden page and side panel was captured through the Chrome
 DevTools Protocol, with its URL, headers and body, and searched for 30 made-up names, emails, phone numbers, devices,
@@ -150,10 +150,10 @@ JSON-escaped.
 |---|---|
 | Requests from the extension | 20, to 6 hosts (Firebase AI Logic, App Check, Remote Config, Installations, Firestore, and the extension itself) |
 | Requests holding a name, email, phone number, device or place | **0 of 20** |
-| Requests to the model | 9 |
-| Model requests that match "What left this computer" word for word | **9 of 9**, and all 9 logged entries were sent |
-| The panel's own ledger (a wrapper around fetch in the hidden page) | **0 of 13** requests holding anything from the check |
-| Functions the cloud called while ordering the plan | `get_steps` once, `ask_device` once (answered "no"), `ask_user` never |
+| Requests to the model | 6 |
+| Model requests that match "What left this computer" word for word | **6 of 6**, and all 6 logged entries were sent (a template call is matched by its inputs object, value for value) |
+| The panel's own ledger (a wrapper around fetch in the hidden page) | **0 of 10** requests holding anything from the check |
+| Functions the cloud called while ordering the plan | `get_steps` once (on November 22 also `ask_device` once, answered "no"); `ask_user` never |
 
 The ledger and the network capture are independent checks: the first counts inside the extension, the second outside
 it. An earlier run of the ledger counted 5 requests as holding something from the check: the private-string list held
@@ -317,26 +317,42 @@ root tool on the phone, a rooting app, Android built with test keys), each teste
 `tests/rooted.test.mjs`. None proves rooting, and a hidden root shows none of them, so the result says "may be". Freed and others, *A Stalker's
 Paradise*, CHI 2018: 39 survivors and 50 professionals, with "numerous (n=47) accounts" of location tracking.
 
-In your own words (`tools/told-eval.mjs`, November 25). Two sets of statements a person might type, with made-up
+In your own words (`tools/told-eval.mjs`, November 25). Three sets of statements a person might type, with made-up
 names: 40 for development (`tools/told-cases.json`, written by the builder before either reader; the keyword reader's
-rules were written after reading them), and 60 held out (`tools/told-heldout.json`, written by an agent that did not
-see the code, committed before any run on it). On the held-out set:
+rules were written after reading them), 60 in a second set (`tools/told-heldout.json`) and 60 in a fresh set
+(`tools/told-fresh.json`), each written by an agent that did not see the code.
 
-| Reader | Ways in found (of 52) | Extra codes | Situation answers right (of 14) | Median time |
+**The fresh set is the result to quote.** It was written after every change below, includes 6 people who name 4 or 5
+ways in, and was committed (3870028) before either reader ran on it. Gemini Nano ran on it once:
+
+| Reader | Ways in found (of 99) | Extra codes | Statements with exactly the right codes (of 60) | Median time |
 |---|---|---|---|---|
-| Code's keyword reader | 34 | 2 | 11 | under 1 ms |
-| Gemini Nano, first prompt, no guard | 51 | 126 | 14 | 2.5 s |
-| Gemini Nano, final prompt and guard | 50 | 13 | 14 | 2.8 s |
+| Code's keyword reader | 75 | 4 | 40 | under 1 ms |
+| Gemini Nano (Chrome, this computer) | 93 | 17 | 46 | 2.4 s |
 
-The first Nano run listed 10 to 17 codes for a few statements that named none. The development set showed the same
-(all 17 codes for "I moved out last month. No kids."), and two changes were made from it: the prompt says to return an
-empty list when nothing is named, and an answer naming more than 3 ways in is not used (the keyword reader's is used
-instead; it was used for 2 of the 60). The final run is the second run on the held-out set, after the changes; the
-first is kept (`docs/evidence/told-eval-told-heldout-v1-first-prompt.json`). An extra code adds a step; it never
-removes one. Gemini Nano also fills the living and children answers when the words do not say (43 times), but only
-the careful answers are used ("together", "shared children"): 9 would reach a plan, 8 of them right. The keyword reader
-skips a sentence that says a way in is not there ("I do not have an AirTag"), added after judge round 10, which left
-its held-out score unchanged.
+By how much a statement names: on the 12 that name no way in, Nano added codes to 5 (9 codes) and the keyword reader to
+2; on the 6 that name 4 or 5, Nano found 24 of 27 and the keyword reader 21. The guard (below) set Nano's answer aside
+twice, at 8 and 6 codes. Nano also fills the living and children answers when the words do not say (49 times), but
+only the careful answers are used ("together", "shared children"): 11 would reach a plan, 8 of them right; the other 3
+said "together" where the words did not say, which can only make the plan wait more. Counting those answers too, a
+whole statement was read exactly right 39 times by the keyword reader and 6 times by Nano.
+
+**How the second set stopped being held out.** It was written blind and committed before any run, but Gemini Nano's
+first run on it (19:12 UTC) came three minutes before its first run on the development set, and the changes that
+followed were made after seeing both: the prompt says to return an empty list when nothing is named, and an answer
+naming more than 3 ways in was set aside for the keyword reader's. Both runs on it are kept:
+
+| Reader, second set | Ways in found (of 52) | Extra codes | Median time |
+|---|---|---|---|
+| Code's keyword reader | 34 | 2 | under 1 ms |
+| Gemini Nano, first prompt, no guard | 51 | 126 | 2.5 s |
+| Gemini Nano, new prompt, guard at 3 | 50 | 13 | 2.8 s |
+
+Judge round 11 then showed the guard at 3 threw away a right answer from a person who named 4 ways in, so it was moved
+to 5 (more than a quarter of the 17 codes is a list, not a reading), and the keyword reader now splits a sentence at
+"but" and at "and I" or "and he", so "I removed him from Life360 but he can still see me on Find My" keeps its second
+half. Both changes were made before the fresh set was written. An extra code adds a step; it never removes one. A way in
+the person typed is added even when a finding of the same kind was marked "Mine" (judge round 11 found it was dropped).
 
 Effort by hand (`tools/effort.mjs`, `docs/evidence/effort.json`): 13 settings pages on 4 sites from the check
 catalogue, and the 18 official help pages the steps library cites for the account checks. The 15 that could be fetched

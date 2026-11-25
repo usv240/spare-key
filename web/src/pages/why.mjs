@@ -24,13 +24,14 @@ function nanoAdds(drift) {
   return `<li><span class="n">${sum(nano, 'found')} of ${sum(nano, 'of')}</span><p>planted ways in found with Gemini Nano reading the changed page on the computer, when the practice pages were changed five ways, the way a site redesign changes them. Code alone found ${sum(code, 'found')}. This is the part code cannot do. ${esc(drift.nanoDate || drift.date)}.</p></li>`;
 }
 
-// What Gemini Nano adds when a person types what they know in their own words (tools/told-eval.mjs, held-out set).
+// What Gemini Nano adds when a person types what they know in their own words (tools/told-eval.mjs, the fresh set,
+// committed before either reader ran on it and run once).
 function toldItem(t) {
   const n = t?.nano, k = t?.keyword;
   if (!n?.codes || !k?.codes) return '';
   const of = n.codes.found + n.codes.missed;
   const date = new Date(t.at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York' });
-  return `<li><span class="n">${n.codes.found} of ${of}</span><p>ways in found by Gemini Nano on the computer in what a person typed in their own words, like “hes the one paying for my cell”, on ${n.cases} statements written by an agent that never saw the code. Code’s keyword reader found ${k.codes.found}. Nano added ${n.codes.wrongAdded} codes the words did not name, each of which can only add a step. The words never left the computer. ${esc(date)}.</p></li>`;
+  return `<li><span class="n">${n.codes.found} of ${of}</span><p>ways in found by Gemini Nano on the computer in what a person typed in their own words, like “he pays my cell bill”, on ${n.cases} new statements written by an agent that never saw the code, run once. Code’s keyword reader found ${k.codes.found}. Nano added ${n.codes.wrongAdded} codes the words did not name (the keyword reader ${k.codes.wrongAdded}), each of which can only add a step. The words never left the computer. On phones, where Chrome has no Gemini Nano, the keyword reader does this. ${esc(date)}.</p></li>`;
 }
 
 function androidProof(a) {

@@ -41,13 +41,14 @@ Spare Key is a free, read-only Chrome extension, an Android app, and a step-by-s
    copy kept on the computer, shows what is gone and anything new. For advocates, a printed record of what was found goes in the case file.
 5. **In your own words.** The person can type what no settings page shows: "he bought this phone", "we're on his
    plan". Gemini Nano turns the words into finding codes on the device, and only the codes reach the plan. This covers
-   the abuser buying the devices, which 20 participants described in the CHI 2018 study.
+   what no settings page shows, like a phone the abuser bought and set up or a plan in their name. If the words match
+   nothing Spare Key checks, the plan says so and points to an advocate.
 6. **Quick exit** is on every screen, and nothing is kept unless the person asks.
 
-It has a check for each of the 6 kinds of problem the Cornell and NYU clinic found, some in full and some in part:
-unknown signed-in devices (12 clients; Google read, Apple through the guided check, social media next), signs a
-password was known (14; through what a known password leads to), a shared family or phone plan (4), possible spyware
-(3), browser extensions the person did not install (2) and a rooted phone (1). A phone that may be rooted is treated like one an app is watching:
+It looks for 5 of the 6 kinds of problem the Cornell and NYU clinic found: unknown signed-in devices (12 clients;
+Google read, Apple through the guided check, social media next), a shared family or phone plan (4), possible spyware
+(3; Android, judged by the access an app holds), browser extensions the person did not install (2) and a rooted phone
+(1). For the sixth, signs a password was known (14), it checks what a known password opens. A phone that may be rooted is treated like one an app is watching:
 it comes first in the plan, and every other step says to use a device the other person never had. By hand the same check is 13 settings pages on 4 sites
 and about an hour of reading official help pages; Spare Key reads the 12 checks in one pass.
 
@@ -67,9 +68,12 @@ other person, so the model that reads them runs on the device. The cloud only ev
 
 **What Gemini does that code cannot.** Sites redesign their pages. With the 13 practice pages changed four ways at
 once, code showed 6 of 24 planted ways in and Gemini Nano, reading the changed pages on the device, 18; a Remote Config
-fix restored all 24 with no update. And people say things in their own way: on 60 statements written by an agent that
-never saw the code ("hes the one paying for my cell"), Gemini Nano found 50 of 52 ways in on the device, against 34
-for code's keyword reader, in a median 2.8 seconds.
+fix restored all 24 with no update. And people say things in their own way ("he pays my cell bill", "the alexa in
+the kitchen is on his amazon"). On 60 new statements written by an agent that never saw the code, committed before
+either reader ran and run once, Gemini Nano found 93 of 99 ways in on the device, against 75 for code's keyword
+reader, in a median 2.4 seconds. It also added 17 codes the words did not name (the keyword reader 4); each can only
+add a step. Nano got exactly the right codes for 46 statements, the keyword reader 40. Where Chrome has no Gemini
+Nano, as on phones, the keyword reader does this alone.
 
 **What code does that a model must not.** `shared/cloud-safe.js` is the only exit to the cloud: it builds each request
 from an allow-list of codes and checks it again before it is sent. The server prompt template's input schema is the
@@ -89,7 +93,8 @@ Full, then the phone's own Nano, each asked one tiny question first, so a model 
 ## Challenges we ran into
 
 - **Proving nothing leaks.** A test captured every request the extension made and searched it for 30 made-up names,
-  emails, phones and places in four encodings: 0 of 20 requests held one.
+  emails, phones and places in four encodings, with typed words naming a made-up person and town in the box too: 0 of
+  20 requests held one, and only the typed words' 3 codes reached the cloud.
 - **Sites change their pages.** On the first blind run, a check said it was done while missing a way in 24 times. Now 0:
   a page it cannot read is listed as "looked different".
 - **Small models need guardrails.** In a live run, Gemini Nano called four household members the person's own, which

@@ -20,7 +20,10 @@ export const CANARIES = [
   '(937) 555-0177', '937 555 0177', '9375550177', '555-0177', 'Riley', 'Pixel 8', 'iPhone 15', 'Windows computer', 'Mac',
   'Columbus', 'Dayton', 'InboxPilot', 'TrailMate', 'Recipe Box', 'alerts@examplebank.com', 'examplebank', 'appointment',
   'receipts@example.org', "Sam's Echo Dot", 'Echo Dot', 'Kindle Paperwhite', 'Fire TV Stick', 'Living room',
+  // What the person types under "Anything else you know?" (TYPED below): only its codes may leave.
+  'Marcus Vell', 'Marcus', 'Akron', 'bought me this phone',
 ];
+const TYPED = 'Marcus Vell bought me this phone and set it up. He pays my cell bill. His mom in Akron is in my Life360 circle.';
 
 const out = path.resolve('tools/out');
 mkdirSync(out, { recursive: true });
@@ -89,6 +92,7 @@ try {
   await panel.waitForSelector('#make-plan', { visible: true });
   for (const [q, v] of [['living', 'apart'], ['safe_to_change_now', 'not_sure'], ['children_shared', 'yes'], ['has_advocate', 'no']]) await panel.click(`input[name="q-${q}"][value="${v}"]`);
   await panel.click('#share-situation');
+  await panel.type('#told-text', TYPED);
   await panel.click('#make-plan');
   const t1 = Date.now();
   while (Date.now() - t1 < 240000) {
@@ -133,7 +137,10 @@ try {
   const pieces = e => e.kind === 'function_answers'
     ? JSON.parse(e.text).map(a => JSON.stringify(a.response))
     : [JSON.stringify(e.text).slice(1, -1)];
-  const holds = (r, e) => pieces(e).every(p => r.body.includes(p));
+  // A server prompt template call carries the logged codes as its "inputs" object, not as an escaped string: it matches
+  // when that object is the logged request, value for value.
+  const sameInputs = (r, e) => { try { return e.kind === 'request' && JSON.stringify(JSON.parse(r.body).inputs) === JSON.stringify(JSON.parse(e.text)); } catch { return false; } };
+  const holds = (r, e) => pieces(e).every(p => r.body.includes(p)) || sameInputs(r, e);
   const unmatched = modelCalls.filter(r => !sent.some(e => holds(r, e)));
   report.unloggedEntries = sent.filter(e => !modelCalls.some(r => holds(r, e))).map(e => `${e.kind} ${e.purpose}`);
   const byHost = {};
@@ -164,6 +171,10 @@ try {
   const ledgerCount = (report.ledger.match(/from your check: (\d+) of (\d+)/) || []);
   report.ledgerHolding = ledgerCount[1] === undefined ? null : Number(ledgerCount[1]);
   log(report.ledgerHolding === 0 ? `PASS: the panel's ledger counts 0 of ${ledgerCount[2]} requests holding anything from the check` : `FAIL: the panel's ledger says ${report.ledgerHolding ?? 'nothing'}`);
+  // The typed words did their job: what they name reached the plan request as codes only.
+  report.typed = TYPED.length;
+  report.toldCodesSent = ['device.given_by_other', 'carrier.plan.holder_other', 'life360.circle.member'].filter(c => modelCalls.some(r => r.body.includes(c)));
+  log(`typed words: codes sent to the cloud plan: ${report.toldCodesSent.join(', ') || 'none'}`);
 } catch (e) {
   log('FAIL run', String(e && e.stack || e).slice(0, 500));
   report.error = String(e);
