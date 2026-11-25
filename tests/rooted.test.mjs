@@ -40,8 +40,10 @@ test('the plan treats it like an app watching the phone: first, and every other 
   assert.equal(steps[0].code, 'phone.rooted');
   assert.ok(steps.slice(1).every(a => a.linked === PHONE_NOTE), 'other steps carry the use-another-device note');
   const checked = applyInvariants(plan, { findings, situation: { safe_to_change_now: 'yes', living: 'apart' }, notChecked: [], library });
-  assert.equal(checked.plan.actions.find(a => a.code === 'phone.rooted')?.action !== undefined, true);
-});
+  // After the safety rules, it is still the first step past the record and the advocate, and the others keep the note.
+  const after = checked.plan.actions.filter(a => !['document', 'talk_to_advocate', 'check_manually'].includes(a.action));
+  assert.equal(after[0].code, 'phone.rooted');
+  assert.ok(after.slice(1).every(a => a.linked === PHONE_NOTE), 'the note survives the safety rules');});
 
 test('living together, now a good time: it still waits (R11)', () => {
   const { findings } = phoneFindings(facts(['su_binary']));

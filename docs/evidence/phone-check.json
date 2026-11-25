@@ -1,8 +1,8 @@
 {
- "at": "2026-11-25T20:36:34.193Z",
+ "at": "2026-11-25T20:53:39.081Z",
  "tool": "node tools/phone-check-test.mjs",
- "passed": 24,
- "of": 24,
+ "passed": 38,
+ "of": 38,
  "results": [
   {
    "name": "iphone: the plan starts with the record, then an advocate",
@@ -121,6 +121,76 @@
   },
   {
    "name": "iphone: nothing was sent after the page loaded",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "nano: while Gemini Nano reads, the button says so and cannot be pressed again",
+   "ok": true,
+   "note": "{\"button\":\"Reading what you typed\",\"disabled\":true,\"status\":\"Reading what you typed, on this device. Nothing is sent.\"}"
+  },
+  {
+   "name": "iphone: the plan starts with the record, then an advocate",
+   "ok": true,
+   "note": "document > talk_to_advocate > wait > check_manually"
+  },
+  {
+   "name": "iphone: every place marked yes or not sure is in the plan (1)",
+   "ok": true,
+   "note": "The other person gave you or set up a device"
+  },
+  {
+   "name": "iphone: no \"safe\", \"secure\" or \"all clear\" in the plan",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "iphone: the backup hotline is in the plan",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "nano: the words Gemini Nano read add the step for the device they gave",
+   "ok": true,
+   "note": "The other person gave you or set up a device"
+  },
+  {
+   "name": "nano: \"Why this order\" says Gemini Nano read the words, and no longer says \"with no AI\"",
+   "ok": true,
+   "note": "Made in this page by Spare Key’s rules, the same code the extension and the Android app use. Gemini Nano read what you typed, on this device, and could only add steps."
+  },
+  {
+   "name": "iphone: nothing was sent after the page loaded",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "android: nothing to screenshot, so the plan starts with an advocate",
+   "ok": true,
+   "note": "talk_to_advocate > check_manually"
+  },
+  {
+   "name": "android: every place marked yes or not sure is in the plan (0)",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "android: no \"safe\", \"secure\" or \"all clear\" in the plan",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "android: the backup hotline is in the plan",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "told: words that name no way in: the plan says they matched nothing, and points to an advocate",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "android: nothing was sent after the page loaded",
    "ok": true,
    "note": ""
   }

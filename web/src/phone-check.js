@@ -1,8 +1,10 @@
 // The guided phone check (phone-check.html): for a person with only a phone, iPhone or Android. The person looks in a
 // few places on their own phone and answers yes, no or not sure. Each "yes" or "not sure" becomes a finding code, and
 // the plan is made here by the same code the extension and the Android app use (shared/plan/engine.js), then held to
-// the same safety rules (shared/plan/invariants.js). Nothing is read from the phone, nothing is saved, and this page
-// makes no network request after it loads: no model is needed, because the person already did the reading.
+// the same safety rules (shared/plan/invariants.js). Nothing is read from the phone and nothing is saved. The places
+// and questions need no model, because the person already did the reading. Only the optional "Anything else you know?"
+// box uses one: Gemini Nano on this device (Firebase AI Logic, ONLY_ON_DEVICE) where Chrome has it, Spare Key's keyword
+// reader where it does not (most phones). Either way the words are read here and nothing is sent after the page loads.
 import { initInfo, closeInfo, isInfoOpen } from '../../extension/src/ui/info.js';
 import { h, put } from '../../extension/src/ui/results.js';
 import { renderPlan, QUESTIONS, toldBox, readingWords } from '../../extension/src/ui/plan.js';
@@ -104,14 +106,14 @@ async function makePlan() {
     const words = Object.fromEntries(Object.entries(CODE_TEXT).map(([c, t]) => [c, t[0]]));
     told = toldFindings(r.answer, { existing: found, howFound: r.how === 'nano' ? 'nano' : 'reader', words });
     toldValues = toldSituation(r.answer, situation);
-    toldBy = r.how === 'nano' ? 'nano' : 'reader';
+    toldBy = r.how || 'reader';
   }
   const fs = [...found, ...told];
   const notChecked = ['other_services'];
   const ctx = { findings: fs, situation: { ...toldValues, ...situation }, notChecked, library: LIBRARY };
   const { plan, fired } = applyInvariants(buildPlan(ctx), ctx);
   const byRef = new Map(fs.map(f => [f.ref, f]));
-  renderPlan($('plan'), { plan, fired, byRef, library: LIBRARY, source: 'page', toldBy, onOpen: () => {} });
+  renderPlan($('plan'), { plan, fired, byRef, library: LIBRARY, source: 'page', toldBy, toldAdded: told.length + Object.keys(toldValues).length, onOpen: () => {} });
   initInfo($('plan'));
   if (!fs.length) $('plan').prepend(h('p', { class: 'notice', text: 'You did not mark anything in these places. That is useful to know, and it covers only these places: other apps, accounts and devices can still share. The guides at the end show where else to look.' }));
   $('screen-ask').hidden = true;

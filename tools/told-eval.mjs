@@ -81,8 +81,10 @@ if (NANO) {
   } finally { await browser.close(); }
 }
 
-mkdirSync('docs/evidence', { recursive: true });
-writeFileSync(`docs/evidence/told-eval-${path.basename(CASES, '.json')}.json`, JSON.stringify({
+// Only a Gemini Nano run is evidence; a keyword-only run goes to tools/out, so it never replaces a Nano result.
+const dir = NANO ? 'docs/evidence' : 'tools/out';
+mkdirSync(dir, { recursive: true });
+writeFileSync(`${dir}/told-eval-${path.basename(CASES, '.json')}.json`, JSON.stringify({
   at: new Date().toISOString(), tool: 'node tools/told-eval.mjs' + (NANO ? ' --nano' : ''), cases: CASES,
   keyword, nano, nanoRaw,
 }, null, 1));

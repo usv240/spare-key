@@ -20,12 +20,25 @@ test('an answer is cleaned: unknown codes, repeats and odd answers are dropped',
 });
 
 test('told findings only add: a code already found is not added again, and nothing is marked as the person\'s own', () => {
-  const existing = [{ ref: 'f1', code: 'tracker.alert', ownership: 'mine' }];
+  const existing = [{ ref: 'f1', code: 'tracker.alert', ownership: 'not_mine' }];
   const told = toldFindings({ codes: ['tracker.alert', 'carrier.plan.holder_other'] }, { existing });
   assert.equal(told.length, 1);
   assert.equal(told[0].code, 'carrier.plan.holder_other');
   assert.equal(told[0].ownership, 'not_mine');
   assert.match(told[0].label, /from what you told/);
+});
+
+test('a finding marked "Mine" does not hide the same kind of way in told about the other person (judge round 11)', async () => {
+  const { buildPlan } = await import('../shared/plan/engine.js');
+  const { applyInvariants } = await import('../shared/plan/invariants.js');
+  // Sharing with a sister, marked Mine; then "I am sharing my location with him in Google Maps".
+  const existing = [{ ref: 'f1', code: 'maps.sharing.person', ownership: 'mine' }];
+  const told = toldFindings({ codes: ['maps.sharing.person'] }, { existing });
+  assert.equal(told.length, 1);
+  const findings = [...existing, ...told];
+  const ctx = { findings, situation: {}, notChecked: [], library };
+  const refs = applyInvariants(buildPlan(ctx), ctx).plan.actions.flatMap(a => a.refs || []);
+  assert.ok(refs.includes(told[0].ref), JSON.stringify(refs));
 });
 
 test('words never override an answer the person gave', () => {

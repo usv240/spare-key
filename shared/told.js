@@ -53,7 +53,7 @@ export const TOLD_SCHEMA = {
 // name it; a sentence that says the way in is over ("turned off", "deleted", "used to") is skipped.
 const RULES = [
   ['device.given_by_other', /\b(bought|got|gave|given|set ?up|setup)\b[^.]{0,40}\b(phone|iphone|samsung|tablet|ipad|laptop|computer)\b|\b(phone|tablet|ipad|laptop|computer)\b[^.]{0,30}\b(he|she|they) (bought|gave|set up)/i],
-  ['carrier.plan.holder_other', /\b(pays?|paying) (for )?my phone|\bmy phone (bill|plan)\b[^.]{0,30}\b(his|her|their) name|\b(his|her|their) (family |phone )?plan\b|\bon (his|her|their) [a-z-]* ?(family )?plan\b|\bfamily plan with\b/i],
+  ['carrier.plan.holder_other', /\b(pays?|paying) (for )?(the |my )?(phone|cell)|\b(pays?|paying) (for )?my (phone |cell )?(plan|bill)\b|\bmy phone (bill|plan)\b[^.]{0,30}\b(his|her|their) name|\b(his|her|their) (family |phone )?plan\b|\bon (his|her|their) [a-z-]* ?(family )?plan\b|\bfamily plan with\b/i],
   ['phone.app.control', /\b(installed|put)\b[^.]{0,30}\bapp\b|\bapp\b[^.]{0,40}\b(didn.t|did not) install/i],
   ['tracker.alert', /\b(airtag|tracker)\b/i],
   ['apple.findmy.sharing', /\bfind my\b/i],
@@ -80,7 +80,9 @@ const STILL_THERE = /\bnever (turned|changed|took|signed)\b[^.]*|\b(didn.t|did n
 /** The keyword reader. Returns { codes, living, children_shared } in the same shape as Gemini Nano's answer. */
 export function keywordTold(text) {
   const out = { codes: [], living: 'unclear', children_shared: 'unclear' };
-  const sentences = String(text || '').slice(0, TOLD_MAX_CHARS).split(/(?<=[.!?\n])\s+|,\s+(?=and\b|but\b)/i);
+  // Sentences, and the parts of a sentence joined by "but" or by "and" before a new subject, so "I removed him from
+  // Life360 but he can still see me on Find My" keeps its second half (judge round 11).
+  const sentences = String(text || '').slice(0, TOLD_MAX_CHARS).split(/(?<=[.!?\n])\s+|,?\s+(?=but\b)|,?\s+(?=and (i|he|she|they|we|my|his|her)\b)/i).filter(s => s && !/^(i|he|she|they|we|my|his|her)$/i.test(s));
   for (const s of sentences) {
     if (OVER.test(s) && !/\bnever (turned|changed)\b/i.test(s)) continue;
     if (UNSURE.test(s)) continue;
@@ -97,9 +99,11 @@ export function keywordTold(text) {
   return out;
 }
 
-// A model answer that names more ways in than this is treated as unread: on the development statements (November 25,
-// 2026), Gemini Nano listed all 17 codes for "I moved out last month. No kids.", which names none.
-export const TOLD_MAX_CODES = 3;
+// A model answer that names more ways in than this is treated as unread: with the first prompt, Gemini Nano listed all
+// 17 codes for "I moved out last month. No kids.", which names none. Set at 3 first; judge round 11 showed that threw
+// away a right answer of 4 from a person who told a lot, so it is now 5 (more than a quarter of the 17 codes is a list,
+// not a reading). Fixed before the third, fresh statement set was written.
+export const TOLD_MAX_CODES = 5;
 
 /**
  * The answer to use: Gemini Nano's when it reads the words, the keyword reader's when Nano's answer lists more than
@@ -126,7 +130,10 @@ export function cleanTold(answer) {
  * added again. The label says the person told it, so it is never mistaken for something read from a page.
  */
 export function toldFindings(answer, { existing = [], refStart = 0, howFound = 'reader', words = {} } = {}) {
-  const have = new Set(existing.map(f => f.code));
+  // Only a finding the plan will act on counts as already found. One the person marked "Mine" (their own laptop, a
+  // sister in Maps) is left out of the plan, so the same kind of way in, told about the other person, must still be
+  // added (judge round 11).
+  const have = new Set(existing.filter(f => f.ownership !== 'mine').map(f => f.code));
   let n = refStart;
   return cleanTold(answer).codes.filter(c => !have.has(c)).map(code => ({
     ref: `t${++n}`, code, check: CODES[code].check, service: 'told', group: CODES[code].group,

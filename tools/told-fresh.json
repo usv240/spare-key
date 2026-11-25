@@ -1,0 +1,258 @@
+{
+  "note": "Fresh hand-written test set: 60 statements a person might type into the optional 'Anything else you know?' box while leaving an abusive partner in the US. Written from general knowledge, without reading project files or searching the web. Codes are listed only when the words clearly say that way in is there now. Ways in that are over, denied, only guessed at, or held by a safe person (a sister or the person's own mom) get no code. 'living' and 'children_shared' appear only when the words clearly say. All names are made up. Mix: 12 with 0 codes, 20 with 1, 14 with 2, 8 with 3, 3 with 4, 3 with 5.",
+  "cases": [
+    {
+      "text": "i think he somehow knows where i am, he showed up at my work twice this week and i never told him my schedule",
+      "codes": []
+    },
+    {
+      "text": "I already took him off Life360 last week and deleted the app.",
+      "codes": []
+    },
+    {
+      "text": "he never had my icloud password and i set up my phone myself. i just want to make sure im not missing anything",
+      "codes": []
+    },
+    {
+      "text": "my sister Marisol Quenby is on my family plan and she pays the bill, not him. he isnt on it at all",
+      "codes": []
+    },
+    {
+      "text": "I am staying with my mom right now. We have two kids together and I'm scared he will use them to find me.",
+      "codes": [],
+      "living": "apart",
+      "children_shared": "yes"
+    },
+    {
+      "text": "im so tired. i just want to sleep without checking the door every 5 min",
+      "codes": []
+    },
+    {
+      "text": "We still live together. I'm planning to leave Friday when he's at work.",
+      "codes": [],
+      "living": "together"
+    },
+    {
+      "text": "my mom is the one in my google family, she set it up for me years ago. she hasnt talked to him in forever and hes not in it",
+      "codes": []
+    },
+    {
+      "text": "he used to have my gmail forwarded to him but i turned that off in settings yesterday and changed my password",
+      "codes": []
+    },
+    {
+      "text": "I don't know much about tech. He always handled that stuff and I never asked questions.",
+      "codes": []
+    },
+    {
+      "text": "no kids. we broke up in march and i moved out but he keeps texting me from new numbers",
+      "codes": [],
+      "living": "apart",
+      "children_shared": "no"
+    },
+    {
+      "text": "I'm not sure if he put something on my phone. It's been acting weird and the battery dies super fast",
+      "codes": []
+    },
+    {
+      "text": "he pays my cell bill every month and says if i leave hell shut it off",
+      "codes": ["carrier.plan.holder_other"]
+    },
+    {
+      "text": "the alexa in the kitchen is on his amazon",
+      "codes": ["amazon.device.other"]
+    },
+    {
+      "text": "My phone keeps saying an AirTag is moving with me. It popped up again this morning on the way to work.",
+      "codes": ["tracker.alert"]
+    },
+    {
+      "text": "he bought me this iphone for my birthday and set it all up before he gave it to me",
+      "codes": ["device.given_by_other"]
+    },
+    {
+      "text": "he can see my location on find my, it says im sharing with him and idk how to stop it without him noticing",
+      "codes": ["apple.findmy.sharing"]
+    },
+    {
+      "text": "his mom Gwendolyn Parrow is in our life360 circle and she tells him everything",
+      "codes": ["life360.circle.member"]
+    },
+    {
+      "text": "theres an app on my phone called like 'system service' that i never downloaded",
+      "codes": ["phone.app.control"]
+    },
+    {
+      "text": "His old iPad is still signed into my iCloud. My photos show up on it.",
+      "codes": ["apple.account.device_other"]
+    },
+    {
+      "text": "hes the organizer of our apple family sharing thing, im just a member",
+      "codes": ["apple.family.organizer_other"]
+    },
+    {
+      "text": "I share my location with him in Google Maps because he made me turn it on after the last fight.",
+      "codes": ["maps.sharing.person"]
+    },
+    {
+      "text": "when i made my gmail he put his email as the backup in case i forgot my password and its still his email on there",
+      "codes": ["google.recovery.email_other"]
+    },
+    {
+      "text": "his number is the recovery phone on my google account, i checked and its still there",
+      "codes": ["google.recovery.phone_unconfirmed"]
+    },
+    {
+      "text": "My husband, Thaddeus Brillwater, manages our Google family group. He made himself the manager when we set it up.",
+      "codes": ["google.family.manager_other"]
+    },
+    {
+      "text": "his laptop is still logged into my google account, i can see it in my devices list",
+      "codes": ["google.devices.other"]
+    },
+    {
+      "text": "We're in the same Amazon Household. He added me so we could share Prime.",
+      "codes": ["amazon.household.adult"]
+    },
+    {
+      "text": "all my emails go to him too, he set up forwarding on my gmail so he gets a copy of everything",
+      "codes": ["gmail.forwarding.external"]
+    },
+    {
+      "text": "He gave my son a tablet for Christmas and my son still uses it every night.",
+      "codes": ["device.given_by_other"]
+    },
+    {
+      "text": "the phone plan is under his name. ive never even been on the account myself",
+      "codes": ["carrier.plan.holder_other"]
+    },
+    {
+      "text": "i removed him from life360 but he can still see me on find my",
+      "codes": ["apple.findmy.sharing"]
+    },
+    {
+      "text": "His brother Rudolpho is in my Google family group and I don't know how to get him out.",
+      "codes": ["google.family.member"]
+    },
+    {
+      "text": "He set up my Samsung for me when we moved in and his email is the recovery email on my Google. We still live together.",
+      "codes": ["device.given_by_other", "google.recovery.email_other"],
+      "living": "together"
+    },
+    {
+      "text": "he pays the verizon bill and theres a tracking app he put on my phone, i cant uninstall it",
+      "codes": ["carrier.plan.holder_other", "phone.app.control"]
+    },
+    {
+      "text": "I took him off my Find My already. But he's still the organizer of our Apple family and his MacBook is signed into my Apple ID.",
+      "codes": ["apple.family.organizer_other", "apple.account.device_other"]
+    },
+    {
+      "text": "the echo dot in my daughters room is on his amazon account and hes in our amazon household",
+      "codes": ["amazon.device.other", "amazon.household.adult"]
+    },
+    {
+      "text": "I share my location with him on google maps and he's also in my life360 circle with his sister.",
+      "codes": ["maps.sharing.person", "life360.circle.member"]
+    },
+    {
+      "text": "my iphone keeps alerting about an airtag, and he can see me on find my anyway so i dont even know why hed need it",
+      "codes": ["tracker.alert", "apple.findmy.sharing"]
+    },
+    {
+      "text": "He bought the kids' iPads and he's the Apple family organizer for all of us. We have 3 kids together.",
+      "codes": ["device.given_by_other", "apple.family.organizer_other"],
+      "children_shared": "yes"
+    },
+    {
+      "text": "his work phone is still signed into my gmail and he set up forwarding so my emails get sent to him",
+      "codes": ["google.devices.other", "gmail.forwarding.external"]
+    },
+    {
+      "text": "My sister is on the family phone plan with me (she pays it, not him). But his number is still the recovery phone on my Google account, and he manages our Google family.",
+      "codes": ["google.recovery.phone_unconfirmed", "google.family.manager_other"]
+    },
+    {
+      "text": "The respondent purchased my current mobile device and remains the account holder for our wireless service.",
+      "codes": ["device.given_by_other", "carrier.plan.holder_other"]
+    },
+    {
+      "text": "he never had my gmail password but his old phone still shows up as signed in on my google account. also his mom is in my google family",
+      "codes": ["google.devices.other", "google.family.member"]
+    },
+    {
+      "text": "I still share my location with him on google maps bc if i turn it off hell know im leaving. and his echo show in the living room is logged into my amazon",
+      "codes": ["maps.sharing.person", "amazon.device.other"]
+    },
+    {
+      "text": "theres an app on my phone i didnt install, it looks like a calculator but it isnt. also im on his phone plan",
+      "codes": ["phone.app.control", "carrier.plan.holder_other"]
+    },
+    {
+      "text": "we dont live together anymore but his ipad is still on my icloud and i got an airtag alert last nite at my friends house",
+      "codes": ["apple.account.device_other", "tracker.alert"],
+      "living": "apart"
+    },
+    {
+      "text": "He gave me my phone and the plan is in his name. He also put an app on it that he says is for 'safety'. I can't afford my own right now.",
+      "codes": ["device.given_by_other", "carrier.plan.holder_other", "phone.app.control"]
+    },
+    {
+      "text": "life360 circle has him and his mom in it, find my shows him my location, and hes the family organizer on apple",
+      "codes": ["life360.circle.member", "apple.findmy.sharing", "apple.family.organizer_other"]
+    },
+    {
+      "text": "My Gmail forwards to his email and his email is also my recovery email. His Chromebook is still signed in to my account too.",
+      "codes": ["gmail.forwarding.external", "google.recovery.email_other", "google.devices.other"]
+    },
+    {
+      "text": "i turned off google maps sharing already. but he still manages my google family, his number is my recovery phone, and hes in my amazon household",
+      "codes": ["google.family.manager_other", "google.recovery.phone_unconfirmed", "amazon.household.adult"]
+    },
+    {
+      "text": "we live together and have a 4 year old. he set up the alexa on his account, hes in my amazon household, and the tablet our son uses is one he bought",
+      "codes": ["amazon.device.other", "amazon.household.adult", "device.given_by_other"],
+      "living": "together",
+      "children_shared": "yes"
+    },
+    {
+      "text": "AirTag warning on my phone twice now. He still has my Apple ID on his iPad and I'm sharing my location with him in Find My.",
+      "codes": ["tracker.alert", "apple.account.device_other", "apple.findmy.sharing"]
+    },
+    {
+      "text": "hes a member of my google family, i share my location w him on google maps, and my phone bill is on his account",
+      "codes": ["google.family.member", "maps.sharing.person", "carrier.plan.holder_other"]
+    },
+    {
+      "text": "I'm not sure about the AirTag thing, nothing has popped up. But he bought my laptop, his phone is still signed into my Google account, and there's a parental control app on my phone that he installed.",
+      "codes": ["device.given_by_other", "google.devices.other", "phone.app.control"]
+    },
+    {
+      "text": "ok so basically he controls everything. he bought my phone, its on his plan, he put some app on it, and hes the organizer of our apple family. we still live together til i can get out",
+      "codes": ["device.given_by_other", "carrier.plan.holder_other", "phone.app.control", "apple.family.organizer_other"],
+      "living": "together"
+    },
+    {
+      "text": "His iPad is signed into my iCloud, he sees me on Find My, his sister is in our Life360 circle, and I share my location with him on Google Maps too.",
+      "codes": ["apple.account.device_other", "apple.findmy.sharing", "life360.circle.member", "maps.sharing.person"]
+    },
+    {
+      "text": "my gmail is forwarded to him, his email is my recovery email, his number is my recovery phone, and his desktop is still loged in to my google",
+      "codes": ["gmail.forwarding.external", "google.recovery.email_other", "google.recovery.phone_unconfirmed", "google.devices.other"]
+    },
+    {
+      "text": "I moved out two weeks ago with our daughter. He still runs our Google family and his mom is in it too, the Echo I took with me is on his Amazon account, he's in my Amazon household, and my phone keeps saying an AirTag is moving with me.",
+      "codes": ["google.family.manager_other", "google.family.member", "amazon.device.other", "amazon.household.adult", "tracker.alert"],
+      "living": "apart",
+      "children_shared": "yes"
+    },
+    {
+      "text": "To summarize: he pays for my phone service, he gave me the phone, he is the organizer of my Apple family, his MacBook is still signed into my iCloud, and my location is shared with him in Find My. I did remove the location app he installed last month.",
+      "codes": ["carrier.plan.holder_other", "device.given_by_other", "apple.family.organizer_other", "apple.account.device_other", "apple.findmy.sharing"]
+    },
+    {
+      "text": "where do i even start lol. hes in our life360, my google maps location is shared to him, my emails forward to his gmail, the kids tablets r from him and he set them up, and his phone is still on my google acct. i never gave him my apple password tho",
+      "codes": ["life360.circle.member", "maps.sharing.person", "gmail.forwarding.external", "device.given_by_other", "google.devices.other"]
+    }
+  ]
+}

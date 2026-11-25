@@ -90,7 +90,7 @@ const WHERE = {
  * The plan. `plan` uses local refs. `byRef` maps a local ref to its finding; `library` maps code to entry.
  * `source` is 'code', 'device' or 'cloud'; `fired` lists the safety rules that changed it; `onOpen(url)` opens a setting.
  */
-export function renderPlan(root, { plan, byRef, library, source, model, calls = null, fired = [], cloudNote = '', voices = null, freshDays = 45, freshness = {}, onCheckFresh = null, simpler = {}, onSimpler = null, onOpenCheck = null, checkLabels = {}, toldBy = null, onOpen }) {
+export function renderPlan(root, { plan, byRef, library, source, model, calls = null, fired = [], cloudNote = '', voices = null, freshDays = 45, freshness = {}, onCheckFresh = null, simpler = {}, onSimpler = null, onOpenCheck = null, checkLabels = {}, toldBy = null, toldAdded = 0, onOpen }) {
   const ctx = { byRef, library, onOpen, freshDays, freshness, onCheckFresh, simpler, onSimpler, onOpenCheck, checkLabels, phoneOnly: [...byRef.values()].every(f => f.service === 'phone') };
   const acts = plan.actions;
   const docs = acts.filter(a => a.action === 'document');
@@ -100,9 +100,15 @@ export function renderPlan(root, { plan, byRef, library, source, model, calls = 
   const checks = acts.filter(a => a.action === 'check_manually');
   const [lead, where] = (WHERE[source] || WHERE.code)(model);
   // Who read what the person typed. When it was Gemini Nano, "with no AI" would no longer be true.
+  const ran = where.replace(/, with no AI(: you did the reading, so no model was needed)?\./, '.');
   const base = toldBy === 'nano'
-    ? `${where.replace(/, with no AI(: you did the reading, so no model was needed)?\./, '.')} Gemini Nano read what you typed, on this device, and could only add steps.`
+    ? `${ran} Gemini Nano read what you typed, on this device, and could only add steps.`
+    : toldBy === 'reader_after_nano' ? `${ran} Gemini Nano read what you typed, on this device; its answer listed too many ways in to trust, so Spare Key’s code read the words again and that answer was used.`
     : toldBy === 'reader' ? `${where} Spare Key’s code read what you typed, on this device.` : where;
+  // Typed words that matched nothing Spare Key knows about: said plainly, so silence is not read as "nothing there".
+  const toldNone = toldBy && !toldAdded
+    ? h('p', { class: 'notice', role: 'status', text: 'What you typed did not match anything Spare Key knows how to check, so it did not change this plan. It can still matter: an advocate can go through it with you.' })
+    : null;
   const times = n => (n === 1 ? 'once' : `${n} times`);
   const tech = source === 'cloud' && calls
     ? `${base} While ordering it, Gemini read the steps library ${times(calls.get_steps)}, asked this computer ${calls.ask_device} ${calls.ask_device === 1 ? 'question' : 'questions'} and asked you ${calls.ask_user}. Each answer was yes, no or not sure.${calls.nano_answered ? ` Gemini Nano answered ${calls.nano_answered} of this computer's questions by reading the entry here; only its yes or no went back.` : ''}`
@@ -125,6 +131,7 @@ export function renderPlan(root, { plan, byRef, library, source, model, calls = 
     h('h1', { id: 'plan-title', tabindex: '-1', text: 'Your plan' }),
     h('div', { class: 'with-info' }, h('p', { class: 'lead', text: lead }), infoButton('why-order', 'About why this order')),
     cloudNote ? h('p', { class: 'notice', text: cloudNote }) : null,
+    toldNone,
     // A model's own summary when it wrote one; the code plan's summary is what "Start here" already says.
     plan.summary ? h('p', { class: 'plan-summary', text: plan.summary }) : null,
     startHere({ docs, adv, nows, waits }, ctx),

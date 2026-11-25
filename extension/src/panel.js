@@ -513,7 +513,7 @@ async function makePlan() {
       const words = Object.fromEntries(Object.entries(CODE_TEXT).map(([c, t]) => [c, t[0]]));
       told = toldFindings(r.answer, { existing: scan.findings, howFound: r.how === 'nano' ? 'nano' : 'reader', words });
       toldValues = toldSituation(r.answer, situation.values);
-      toldBy = r.how === 'nano' ? 'nano' : 'reader';
+      toldBy = r.how || 'reader';
     }
   }
   const values = { ...SITUATION_DEFAULTS, ...toldValues, ...situation.values };
@@ -528,7 +528,7 @@ async function makePlan() {
   const freshDays = (await offscreen('sk:fresh-days').catch(() => ({})))?.freshDays ?? 45;
   const draw = (result, source, extra = {}) => {
     lastDraw = { result, source, extra, byRef, freshDays, scan };
-    return renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, toldBy, freshDays, freshness, onCheckFresh, ...planHelpers(scan), onOpen: url => chrome.tabs.create({ url }), ...extra });
+    return renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, toldBy, toldAdded: told.length + Object.keys(toldValues).length, freshDays, freshness, onCheckFresh, ...planHelpers(scan), onOpen: url => chrome.tabs.create({ url }), ...extra });
   };
   draw(codeResult, 'code', { cloudNote: cloudOn ? 'Asking Gemini in the cloud to order this for your situation. It sees finding types only.' : '' });
   $('plan-title')?.focus({ preventScroll: true });
