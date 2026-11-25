@@ -468,3 +468,21 @@ kbd {
 .step-list.ticks > li:first-child { border-top: 0; }
 .code-block > .tick { margin-top: 8px; border-top: 1px solid var(--line); padding-top: 12px; font-weight: 600; }
 .done-line { margin: 12px 0 0; font-weight: 600; color: var(--ink); }
+
+/* Every fold shows that it opens: the same chevron as the plan's cards, before the words (design judge, November 25). */
+.checked-list > summary, .later > summary, .voices > summary, .break-it > summary { gap: 10px; list-style: none; }
+.checked-list > summary::-webkit-details-marker, .later > summary::-webkit-details-marker, .voices > summary::-webkit-details-marker, .break-it > summary::-webkit-details-marker { display: none; }
+.checked-list > summary::before, .later > summary::before, .voices > summary::before, .break-it > summary::before {
+  content: ""; flex: none; width: 7px; height: 7px; margin: 0 3px 0 2px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg); transition: transform 160ms var(--ease-out);
+}
+.checked-list[open] > summary::before, .later[open] > summary::before, .voices[open] > summary::before, .break-it[open] > summary::before { transform: rotate(45deg); }
+@media print { .checked-list > summary::before, .later > summary::before, .voices > summary::before, .break-it > summary::before { display: none; } }
+
+/* Results: what is left to do, said once at the top; the shared caution under a group's heading. */
+.todo-line { margin: 16px 0 0; font-weight: 600; }
+.group-caution { margin: 6px 0 10px; }
+/* "Make my plan", in reach while scrolling a long list. The page's background behind it, so cards never show through. */
+.sticky-go { position: sticky; bottom: 0; z-index: 2; margin: 16px -16px 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: var(--bg); border-top: 1px solid var(--line); }
+.sticky-go[hidden] { display: none; }
+@media print { .sticky-go { display: none; } }

@@ -41,7 +41,7 @@ const ORDER = ['accessibility', 'device_admin', 'notifications', 'messages', 'us
 // Store, or holds two or more strong powers, or its name or package says what it is. Found on a real phone on
 // November 24, 2026: with no such check Gemini Nano raised a caution on 10 of 13 ordinary Play Store apps, and asking it
 // for its own reason did not help (it called the right apps "monitoring" and gave the wrong reason).
-const TELLING = /track|spy|monitor|locat|finder|family|parent|kids?|child|guardian|stealth|keylog|surveil|mirror|forward/i;
+const TELLING = /track|spy|monitor|locat|finder|family|parent|kids?\b|child|guardian|stealth|keylog|surveil|mirror|forward/i;
 const backedUp = app => app.installer === 'other' || COUNTS.filter(k => app.powers?.[k]).length >= 2 || TELLING.test(`${app.label} ${app.pkg}`);
 const ONE_KIND = ['phone.app.accessibility', 'phone.app.notifications', 'phone.app.messages', 'phone.app.usage_access'];
 

@@ -88,7 +88,9 @@ try {
       // Working through the plan: ticking a record updates "Done so far", and Start over clears the ticks.
       await page.click('#plan .tick-box[data-kind="record"]');
       const done = await page.$eval('#plan .done-line', e => e.textContent);
-      step('iphone: ticking a record off updates "Done so far"', /^Done so far: 1 of \d+ recorded/.test(done), done);
+      step('iphone: ticking a record off updates "Done so far"', /^Done so far: 1 of \d+ kinds? recorded/.test(done), done);
+      // On a phone-only plan the record is made with another phone or on paper: no step says "screenshot it" (design judge).
+      step('iphone: a phone-only plan never says to screenshot on this phone', !/\bscreenshot (it|them)\b/i.test(plan.text), plan.text.match(/.{40}screenshot (it|them).{20}/i)?.[0] || '');
     } else {
       step('android: living apart, now a good time: the person can change things now', plan.kinds.includes('change_now'), plan.kinds.join(' > '));
       step('android: an app that may watch the phone comes first, with the note to use another device', plan.titles[0]?.startsWith('An app can read your screen') || /another phone|never had/i.test(plan.text), plan.titles[0]);

@@ -21,7 +21,7 @@ export function tryPage() {
     </figure>
     <figure class="panel-frame" id="panel-demo">
       <iframe src="/panel-demo.html?mode=live" title="The Spare Key side panel, running the practice check" loading="eager"></iframe>
-      <figcaption>The side panel, here in the page. Its tab “What left this computer” shows every request word for word.</figcaption>
+      <figcaption>The side panel, here in the page. Its tab “Under the hood” shows every request word for word, under “What left this computer”.</figcaption>
     </figure>
   </div>
   <div class="wrap try-notes">

@@ -141,7 +141,7 @@ From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved
   0.7 s each ([evidence](docs/evidence/aicore-record.json)). In the latest run the two Nano 4 previews were listed
   but did not answer (AICore: not on this phone yet), so Spare Key skipped them and Nano 4 Full sorted all 13 apps in
   9.6 s; both plan templates returned a server error ("high demand") and the direct call ordered the plan.
-- **Phone check:** 39 of 39 browser checks, including the typed-words box read by code and through the on-device path, ticking the plan off as you go, and that the page sends nothing after it loads.
+- **Phone check:** 40 of 40 browser checks, including the typed-words box read by code and through the on-device path, ticking the plan off as you go, and that the page sends nothing after it loads.
 - **Accessibility and reading level:** 78 axe runs with 0 issues; median reading grade 4.3.
 
 Next: review by advocates and survivors, planted ways in on real test accounts, and real stalkerware samples for the

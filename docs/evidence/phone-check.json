@@ -1,8 +1,8 @@
 {
- "at": "2026-11-25T21:44:47.234Z",
+ "at": "2026-11-25T22:09:35.333Z",
  "tool": "node tools/phone-check-test.mjs",
- "passed": 39,
- "of": 39,
+ "passed": 40,
+ "of": 40,
  "results": [
   {
    "name": "iphone: the plan starts with the record, then an advocate",
@@ -37,7 +37,12 @@
   {
    "name": "iphone: ticking a record off updates \"Done so far\"",
    "ok": true,
-   "note": "Done so far: 1 of 2 recorded, 0 of 2 changed. Tick each one as you go; nothing is saved."
+   "note": "Done so far: 1 of 2 kinds recorded, 0 of 2 kinds changed. Tick each one as you go; nothing is saved."
+  },
+  {
+   "name": "iphone: a phone-only plan never says to screenshot on this phone",
+   "ok": true,
+   "note": ""
   },
   {
    "name": "iphone: nothing was sent after the page loaded",

@@ -72,7 +72,7 @@ export default function why({ numbers, drift = null, android = null, grade = nul
 <section class="block why-top" aria-labelledby="why-title">
   <div class="wrap">
     <h1 id="why-title">Why Spare Key</h1>
-    <p class="lead">The problem, the idea, and the proof. About two minutes.</p>
+    <p class="lead">The problem, the idea, and the proof. Each part stands on its own: read the one you need.</p>
     <nav class="jump" aria-label="On this page">
       <a href="#problem">The problem</a><a href="#stays">What leaves the device</a><a href="#numbers">How well it works</a><a href="#built">How it’s built</a><a href="#builders">For advocates and developers</a>
     </nav>

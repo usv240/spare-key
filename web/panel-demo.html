@@ -26,14 +26,15 @@
 <main>
   <div class="tabs" role="tablist" aria-label="Spare Key">
   <button class="tab" role="tab" id="tab-check" aria-selected="true" aria-controls="screen-results">Your check</button>
-  <button class="tab" role="tab" id="tab-sent" aria-selected="false" aria-controls="screen-sent" tabindex="-1">What left this computer</button>
+  <button class="tab" role="tab" id="tab-sent" aria-selected="false" aria-controls="screen-sent" tabindex="-1">Under the hood</button>
 </div>
   <section class="screen" id="screen-start" hidden>
     <h1 tabindex="-1" id="start-title">Practice check</h1>
     <p class="lead">Spare Key reads made-up settings pages for a person called Jordan, the same way it reads yours. Nothing of yours is opened.</p>
     <div class="status-line"><span class="dot" id="where-dot" aria-hidden="true"></span><p class="text" id="where-line">Checking for Gemini Nano in this browser.</p></div>
+    <div class="actions"><button class="btn btn-primary btn-block" type="button" id="start">Start the practice check</button></div>
     <details class="break-it" id="break-it">
-      <summary>Break the pages first</summary>
+      <summary>For testers: break the pages first</summary>
       <p>Sites change their pages without warning. Change Jordan’s pages here, then watch what Spare Key does: say it could not read a page, read it with AI instead, or read it by code again after a fix.</p>
       <fieldset class="question">
         <legend>Change the practice pages</legend>
@@ -42,7 +43,6 @@
       <label class="share-line"><input type="checkbox" id="apply-fix"><span>Apply the fix sent through Remote Config</span></label>
       <p class="muted" id="drift-note">The fix is what the builder would publish once a page changes: new words and places to look. It reaches every copy of Spare Key within an hour, with no update to install.</p>
     </details>
-    <div class="actions"><button class="btn btn-primary btn-block" type="button" id="start">Start the practice check</button></div>
   </section>
 
   <section class="screen" id="screen-scanning" hidden>

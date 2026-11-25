@@ -101,6 +101,12 @@ export function renderResults(root, { scan, catalogue, library = {}, reveal = ne
     : `These ${checked.length} checks found no other person, device or app. Spare Key did not check everything: see Not checked below.`;
 
   const groups = GROUPS.map(g => ({ g, items: findings.filter(f => f.group === g) })).filter(x => x.items.length);
+  // What is left to do on this screen, counted live: every answer re-draws it.
+  const answered = findings.filter(f => f.ownership).length;
+  const todo = findings.length ? h('p', { class: 'todo-line', role: 'status' },
+    answered === findings.length
+      ? `All ${findings.length} answered. Your plan is at the bottom of this screen.`
+      : `${findings.length} ${findings.length === 1 ? 'entry' : 'entries'} in ${groups.length} ${groups.length === 1 ? 'group' : 'groups'}. For each, say whether it is yours: ${answered} of ${findings.length} answered. You can make your plan at any time.`) : null;
 
   put(root,
     h('h1', { id: 'results-title', tabindex: '-1', text: scan.mode === 'practice' ? 'What we found for Jordan' : 'What we found' }),
@@ -108,15 +114,42 @@ export function renderResults(root, { scan, catalogue, library = {}, reveal = ne
     h('div', { class: 'with-info' }, h('p', { class: 'lead', text: summary }), infoButton('results-summary', 'About these results')),
     // Which account the pages belonged to, masked, so a check of the wrong account is easy to spot.
     scan.account?.email ? h('p', { class: 'muted account-line', text: scan.mode === 'practice' ? `The made-up account: ${scan.account.email}.` : `Account checked: ${maskEmail(scan.account.email)}. If that is not yours, choose another account and check again.` }) : null,
-    ...groups.map(({ g, items }) => h('section', { class: 'group', 'aria-labelledby': `g-${g}` },
-      h('h2', { id: `g-${g}` }, `${GROUP_LABELS[g]} `, h('span', { class: 'count', text: `(${items.length})` })),
-      h('ul', { class: 'findings' }, items.map(f => findingCard(f, { reveal: reveal.has(f.ref), library, onAnswer, onOpen, onToggleReveal }))),
-    )),
+    todo,
+    ...groups.map(({ g, items }) => {
+      // The caution most of a group's entries share is said once, under the group's heading, so it is still read (design
+      // judge, November 25: on every card it appeared about 20 times). A card keeps its own caution only when it differs,
+      // so "they are told" stands out instead of hiding in the repeats.
+      const count = new Map();
+      for (const f of items) { const l = noticeLine(library[f.code]); count.set(l, (count.get(l) || 0) + 1); }
+      const [top, n] = [...count].sort((a, b) => b[1] - a[1])[0] || [];
+      const shared = items.length > 1 && n >= 2 ? top : null;
+      const allSame = count.size === 1;
+      const groupLine = shared && (allSame ? shared.replace(/\bit\b/, 'any of these') : `Unless a card says otherwise: ${shared.charAt(0).toLowerCase()}${shared.slice(1).replace(/\bit\b/, 'one')}`);
+      return h('section', { class: 'group', 'aria-labelledby': `g-${g}` },
+        h('h2', { id: `g-${g}` }, `${GROUP_LABELS[g]} `, h('span', { class: 'count', text: `(${items.length})` })),
+        shared ? h('p', { class: 'caution-line group-caution' }, cautionIcon(), h('span', { text: groupLine })) : null,
+        h('ul', { class: 'findings' }, items.map(f => findingCard(f, { reveal: reveal.has(f.ref), library, onAnswer, onOpen, onToggleReveal, groupCaution: shared && noticeLine(library[f.code]) === shared }))),
+      );
+    }),
     checkedList(scan.outcomes, label),
     notChecked(skipped, label, checked.filter(o => o.partly && o.id !== 'screenshot'), scan.mode !== 'practice' ? onRecheck : null),
     pageRecord(scan.pages, label),
     scan.mode !== 'practice' && onReport ? reportBox(skipped.filter(o => ['looked_different', 'did_not_load'].includes(o.why)), label, { onReport, reportState }) : null,
   );
+  stickyPlanButton(root, findings.length);
+}
+
+// "Make my plan" stays in reach while the person works down a long list, and steps aside once the screen's own button
+// is in view, so there is never two on the screen. It presses that button, so it does exactly the same thing.
+let planButtonWatch = null;
+function stickyPlanButton(root, count) {
+  planButtonWatch?.disconnect();
+  const target = document.getElementById('to-plan');
+  if (!target || count < 4 || !('IntersectionObserver' in self)) return;
+  const bar = h('div', { class: 'sticky-go' }, h('button', { type: 'button', class: 'btn btn-primary btn-block', onclick: () => target.click() }, 'Make my plan'));
+  root.append(bar);
+  planButtonWatch = new IntersectionObserver(([e]) => { bar.hidden = e.isIntersecting; });
+  planButtonWatch.observe(target);
 }
 
 // What removing it does for the other person, from the steps library and its quoted official source.
@@ -125,7 +158,7 @@ export function noticeLine(entry) {
   return n === 'notifies' ? 'If you remove it, they are told.' : n === 'unlikely' ? 'Removing it is unlikely to be noticed.' : n === 'noticeable' ? 'If you remove it, they may notice.' : 'Removing it may alert them.';
 }
 
-function findingCard(f, { reveal, library, onAnswer, onOpen, onToggleReveal }) {
+function findingCard(f, { reveal, library, onAnswer, onOpen, onToggleReveal, groupCaution = false }) {
   const [title, means] = CODE_TEXT[f.code] || [f.code, ''];
   const entry = library[f.code];
   const infoId = `finding-${f.ref}`;
@@ -151,7 +184,7 @@ function findingCard(f, { reveal, library, onAnswer, onOpen, onToggleReveal }) {
       infoButton(infoId, `About ${title.charAt(0).toLowerCase()}${title.slice(1)}`)),
     f.confidence === 'check_it' ? h('p', { class: 'finding-note', text: 'Found by reading the page. Check it in the setting.' }) : null,
     f.disagree ? h('p', { class: 'finding-note', text: 'Spare Key is not sure whose this is. Your answer below decides.' }) : null,
-    h('p', { class: 'caution-line' }, cautionIcon(), h('span', { text: noticeLine(entry) })),
+    groupCaution ? null : h('p', { class: 'caution-line' }, cautionIcon(), h('span', { text: noticeLine(entry) })),
     // The question is on the screen, not only said to a screen reader: "Mine" alone can be read as "my location".
     h('p', { class: 'answer-q', 'aria-hidden': 'true', text: 'Is this yours, or did you set it up?' }),
     h('div', { class: 'answer', role: 'group', 'aria-label': `Is this yours, or did you set it up: ${title}` },

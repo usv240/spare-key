@@ -453,7 +453,7 @@ async function makePlan() {
   $('plan-actions').hidden = false;
   draw(codeResult, 'code', { cloudNote: 'Asking Gemini in the cloud to order this. It sees finding types only.' });
   $('plan-title')?.focus({ preventScroll: true });
-  if (mode !== 'live') { draw(codeResult, 'code', { cloudNote: 'This is the plan built by code. Run the full practice check to see the cloud order it.' }); return; }
+  if (mode !== 'live') { draw(codeResult, 'code'); return; }
   const shared = situation.share ? Object.fromEntries(Object.keys(SITUATION).map(k => [k, !!situation.values[k]])) : {};
   const { body, refs } = toCloud(scan.findings, { situation: situation.values, shared, notChecked });
   try {

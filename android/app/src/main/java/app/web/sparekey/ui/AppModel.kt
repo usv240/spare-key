@@ -387,7 +387,7 @@ class AppModel(app: Application) : AndroidViewModel(app) {
                 // Which model was asked, and the server's own short reason (a status and a few words, never anything
                 // from this phone), so a failure can be told apart later.
                 val asked = if (cloud) "The cloud" else "Gemini Nano"
-                val reason = Regex("""(4\d\d|5\d\d)|high demand|overloaded|quota|RESOURCE_EXHAUSTED|UNAVAILABLE|timed? ?out|App Check|too (long|large)|token|not supported|busy""", RegexOption.IGNORE_CASE)
+                val reason = Regex("""\b(4\d\d|5\d\d)\b|high demand|overloaded|quota|RESOURCE_EXHAUSTED|UNAVAILABLE|timed? ?out|App Check|too (long|large)|token|not supported|busy""", RegexOption.IGNORE_CASE)
                     .findAll(e.message ?: "").map { it.value.lowercase() }.distinct().take(3).joinToString(", ")
                 note("$asked did not answer (${e.javaClass.simpleName}${if (reason.isNotEmpty()) ": $reason" else ""}). The plan made by code is shown.")
                 planNote = "$asked did not answer. This is the plan made by Spare Key's rules on this phone."

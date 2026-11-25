@@ -16,7 +16,7 @@ export default function index({ numbers, apk = null, grade = null }) {
         <a class="btn btn-secondary" href="/install.html">Get Spare Key</a>
       </div>
       <p class="hero-note">Free, with no sign-in. The practice check uses made-up pages and works on any phone. This visit stays in your browser’s history. ${info('shared-computer', 'About using a shared computer')}</p>
-      <p class="hero-note hero-links"><a href="/phone-check.html">Only have a phone? Check it step by step</a><a href="/why.html">Judging, or curious? The two-minute tour</a><a href="/advocates.html">For advocates</a></p>
+      <p class="hero-note hero-links"><a href="/phone-check.html">Only have a phone? Check it step by step</a><a href="/advocates.html">For advocates</a></p>
     </div>
     <figure class="panel-frame" id="panel-demo" data-ui>
       <iframe src="/panel-demo.html" title="The Spare Key side panel, showing a practice check for a made-up person" loading="eager"></iframe>

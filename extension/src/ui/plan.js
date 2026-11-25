@@ -206,7 +206,9 @@ function showProgress(root) {
   if (!line) return;
   const count = kind => { const all = [...root.querySelectorAll(`.tick-box[data-kind="${kind}"]`)]; return [all.filter(b => b.checked).length, all.length]; };
   const [rd, rn] = count('record'), [cd, cn] = count('change');
-  const parts = [rn ? `${rd} of ${rn} recorded` : '', cn ? `${cd} of ${cn} changed` : ''].filter(Boolean);
+  // Records are ticked by kind (a kind can hold several entries), so the count says kinds; changes are one per kind too.
+  const kinds = n => `${n === 1 ? 'kind' : 'kinds'}`;
+  const parts = [rn ? `${rd} of ${rn} ${kinds(rn)} recorded` : '', cn ? `${cd} of ${cn} ${kinds(cn)} changed` : ''].filter(Boolean);
   line.textContent = parts.length ? `Done so far: ${parts.join(', ')}. Tick each one as you go; nothing is saved.` : '';
   line.hidden = !parts.length;
 }
@@ -281,9 +283,15 @@ function nowSection(nows, ctx) {
     ...byService(nows, ctx));
 }
 
+// On a phone-only plan a screenshot stays on the watched phone (step 1 says so), so "screenshot" becomes "make a record",
+// with another phone or on paper, everywhere else in the plan too (design judge, November 25).
+const recordWords = (text, phoneOnly) => !phoneOnly || !text ? text : text
+  .replace(/\bscreenshot (it|them)\b/gi, (_, x) => `make a record of ${x} with another phone or on paper`)
+  .replace(/\bscreenshots?\b/gi, 'record');
+
 function waitSection(waits, ctx) {
   return section('wait', `Leave these for a better time (${countOf(waits)})`,
-    h('p', { text: 'Removing these may be noticed. For now, screenshot them and talk to an advocate about when to change each one. Open one to see what the other person would see, and the steps for later.' }),
+    h('p', { text: recordWords('Removing these may be noticed. For now, screenshot them and talk to an advocate about when to change each one. Open one to see what the other person would see, and the steps for later.', ctx.phoneOnly) }),
     ...byService(waits, ctx));
 }
 
@@ -324,7 +332,7 @@ function simplerBlock(code, { simpler = {}, onSimpler = null }) {
     h('p', { class: 'muted', text: `${r.source === 'on_device' ? 'By Gemini Nano on this computer' : 'By Gemini in the cloud, which saw only these public steps'}. If anything here differs from the steps above, follow the steps above.` }))];
 }
 
-function codeBlock(a, { byRef, library, onOpen, freshDays, freshness, onCheckFresh, simpler, onSimpler }, { open }) {
+function codeBlock(a, { byRef, library, onOpen, freshDays, freshness, onCheckFresh, simpler, onSimpler, phoneOnly }, { open }) {
   const items = a.refs.map(r => byRef.get(r)).filter(Boolean);
   const f = items[0];
   const code = a.code || f?.code;
@@ -334,11 +342,11 @@ function codeBlock(a, { byRef, library, onOpen, freshDays, freshness, onCheckFre
   const steps = [h('ol', { class: 'how' }, (e.steps || []).map(s => h('li', { text: s }))), ...simplerBlock(code, { simpler, onSimpler })];
   const inner = [
     items.length ? h('ul', { class: 'step-list items' }, items.map(x => h('li', { class: 'muted', text: x.label }))) : null,
-    h('p', { class: 'caution-line' }, h('span', { text: a.action === 'change_now' ? `${see} If now is not a good time, leave it and screenshot it.` : see })),
+    h('p', { class: 'caution-line' }, h('span', { text: recordWords(a.action === 'change_now' ? `${see} If now is not a good time, leave it and screenshot it.` : see, phoneOnly) })),
     a.linked ? h('p', { class: 'caution-line linked-line' }, h('span', { text: a.linked })) : null,
     a.cutoff ? h('p', { class: 'caution-line linked-line' }, h('span', { text: a.cutoff })) : null,
     a.why && !STOCK.test(a.why) ? h('p', { text: a.why }) : null,
-    a.action === 'wait' && e.if_not_safe_yet ? h('p', {}, h('strong', { text: 'For now: ' }), e.if_not_safe_yet) : null,
+    a.action === 'wait' && e.if_not_safe_yet ? h('p', {}, h('strong', { text: 'For now: ' }), recordWords(e.if_not_safe_yet, phoneOnly)) : null,
     a.action === 'change_now'
       ? h('div', { class: 'steps-now' }, ...steps)
       : h('details', { class: 'later' }, h('summary', { text: 'Steps for when it is a better time' }), ...steps),

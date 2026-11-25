@@ -12,3 +12,5 @@ body.phone-check .bar .mark { color: inherit; text-decoration: none; }
 @media print {
   .phone-check .bar, .phone-check .actions, .phone-check .pc-foot { display: none; }
 }
+/* The header lines up with the page's one column on a wide screen, instead of running edge to edge. */
+body.phone-check .bar { padding-inline: max(16px, calc((100% - 40rem) / 2 + 16px)); }

@@ -69,6 +69,8 @@ pre { margin: 0; padding: 16px; overflow-x: auto; background: var(--surface); bo
 .safety-strip { background: var(--surface); border-bottom: 1px solid var(--line); font-size: 15px; }
 .safety-strip .wrap { display: flex; flex-wrap: wrap; gap: 4px 18px; align-items: center; min-height: 40px; padding-block: 6px; }
 .safety-strip a { color: var(--ink); font-weight: 600; }
+/* The two most important links on the page get a full-size target: 44 px tall, the whole label. */
+.safety-strip .wrap > a { display: inline-flex; align-items: center; min-height: 44px; }
 .menu-toggle { display: none; }
 
 /* ---------- Type and sections ---------- */
@@ -233,7 +235,7 @@ dl.glossary dd { margin: 0; color: var(--ink-2); }
 
 /* ---------- Footer ---------- */
 .site-foot { padding-block: 64px 48px; background: var(--surface); border-top: 1px solid var(--line); }
-.foot-grid { display: grid; grid-template-columns: minmax(0, 5fr) repeat(3, minmax(0, 2fr)); gap: 32px; }
+.foot-grid { display: grid; grid-template-columns: minmax(0, 4fr) repeat(3, minmax(max-content, 2fr)); gap: 32px 40px; }
 .foot-grid ul { margin: 0; padding: 0; list-style: none; }
 .foot-grid li { margin: 0 0 10px; }
 .foot-grid a { color: var(--ink); }
@@ -297,6 +299,9 @@ dl.glossary dd { margin: 0; color: var(--ink-2); }
 @media (max-width: 960px) {
   .site-nav { display: none; }
   .site-nav.open { display: grid; position: absolute; top: 64px; left: 0; right: 0; gap: 0; padding: 8px var(--gutter) 16px; background: var(--bg); border-bottom: 1px solid var(--line); }
+  /* The open menu sits over the page: a shadow sets it apart, and the page behind it is dimmed. */
+  .site-nav.open { z-index: 20; box-shadow: 0 12px 24px rgb(0 0 0 / 0.14); }
+  body:has(.site-nav.open) main { opacity: 0.35; transition: opacity 160ms var(--ease-out, ease-out); }
   .site-nav.open a { padding: 12px 0; font-size: 18px; }
   .menu-toggle { display: inline-flex; margin-left: auto; }
   .hero .wrap { grid-template-columns: minmax(0, 1fr); }

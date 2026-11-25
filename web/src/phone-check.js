@@ -115,7 +115,7 @@ async function makePlan() {
   const byRef = new Map(fs.map(f => [f.ref, f]));
   renderPlan($('plan'), { plan, fired, byRef, library: LIBRARY, source: 'page', toldBy, toldAdded: told.length + Object.keys(toldValues).length, onOpen: () => {} });
   initInfo($('plan'));
-  if (!fs.length) $('plan').prepend(h('p', { class: 'notice', text: 'You did not mark anything in these places. That is useful to know, and it covers only these places: other apps, accounts and devices can still share. The guides at the end show where else to look.' }));
+  if (!fs.length) $('plan').querySelector('.with-info')?.after(h('p', { class: 'notice', role: 'status', text: 'You did not mark anything in these places. That is useful to know, and it covers only these places: other apps, accounts and devices can still share. The guides at the end show where else to look.' }));
   $('screen-ask').hidden = true;
   $('screen-plan').hidden = false;
   $('plan-title')?.focus();
