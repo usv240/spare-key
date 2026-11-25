@@ -36,6 +36,7 @@ google.family.member: the other person, or someone close to them, is a member of
 google.devices.other: a computer or phone the other person has is still signed in to the person's Google account.
 amazon.household.adult: the other person is in the person's Amazon household.
 amazon.device.other: an Echo or other Amazon device is set up on the other person's account, or the person's account is on a device the other person has.
+Most messages name one way in, some name none. If the words do not clearly name a way in, return an empty list: never list codes just because they might apply.
 Also say whether the words tell you they live together ("together") or apart ("apart"), and whether they share children ("yes" or "no"). Use "unclear" when the words do not say.`;
 
 export const TOLD_SCHEMA = {
@@ -94,6 +95,20 @@ export function keywordTold(text) {
   if (/\bno (kids|children)\b|\bno children together\b/i.test(all)) out.children_shared = 'no';
   else if (/\b(kids?|children|son|daughter|baby)\b/i.test(all)) out.children_shared = 'yes';
   return out;
+}
+
+// A model answer that names more ways in than this is treated as unread: on the development statements (November 25,
+// 2026), Gemini Nano listed all 17 codes for "I moved out last month. No kids.", which names none.
+export const TOLD_MAX_CODES = 3;
+
+/**
+ * The answer to use: Gemini Nano's when it reads the words, the keyword reader's when Nano's answer lists more than
+ * TOLD_MAX_CODES ways in (a list, not a reading) or Nano is not there. Returns { answer, how }.
+ */
+export function pickTold(nanoAnswer, text) {
+  const nano = nanoAnswer ? cleanTold(nanoAnswer) : null;
+  if (nano && nano.codes.length <= TOLD_MAX_CODES) return { answer: nano, how: 'nano' };
+  return { answer: cleanTold(keywordTold(text)), how: nano ? 'reader_after_nano' : 'reader' };
 }
 
 /** Checks an answer from either reader: known codes only, no repeats, and the answers from their lists. */

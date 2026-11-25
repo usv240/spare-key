@@ -9,7 +9,7 @@ import { validateLibrary } from '../../shared/steps-schema.js';
 import { classifyEntries, readWholePage, readScreenshot, nanoAnswer } from './classify.js';
 import { cloudPlan } from './cloud/plan.js';
 import { devicePlan } from './device-plan.js';
-import { TOLD_SYSTEM, TOLD_SCHEMA, TOLD_MAX_CHARS, keywordTold, cleanTold } from '../../shared/told.js';
+import { TOLD_SYSTEM, TOLD_SCHEMA, TOLD_MAX_CHARS, keywordTold, cleanTold, pickTold } from '../../shared/told.js';
 import { twoVoices } from './cloud/voices.js';
 import { checkFreshness, fetchHelpPage } from './cloud/freshness.js';
 
@@ -142,8 +142,10 @@ const NANO = {
     if ((await deviceStatus(TEXT_ONLY)) === 'available') {
       try {
         const t0 = performance.now();
-        const answer = cleanTold(await deviceJson({ system: TOLD_SYSTEM, schema: TOLD_SCHEMA, text: words, timeoutMs: 60000 }));
-        return { answer, how: 'nano', ms: Math.round(performance.now() - t0) };
+        const raw = await deviceJson({ system: TOLD_SYSTEM, schema: TOLD_SCHEMA, text: words, timeoutMs: 60000 });
+        // An answer that lists more ways in than the words could name is a list, not a reading: the keyword reader's
+        // answer is used instead (shared/told.js, pickTold).
+        return { ...pickTold(raw, words), raw: cleanTold(raw), ms: Math.round(performance.now() - t0) };
       } catch (e) {
         return { answer: cleanTold(keywordTold(words)), how: 'reader', nanoError: String(e).slice(0, 160) };
       }

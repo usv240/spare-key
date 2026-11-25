@@ -60,11 +60,13 @@ if (NANO) {
     nanoRaw = [];
     for (const [i, c] of cases.entries()) {
       const r = await ask('sk:told', { text: c.text });
-      nanoRaw.push({ i, how: r?.how, ms: r?.ms, nanoError: r?.nanoError || null, answer: r?.answer });
+      nanoRaw.push({ i, how: r?.how, ms: r?.ms, nanoError: r?.nanoError || null, answer: r?.answer, raw: r?.raw || null });
       process.stdout.write(`${i + 1}/${cases.length} ${r?.how} ${r?.ms ?? ''}ms\r`);
     }
     console.log();
-    const ran = nanoRaw.filter(x => x.how === 'nano').length;
+    // Gemini Nano answered when how is 'nano', or 'reader_after_nano' (its answer listed too many ways in and the guard
+    // used the keyword reader's). 'reader' means Nano did not answer at all.
+    const ran = nanoRaw.filter(x => x.how === 'nano' || x.how === 'reader_after_nano').length;
     // Only a run where Gemini Nano answered every statement is scored as Gemini Nano: a statement the keyword reader
     // answered instead would make the two look alike.
     if (ran < cases.length) {
@@ -72,7 +74,8 @@ if (NANO) {
       console.log(`Gemini Nano answered ${ran} of ${cases.length}: not scored.`, nano.errors.join(' | '));
     } else {
       const ms = nanoRaw.map(x => x.ms).sort((a, b) => a - b);
-      nano = { ...score(nanoRaw.map(x => x.answer)), ranOnNano: ran, medianMs: ms[Math.floor(ms.length / 2)] };
+      nano = { ...score(nanoRaw.map(x => x.answer)), ranOnNano: ran, guardUsed: nanoRaw.filter(x => x.how === 'reader_after_nano').length, medianMs: ms[Math.floor(ms.length / 2)],
+        rawNano: (({ misses, ...rest }) => rest)(score(nanoRaw.map(x => x.raw || x.answer))) };
       console.log('Gemini Nano:', JSON.stringify({ ...nano, misses: nano.misses.length }));
     }
   } finally { await browser.close(); }

@@ -4,7 +4,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAI, getGenerativeModel, GoogleAIBackend, InferenceMode } from 'firebase/ai';
 import { firebaseConfig } from '../../extension/src/firebase-config.js';
-import { TOLD_SYSTEM, TOLD_SCHEMA, TOLD_MAX_CHARS, keywordTold, cleanTold } from '../../shared/told.js';
+import { TOLD_SYSTEM, TOLD_SCHEMA, TOLD_MAX_CHARS, keywordTold, cleanTold, pickTold } from '../../shared/told.js';
 
 const TEXT_ONLY = { expectedInputs: [{ type: 'text', languages: ['en'] }], expectedOutputs: [{ type: 'text', languages: ['en'] }] };
 let ai = null;
@@ -28,7 +28,7 @@ export async function readTold(text) {
         },
       });
       const r = await Promise.race([model.generateContent(words), new Promise((_, no) => setTimeout(() => no(new Error('timed out')), 60000))]);
-      return { answer: cleanTold(JSON.parse(r.response.text())), how: 'nano' };
+      return pickTold(JSON.parse(r.response.text()), words);
     } catch { /* falls back to the keyword reader below */ }
   }
   return { answer: cleanTold(keywordTold(words)), how: 'reader' };

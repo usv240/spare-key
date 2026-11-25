@@ -1,6 +1,6 @@
 {
- "at": "2026-11-25T18:19:09.462Z",
- "tool": "node tools/told-eval.mjs",
+ "at": "2026-11-25T19:15:02.112Z",
+ "tool": "node tools/told-eval.mjs --nano",
  "cases": "tools/told-cases.json",
  "keyword": {
   "cases": 40,
@@ -80,6 +80,1106 @@
    }
   ]
  },
- "nano": null,
- "nanoRaw": null
+ "nano": {
+  "cases": 40,
+  "exact": 13,
+  "codes": {
+   "found": 29,
+   "wrongAdded": 75,
+   "missed": 0,
+   "precision": 0.279,
+   "recall": 1
+  },
+  "situation": {
+   "right": 11,
+   "of": 12,
+   "filledWhenNotSaid": 20
+  },
+  "misses": [
+   {
+    "i": 1,
+    "want": [
+     "carrier.plan.holder_other"
+    ],
+    "got": [
+     "carrier.plan.holder_other"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 2,
+    "want": [],
+    "got": [
+     "device.given_by_other",
+     "carrier.plan.holder_other",
+     "phone.app.control",
+     "tracker.alert",
+     "apple.findmy.sharing",
+     "apple.family.organizer_other",
+     "apple.account.device_other",
+     "life360.circle.member",
+     "maps.sharing.person",
+     "gmail.forwarding.external",
+     "google.recovery.email_other",
+     "google.recovery.phone_unconfirmed",
+     "google.family.manager_other",
+     "google.family.member",
+     "google.devices.other",
+     "amazon.household.adult",
+     "amazon.device.other"
+    ],
+    "living": [
+     "together",
+     "together"
+    ],
+    "children": [
+     "yes",
+     "yes"
+    ]
+   },
+   {
+    "i": 3,
+    "want": [],
+    "got": [
+     "device.given_by_other",
+     "carrier.plan.holder_other",
+     "phone.app.control",
+     "tracker.alert",
+     "apple.findmy.sharing",
+     "apple.family.organizer_other",
+     "apple.account.device_other",
+     "life360.circle.member",
+     "maps.sharing.person",
+     "gmail.forwarding.external",
+     "google.recovery.email_other",
+     "google.recovery.phone_unconfirmed",
+     "google.family.manager_other",
+     "google.family.member",
+     "google.devices.other",
+     "amazon.household.adult",
+     "amazon.device.other"
+    ],
+    "living": [
+     "apart",
+     "apart"
+    ],
+    "children": [
+     "no",
+     "no"
+    ]
+   },
+   {
+    "i": 5,
+    "want": [
+     "apple.findmy.sharing"
+    ],
+    "got": [
+     "apple.findmy.sharing"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 7,
+    "want": [
+     "apple.account.device_other"
+    ],
+    "got": [
+     "apple.account.device_other",
+     "google.devices.other"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 9,
+    "want": [],
+    "got": [
+     "gmail.forwarding.external"
+    ],
+    "living": [
+     "unclear",
+     "unclear"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 11,
+    "want": [
+     "maps.sharing.person"
+    ],
+    "got": [
+     "maps.sharing.person"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 12,
+    "want": [],
+    "got": [
+     "apple.findmy.sharing"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 14,
+    "want": [
+     "google.family.manager_other"
+    ],
+    "got": [
+     "google.family.manager_other",
+     "google.family.member"
+    ],
+    "living": [
+     "unclear",
+     "unclear"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 15,
+    "want": [
+     "google.devices.other"
+    ],
+    "got": [
+     "google.devices.other"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 16,
+    "want": [
+     "amazon.household.adult",
+     "amazon.device.other"
+    ],
+    "got": [
+     "amazon.household.adult",
+     "amazon.device.other"
+    ],
+    "living": [
+     "unclear",
+     "together"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 17,
+    "want": [
+     "phone.app.control"
+    ],
+    "got": [
+     "phone.app.control"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 18,
+    "want": [],
+    "got": [],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 19,
+    "want": [
+     "device.given_by_other"
+    ],
+    "got": [
+     "device.given_by_other"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "yes",
+     "unclear"
+    ]
+   },
+   {
+    "i": 20,
+    "want": [],
+    "got": [
+     "carrier.plan.holder_other"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 22,
+    "want": [
+     "device.given_by_other"
+    ],
+    "got": [
+     "device.given_by_other",
+     "google.recovery.email_other",
+     "google.recovery.phone_unconfirmed",
+     "google.devices.other"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 23,
+    "want": [
+     "tracker.alert"
+    ],
+    "got": [
+     "tracker.alert"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 24,
+    "want": [],
+    "got": [
+     "apple.account.device_other"
+    ],
+    "living": [
+     "unclear",
+     "unclear"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 26,
+    "want": [],
+    "got": [
+     "life360.circle.member"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 27,
+    "want": [
+     "apple.findmy.sharing",
+     "carrier.plan.holder_other"
+    ],
+    "got": [
+     "apple.findmy.sharing",
+     "carrier.plan.holder_other"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 29,
+    "want": [],
+    "got": [
+     "device.given_by_other",
+     "carrier.plan.holder_other",
+     "phone.app.control",
+     "tracker.alert",
+     "apple.findmy.sharing",
+     "apple.account.device_other",
+     "google.recovery.email_other",
+     "google.recovery.phone_unconfirmed",
+     "google.devices.other"
+    ],
+    "living": [
+     "apart",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 30,
+    "want": [
+     "device.given_by_other"
+    ],
+    "got": [
+     "device.given_by_other",
+     "google.devices.other"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 31,
+    "want": [],
+    "got": [
+     "apple.findmy.sharing"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "no",
+     "no"
+    ]
+   },
+   {
+    "i": 33,
+    "want": [],
+    "got": [
+     "phone.app.control",
+     "apple.account.device_other"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 36,
+    "want": [],
+    "got": [
+     "device.given_by_other"
+    ],
+    "living": [
+     "unclear",
+     "apart"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   },
+   {
+    "i": 38,
+    "want": [],
+    "got": [
+     "device.given_by_other",
+     "carrier.plan.holder_other",
+     "phone.app.control",
+     "tracker.alert",
+     "apple.findmy.sharing",
+     "apple.family.organizer_other",
+     "apple.account.device_other",
+     "life360.circle.member",
+     "maps.sharing.person",
+     "gmail.forwarding.external",
+     "google.recovery.email_other",
+     "google.recovery.phone_unconfirmed",
+     "google.family.manager_other",
+     "google.family.member",
+     "google.devices.other",
+     "amazon.household.adult",
+     "amazon.device.other"
+    ],
+    "living": [
+     "apart",
+     "apart"
+    ],
+    "children": [
+     "yes",
+     "yes"
+    ]
+   },
+   {
+    "i": 39,
+    "want": [
+     "gmail.forwarding.external"
+    ],
+    "got": [
+     "gmail.forwarding.external"
+    ],
+    "living": [
+     "unclear",
+     "together"
+    ],
+    "children": [
+     "unclear",
+     "unclear"
+    ]
+   }
+  ],
+  "ranOnNano": 40,
+  "medianMs": 2621
+ },
+ "nanoRaw": [
+  {
+   "i": 0,
+   "how": "nano",
+   "ms": 2144,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "device.given_by_other"
+    ],
+    "living": "unclear",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 1,
+   "how": "nano",
+   "ms": 2384,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "carrier.plan.holder_other"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 2,
+   "how": "nano",
+   "ms": 6176,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "device.given_by_other",
+     "carrier.plan.holder_other",
+     "phone.app.control",
+     "tracker.alert",
+     "apple.findmy.sharing",
+     "apple.family.organizer_other",
+     "apple.account.device_other",
+     "life360.circle.member",
+     "maps.sharing.person",
+     "gmail.forwarding.external",
+     "google.recovery.email_other",
+     "google.recovery.phone_unconfirmed",
+     "google.family.manager_other",
+     "google.family.member",
+     "google.devices.other",
+     "amazon.household.adult",
+     "amazon.device.other"
+    ],
+    "living": "together",
+    "children_shared": "yes"
+   }
+  },
+  {
+   "i": 3,
+   "how": "nano",
+   "ms": 7056,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "device.given_by_other",
+     "carrier.plan.holder_other",
+     "phone.app.control",
+     "tracker.alert",
+     "apple.findmy.sharing",
+     "apple.family.organizer_other",
+     "apple.account.device_other",
+     "life360.circle.member",
+     "maps.sharing.person",
+     "gmail.forwarding.external",
+     "google.recovery.email_other",
+     "google.recovery.phone_unconfirmed",
+     "google.family.manager_other",
+     "google.family.member",
+     "google.devices.other",
+     "amazon.household.adult",
+     "amazon.device.other"
+    ],
+    "living": "apart",
+    "children_shared": "no"
+   }
+  },
+  {
+   "i": 4,
+   "how": "nano",
+   "ms": 2327,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "tracker.alert"
+    ],
+    "living": "unclear",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 5,
+   "how": "nano",
+   "ms": 2648,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "apple.findmy.sharing"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 6,
+   "how": "nano",
+   "ms": 2540,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "apple.family.organizer_other"
+    ],
+    "living": "unclear",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 7,
+   "how": "nano",
+   "ms": 2704,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "apple.account.device_other",
+     "google.devices.other"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 8,
+   "how": "nano",
+   "ms": 2577,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "life360.circle.member"
+    ],
+    "living": "unclear",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 9,
+   "how": "nano",
+   "ms": 2503,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "gmail.forwarding.external"
+    ],
+    "living": "unclear",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 10,
+   "how": "nano",
+   "ms": 2487,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "gmail.forwarding.external"
+    ],
+    "living": "unclear",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 11,
+   "how": "nano",
+   "ms": 2381,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "maps.sharing.person"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 12,
+   "how": "nano",
+   "ms": 2671,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "apple.findmy.sharing"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 13,
+   "how": "nano",
+   "ms": 2531,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "google.recovery.email_other"
+    ],
+    "living": "unclear",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 14,
+   "how": "nano",
+   "ms": 3576,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "google.family.manager_other",
+     "google.family.member"
+    ],
+    "living": "unclear",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 15,
+   "how": "nano",
+   "ms": 2447,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "google.devices.other"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 16,
+   "how": "nano",
+   "ms": 2739,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "amazon.household.adult",
+     "amazon.device.other"
+    ],
+    "living": "together",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 17,
+   "how": "nano",
+   "ms": 2461,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "phone.app.control"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 18,
+   "how": "nano",
+   "ms": 2342,
+   "nanoError": null,
+   "answer": {
+    "codes": [],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 19,
+   "how": "nano",
+   "ms": 2623,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "device.given_by_other"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 20,
+   "how": "nano",
+   "ms": 2568,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "carrier.plan.holder_other"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 21,
+   "how": "nano",
+   "ms": 2636,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "carrier.plan.holder_other"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 22,
+   "how": "nano",
+   "ms": 3419,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "device.given_by_other",
+     "google.recovery.email_other",
+     "google.recovery.phone_unconfirmed",
+     "google.devices.other"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 23,
+   "how": "nano",
+   "ms": 2399,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "tracker.alert"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 24,
+   "how": "nano",
+   "ms": 2719,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "apple.account.device_other"
+    ],
+    "living": "unclear",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 25,
+   "how": "nano",
+   "ms": 2378,
+   "nanoError": null,
+   "answer": {
+    "codes": [],
+    "living": "together",
+    "children_shared": "yes"
+   }
+  },
+  {
+   "i": 26,
+   "how": "nano",
+   "ms": 2655,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "life360.circle.member"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 27,
+   "how": "nano",
+   "ms": 3031,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "apple.findmy.sharing",
+     "carrier.plan.holder_other"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 28,
+   "how": "nano",
+   "ms": 2461,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "amazon.device.other"
+    ],
+    "living": "unclear",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 29,
+   "how": "nano",
+   "ms": 4685,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "device.given_by_other",
+     "carrier.plan.holder_other",
+     "phone.app.control",
+     "tracker.alert",
+     "apple.findmy.sharing",
+     "apple.account.device_other",
+     "google.recovery.email_other",
+     "google.recovery.phone_unconfirmed",
+     "google.devices.other"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 30,
+   "how": "nano",
+   "ms": 2846,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "device.given_by_other",
+     "google.devices.other"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 31,
+   "how": "nano",
+   "ms": 2496,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "apple.findmy.sharing"
+    ],
+    "living": "apart",
+    "children_shared": "no"
+   }
+  },
+  {
+   "i": 32,
+   "how": "nano",
+   "ms": 2495,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "google.family.member"
+    ],
+    "living": "unclear",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 33,
+   "how": "nano",
+   "ms": 2796,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "phone.app.control",
+     "apple.account.device_other"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 34,
+   "how": "nano",
+   "ms": 3168,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "apple.family.organizer_other",
+     "apple.findmy.sharing"
+    ],
+    "living": "unclear",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 35,
+   "how": "nano",
+   "ms": 2614,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "phone.app.control"
+    ],
+    "living": "unclear",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 36,
+   "how": "nano",
+   "ms": 2621,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "device.given_by_other"
+    ],
+    "living": "apart",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 37,
+   "how": "nano",
+   "ms": 2714,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "google.recovery.phone_unconfirmed"
+    ],
+    "living": "unclear",
+    "children_shared": "unclear"
+   }
+  },
+  {
+   "i": 38,
+   "how": "nano",
+   "ms": 7274,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "device.given_by_other",
+     "carrier.plan.holder_other",
+     "phone.app.control",
+     "tracker.alert",
+     "apple.findmy.sharing",
+     "apple.family.organizer_other",
+     "apple.account.device_other",
+     "life360.circle.member",
+     "maps.sharing.person",
+     "gmail.forwarding.external",
+     "google.recovery.email_other",
+     "google.recovery.phone_unconfirmed",
+     "google.family.manager_other",
+     "google.family.member",
+     "google.devices.other",
+     "amazon.household.adult",
+     "amazon.device.other"
+    ],
+    "living": "apart",
+    "children_shared": "yes"
+   }
+  },
+  {
+   "i": 39,
+   "how": "nano",
+   "ms": 2590,
+   "nanoError": null,
+   "answer": {
+    "codes": [
+     "gmail.forwarding.external"
+    ],
+    "living": "together",
+    "children_shared": "unclear"
+   }
+  }
+ ]
 }
