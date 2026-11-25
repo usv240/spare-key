@@ -63,6 +63,8 @@ export const CODES = {
   'tracker.alert': { group: 'location', check: 'phone.guided' },
   'life360.circle.member': { group: 'location', check: 'phone.guided' },
   'carrier.plan.holder_other': { group: 'account', check: 'phone.guided' },
+  // From what the person told Spare Key in their own words (shared/told.js): a device the other person gave or set up.
+  'device.given_by_other': { group: 'phone', check: 'phone.guided' },
 };
 
 // Every check id, including the services Spare Key does not check yet. A "not checked" item carries only one of
@@ -132,6 +134,7 @@ export const CODE_TEXT = {
   'apple.account.device_other': ['A device you do not know is signed in to your Apple Account', 'Whoever has this device may see your messages, photos and where you are.'],
   'tracker.alert': ['Your phone warned you about a tracker moving with you', 'A tracker, like an AirTag, may be in your bag, your car or something you carry.'],
   'life360.circle.member': ['Someone can see your location in Life360', 'People in your Life360 circle can see where you are and where you have been.'],
+  'device.given_by_other': ['The other person gave you or set up a device', 'A phone, tablet or computer they bought, gave or set up may have apps or accounts on it that they chose, and they may know how to get into it.'],
   'carrier.plan.holder_other': ['Someone else holds your phone plan', 'The account holder can see who you call and text, and may be able to locate the phone or move the number.'],
 };
 

@@ -9,6 +9,7 @@ import { validateLibrary } from '../../shared/steps-schema.js';
 import { classifyEntries, readWholePage, readScreenshot, nanoAnswer } from './classify.js';
 import { cloudPlan } from './cloud/plan.js';
 import { devicePlan } from './device-plan.js';
+import { TOLD_SYSTEM, TOLD_SCHEMA, TOLD_MAX_CHARS, keywordTold, cleanTold } from '../../shared/told.js';
 import { twoVoices } from './cloud/voices.js';
 import { checkFreshness, fetchHelpPage } from './cloud/freshness.js';
 
@@ -132,6 +133,23 @@ const NANO = {
   },
   // The plan on this computer (extension/src/device-plan.js): finding codes in, nothing out.
   'sk:device-plan': async ({ body, library }) => devicePlan({ body, library }),
+  // "In your own words": what the person typed, read into finding codes here, on this computer. Gemini Nano only
+  // (ONLY_ON_DEVICE: the words name people, so there is no cloud fallback), and code's keyword reader when Nano is not
+  // there or does not answer. Only the codes go back to the panel.
+  'sk:told': async ({ text }) => {
+    const words = String(text || '').slice(0, TOLD_MAX_CHARS);
+    if (!words.trim()) return { answer: cleanTold({}), how: 'reader' };
+    if ((await deviceStatus(TEXT_ONLY)) === 'available') {
+      try {
+        const t0 = performance.now();
+        const answer = cleanTold(await deviceJson({ system: TOLD_SYSTEM, schema: TOLD_SCHEMA, text: words, timeoutMs: 60000 }));
+        return { answer, how: 'nano', ms: Math.round(performance.now() - t0) };
+      } catch (e) {
+        return { answer: cleanTold(keywordTold(words)), how: 'reader', nanoError: String(e).slice(0, 160) };
+      }
+    }
+    return { answer: cleanTold(keywordTold(words)), how: 'reader' };
+  },
   // An ask_device question the code rules left unknown: Gemini Nano reads the entry's words here and answers with one
   // word. Only that word goes back to the cloud.
   'sk:nano-ask': async ({ question, text }) => ({

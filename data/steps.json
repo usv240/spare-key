@@ -1325,6 +1325,39 @@
       "steps_followed": false,
       "version": 1,
       "what_they_see": "Your line leaves their plan, which shows on their account and bill."
+    },
+    {
+      "code": "device.given_by_other",
+      "title": "The other person gave you or set up a device",
+      "what_it_means": "A phone, tablet or computer the other person bought, gave you or set up may have apps or accounts on it that they chose, and they may know how to get into it.",
+      "who_can_notice": "unknown",
+      "notice_why": "Whether they notice depends on what is on the device: an account or app of theirs on it may show them a change.",
+      "evidence_first": [
+        "With another phone, take a picture of the device's accounts list (Settings, then Accounts, or Passwords and accounts) and of any app you do not know."
+      ],
+      "steps": [
+        "Talk to an advocate about whether to keep using this device.",
+        "If you can, get a phone the other person has never had: a new or pay-as-you-go phone, or an old one from someone you trust, reset to factory settings.",
+        "Do not sign the new phone in to old accounts or move backups from the old one: that can bring back what was on it."
+      ],
+      "if_not_safe_yet": "Keep using it as it is for now, and treat it as one the other person may see. Use a device they have never had for anything private, including this plan. Talk to an advocate about when to change it.",
+      "also_check": [
+        "carrier.plan.holder_other",
+        "phone.app.control",
+        "google.devices.other"
+      ],
+      "sources": [
+        {
+          "title": "NNEDV Safety Net: Cell phone safety plan",
+          "url": "https://www.techsafety.org/resources-survivors/cell-phone-safety-plan",
+          "quote": "Doing so could reinstall stalkerware."
+        }
+      ],
+      "verified_at": "2026-11-25",
+      "verified_how": "NNEDV Safety Net's cell phone safety plan checked for the new-phone advice; steps not yet followed on a test phone",
+      "steps_followed": false,
+      "version": 1,
+      "what_they_see": "Nothing changes on their side unless you sign out of their account or remove an app that reports to them."
     }
   ]
 }
