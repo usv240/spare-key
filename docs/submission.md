@@ -54,13 +54,13 @@ pages and the result says so. The cloud only ever sees the kind of thing that wa
 | On Android: the same three modes through Firebase AI Logic for Android | Gemini Nano through AICore; Gemini in the cloud | `InferenceMode.ONLY_ON_DEVICE`, `ONLY_IN_CLOUD`, `PREFER_ON_DEVICE` |
 
 **What Gemini does that code cannot.** Sites redesign their pages. When we changed the 13 practice pages five ways by
-script, code alone found 79 of 120 planted ways in; with Gemini Nano reading the changed page on the device, 105. With
-four changes at once it was 6 of 24 by code and 18 with Gemini Nano, and a Remote Config fix restored all 24 with no
+script, code alone found 79 of 120 planted ways in; with Gemini Nano reading the changed page on the device, 105 (counting
+only ways in listed as the right kind). With four changes at once it was 6 of 24 by code and 16 with Gemini Nano, and a Remote Config fix restored all 24 with no
 update.
 
 **What code does that a model must not.** One file, `shared/cloud-safe.js`, is the only exit to the cloud: it builds
 each request from an allow-list of codes and enums, and checks it again before it is sent. Ten safety rules in code
-check any plan a model writes. Gemini Nano's plans needed 103 fixes on 35 situations and the cloud's 43 on 30, so the
+check any plan a model writes. Gemini Nano's plans needed 103 fixes on 35 situations and the cloud's 63 on 38, so the
 rules, not the model, decide what a person in danger is told.
 
 **The prompt lives on Firebase's server, and the server checks the codes too.** The plan is asked through a Firebase AI
@@ -68,7 +68,7 @@ Logic server prompt template (`shared/plan/template.js`, created by `tools/templ
 Its instructions, answer format and the three functions stay on Firebase's server; the extension, the website and
 the Android app send only the template's id and the codes. The template's input schema is the same allow-list as
 `cloud-safe.js`, so the server is a second gate: a request with a name where a code goes, a name as a ref, or an
-address in an answer was refused with HTTP 400 before any model saw it. Backups: a second template on a second
+address in an answer was refused with HTTP 400 before any model saw it (`docs/evidence/template-check.json`). Backups: a second template on a second
 model, then the direct call through the same gate; which templates to use is a Remote Config key. On Android, which
 on-device model to use is a Remote Config list too: Gemini Nano 4 Fast and Full (previews built on Gemma 4) first,
 then the Gemini Nano a phone ships with.
@@ -103,8 +103,8 @@ then 911. Settings, page readers and the steps library each fall back to the cop
 ## Accomplishments that we're proud of
 
 - A plain chatbot told the person to record their settings before changing anything in 7 of 38 answers, each read in full
-  against a written rubric; none made it the first step and 14 said something risky, like urging changes at once on someone who was
-  not sure. Every plan Spare Key shows starts with the record, in 38 of 38.
+  against a written rubric by an AI reviewer (Claude; no person has checked the grades); none made it the first step and 14 said something risky, like urging changes at once on someone who was
+  not sure. Every plan Spare Key shows starts with the record, because a safety rule in code puts it first (38 of 38).
 - Rule R9: when mail is copied to someone else, or someone else may hold the recovery email or phone, deal with that
   before any change Google would tell them about. By keyword position, the chatbot got the mail order wrong in 3 of 7
   situations where it applied.
@@ -114,9 +114,9 @@ then 911. Settings, page readers and the steps library each fall back to the cop
   server prompt template, reordered it 9.8 seconds after the button was pressed. When the free-tier model does not answer, the app keeps the
   plan made by code and says so. The emulator's own packet capture of the run shows no reporting host reached.
 - The whole hybrid path on a real phone: on the builder's own Pixel with 703 apps, 72 held some special access; Spare
-  Key listed 13 and counted the 59 that came with the phone. Gemini Nano read all 13 on the phone in 9.8 seconds, and
-  Gemini in the cloud ordered the plan from finding types in 3.3 seconds, asking the phone one yes or no question (on 1 of
-  4 runs: on the others the free-tier model did not answer in time, and the plan made by code stayed on screen).
+  Key listed 13 and counted the 59 that came with the phone. Gemini Nano read all 13 on the phone in 7.5 to 10 seconds, and
+  Gemini in the cloud ordered the plan from finding types in 2.3 to 8.5 seconds (on 4 of 7 runs, the last 3 through the
+  server prompt template; on the other 3 the free-tier model did not answer in time, and the plan made by code stayed on screen).
   Gemini Nano's first run there raised a caution on 10 of the 13, so a caution now has to be backed up by something
   code can check: 2 were kept and 6 set aside.
 - Accessibility: axe-core finds 0 violations in 74 runs across the site and the panel; median reading grade
@@ -133,7 +133,7 @@ product more useful and more honest about what each part does.
 ## Limits, stated plainly
 
 No survivor or advocate has tested it yet. Planted access has been found on made-up pages and a test phone, not yet on
-a real account. Gemini Nano on Android has run on one real phone (13 of 13 listed apps read in 9.8 seconds), not in the automated test: the emulator has none. The cloud model is
+a real account. Gemini Nano on Android has run on one real phone (13 of 13 listed apps read in 7.5 to 10 seconds, on 6 runs), not in the automated test: the emulator has none. The cloud model is
 on the free tier: in 40 test situations it failed to order the plan in 5 and failed the two-voice check in 5 more. The
 plan made by code is shown at once either way.
 

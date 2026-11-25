@@ -1,12 +1,12 @@
 {
- "at": "2026-11-24T19:05:36.028Z",
+ "at": "2026-11-25T04:53:31.534Z",
  "method": "Flesch-Kincaid grade of p, li, h1-h6, dd, summary, figcaption, label and button text; code, tables, nav and footer left out; vowel-group syllable count",
  "median": 4.3,
  "rows": [
   {
    "page": "web/dist/accuracy.html",
-   "words": 1522,
-   "grade": 6
+   "words": 1691,
+   "grade": 6.3
   },
   {
    "page": "web/dist/advocates.html",
@@ -20,8 +20,8 @@
   },
   {
    "page": "web/dist/built-with.html",
-   "words": 575,
-   "grade": 6.5
+   "words": 621,
+   "grade": 6.4
   },
   {
    "page": "web/dist/how-it-works.html",
@@ -30,7 +30,7 @@
   },
   {
    "page": "web/dist/index.html",
-   "words": 1478,
+   "words": 1490,
    "grade": 4.3
   },
   {
@@ -55,8 +55,8 @@
   },
   {
    "page": "web/dist/safety.html",
-   "words": 268,
-   "grade": 4.2
+   "words": 280,
+   "grade": 4.1
   },
   {
    "page": "web/dist/try.html",
@@ -70,12 +70,12 @@
   },
   {
    "page": "web/dist/why.html",
-   "words": 1178,
-   "grade": 5
+   "words": 1222,
+   "grade": 5.2
   },
   {
    "page": "extension/src/panel.html",
-   "words": 353,
+   "words": 364,
    "grade": 2.3
   }
  ]

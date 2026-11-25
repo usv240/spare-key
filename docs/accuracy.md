@@ -165,6 +165,15 @@ the fixed part sent with every request: the instructions, the answer format and 
 
 The scan tab's own requests are the practice site's, not Spare Key's, and are not counted.
 
+**The server checks too (`tools/templates.mjs --test`, `docs/evidence/template-check.json`, November 24).** Calls
+straight to the plan's server prompt template, with an App Check token, the way the apps make them. Codes only:
+accepted, and the model answered with function calls (`get_steps`, `ask_device`). A made-up name and email where a
+code goes, a made-up name as a ref, and a made-up address in a situation answer: each refused with HTTP 400 by the
+template's input schema, before any model call. A key the template does not name is accepted but never written into
+the prompt, so the apps' own gate (`checkOutgoing()`) is still the first check. The backup template, on the second
+model, got HTTP 429 (free-tier quota busy) in this run; it has answered in earlier runs, and the direct call is the
+next backup.
+
 ## 4. Plan safety (EVALUATION.md section 4)
 
 40 situations (`tools/plan-scenarios.json`), written by a seeded script before any run and not changed after: each a set
@@ -371,7 +380,12 @@ in the `private/` folder, and the evidence file holds counts, timings and Spare 
 |---|---|---|---|---|---|---|
 | Rules only (Gemini Nano not yet downloaded) | 72 | 13 (3, 3, 7) | 59 | 1.0 s | none | by rules, on screen in 2.3 s; the cloud did not answer |
 | With Gemini Nano | 72 | 13 (9, 3, 1) | 59 | 8.3 s | 13 of 13 apps in 7.5 s; 10 cautions | by rules, on screen in 2.3 s; the cloud did not answer |
-\1| The same again, recording why the cloud failed | 72 | 13 (4, 3, 6) | 59 | 10.0 s | 13 of 13 apps in 9.5 s; 2 cautions kept, 6 set aside | by rules on screen in 2.3 s; the cloud took longer than the 45 s the app allows |\n
+| With Gemini Nano, after its cautions had to be backed up | 72 | 13 (4, 3, 6) | 59 | 10.4 s | 13 of 13 apps in 9.8 s; 2 cautions kept, 6 set aside | ordered by the cloud (direct call) in 4.6 s |
+| The same again, recording why the cloud failed | 72 | 13 (4, 3, 6) | 59 | 10.0 s | 13 of 13 apps in 9.5 s; 2 cautions kept, 6 set aside | by rules on screen in 2.3 s; the cloud took longer than the 45 s the app allows |
+| Server prompt template (November 24, evening) | 72 | 13 (4, 3, 6) | 59 | 10.6 s | 13 of 13 apps in 9.7 s; 2 cautions kept | ordered through the template in 5 s |
+| Rules in the WebView backup (forced, to test it) | 72 | 13 (4, 3, 6) | 59 | 10.7 s | 13 of 13 apps in 10.0 s | ordered through the template in 4.6 s |
+| Rules in the JavaScript sandbox, same build | 72 | 13 (4, 3, 6) | 59 | 10.6 s | 13 of 13 apps in 9.9 s | ordered through the template in 8.5 s |
+
 What it showed:
 
 - **The app never offered Gemini Nano.** The phone reported it as downloadable and the app had no way to get it. The
@@ -387,8 +401,8 @@ What it showed:
 - **The whole hybrid path ran on the third run.** Gemini Nano on the phone, then Gemini in the cloud ordering the plan
   from finding types in 3.3 s: three requests left the phone, each passed the second check in Kotlin, and one
   was the phone's one-word answer to a question the cloud asked. Code then made one fix under the safety rules.
-- **The cloud ordered the plan on 1 of 4 runs.** On the first two it returned a server error after about 45 s; on the
-  fourth it took longer than the 45 s the app allows, so the app stopped waiting. The plan made by code was on the screen
+- **The cloud ordered the plan on 4 of 7 runs**, the last 3 through the server prompt template, in 4.6 to 8.5 s. On the
+  first two it returned a server error after about 45 s; on the fourth it took longer than the 45 s the app allows, so the app stopped waiting. The plan made by code was on the screen
   in about 2.3 s every time. The app now records the server's short reason (a status code and a few words, nothing from
   the phone) when a call fails, so the next failure can be told apart; the two server errors were before that.
 - **Gemini Nano also ordered the plan on the phone.** With the cloud left out (the practice phone), its first answer

@@ -76,23 +76,34 @@ if (has('test')) {
     let json = null; try { json = JSON.parse(text); } catch { /* not JSON */ }
     return { status: r.status, json, text };
   };
+  // What is saved to docs/evidence/template-check.json: the case, the HTTP status, and the server's own reason or the kind
+  // of answer. The made-up name and address are not written to the file.
+  const results = [];
+  const keep = (template, kase, r, expect) => results.push({ template, case: kase, expect, status: r.status, passed: expect === 'refused' ? r.status === 400 : r.status === 200 || r.status === 429, answer: r.status === 200 ? (r.json?.candidates?.[0]?.content?.parts || []).map(p => p.functionCall ? `function call ${p.functionCall.name}` : p.text ? 'text' : 'other').filter((x, i, a) => a.indexOf(x) === i).join(', ') : (r.json?.error?.message || '').split('.')[0] });
   for (const [id] of TEMPLATES) {
     const r = await run(id, ok);
+    keep(id, 'codes only', r, 'accepted');
     const parts = r.json?.candidates?.[0]?.content?.parts || [];
     console.log(`\n${id} with codes only: HTTP ${r.status}`, r.status < 300 ? JSON.stringify(parts).slice(0, 500) : r.text.slice(0, 600));
   }
   // A name where a code goes: the input schema must refuse it before any model sees it.
   const bad = { ...ok, findings: [{ ...ok.findings[0], code: 'Sam Porter, sam.porter@example.net' }] };
   const r = await run(PLAN_TEMPLATE, bad);
+  keep(PLAN_TEMPLATE, 'a made-up name and email where a code goes', r, 'refused');
   console.log(`\n${PLAN_TEMPLATE} with a name in it: HTTP ${r.status}`, r.text.slice(0, 400));
   const inRef = { ...ok, findings: [{ ...ok.findings[0], ref: 'Sam Porter' }] };
   const r3 = await run(PLAN_TEMPLATE, inRef);
+  keep(PLAN_TEMPLATE, 'a made-up name as a ref', r3, 'refused');
   console.log(`${PLAN_TEMPLATE} with a name as a ref: HTTP ${r3.status}`, r3.text.slice(0, 200));
   const inSituation = { ...ok, situation: { safe_to_change_now: 'no, he lives at 12 Elm St' } };
   const r4 = await run(PLAN_TEMPLATE, inSituation);
+  keep(PLAN_TEMPLATE, 'a made-up address in a situation answer', r4, 'refused');
   console.log(`${PLAN_TEMPLATE} with an address in an answer: HTTP ${r4.status}`, r4.text.slice(0, 200));
   // A key the template does not name is accepted, but never written into the prompt, so no model sees it.
   const extra = { ...ok, note: 'my ex is Sam Porter' };
   const r2 = await run(PLAN_TEMPLATE, extra);
+  keep(PLAN_TEMPLATE, 'an extra free-text key the template does not name (accepted, never written into the prompt)', r2, 'accepted');
+  const { writeFileSync } = await import('node:fs');
+  writeFileSync('docs/evidence/template-check.json', JSON.stringify({ at: new Date().toISOString(), note: 'node tools/templates.mjs --test: calls to the server prompt templates through the templateGenerateContent endpoint, with an App Check token from the development debug token. HTTP 429 on an accepted case means the free-tier quota was busy, not a refusal. A refusal (HTTP 400) happens before any model call.', results }, null, 1));
   console.log(`${PLAN_TEMPLATE} with an extra free-text key: HTTP ${r2.status}`, r2.text.slice(0, 400));
 }

@@ -10,9 +10,9 @@ changes nothing on its own, and nothing that names a person ever leaves your com
 (`android/`). It reads the phone's own settings and lists every app that could let someone watch it: apps that can read
 the screen, device admin apps, apps that read notifications, texts or the call log, and apps that see your location all
 the time. It runs the extension's own rules, the same JavaScript, in Android's sandbox. Gemini Nano sorts the apps on
-the phone; the cloud orders the plan from finding types and never sees an app's name. (The whole path has run on one real phone, the builder's own: Gemini Nano read 13 of 13 listed apps on the phone in 9.8 s,
-then Gemini in the cloud ordered the plan from finding types in 3.3 s and asked the phone one yes or no question. The
-free-tier cloud model did that on 1 of 4 runs; on the others the plan made by code stayed on screen. The test
+the phone; the cloud orders the plan from finding types and never sees an app's name. (The whole path has run on one real phone, the builder's own: Gemini Nano read 13 of 13 listed apps on the phone in 7.5 to 10 s,
+then Gemini in the cloud ordered the plan from finding types in 2.3 to 8.5 s. The free-tier cloud model did that on 4
+of 7 runs (the last 3 through the server prompt template); on the others the plan made by code stayed on screen. The test
 emulator has no Gemini Nano, so the automated end-to-end test covers everything else. See `docs/evidence/android-real.json`.)
 
 Site: <https://spare-key-app.web.app> · Practice check in any browser: <https://spare-key-app.web.app/try.html>
@@ -114,7 +114,7 @@ Logic server prompt template (`shared/plan/template.js`, created by `tools/templ
 Its instructions, answer format and the three functions stay on Firebase's server; the extension, the website and
 the Android app send only the template's id and the codes. The template's input schema is the same allow-list as
 `cloud-safe.js`, so the server is a second gate: a request with a name where a code goes, a name as a ref, or an
-address in an answer was refused with HTTP 400 before any model saw it. Backups: a second template on a second
+address in an answer was refused with HTTP 400 before any model saw it (`docs/evidence/template-check.json`). Backups: a second template on a second
 model, then the direct call through the same gate; which templates to use is a Remote Config key. On Android, which
 on-device model to use is a Remote Config list too: Gemini Nano 4 Fast and Full (previews built on Gemma 4) first,
 then the Gemini Nano a phone ships with.
@@ -181,7 +181,7 @@ notification, texts and background location access, turns each one on through ad
 and control this phone"; apps that came with the phone are not listed (the first run flagged Android System
 Intelligence, which is why); the plan says to leave the watching app for a better time when now is not a good time;
 the cloud plan request is in "What left this phone" word for word and names no app; Quick exit and back-twice leave no
-recent-apps entry; every button is at least 48dp. The check took 8.7 s. The plan made by code was on the screen 2.8 s after the button was pressed, and Gemini in the cloud reordered it 9.3 s after the button was pressed, with rule R10 applied by code. Also checked: an app that can see which apps you use is found; "Say it more simply" is answered through hybrid inference's cloud fallback (the emulator has no Gemini Nano); every request passes a second check for app names in Kotlin; and no usage statistics or crash reports are stored or sent. The emulator's own packet capture of that run, with Wi-Fi off so nothing could go another way, shows Spare Key reaching only Firebase AI Logic, App Check with reCAPTCHA, Remote Config and its own site (116.1 KB sent by host name; Android's counter for the app says 125.7 KB in all), and no usage, crash or analytics host looked up or reached (`tools/android-net.mjs`, `docs/evidence/android-net.json`).
+recent-apps entry; every button is at least 48dp. The check took 8.7 s. The plan made by code was on the screen 3 s after the button was pressed, and Gemini in the cloud, through the server prompt template, reordered it 9.8 s after the button was pressed, with rule R10 applied by code. Also checked: an app that can see which apps you use is found; "Say it more simply" is answered through hybrid inference's cloud fallback (the emulator has no Gemini Nano); every request passes a second check for app names in Kotlin; and no usage statistics or crash reports are stored or sent. The emulator's own packet capture of that run, with Wi-Fi off so nothing could go another way, shows Spare Key reaching only Firebase AI Logic, App Check with reCAPTCHA, Remote Config and its own site (116.1 KB sent by host name; Android's counter for the app says 125.7 KB in all), and no usage, crash or analytics host looked up or reached (`tools/android-net.mjs`, `docs/evidence/android-net.json`).
 Not shown by this: real stalkerware, a rooted phone, or Gemini Nano's sorting (the emulator has no Gemini Nano).
 
 ## Install

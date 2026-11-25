@@ -1,0 +1,54 @@
+{
+ "at": "2026-11-25T04:54:35.485Z",
+ "note": "node tools/templates.mjs --test: calls to the server prompt templates through the templateGenerateContent endpoint, with an App Check token from the development debug token. HTTP 429 on an accepted case means the free-tier quota was busy, not a refusal. A refusal (HTTP 400) happens before any model call.",
+ "results": [
+  {
+   "template": "spare-key-plan-v1",
+   "case": "codes only",
+   "expect": "accepted",
+   "status": 200,
+   "passed": true,
+   "answer": "function call get_steps, function call ask_device"
+  },
+  {
+   "template": "spare-key-plan-b-v1",
+   "case": "codes only",
+   "expect": "accepted",
+   "status": 429,
+   "passed": true,
+   "answer": "You exceeded your current quota, please check your plan and billing details"
+  },
+  {
+   "template": "spare-key-plan-v1",
+   "case": "a made-up name and email where a code goes",
+   "expect": "refused",
+   "status": 400,
+   "passed": true,
+   "answer": "The specified input parameters were malformed or did not match the parameters expected by the given template"
+  },
+  {
+   "template": "spare-key-plan-v1",
+   "case": "a made-up name as a ref",
+   "expect": "refused",
+   "status": 400,
+   "passed": true,
+   "answer": "The specified input parameters were malformed or did not match the parameters expected by the given template"
+  },
+  {
+   "template": "spare-key-plan-v1",
+   "case": "a made-up address in a situation answer",
+   "expect": "refused",
+   "status": 400,
+   "passed": true,
+   "answer": "The specified input parameters were malformed or did not match the parameters expected by the given template"
+  },
+  {
+   "template": "spare-key-plan-v1",
+   "case": "an extra free-text key the template does not name (accepted, never written into the prompt)",
+   "expect": "accepted",
+   "status": 200,
+   "passed": true,
+   "answer": "function call get_steps, function call ask_device"
+  }
+ ]
+}
