@@ -355,6 +355,17 @@ to 5 (more than a quarter of the 17 codes is a list, not a reading), and the key
 half. Both changes were made before the fresh set was written. An extra code adds a step; it never removes one. A way in
 the person typed is added even when a finding of the same kind was marked "Mine" (judge round 11 found it was dropped).
 
+A planted test account, beside Google's Security Checkup (`docs/evidence/real-test-account.json`, November 26). A live
+Google account made for testing, in the builder's own Chrome. Planted: a Gmail filter that skips the inbox and marks
+mail read, for a made-up bank sender. Gmail refused forwarding to a second account until that account confirms it, and
+the delegate needed a confirmation window, so neither was saved. Spare Key's own reader (`tools/real-inpage.mjs`, codes
+only) found the filter (`gmail.filter.hides`) and read forwarding and delegates as not set, which is right. Google's
+Security Checkup for the same account listed six items (a second passkey, confirm the recovery email and phone,
+Enhanced Safe Browsing, devices, recent activity) and none about Gmail filters, forwarding or delegates. It did show
+the recovery email, which is the builder's second account: Spare Key's recovery and devices pages asked for the
+account's passkey first, so those two read "Not checked: asks for your password", never empty. One way in is a small
+test; planting forwarding and a delegate (both need the second account to confirm) is next.
+
 Effort by hand (`tools/effort.mjs`, `docs/evidence/effort.json`): 13 settings pages on 4 sites from the check
 catalogue, and the 18 official help pages the steps library cites for the account checks. The 15 that could be fetched
 (Amazon refused 3) hold 12,640 words, about 63 minutes at 200 words per minute, before any time spent finding a setting

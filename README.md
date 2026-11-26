@@ -124,6 +124,10 @@ From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved
   belong to the person flagged.
 - **A real account (the builder's own, read-only):** every check it could read matches what the site shows, after
   fixes found on that account (about 50 wrong app entries, a missed recovery phone and others, all fixed).
+- **A planted test account, beside Google's Security Checkup:** on a live Google account made for testing, a Gmail
+  filter that hides mail was planted. Spare Key's reader found it; Security Checkup has no item for Gmail filters,
+  forwarding or delegates. Security Checkup did show the recovery email, which Spare Key reads after the account's
+  passkey check, and lists as "Not checked" until then ([evidence](docs/evidence/real-test-account.json)).
 - **When a site changes its pages:** five kinds of change to the 13 practice pages. A check now says "done" while
   missing a way in 0 times, down from 24 on the first blind run.
 - **Privacy:** 0 of 20 requests held a name, email, phone number, device or place, with every cloud step on and typed

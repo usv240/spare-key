@@ -1,0 +1,27 @@
+{
+ "at": "2026-11-26",
+ "what": "A live Google account made for testing (the builder's own, never anyone else's). One way in was planted, Spare Key's own reader ran inside its real Gmail settings pages through the builder's Chrome (tools/real-inpage.mjs), and Google's Security Checkup was read for the same account. Only check results and finding codes are kept here: no addresses, numbers or page text.",
+ "planted": [
+  { "way_in": "A Gmail filter that skips the inbox and marks mail read, for mail from a made-up bank sender", "code": "gmail.filter.hides", "saved": true },
+  { "way_in": "Gmail forwarding to the builder's second account", "saved": false, "why": "Gmail refused it (\"Invalid forwarding address\"): a new forwarding address must be confirmed from the other account first" },
+  { "way_in": "The second account as a Gmail delegate", "saved": false, "why": "Gmail opens a confirmation window that was not completed" }
+ ],
+ "already_there": [
+  { "way_in": "The recovery email is the builder's second account", "code": "google.recovery.email_other" }
+ ],
+ "spare_key": [
+  { "check": "gmail.filters", "status": "checked", "codes": { "gmail.filter.hides": 1 } },
+  { "check": "gmail.forwarding", "status": "checked", "codes": {} },
+  { "check": "gmail.delegates", "status": "checked", "codes": {} },
+  { "check": "google.recovery", "status": "not_checked", "why": "needs_password", "note": "Google asked for the account's passkey before showing the page; Spare Key lists it under Not checked, never as empty" },
+  { "check": "google.devices", "status": "not_checked", "why": "needs_password" }
+ ],
+ "security_checkup": {
+  "items": ["Create another passkey", "Confirm your recovery email", "Confirm your recovery phone", "Turn on Enhanced Safe Browsing", "Your devices", "Recent security activity: none in 28 days"],
+  "mentions_gmail_filters": false,
+  "mentions_gmail_forwarding": false,
+  "mentions_gmail_delegates": false,
+  "shows_recovery_email": true
+ },
+ "result": "Spare Key found the planted hiding filter; Security Checkup has no item for Gmail filters, forwarding or delegates. Security Checkup showed the recovery email, which Spare Key could read only after the passkey check; without it, Spare Key said so instead of showing the page as empty. Forwarding and delegate were read correctly as not set, since Gmail did not save either."
+}
