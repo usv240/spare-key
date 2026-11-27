@@ -162,3 +162,6 @@ The Firebase AI Logic wrapper pattern, the App Check bridge for a Chrome extensi
 the App Check bridge through a WebView, and shared JavaScript in Jetpack's sandbox) come from the author's other
 #BuildHybridAI entry, Still Recalled. The checks, the rules, the plan, the screens, the practice pages, the planted test
 app and every test are new.
+
+Both entries were built inside the contest's submission period: Still Recalled from November 15, 2026, and Spare Key
+from November 20 (the design documents) and November 21 (the first code), 2026.

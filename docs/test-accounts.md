@@ -2,7 +2,10 @@
 
 Spare Key's page readers need the real settings pages to read. These steps make two throwaway Google accounts, plant a
 few harmless "ways in", and let Spare Key record what the pages look like. About 45 minutes. Use made-up names only, and
-never use your own real accounts. Nothing here goes in the repo, screenshots or the video.
+plant nothing in your own real accounts. Nothing here goes in the repo, screenshots or the video.
+
+(The builder's own account was also read, read-only, with nothing planted and only counts saved:
+`docs/evidence/real-account.json`.)
 
 ## 1. Make two Google accounts (10 minutes)
 

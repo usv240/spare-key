@@ -42,6 +42,9 @@ const fixSay = B && (() => {
   return `Then the fix: new words and places to look, fetched from Firebase Remote Config, with no update to install. The code reads ${code} of ${total} again.`;
 })();
 const PHONE_CLIP = path.join(OUT, 'android-practice.mp4');
+const REAL_PHONE = args.includes('--real-phone');
+// The rules judge only the first 3:00. The build stops, before the long encode, when the scenes add up to more.
+const MAX_SECONDS = 175;
 const scenes = [
   { key: 'hook', slide: 'hook',
     say: 'When someone leaves an abusive partner, that person often still has a way in: a signed-in phone, mail copied to another address, a shared location. And 60 percent of AI chatbot answers to survivors left out critical safety warnings.' },
@@ -59,13 +62,16 @@ const scenes = [
   ] : []),
   { key: 'plan', panel: [M.questions, M['plan end']], slide: 'side', head: 'Screenshots first. Then an advocate. Then changes, at a time that is right for you.', sub: 'Code checks every plan against eleven safety rules, whoever wrote it.',
     say: 'The plan follows the field\'s advice: screenshots first, then an advocate, and changes they may notice wait. Gemini in the cloud can order it from finding codes, and code checks every plan with eleven safety rules. One of them: if mail is copied to someone else, stop that first, or Google\'s alert emails reach them.' },
-  // The Android app on a made-up practice phone, recorded from the emulator's screen (adb screenrecord).
-  ...(existsSync(PHONE_CLIP) ? [{ key: 'android', clip: PHONE_CLIP, range: [41, 100], slide: 'side', head: 'And the phone itself, on Android.', sub: 'A real Pixel, with Gemini Nano on the phone. A made-up practice phone, so no real app is shown.',
-    say: 'An account check cannot see an app hidden on the phone. So there is an Android app too, here on a real phone. Gemini Nano sorts the apps on the phone itself, and the plan follows the same rules. The cloud never sees an app\'s name.' }] : []),
+  // The Android app on a made-up practice phone. The clip is the emulator's screen (adb screenrecord) unless
+  // --real-phone says it was recorded on a real phone (tools/android-record.mjs): the caption only says "a real phone"
+  // when that is what the clip shows.
+  ...(existsSync(PHONE_CLIP) ? [{ key: 'android', clip: PHONE_CLIP, range: [41, 100], slide: 'side', head: 'And the phone itself, on Android.',
+    sub: `${REAL_PHONE ? 'A real phone, with Gemini Nano on the phone. ' : ''}A made-up practice phone, so no real app is shown.`,
+    say: `An account check cannot see an app hidden on the phone. So there is an Android app too${REAL_PHONE ? ', here on a real phone' : ''}. Gemini Nano sorts the apps on the phone itself, and the plan follows the same rules. The cloud never sees an app's name.` }] : []),
   { key: 'hood', panel: [M.hood, M.ledger + 0.5], slide: 'side', head: 'Every request to the cloud, word for word.', sub: 'A test searched every request for the made-up names and addresses: none held one.',
-    say: 'Every request to the cloud is listed word for word. A test searched every one for names and addresses. Zero of twenty held one.' },
+    say: 'Every request to the cloud is listed word for word. A test searched every one for names and addresses. Zero of twenty-one held one.' },
   { key: 'gap', slide: 'gap',
-    say: 'We asked a plain chatbot about 30 situations and read every answer. Only 7 said to record the settings before changing anything. Spare Key\'s plans do in all 30.' },
+    say: 'We asked a plain chatbot about 38 situations. Only 7 answers said to record the settings before changing anything. Spare Key\'s plans do in all 38.' },
   { key: 'results-slide', slide: 'numbers',
     say: 'It finds all 24 planted ways in, with zero silent misses when pages change.' },
   { key: 'close', slide: 'close',
@@ -103,10 +109,10 @@ const SLIDES = {
 .c .n { color: var(--ink-2); } .c.us .n { color: var(--accent); }
 .t { font-size: 28px; line-height: 1.4; color: var(--ink-2); margin-top: 18px; }
 </style><div class="slide"><h1>Screenshots first, before any change.</h1>
-<p class="lede">The field's first rule. Our test: 30 made-up situations, the same Gemini model.</p>
+<p class="lede">The field's first rule. Our test: 38 made-up situations, the same Gemini model.</p>
 <div class="row">
-<div class="c"><div class="n">7 of 30</div><div class="t">answers from a plain chatbot said to record the settings before changing anything. 10 said something risky.</div></div>
-<div class="c us"><div class="n">30 of 30</div><div class="t">plans Spare Key shows start with the screenshots, and warn that a change may be noticed.</div></div>
+<div class="c"><div class="n">7 of 38</div><div class="t">answers from a plain chatbot said to record the settings before changing anything. 14 said something risky.</div></div>
+<div class="c us"><div class="n">38 of 38</div><div class="t">plans Spare Key shows start with the screenshots, and warn that a change may be noticed.</div></div>
 </div></div>`,
   hook: `<style>${base}
 .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 70px; max-width: 1500px; }
@@ -144,7 +150,7 @@ const SLIDES = {
 <div class="grid">
 <div class="c"><div class="n">24 of 24</div><div class="t">planted ways in found on the practice pages, with code alone and with Gemini Nano.</div></div>
 <div class="c"><div class="n">0</div><div class="t">silent misses when the pages change (24 on the first, blind run). A page it cannot read is listed as not checked.</div></div>
-<div class="c"><div class="n">0 of 20</div><div class="t">requests to the cloud held a name, address, phone number or device.</div></div>
+<div class="c"><div class="n">0 of 21</div><div class="t">requests to the cloud held a name, address, phone number or device.</div></div>
 </div><p class="lede" style="font-size:26px">Plus one real account, read only: 5 of 12 checks needed a fix; after the fixes, every check it could read matches the page.</p></div>`,
   close: `<style>${base}
 .slide { justify-content: center; }
@@ -243,6 +249,8 @@ for (const s of scenes) {
   clock += D;
   console.log(`${s.key.padEnd(14)} ${D.toFixed(1)} s`);
 }
+
+if (clock > MAX_SECONDS) throw new Error(`The scenes add up to ${clock.toFixed(1)} s, over the ${MAX_SECONDS} s limit (the rules judge only the first 3:00). Shorten a scene's words and run again.`);
 
 // ---- Join, then burn in the captions -------------------------------------------------------------------------------
 writeFileSync(path.join(work, 'video.txt'), clips.map(c => `file '${c.clip.replace(/\\/g, '/')}'`).join('\n'));

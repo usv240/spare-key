@@ -206,6 +206,13 @@ The Firebase AI Logic wrapper pattern, the App Check bridge for a Chrome extensi
 the App Check bridge through a WebView, and shared JavaScript in Jetpack's sandbox) come from the author's other
 #BuildHybridAI entry, Still Recalled. Everything else is new.
 
+Both entries were built inside the contest's submission period: Still Recalled from November 15, 2026, and Spare Key
+from November 20 (the design documents in docs/design) and November 21 (the first code), 2026.
+
+The Firebase keys in the repository (`firebase-config.js`, `google-services.json`) are the public app identifiers that
+every Firebase app ships, not secrets: a call to the models without an App Check token is refused. App Check debug
+tokens, signing keys and test account details are kept out of the repository.
+
 ## License
 
 Apache-2.0.
