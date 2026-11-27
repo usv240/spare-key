@@ -1,0 +1,581 @@
+{
+ "at": "2026-11-27T01:44:41.114Z",
+ "tool": "node tools/they-see-eval.mjs",
+ "owner": "the made-up practice person",
+ "summary": {
+  "kinds": 18,
+  "runs": 3,
+  "answers": 54,
+  "answeredOnNano": 54,
+  "shown": 52,
+  "replacedByLibrary": {
+   "not_a_person_notices": 2
+  },
+  "shownWithRolesRight": 52,
+  "medianMs": 2891
+ },
+ "rows": [
+  {
+   "run": 1,
+   "code": "google.devices.other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 1592,
+   "text": "The other person will notice the device is signed out of your account next time they open a Google app.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "google.apps.read_mail",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 1776,
+   "text": "The app stops getting your mail, and if the other person uses it, they may notice their mail stops coming in.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "google.apps.location",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2145,
+   "text": "The app stops getting your location, and the location on the map will stop updating when they use it. They may notice when the location stops working.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "google.recovery.phone_unconfirmed",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2492,
+   "text": "Google may still send codes to your old number for 7 days after you change it. The other person may notice if this happens, and they could still use a code during that time.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "google.recovery.email_other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2221,
+   "text": "Google might still send codes to your old email for 7 days after you change it. The other person may notice this, and could still use a code during that time.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "google.2sv.other_device",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2652,
+   "text": "Google may still send codes to the other person's removed sign-in phone for 7 days. The other person may notice when the prompts stop, or still get a code during that time.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "maps.sharing.person",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 1736,
+   "text": "Sam may notice when you disappear from their map, and their arrival/departure alerts stop working.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "maps.sharing.link",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 2321,
+   "text": "The link stops showing your location. The other person may notice when it stops working. The company's page does not say whether the other person is told.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "gmail.forwarding.external",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 2530,
+   "text": "New mail stops being forwarded to the other person's address. It is not clear if Gmail notifies them of this change, but they may notice that copies of mail are no longer delivered.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "gmail.filter.forwards",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 2585,
+   "text": "The matching mail stops going to the other person’s address. The company’s page does not say whether they are told about this change, but they may notice when it stops working.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "gmail.filter.hides",
+   "who": "unknown",
+   "ok": false,
+   "why": "not_a_person_notices",
+   "ms": 3048,
+   "text": "The hidden mail starts reaching your inbox. No official page says whether anyone is told. Whoever set it up would notice only if they check your filters or your inbox.",
+   "rolesRight": null
+  },
+  {
+   "run": 1,
+   "code": "gmail.delegate",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2909,
+   "text": "The other person can no longer open your mail and will notice the next time they try to use it. Gmail’s help page does not say if the other person is notified.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "amazon.household.adult",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2352,
+   "text": "Sam will lose access to things you shared, like deals or videos. They may notice when they try to use those things.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "amazon.household.teen",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 1981,
+   "text": "Riley can no longer shop from your account, and Riley may notice when the access changes.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "amazon.device.other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 1954,
+   "text": "Sam may notice when their Echo Dot stops showing your account’s content.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "google.family.manager_other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2745,
+   "text": "When you leave Sam's family group, the purchases you shared will no longer be available for Sam to use. Sam may notice when this stops working.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "google.family.member",
+   "who": "notifies",
+   "ok": true,
+   "why": "",
+   "ms": 1696,
+   "text": "Google sends Riley an email saying they were removed.",
+   "rolesRight": true
+  },
+  {
+   "run": 1,
+   "code": "photos.partner_sharing",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2333,
+   "text": "The other person can no longer see the photos you shared. They will notice the next time they look for them.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "google.devices.other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2391,
+   "text": "The device is signed out of your account. The other person may notice when they open a Google app next.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "google.apps.read_mail",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2403,
+   "text": "The app will stop getting your mail, and if the other person uses it, they may notice emails stop arriving.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "google.apps.location",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2863,
+   "text": "The app stops getting your location, and if the other person uses it, they may notice your location stops updating. The company’s page does not say if the other person is told.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "google.recovery.phone_unconfirmed",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2973,
+   "text": "Google may continue sending codes to your old phone for 7 days after you change it. The other person may notice if this happens and could still use a code during that time.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "google.recovery.email_other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2595,
+   "text": "Google may send codes to your old email for 7 days after you update it. The other person may notice if they read those codes.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "google.2sv.other_device",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3112,
+   "text": "Google may still send codes to the other device for 7 days after you remove it. The other person may notice the prompts stopping, or they might still get a code during that time.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "maps.sharing.person",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2317,
+   "text": "Sam may notice when you disappear from their map, and their arrival or departure alerts will stop working.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "maps.sharing.link",
+   "who": "unknown",
+   "ok": false,
+   "why": "not_a_person_notices",
+   "ms": 2997,
+   "text": "The link stops showing where you are. No official page says whether anyone is told. Anyone who opens the link after that may notice.",
+   "rolesRight": null
+  },
+  {
+   "run": 2,
+   "code": "gmail.forwarding.external",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 2973,
+   "text": "The other person will no longer receive new mail forwarded to their address. Gmail's help page doesn't say if they're notified, but they might notice that copies stop arriving.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "gmail.filter.forwards",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 3780,
+   "text": "The matching mail stops going to the other person's address. The company's page does not say if Gmail tells them about this change, but they may notice it stops working.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "gmail.filter.hides",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 4252,
+   "text": "The hidden mail starts appearing in your inbox. The company’s page doesn’t say if anyone is told about this change. Whoever set up this filter would only notice if they look at your filters or inbox.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "gmail.delegate",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2863,
+   "text": "The other person can no longer open your mail, and they will notice the next time they try. Gmail's page does not say if they are told about this change.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "amazon.household.adult",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2551,
+   "text": "Sam will notice when they can't access the benefits and content you shared, like when they shop or watch something.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "amazon.household.teen",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2307,
+   "text": "Riley may notice that they can no longer shop from your account.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "amazon.device.other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2906,
+   "text": "Sam will notice when the Echo Dot stops showing your account’s content. Whoever uses it will notice at once.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "google.family.manager_other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2986,
+   "text": "Sam may notice that things you shared through the family group are no longer available for them. The family manager can see who is in the group.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "google.family.member",
+   "who": "notifies",
+   "ok": true,
+   "why": "",
+   "ms": 1906,
+   "text": "Riley is told by Google that they were removed.",
+   "rolesRight": true
+  },
+  {
+   "run": 2,
+   "code": "photos.partner_sharing",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3094,
+   "text": "The other person can no longer see the photos you shared with them. They will notice when they look at the photos next time.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "google.devices.other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3564,
+   "text": "The other person will notice the device is signed out of your account when they open a Google app on it next. They will see a \"Signed out\" indication.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "google.apps.read_mail",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 5417,
+   "text": "The app stops getting your mail, and if the other person uses it, they may notice your mail stops arriving. The company’s page does not say whether the other person is told.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "google.apps.location",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 4065,
+   "text": "TrailMate can’t get your location anymore. When they use the app, your location will stop updating, and they may notice this.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "google.recovery.phone_unconfirmed",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 5399,
+   "text": "Google may still send codes to the old number for 7 days after you change it. The other person might notice if codes are sent to that number and could still use them during that time.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "google.recovery.email_other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3961,
+   "text": "Google may still send codes to your old email address for 7 days after you change it. The other person may notice this, and someone could still use a code during that time.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "google.2sv.other_device",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 4631,
+   "text": "Google might still send codes to the other person's old phone for 7 days after you remove it. The other person may notice the prompts stop, or they might still get a code during that time.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "maps.sharing.person",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2939,
+   "text": "Sam may notice when you disappear from their map, and any arrival or departure alerts they had set stop working.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "maps.sharing.link",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 3696,
+   "text": "The link stops showing your location to the other person. The company's page doesn't say if anyone is told about this change, but the other person may notice when they open the link.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "gmail.forwarding.external",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 4014,
+   "text": "The other person may notice new mail no longer arrives at their Gmail address. The company's page does not say if they are told about this change.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "gmail.filter.forwards",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 3410,
+   "text": "The emails that match your filter will no longer go to the other person's address. The Gmail page does not say if the other person is told about this change, but they may notice the emails stop arriving.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "gmail.filter.hides",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 5727,
+   "text": "The hidden mail starts appearing in your inbox. The company's page does not say if the other person is told about this change. Whoever set up the filter would only notice if they look at your filters or inbox.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "gmail.delegate",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3443,
+   "text": "The other person can no longer open your mail, and they will notice the next time they try. The Gmail page does not say whether the other person is told about this change.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "amazon.household.adult",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3689,
+   "text": "Sam will notice when they lose access to the shared benefits and content. They can still use their own account, but they won't see the shared benefits anymore.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "amazon.household.teen",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2116,
+   "text": "Riley can no longer shop from your account. Riley may notice when this change happens.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "amazon.device.other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 4787,
+   "text": "Sam's Echo Dot stops showing your Amazon account's content, and whoever uses it will notice right away.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "google.family.manager_other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3268,
+   "text": "The purchases you shared with Sam are removed, and they won't be able to use them anymore. Sam may notice when this happens.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "google.family.member",
+   "who": "notifies",
+   "ok": true,
+   "why": "",
+   "ms": 2109,
+   "text": "Google sends Riley an email saying Riley was removed.",
+   "rolesRight": true
+  },
+  {
+   "run": 3,
+   "code": "photos.partner_sharing",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2891,
+   "text": "The other person can no longer see the photos you shared with them. They will notice when they look at those photos again.",
+   "rolesRight": true
+  }
+ ],
+ "handRead": {
+  "by": "the AI coding assistant that built Spare Key, reading every shown notice for who is who",
+  "shown": 52,
+  "rolesRight": 51,
+  "wrong": [
+   "google.apps.read_mail run 1: \"they may notice their mail stops coming in\" (it is your mail)"
+  ],
+  "refusedButFine": 2,
+  "note": "The first fresh run with every check in place. The 2 refused notices were correct; the check was over-careful and showed the help page's own words instead."
+ },
+ "history": [
+  {
+   "file": "they-see-eval-v1-roles.json",
+   "design": "both names given to Nano",
+   "handRead": "about 11 of 18 in run 1 swapped who is who; the check passed all 54"
+  },
+  {
+   "file": "they-see-eval-v2-names-in-code.json",
+   "design": "only the other person's name, read by code; the person is \"you\"",
+   "handRead": "4 of 54 still swapped; three checks were written from them"
+  }
+ ]
+}

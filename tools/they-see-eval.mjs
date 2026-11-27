@@ -40,11 +40,19 @@ try {
   }
 } finally { await browser.close(); }
 console.log();
+// Each shown notice, read once more for who is who, the mistake the first run made: the person's own name must not
+// appear, and when the entry names the other person, that name must. The check that decides what is shown already does
+// this; repeating it here keeps the count honest if that check is ever loosened.
+for (const r of rows) {
+  const c = cases.find(x => x.code === r.code);
+  const them = (await import('../shared/they-see.js')).otherName(c.label);
+  r.rolesRight = r.ok ? !/\bJordan\b/.test(r.text) && (!them || new RegExp(`\\b${them}\\b`).test(r.text)) : null;
+}
 const answered = rows.filter(r => r.ms !== null);
 const ms = answered.map(r => r.ms).sort((a, b) => a - b);
 const why = {};
 for (const r of rows.filter(x => !x.ok)) why[r.why] = (why[r.why] || 0) + 1;
-const summary = { kinds: cases.length, runs: RUNS, answers: rows.length, answeredOnNano: answered.length, shown: rows.filter(r => r.ok).length, replacedByLibrary: why, medianMs: ms[Math.floor(ms.length / 2)] ?? null };
+const summary = { kinds: cases.length, runs: RUNS, answers: rows.length, answeredOnNano: answered.length, shown: rows.filter(r => r.ok).length, replacedByLibrary: why, shownWithRolesRight: rows.filter(r => r.rolesRight).length, medianMs: ms[Math.floor(ms.length / 2)] ?? null };
 console.log(JSON.stringify(summary));
 // Only a run where Gemini Nano answered every time is evidence; anything else (too little free memory, for one) goes to
 // tools/out, so a failed run never stands in for a result.

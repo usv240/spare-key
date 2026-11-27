@@ -481,3 +481,18 @@ What it showed:
 
 Not shown by this: whether a hidden phone-watching app is found (nothing was planted on this phone; the planted test
 is section 8, on an emulator). One phone, one owner: how Gemini Nano reads other people's apps is not known from this.
+
+What would they see? (`tools/they-see-eval.mjs`, `docs/evidence/they-see-eval*.json`, November 26). For each of the 18
+kinds of finding on the practice check, the extension's offscreen page asked Gemini Nano on this computer to write the
+notice the other person would get, three times each. Spare Key's check decides whether a notice is shown or replaced
+by the steps library's own words. The check passed every notice in the first run, so each run was also read by hand
+(by the AI coding assistant that built Spare Key) for who is who:
+
+| Run | Design | Answered on Nano | Shown | Read by hand |
+|---|---|---|---|---|
+| 1 | Both names given to Nano | 54 of 54 | 54 | About 11 of the first 18 swapped who is who ("Jordan may notice that Sam disappears from their map") |
+| 2 | Only the other person's name, read from the page by code; the person is "you" | 54 of 54 | 54 | 4 swapped; three checks were written from them and applied to the same answers |
+| 3 | The same, with those checks, fresh | 54 of 54, median 2.9 s | 52 | 51 of 52 right; one said "their mail" for the person's own mail. The 2 replaced were correct, so the check errs toward the help page's words |
+
+A hand reading by the tool's builder is not an independent grade; a person's review of the 54 notices is next.
+

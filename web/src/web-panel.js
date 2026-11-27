@@ -452,9 +452,9 @@ async function makePlan() {
     redraw();
     try {
       const f = scan.findings.find(x => x.code === code && x.ownership !== 'mine');
-      const input = theySeeInput(LIBRARY[code], f?.label || '', PRACTICE_OWNER.name);
+      const input = theySeeInput(LIBRARY[code], f?.label || '');
       const r = await hybridJson({ purpose: 'practice', body: { task: 'they_see', owner: { name: PRACTICE_OWNER.name, email: PRACTICE_OWNER.email }, input }, guard: { library: LIBRARY, practiceCorpus: PRACTICE_CORPUS, practiceOwner: PRACTICE_OWNER }, onSend, system: THEY_SEE_SYSTEM, schema: THEY_SEE_SCHEMA });
-      const c = checkTheySee(r.answer, input);
+      const c = checkTheySee(r.answer, input, PRACTICE_OWNER.name);
       theySee[code] = { text: c.text, ok: c.ok, source: r.source };
     } catch (e) { console.warn('Spare Key what-they-see:', String(e && e.message || e).slice(0, 200)); theySee[code] = { error: true }; }
     redraw();

@@ -190,11 +190,11 @@ const NANO = {
   // library (shared/they-see.js) and shows the library's own words when they do not pass.
   'sk:they-see': async ({ entry, label, owner }) => {
     if ((await deviceStatus(TEXT_ONLY)) !== 'available') return { off: true };
-    const input = theySeeInput(entry, label, owner);
+    const input = theySeeInput(entry, label);
     try {
       const t0 = performance.now();
       const answer = await deviceJson({ system: THEY_SEE_SYSTEM, schema: THEY_SEE_SCHEMA, text: JSON.stringify(input), timeoutMs: 60000 });
-      return { ...checkTheySee(answer, input), ms: Math.round(performance.now() - t0) };
+      return { ...checkTheySee(answer, input, owner), ms: Math.round(performance.now() - t0) };
     } catch (e) {
       return { error: String(e && e.message || e).slice(0, 160) };
     }

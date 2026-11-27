@@ -166,13 +166,12 @@ OUTGOING.practice = (b, ctx) => {
   // and words that each appear on the practice pages (the entry's label, with its masked email taken out).
   if (b.task === 'they_see') {
     const i = b.input;
-    onlyKeys(i, ['code', 'help_page', 'what_they_see', 'who_can_notice', 'entry', 'owner'], 'input');
+    onlyKeys(i, ['code', 'help_page', 'what_they_see', 'who_can_notice', 'entry', 'them'], 'input');
     assertCode(i.code);
     const entry = ctx?.library?.[i.code];
     if (!entry || i.help_page !== (entry.notice_source?.quote || '') || i.what_they_see !== (entry.what_they_see || '') || i.who_can_notice !== (entry.who_can_notice || 'unknown')) fail('they_see must carry the library entry\'s own words');
-    if (i.owner !== owner.name.split(/\s+/)[0]) fail('they_see owner must be the practice person');
-    const words = String(i.entry || '').split(/[\s·,;:()]+/).filter(Boolean);
-    if (String(i.entry || '').length > 160 || words.some(w => !corpus.toLowerCase().includes(w.toLowerCase()))) fail('they_see entry must come from the practice pages');
+    const words = [...String(i.entry || '').split(/[\s·,;:()]+/), ...String(i.them || '').split(/\s+/)].filter(w => w && !/^(the|other|person)$/i.test(w));
+    if (String(i.entry || '').length > 160 || String(i.them || '').length > 40 || words.some(w => !corpus.toLowerCase().includes(w.toLowerCase()))) fail('they_see words must come from the practice pages');
     return;
   }
   if (b.task === 'read_page') {

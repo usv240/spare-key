@@ -1,0 +1,502 @@
+{
+ "at": "2026-11-27T01:30:36.415Z",
+ "tool": "node tools/they-see-eval.mjs",
+ "owner": "the made-up practice person",
+ "summary": {
+  "kinds": 18,
+  "runs": 3,
+  "answers": 54,
+  "answeredOnNano": 54,
+  "shown": 54,
+  "replacedByLibrary": {},
+  "medianMs": 3011
+ },
+ "rows": [
+  {
+   "run": 1,
+   "code": "google.devices.other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2070,
+   "text": "Jordan's iPhone 15 will show as \"Signed out\" when someone else uses it next. They may notice this when they open a Google app."
+  },
+  {
+   "run": 1,
+   "code": "google.apps.read_mail",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 1930,
+   "text": "InboxPilot will stop getting your mail now. If you use it, you may notice your inbox stops getting new messages."
+  },
+  {
+   "run": 1,
+   "code": "google.apps.location",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 1980,
+   "text": "TrailMate app won't be able to get your location anymore. If you use the app, you may notice your location stops updating."
+  },
+  {
+   "run": 1,
+   "code": "google.recovery.phone_unconfirmed",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2461,
+   "text": "Jordan, Google may still send verification codes to your old phone number for 7 days after you remove it. Anyone with that number may notice, and could use a code during that time."
+  },
+  {
+   "run": 1,
+   "code": "google.recovery.email_other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2741,
+   "text": "Jordan, Google might still send codes to your old email for 7 days after you update your recovery info. Anyone who sees those codes could use them before they stop working."
+  },
+  {
+   "run": 1,
+   "code": "google.2sv.other_device",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3384,
+   "text": "Google might still send verification codes to Jordan's old phone for about 7 days after it's removed. You might notice the prompts stop, or you could still get a code during that time."
+  },
+  {
+   "run": 1,
+   "code": "maps.sharing.person",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 7305,
+   "text": "Jordan may notice that Sam disappears from their map, and any arrival or departure alerts Sam had set will stop working."
+  },
+  {
+   "run": 1,
+   "code": "maps.sharing.link",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 4010,
+   "text": "Jordan's link to your location will stop working at 9:00 PM. Anyone who opens the link after then may notice it's not showing your location."
+  },
+  {
+   "run": 1,
+   "code": "gmail.forwarding.external",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 5996,
+   "text": "Jordan's forwarded email will no longer arrive at their Gmail address. The company's page doesn't say if they are told about this change, but they may notice when the forwarded messages stop appearing."
+  },
+  {
+   "run": 1,
+   "code": "gmail.filter.forwards",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 3179,
+   "text": "Jordan's mail that matches this filter will no longer arrive at their address. They may notice that the messages stop coming."
+  },
+  {
+   "run": 1,
+   "code": "gmail.filter.hides",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 3557,
+   "text": "Email from Jordan about appointments will now go directly to your inbox. Jordan will notice if they look at their filters or your inbox."
+  },
+  {
+   "run": 1,
+   "code": "gmail.delegate",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3424,
+   "text": "Jordan can't open your emails anymore, and they may notice the next time they try to. The company's page doesn't say if Jordan will be told about this change."
+  },
+  {
+   "run": 1,
+   "code": "amazon.household.adult",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2936,
+   "text": "Sam Porter will no longer see the items or content you shared, so they may notice when they shop or watch."
+  },
+  {
+   "run": 1,
+   "code": "amazon.household.teen",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2745,
+   "text": "Riley will no longer be able to shop using Jordan's account because they’ve been removed from the Family. You may notice when their access stops working."
+  },
+  {
+   "run": 1,
+   "code": "amazon.device.other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2862,
+   "text": "Jordan, Sam's Echo Dot will no longer show your account's content, and anyone using it will notice right away."
+  },
+  {
+   "run": 1,
+   "code": "google.family.manager_other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3400,
+   "text": "Sam Porter is leaving the family group, so Jordan may notice that the things Sam added to the Google Play Family Library will no longer be available to Jordan."
+  },
+  {
+   "run": 1,
+   "code": "google.family.member",
+   "who": "notifies",
+   "ok": true,
+   "why": "",
+   "ms": 3102,
+   "text": "You will receive an email from Google saying Riley has been removed from your account."
+  },
+  {
+   "run": 1,
+   "code": "photos.partner_sharing",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3360,
+   "text": "Jordan will no longer be able to see the photos you shared, and they may notice when they try to look at them. You also won't be able to see their photos again."
+  },
+  {
+   "run": 2,
+   "code": "google.devices.other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3544,
+   "text": "Jordan’s iPhone 15 will say it’s signed out of your account when anyone else uses it next. They may notice this when they open a Google app."
+  },
+  {
+   "run": 2,
+   "code": "google.apps.read_mail",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3011,
+   "text": "InboxPilot will stop getting your mail, and if you use it, you may notice your mail stopping. The company's page does not say if you are told about this."
+  },
+  {
+   "run": 2,
+   "code": "google.apps.location",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2644,
+   "text": "Jordan's app can’t see your location anymore. If you use the app, you may notice your location stops updating."
+  },
+  {
+   "run": 2,
+   "code": "google.recovery.phone_unconfirmed",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3825,
+   "text": "Jordan’s old phone number might still get Google codes for 7 days after you change it. Anyone who has that number may notice and could still use a code during that time."
+  },
+  {
+   "run": 2,
+   "code": "google.recovery.email_other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3889,
+   "text": "Jordan, Google might still send verification codes to your old email for a few days after you update it. Anyone who sees that email could use a code before it stops working."
+  },
+  {
+   "run": 2,
+   "code": "google.2sv.other_device",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3300,
+   "text": "Jordan's old phone may still get Google prompts for 7 days after it's removed. Anyone who has that phone might notice the prompts stop, or might still get codes for a bit longer."
+  },
+  {
+   "run": 2,
+   "code": "maps.sharing.person",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2630,
+   "text": "Jordan may notice that Sam disappears from their map, and the alerts Jordan set for Sam's arrival or departure will stop working."
+  },
+  {
+   "run": 2,
+   "code": "maps.sharing.link",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 3268,
+   "text": "Jordan's link to your location will no longer work after 9:00 PM. Anyone who opens the link after that may notice it's not showing your location."
+  },
+  {
+   "run": 2,
+   "code": "gmail.forwarding.external",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 4048,
+   "text": "Jordan's forwarded email will no longer reach their address. The company's page doesn't say if Gmail will tell them, but they may notice that the forwarded copies stop arriving."
+  },
+  {
+   "run": 2,
+   "code": "gmail.filter.forwards",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 2360,
+   "text": "Jordan's Gmail will stop receiving forwarded emails. You may notice the emails stop arriving in your inbox."
+  },
+  {
+   "run": 2,
+   "code": "gmail.filter.hides",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 3232,
+   "text": "Jordan's filter for emails about appointments will stop hiding them. Jordan would only notice this if they look at their filters or inbox."
+  },
+  {
+   "run": 2,
+   "code": "gmail.delegate",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2889,
+   "text": "Jordan can no longer open your mail, and they may notice when they try. The company’s page does not say if you are notified about this change."
+  },
+  {
+   "run": 2,
+   "code": "amazon.household.adult",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2900,
+   "text": "Sam Porter will no longer have access to the things you shared, like special deals or shows. They may notice when they try to use these features."
+  },
+  {
+   "run": 2,
+   "code": "amazon.household.teen",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2512,
+   "text": "Riley, as a teen, will no longer be able to shop using Jordan's account. You may notice when this stops working."
+  },
+  {
+   "run": 2,
+   "code": "amazon.device.other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2483,
+   "text": "Jordan, your Echo Dot will no longer show your Amazon information. Anyone using the device will notice right away."
+  },
+  {
+   "run": 2,
+   "code": "google.family.manager_other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3190,
+   "text": "Since Jordan left Sam's family group, the purchases Sam shared through the Family Library are no longer available for Jordan to use. Sam can see that Jordan is no longer in the group."
+  },
+  {
+   "run": 2,
+   "code": "google.family.member",
+   "who": "notifies",
+   "ok": true,
+   "why": "",
+   "ms": 2055,
+   "text": "Jordan will receive an email saying Riley was removed from their Google account."
+  },
+  {
+   "run": 2,
+   "code": "photos.partner_sharing",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2376,
+   "text": "Jordan can no longer see the photos I shared with them. They may notice when they try to view them next."
+  },
+  {
+   "run": 3,
+   "code": "google.devices.other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3763,
+   "text": "Jordan's iPhone 15 will show that they are signed out of their Google account the next time they open a Google app. Anyone using that iPhone may notice."
+  },
+  {
+   "run": 3,
+   "code": "google.apps.read_mail",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3097,
+   "text": "InboxPilot will stop getting your mail, so you may notice it stops showing up when you use the app. The company's page doesn't say if Jordan is told about this change."
+  },
+  {
+   "run": 3,
+   "code": "google.apps.location",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2576,
+   "text": "The TrailMate app will no longer get your location. If you use the app, you may notice your location stop updating."
+  },
+  {
+   "run": 3,
+   "code": "google.recovery.phone_unconfirmed",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3251,
+   "text": "Jordan's old phone number might still get Google codes for 7 days after you change it. Anyone who has that number may notice, and could still use a code during that time."
+  },
+  {
+   "run": 3,
+   "code": "google.recovery.email_other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3369,
+   "text": "Google might still send verification codes to Jordan's old email for 7 days after Jordan changes their recovery info. Anyone who sees that email could use a code in that time, and it might be noticeable."
+  },
+  {
+   "run": 3,
+   "code": "google.2sv.other_device",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 3311,
+   "text": "Google may continue sending codes to Jordan's old phone number for 7 days after it's removed. Whoever has that phone might notice the prompts stop or still receive a code during that time."
+  },
+  {
+   "run": 3,
+   "code": "maps.sharing.person",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2528,
+   "text": "Jordan may notice that you disappear from their map, and any arrival or departure alerts they had set will stop working when you turn off sharing."
+  },
+  {
+   "run": 3,
+   "code": "maps.sharing.link",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 3602,
+   "text": "Jordan's link to your location will no longer work after 9:00 PM. Anyone who opens the link after that might notice it's no longer showing your location."
+  },
+  {
+   "run": 3,
+   "code": "gmail.forwarding.external",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 3711,
+   "text": "Jordan's new emails will no longer arrive at their Gmail address. The company's page does not say if Gmail will notify them about this change, but they may notice that copies of emails stop appearing."
+  },
+  {
+   "run": 3,
+   "code": "gmail.filter.forwards",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 2741,
+   "text": "Jordan's forwards will stop arriving in your Gmail. You may notice this change when it happens."
+  },
+  {
+   "run": 3,
+   "code": "gmail.filter.hides",
+   "who": "unknown",
+   "ok": true,
+   "why": "",
+   "ms": 3158,
+   "text": "Jordan's filter for emails with the subject 'appointment' is removed. The hidden mail should now arrive in your inbox. Jordan would only notice if they look at their filters or inbox."
+  },
+  {
+   "run": 3,
+   "code": "gmail.delegate",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2523,
+   "text": "Jordan will no longer be able to open your mail account. They may notice this the next time they try to access it."
+  },
+  {
+   "run": 3,
+   "code": "amazon.household.adult",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2775,
+   "text": "Sam Porter will lose access to shared benefits, so they may notice when they shop or watch. They will keep their account."
+  },
+  {
+   "run": 3,
+   "code": "amazon.household.teen",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2921,
+   "text": "Riley will no longer be able to shop using Jordan's account. Jordan may notice when Riley can no longer shop."
+  },
+  {
+   "run": 3,
+   "code": "amazon.device.other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2364,
+   "text": "Jordan, the Echo Dot will stop showing your content in your account, and anyone using it will notice right away."
+  },
+  {
+   "run": 3,
+   "code": "google.family.manager_other",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2511,
+   "text": "Because you left the family group, Jordan may notice that purchases shared through the Family Library are no longer available to him."
+  },
+  {
+   "run": 3,
+   "code": "google.family.member",
+   "who": "notifies",
+   "ok": true,
+   "why": "",
+   "ms": 2189,
+   "text": "Riley may notice an email from Google saying they were removed by Jordan."
+  },
+  {
+   "run": 3,
+   "code": "photos.partner_sharing",
+   "who": "noticeable",
+   "ok": true,
+   "why": "",
+   "ms": 2472,
+   "text": "Jordan can no longer see the photos you shared with them. They may notice when they try to view those photos."
+  }
+ ]
+}

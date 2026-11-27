@@ -111,10 +111,14 @@ From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved
   (1; Android, tested on made-up phone facts). For the sixth, signs a password was known (14), it checks what a known
   password opens: signed-in devices, recovery details and 2-Step Verification.
 - **What would they see?** On any step of the plan, Gemini Nano writes the notice the other person would get, with
-  the names from the page ("Sam's map stops showing Jordan, and any arrival alerts Sam set stop"). It needs the names,
-  so in the extension it runs only on the device (`ONLY_ON_DEVICE`); code checks each sentence against the company's
-  help page and shows the page's own words when it fails (`shared/they-see.js`, 6 tests). A measured Nano run
-  (`tools/they-see-eval.mjs`) is next: the first try had too little free memory for Nano and is not counted.
+  the other person's name from the page ("Sam may notice when you disappear from their map, and their arrival or
+  departure alerts stop working"). It needs the name, so in the extension it runs only on the device
+  (`ONLY_ON_DEVICE`). Code reads who the other person is from the page, never gives Nano the person's own name, and
+  checks each sentence against the company's help page, showing the page's own words when it fails
+  (`shared/they-see.js`, 10 tests). On Gemini Nano on this computer, 18 kinds of finding 3 times each: 54 of 54
+  answered, median 2.9 s, 52 shown; read by hand, 51 of the 52 have who is who right. The first design gave Nano both
+  names and it swapped them in about 11 of 18; both earlier runs are kept
+  ([evidence](docs/evidence/they-see-eval.json), `tools/they-see-eval.mjs`).
 - **In your own words:** a box where the person types what no settings page shows ("he bought this phone", "we're on
   his plan"). On 60 new statements written by an agent that never saw the code, committed before either reader ran on
   them and run once, Gemini Nano on the computer found 93 of 99 ways in, code's keyword reader 75. Nano added 17
