@@ -223,5 +223,11 @@
     "uid": 10219,
     "sent": 92348,
     "received": 1338954
+  },
+  "apk": {
+    "build": "release",
+    "signed": true,
+    "sha256": "f06d56636f203d8f70fb2e122b4e8a98e4d7d3016e4cbc2be074020bfbdb658d",
+    "note": "the same file as https://github.com/usv240/spare-key/releases/download/android-v0.1.0/spare-key-android.apk; recorded on November 26 from the run command"
   }
 }

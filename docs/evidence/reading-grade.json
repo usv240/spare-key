@@ -1,5 +1,5 @@
 {
- "at": "2026-11-25T21:47:47.398Z",
+ "at": "2026-11-26T23:59:17.941Z",
  "method": "Flesch-Kincaid grade of p, li, h1-h6, dd, summary, figcaption, label and button text; code, tables, nav and footer left out; vowel-group syllable count",
  "median": 4.2,
  "rows": [
@@ -30,17 +30,17 @@
   },
   {
    "page": "web/dist/index.html",
-   "words": 1257,
+   "words": 1247,
    "grade": 4.1
   },
   {
    "page": "web/dist/install.html",
-   "words": 1049,
+   "words": 1035,
    "grade": 5.1
   },
   {
    "page": "web/dist/panel-demo.html",
-   "words": 283,
+   "words": 284,
    "grade": 3
   },
   {
@@ -65,8 +65,8 @@
   },
   {
    "page": "web/dist/try.html",
-   "words": 143,
-   "grade": 3.9
+   "words": 147,
+   "grade": 4.1
   },
   {
    "page": "web/dist/what-they-see.html",
@@ -75,7 +75,7 @@
   },
   {
    "page": "web/dist/why.html",
-   "words": 1542,
+   "words": 1550,
    "grade": 5.5
   },
   {

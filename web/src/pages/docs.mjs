@@ -44,7 +44,7 @@ export function installPage({ apk = null } = {}) {
 <div class="note caution"><p><strong>Before you install:</strong> the other person may see the extension if they use this computer. Use one you already use that they never touch, and remove Spare Key when you are done.</p>
 <details><summary>More on picking a computer</summary><p>A computer that is new to your account, like a friend’s, sends a new sign-in alert to your recovery email and phone, and shows in your list of devices. If the other person can see those, they will know. An advocate can help you choose. If Chrome sync is on, your history, including this site, can show on every computer signed in to the same Chrome profile. (Installed the way described below, the extension itself is not copied to other computers; an extension added from the Chrome Web Store would be.) Library and work computers usually do not allow installing extensions.</p></details></div>
 <h3>Add it to Chrome</h3>
-<p>Spare Key is not in the Chrome Web Store yet, so it is added by hand:</p>
+<p>Spare Key is in review at the Chrome Web Store (submitted November 26). Once Google approves it, it is <a href="https://chromewebstore.google.com/detail/pnfdfbkaabiminifnpmgpljlmoocbbge">here</a>, with no Developer mode. Until then, add it by hand:</p>
 <ol class="install-steps">
   <li>Download <a href="/downloads/spare-key-extension.zip" download><strong>spare-key-extension.zip</strong></a> and unzip it. It holds a folder called <code>spare-key</code>.</li>
   <li>In Chrome, open <code>chrome://extensions</code> and turn on <strong>Developer mode</strong>, top right.</li>
@@ -504,7 +504,7 @@ export function advocatesPage({ numbers }) {
   <li><strong>Clean up:</strong> Clear everything, remove the extension and the download, and clear the history.</li>
 </ol>
 <h2>Before the session</h2>
-<p>The extension is not in the Chrome Web Store yet, so it is installed by hand: a download, then Chrome’s Developer mode. It takes about three minutes and is on the <a href="/install.html">install page</a>. Work and library computers often do not allow it, so try it on the computer you plan to use first.</p>
+<p>The extension is in review at the Chrome Web Store. Until Google approves it, it is installed by hand: a download, then Chrome’s Developer mode. It takes about three minutes and is on the <a href="/install.html">install page</a>. Work and library computers often do not allow it, so try it on the computer you plan to use first.</p>
 <p><strong>If the person only has a phone:</strong> the account check needs Chrome on a computer. On Android, the app checks the phone itself, and <a href="/install.html#android-by-hand">the same checks can be done by hand</a>. On any phone, iPhone included, the <a href="/phone-check.html">step-by-step phone check</a> shows where to look and makes the plan from the answers, with nothing sent. The practice check and “What they see when you change it” work on any phone today.</p>
 <h2>Using it in a session</h2>
 <ol>

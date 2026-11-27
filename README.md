@@ -114,7 +114,9 @@ From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved
   his plan"). On 60 new statements written by an agent that never saw the code, committed before either reader ran on
   them and run once, Gemini Nano on the computer found 93 of 99 ways in, code's keyword reader 75. Nano added 17
   codes the words did not name, the keyword reader 4. Nano got exactly the right codes for 46 of the 60 statements,
-  the keyword reader 40. Median 2.4 s. An extra code can only add a step, and typed words can only fill the careful
+  the keyword reader 40. Counting the living and children answers too, the keyword reader read 39 statements exactly
+  and Nano 6: Nano guesses those answers when the words do not say (49 times), and only "together" and "shared
+  children" are ever used, which can only make the plan more careful. Median 2.4 s. An extra code can only add a step, and typed words can only fill the careful
   answers ("together", "shared children"), never "apart". On phones, where Chrome has no Gemini Nano, the keyword
   reader does this ([evidence](docs/evidence/told-eval-told-fresh.json), `tools/told-eval.mjs`).
 - **Effort saved:** by hand, the same check is 13 settings pages on 4 sites and 18 official help pages (12,640 words
@@ -130,9 +132,10 @@ From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved
   passkey check, and lists as "Not checked" until then ([evidence](docs/evidence/real-test-account.json)).
 - **When a site changes its pages:** five kinds of change to the 13 practice pages. A check now says "done" while
   missing a way in 0 times, down from 24 on the first blind run.
-- **Privacy:** 0 of 20 requests held a name, email, phone number, device or place, with every cloud step on and typed
-  words naming a made-up person and town in the box; only their 3 codes reached the cloud. All 6 model requests matched
-  "What left this computer" word for word.
+- **Privacy:** 0 of 21 requests held a name, email, phone number, device or place, with typed words naming a made-up
+  person and town in the box, and with the cloud plan and the two voices both answering (the test now fails if either
+  does not). Only the typed words' 3 codes reached the cloud, and all 8 model requests matched "What left this
+  computer" word for word.
 - **Plan safety (40 situations written before any run):** a plain chatbot on the same model told the person to record
   their settings first in 7 of 38 answers and said something risky in 14 (each answer read against a written rubric by
   an AI reviewer). Every plan Spare Key shows starts with the record and warns that a change may be noticed: 38 of 38
@@ -146,7 +149,7 @@ From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved
   but did not answer (AICore: not on this phone yet), so Spare Key skipped them and Nano 4 Full sorted all 13 apps in
   9.6 s; both plan templates returned a server error ("high demand") and the direct call ordered the plan.
 - **Phone check:** 40 of 40 browser checks, including the typed-words box read by code and through the on-device path, ticking the plan off as you go, and that the page sends nothing after it loads.
-- **Accessibility and reading level:** 78 axe runs with 0 issues; median reading grade 4.3.
+- **Accessibility and reading level:** 78 axe runs with 0 issues; median reading grade 4.2.
 
 Next: review by advocates and survivors, planted ways in on real test accounts, and real stalkerware samples for the
 Android app.

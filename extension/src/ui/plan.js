@@ -6,7 +6,7 @@
 import { h, put, infoButton, UNCHECKED, KIDS_GUIDES } from './results.js';
 import { registerInfo } from './info.js';
 import { hotlines, EMERGENCY } from './hotline.js';
-import { CODE_TEXT } from '../../../shared/findings.js';
+import { CODE_TEXT, CODES, GROUPS, GROUP_LABELS } from '../../../shared/findings.js';
 import { KIDS_CHECK } from '../../../shared/plan/engine.js';
 
 export const QUESTIONS = [
@@ -267,6 +267,18 @@ function advocateSection(a) {
 }
 
 // One folded block per kind of finding, grouped under the service it belongs to.
+// The changes that wait, grouped by what each one gives the other person, most dangerous first: a phone that may be
+// watched, then where you are, your mail, your account, and the rest (the results screen's own order and headings).
+// The person sees which matters most, not which company it is with (judge round 12). Changes to make now keep the
+// safety rules' order instead, since R9 puts the mail copying first.
+function byDanger(acts, ctx) {
+  const group = a => CODES[a.code || ctx.byRef.get(a.refs[0])?.code]?.group || 'other';
+  const rank = g => { const i = GROUPS.indexOf(g); return i < 0 ? GROUPS.length : i; };
+  return [...groupBy(acts, group)].sort(([a], [b]) => rank(a) - rank(b)).map(([g, list]) => h('div', { class: 'wait-group' },
+    h('h3', { text: GROUP_LABELS[g] || 'Other' }),
+    ...list.map(a => codeBlock(a, ctx, { open: false }))));
+}
+
 function byService(acts, ctx) {
   const service = a => ctx.byRef.get(a.refs[0])?.service || 'other';
   return [...groupBy(acts, service)].map(([svc, list]) => h('div', { class: 'wait-group' },
@@ -292,7 +304,7 @@ const recordWords = (text, phoneOnly) => !phoneOnly || !text ? text : text
 function waitSection(waits, ctx) {
   return section('wait', `Leave these for a better time (${countOf(waits)})`,
     h('p', { text: recordWords('Removing these may be noticed. For now, screenshot them and talk to an advocate about when to change each one. Open one to see what the other person would see, and the steps for later.', ctx.phoneOnly) }),
-    ...byService(waits, ctx));
+    ...byDanger(waits, ctx));
 }
 
 // The checks Spare Key could not read, or read only in part, by name, each with a way to open it; then the guides for

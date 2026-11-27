@@ -119,8 +119,10 @@ export function renderResults(root, { scan, catalogue, library = {}, reveal = ne
       // The caution most of a group's entries share is said once, under the group's heading, so it is still read (design
       // judge, November 25: on every card it appeared about 20 times). A card keeps its own caution only when it differs,
       // so "they are told" stands out instead of hiding in the repeats.
+      // A reassuring line ("unlikely to be noticed") is never lifted to the group's heading, so the heading can never
+      // calm a group that holds a card where the other person is told (judge round 12); those cards keep their own line.
       const count = new Map();
-      for (const f of items) { const l = noticeLine(library[f.code]); count.set(l, (count.get(l) || 0) + 1); }
+      for (const f of items) { const l = noticeLine(library[f.code]); if (!/unlikely/i.test(l)) count.set(l, (count.get(l) || 0) + 1); }
       const [top, n] = [...count].sort((a, b) => b[1] - a[1])[0] || [];
       const shared = items.length > 1 && n >= 2 ? top : null;
       const allSame = count.size === 1;

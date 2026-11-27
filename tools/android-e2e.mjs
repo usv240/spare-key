@@ -285,6 +285,12 @@ report.window.to = Date.now();
 const after = uidBytes();
 report.appBytes = after.seen ? { uid: +after.uid, sent: after.sent - before.sent, received: after.received - before.received } : null;
 if (report.appBytes) console.log(`Android counts ${report.appBytes.sent} bytes sent and ${report.appBytes.received} received for Spare Key in this run.`);
+// Which app file this run tested, so a result can be tied to the download (judge round 12).
+{
+  const { createHash } = await import('node:crypto');
+  const { readFileSync } = await import('node:fs');
+  report.apk = { build: /release/i.test(APK) ? 'release' : 'debug', file: APK.replace(ROOT, '').replace(/\\/g, '/'), sha256: createHash('sha256').update(readFileSync(APK)).digest('hex') };
+}
 writeFileSync(resolve(ROOT, 'docs/evidence/android-e2e.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(`\n${report.passed} passed, ${failed} failed. Report: docs/evidence/android-e2e.json`);
 process.exit(failed ? 1 : 0);

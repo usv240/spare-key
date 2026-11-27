@@ -72,7 +72,9 @@ fix restored all 24 with no update. And people say things in their own way ("he 
 the kitchen is on his amazon"). On 60 new statements written by an agent that never saw the code, committed before
 either reader ran and run once, Gemini Nano found 93 of 99 ways in on the device, against 75 for code's keyword
 reader, in a median 2.4 seconds. It also added 17 codes the words did not name (the keyword reader 4); each can only
-add a step. Nano got exactly the right codes for 46 statements, the keyword reader 40. Where Chrome has no Gemini
+add a step. Nano got exactly the right codes for 46 statements, the keyword reader 40 (counting the
+living and children answers too, 6 against 39: Nano guesses those when the words do not say, and only the careful
+answers are ever used). Where Chrome has no Gemini
 Nano, as on phones, the keyword reader does this alone.
 
 **What code does that a model must not.** `shared/cloud-safe.js` is the only exit to the cloud: it builds each request
@@ -93,8 +95,8 @@ Full, then the phone's own Nano, each asked one tiny question first, so a model 
 ## Challenges we ran into
 
 - **Proving nothing leaks.** A test captured every request the extension made and searched it for 30 made-up names,
-  emails, phones and places in four encodings, with typed words naming a made-up person and town in the box too: 0 of
-  20 requests held one, and only the typed words' 3 codes reached the cloud.
+  emails, phones and places in four encodings, with typed words naming a made-up person and town in the box too, and the cloud plan and two
+  voices answering: 0 of 21 requests held one, and only the typed words' 3 codes reached the cloud.
 - **Sites change their pages.** On the first blind run, a check said it was done while missing a way in 24 times. Now 0:
   a page it cannot read is listed as "looked different".
 - **Small models need guardrails.** In a live run, Gemini Nano called four household members the person's own, which
@@ -114,7 +116,7 @@ Full, then the phone's own Nano, each asked one tiny question first, so a model 
   phone.
 - On a real account, read-only, real pages differed from what we expected in 5 of 12 checks; after the fixes, every
   check Spare Key could read matched what the site shows.
-- 0 accessibility violations in 78 axe-core runs; median reading grade 4.3.
+- 0 accessibility violations in 78 axe-core runs; median reading grade 4.2.
 
 ## What we learned
 
@@ -126,7 +128,7 @@ product more useful and more honest about what each part does.
 
 - Review by advocates and survivors: the questions are at https://spare-key-app.web.app/advocates.html.
 - Readers for social media sign-ins, and a test of the rooted-phone check on a real rooted phone.
-- A Chrome Web Store listing and a signed Android release.
+- The Chrome Web Store listing, now in Google's review (submitted November 26, unlisted): https://chromewebstore.google.com/detail/pnfdfbkaabiminifnpmgpljlmoocbbge.
 
 ## Built with
 
@@ -137,10 +139,10 @@ Hosting, Chrome Extensions, Kotlin, Jetpack Compose.
 
 1. **No install, 2 minutes:** open https://spare-key-app.web.app/try.html and press Start the practice check. It reads
    13 made-up settings pages for a person called Jordan. Open "Break the pages first" to see what happens when a site
-   changes its pages. Very private or automated browsers may be refused by App Check; the check still runs with code.
+   changes its pages. Very private or automated browsers may be refused by App Check, or block Google's servers: the check still runs with code, and "Show results now" is always there (Gemini gets 45 seconds).
 2. **Any phone, 3 minutes:** open https://spare-key-app.web.app/phone-check.html, choose iPhone or Android, answer a
    few questions, and get the plan, made in the page with nothing sent.
-3. **The extension:** download https://spare-key-app.web.app/downloads/spare-key-extension.zip, unzip it, open
+3. **The extension:** from the Chrome Web Store once Google's review clears (https://chromewebstore.google.com/detail/pnfdfbkaabiminifnpmgpljlmoocbbge), or now by hand: download https://spare-key-app.web.app/downloads/spare-key-extension.zip, unzip it, open
    `chrome://extensions`, turn on Developer mode, Load unpacked, choose the `spare-key` folder, then click the puzzle
    piece and the key. Choose **Try a practice check first** to run it on the made-up pages.
 4. **The Android app (optional):** on an Android phone, download the signed app from

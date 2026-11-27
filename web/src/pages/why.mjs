@@ -90,7 +90,7 @@ export default function why({ numbers, drift = null, android = null, grade = nul
       <li class="fact rise"><span class="fact-n">60%</span><p>When researchers asked AI chatbots 193 real questions survivors had asked online and in published studies, 60% of the answers left out critical safety warnings.</p><cite><a href="https://engineering.nyu.edu/news/ai-chatbots-often-give-unsafe-or-incomplete-advice-survivors-tech-enabled-abuse-study-finds">NYU Tandon, USENIX Security 2026</a> (October 20, 2026)</cite></li>
       <li class="fact rise"><span class="fact-n">3</span><p>There are only three dedicated tech-abuse clinics in the US, to the researchers’ knowledge. They do this check by hand, account by account.</p><cite><a href="https://engineering.nyu.edu/news/ai-chatbots-often-give-unsafe-or-incomplete-advice-survivors-tech-enabled-abuse-study-finds">Same study</a></cite></li>
     </ul>
-    <p class="closing-line">Spare Key does the clinic’s first job for anyone: it reads the person’s own settings and lists who still has a way in. Then it gives the two warnings the chatbots left out, every time.</p>
+    <p class="closing-line">Spare Key does the first part of the clinic’s job for anyone, for the accounts it reads: Google, Gmail, Amazon, Chrome and an Android phone, with Apple and the phone plan by guided questions. It lists who still has a way in. Then it gives the two warnings the chatbots left out, every time.</p>
     <p class="stakes">A change the other person notices can make things worse. That is why the plan tells you which changes they may notice before you touch anything.</p>
   </div>
 </section>

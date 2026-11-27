@@ -357,11 +357,17 @@ async function runPractice() {
     const body = { task: 'classify', owner: { name: PRACTICE_OWNER.name, email: PRACTICE_OWNER.email }, entries: raw.map((r, i) => ({ i, check: r.check.id, text: r.entry.text })) };
     // Every entry is already read by code. Gemini only sorts them, which can take minutes on the device, so the person
     // can stop waiting and see the results as code alone sorted them.
-    const skipped = new Promise(resolve => { $('skip-sort').onclick = () => resolve(null); });
-    $('skip-sort').hidden = !onDevice;
-    const r = await Promise.race([hybridJson({ purpose: 'practice', body, system: `${CLASSIFY_SYSTEM}\nEach entry names the check it came from.`, schema: CLASSIFY_SCHEMA, guard: { practiceCorpus: PRACTICE_CORPUS, practiceOwner: PRACTICE_OWNER }, onSend }), skipped]);
-    sorted = r ? r.answer.items || [] : null;
-    where = !r ? 'Sorted by code only: you chose not to wait for Gemini Nano. Start again to let it sort the entries on this device.' : r.source === 'on_device' ? 'Sorted by Gemini Nano, on this device.' : `Sorted by Gemini in the cloud (${r.model}). The practice data is made up, so this is the one place Spare Key lets the cloud read entries.`;
+    // "Show results now" is always there, and the wait has a limit: a browser that blocks Google's App Check or the
+    // cloud can otherwise leave the sort waiting forever (judge round 12: 417 s and counting). Gemini Nano on the device
+    // gets longer, since it is known to take minutes.
+    const skipped = new Promise(resolve => { $('skip-sort').onclick = () => resolve('skipped'); });
+    const limit = new Promise(resolve => setTimeout(() => resolve('timed_out'), onDevice ? 300000 : 45000));
+    $('skip-sort').hidden = false;
+    const r = await Promise.race([hybridJson({ purpose: 'practice', body, system: `${CLASSIFY_SYSTEM}\nEach entry names the check it came from.`, schema: CLASSIFY_SCHEMA, guard: { practiceCorpus: PRACTICE_CORPUS, practiceOwner: PRACTICE_OWNER }, onSend }), skipped, limit]);
+    sorted = r && typeof r === 'object' ? r.answer.items || [] : null;
+    where = r === 'skipped' ? `Sorted by code only: you chose not to wait for Gemini${onDevice ? ' Nano' : ''}. Start again to let it sort the entries.`
+      : r === 'timed_out' ? `Sorted by code only: Gemini did not answer within ${onDevice ? 'five minutes' : '45 seconds'}. A blocked or slow connection can do this.`
+      : r.source === 'on_device' ? 'Sorted by Gemini Nano, on this device.' : `Sorted by Gemini in the cloud (${r.model}). The practice data is made up, so this is the one place Spare Key lets the cloud read entries.`;
   } catch (e) {
     console.warn('Spare Key practice sorting:', String(e && e.message || e).slice(0, 300));
     lastSortError = String(e && e.message || e);

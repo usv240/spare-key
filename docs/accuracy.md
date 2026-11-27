@@ -139,7 +139,7 @@ value), not how well a first guess reads a new page. Whether a fix reaches every
 
 ## 3. Privacy: nothing that names a person leaves (EVALUATION.md section 3)
 
-`tools/privacy-test.mjs`, last run November 25, 2026 (earlier runs: 0 of 20 and 0 of 17 on November 22). Since November 25 the run also types words naming a made-up person and town into "Anything else you know?" (they are in the list it searches for); only their 3 codes reached the cloud plan: a full practice check with every cloud step on (the cloud plan
+`tools/privacy-test.mjs`, last run November 26, 2026 (earlier runs: 0 of 20 on November 25, when the free tier was busy and the code plan stayed; 0 of 20 and 0 of 17 on November 22). Since November 25 the run also types words naming a made-up person and town into "Anything else you know?" (they are in the list it searches for); only their 3 codes reached the cloud plan. Since November 26 the test fails unless the cloud plan and the two voices both answered: a full practice check with every cloud step on (the cloud plan
 with function calling, the two voices, every situation answer shared, two findings answered, and the setup probe). Every
 network request from the extension's service worker, hidden page and side panel was captured through the Chrome
 DevTools Protocol, with its URL, headers and body, and searched for 30 made-up names, emails, phone numbers, devices,
@@ -148,11 +148,11 @@ JSON-escaped.
 
 | Result | |
 |---|---|
-| Requests from the extension | 20, to 6 hosts (Firebase AI Logic, App Check, Remote Config, Installations, Firestore, and the extension itself) |
-| Requests holding a name, email, phone number, device or place | **0 of 20** |
-| Requests to the model | 6 |
-| Model requests that match "What left this computer" word for word | **6 of 6**, and all 6 logged entries were sent (a template call is matched by its inputs object, value for value) |
-| The panel's own ledger (a wrapper around fetch in the hidden page) | **0 of 10** requests holding anything from the check |
+| Requests from the extension | 21, to 6 hosts (Firebase AI Logic, App Check, Remote Config, Installations, Firestore, and the extension itself) |
+| Requests holding a name, email, phone number, device or place | **0 of 21** |
+| Requests to the model | 8: 4 for the plan (3 requests and 1 with function answers), 3 for the two voices, 1 setup probe |
+| Model requests that match "What left this computer" word for word | **8 of 8**, and all 8 logged entries were sent (a template call is matched by its inputs object, value for value) |
+| The panel's own ledger (a wrapper around fetch in the hidden page) | **0 of 12** requests holding anything from the check |
 | Functions the cloud called while ordering the plan | `get_steps` once (on November 22 also `ask_device` once, answered "no"); `ask_user` never |
 
 The ledger and the network capture are independent checks: the first counts inside the extension, the second outside

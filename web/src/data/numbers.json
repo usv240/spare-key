@@ -9,19 +9,20 @@
     "codeSeconds": 13
   },
   "privacy": {
-    "requests": 20,
+    "requests": 21,
     "withPrivate": 0,
-    "modelRequests": 9,
+    "modelRequests": 8,
     "canaries": 30,
     "hosts": 6,
-    "date": "November 22, 2026",
+    "date": "November 26, 2026",
     "ledgerHolding": 0,
-    "ledgerRequests": 13,
+    "ledgerRequests": 12,
     "calls": {
       "get_steps": 1,
-      "ask_device": 1,
+      "ask_device": 0,
       "ask_user": 0
-    }
+    },
+    "typedWords": true
   },
   "voices": {
     "close": "We must close access soon before the other person takes your offline notes or locks you out.",
@@ -135,7 +136,7 @@
     },
     "fixesC": 63,
     "fixesD": 45,
-    "note": "Model: gemini-3.5-flash-lite on the Gemini Developer API free tier. 38 of the 40 situations were scored. On November 21, 10 failed in the cloud. They were run once more on November 24, with that day’s code, and 8 answered. The other 2 failed in the cloud and are not counted: 1 timed out after 30 seconds (0 while making the plan, 1 in the two voices), 1 found the model overloaded (HTTP 500) and 0 ran out of free-tier quota (HTTP 429). The plain chatbot’s free-text answers were read with fixed keyword lists, which is rough. Before Spare Key’s safety rules ran, the two voices cut the fixes the rules had to make from 63 to 45, mostly because they changed fewer things at once (31 to 19 “change now” steps), but they dropped a finding 11 times, which the rules put back."
+    "note": "Model: gemini-3.5-flash-lite on the Gemini Developer API free tier. 38 of the 40 situations were scored. On November 21, 10 failed in the cloud. They were run once more on November 24, with that day\u2019s code, and 8 answered. The other 2 failed in the cloud and are not counted: 1 timed out after 30 seconds (0 while making the plan, 1 in the two voices), 1 found the model overloaded (HTTP 500) and 0 ran out of free-tier quota (HTTP 429). The plain chatbot\u2019s free-text answers were read with fixed keyword lists, which is rough. Before Spare Key\u2019s safety rules ran, the two voices cut the fixes the rules had to make from 63 to 45, mostly because they changed fewer things at once (31 to 19 \u201cchange now\u201d steps), but they dropped a finding 11 times, which the rules put back."
   },
   "nanoPlan": {
     "date": "2026-11-22",

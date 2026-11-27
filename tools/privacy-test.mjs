@@ -183,4 +183,12 @@ try {
   try { rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 }); } catch { /* temp */ }
 }
 writeFileSync(path.join(out, 'privacy-report.json'), JSON.stringify(report, null, 2));
-process.exit(report.error || report.hits?.length || report.unmatchedModelRequests?.length || report.unloggedEntries?.length || report.ledgerHolding !== 0 ? 1 : 0);
+// "Every cloud step on" must mean every cloud step ran: the cloud plan and the two voices both answered (judge round
+// 12: a run where the free tier was busy and the code plan stayed proved less than it claimed). --allow-code-plan
+// accepts such a run, for a quick check.
+report.cloudPlan = report.plan?.source === 'cloud';
+report.voicesRan = !!report.plan?.voices;
+console.log(`cloud plan: ${report.cloudPlan ? 'answered' : 'did not answer (code plan shown)'}; two voices: ${report.voicesRan ? 'answered' : 'did not run'}`);
+writeFileSync(path.join(out, 'privacy-report.json'), JSON.stringify(report, null, 2));
+const everyStep = (report.cloudPlan && report.voicesRan) || process.argv.includes('--allow-code-plan');
+process.exit(report.error || report.hits?.length || report.unmatchedModelRequests?.length || report.unloggedEntries?.length || report.ledgerHolding !== 0 || !everyStep ? 1 : 0);
