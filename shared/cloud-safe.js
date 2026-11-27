@@ -156,12 +156,25 @@ export const OUTGOING = {
 // "read_page" sends one changed practice page's text (the layout drift demo), every line of it from the practice pages.
 const norm = s => String(s || '').replace(/\s+/g, ' ').trim();
 OUTGOING.practice = (b, ctx) => {
-  assertEnum(b?.task, ['classify', 'read_page'], 'task');
-  onlyKeys(b, b.task === 'read_page' ? ['task', 'owner', 'check', 'page_text'] : ['task', 'owner', 'entries'], 'body');
+  assertEnum(b?.task, ['classify', 'read_page', 'they_see'], 'task');
+  onlyKeys(b, b.task === 'read_page' ? ['task', 'owner', 'check', 'page_text'] : b.task === 'they_see' ? ['task', 'owner', 'input'] : ['task', 'owner', 'entries'], 'body');
   const owner = ctx?.practiceOwner;
   if (!owner || !isPlainObject(b.owner) || b.owner.name !== owner.name || b.owner.email !== owner.email || Object.keys(b.owner).length !== 2) fail('owner must be the practice person');
   const corpus = norm(ctx?.practiceCorpus);
   if (!corpus) fail('no practice pages to check against');
+  // "What would they see?" on a practice entry: the library's own words for one code, the made-up owner's first name,
+  // and words that each appear on the practice pages (the entry's label, with its masked email taken out).
+  if (b.task === 'they_see') {
+    const i = b.input;
+    onlyKeys(i, ['code', 'help_page', 'what_they_see', 'who_can_notice', 'entry', 'owner'], 'input');
+    assertCode(i.code);
+    const entry = ctx?.library?.[i.code];
+    if (!entry || i.help_page !== (entry.notice_source?.quote || '') || i.what_they_see !== (entry.what_they_see || '') || i.who_can_notice !== (entry.who_can_notice || 'unknown')) fail('they_see must carry the library entry\'s own words');
+    if (i.owner !== owner.name.split(/\s+/)[0]) fail('they_see owner must be the practice person');
+    const words = String(i.entry || '').split(/[\s·,;:()]+/).filter(Boolean);
+    if (String(i.entry || '').length > 160 || words.some(w => !corpus.toLowerCase().includes(w.toLowerCase()))) fail('they_see entry must come from the practice pages');
+    return;
+  }
   if (b.task === 'read_page') {
     assertEnum(b.check, CHECK_IDS, 'check');
     if (typeof b.page_text !== 'string' || !b.page_text.trim() || b.page_text.length > 20000) fail('page_text must be one page');

@@ -90,8 +90,8 @@ const WHERE = {
  * The plan. `plan` uses local refs. `byRef` maps a local ref to its finding; `library` maps code to entry.
  * `source` is 'code', 'device' or 'cloud'; `fired` lists the safety rules that changed it; `onOpen(url)` opens a setting.
  */
-export function renderPlan(root, { plan, byRef, library, source, model, calls = null, fired = [], cloudNote = '', voices = null, freshDays = 45, freshness = {}, onCheckFresh = null, simpler = {}, onSimpler = null, onOpenCheck = null, checkLabels = {}, toldBy = null, toldAdded = 0, onOpen }) {
-  const ctx = { byRef, library, onOpen, freshDays, freshness, onCheckFresh, simpler, onSimpler, onOpenCheck, checkLabels, phoneOnly: [...byRef.values()].every(f => f.service === 'phone') };
+export function renderPlan(root, { plan, byRef, library, source, model, calls = null, fired = [], cloudNote = '', voices = null, freshDays = 45, freshness = {}, onCheckFresh = null, simpler = {}, onSimpler = null, theySee = {}, onTheySee = null, onOpenCheck = null, checkLabels = {}, toldBy = null, toldAdded = 0, onOpen }) {
+  const ctx = { byRef, library, onOpen, freshDays, freshness, onCheckFresh, simpler, onSimpler, theySee, onTheySee, onOpenCheck, checkLabels, phoneOnly: [...byRef.values()].every(f => f.service === 'phone') };
   const acts = plan.actions;
   const docs = acts.filter(a => a.action === 'document');
   const adv = acts.find(a => a.action === 'talk_to_advocate');
@@ -344,7 +344,23 @@ function simplerBlock(code, { simpler = {}, onSimpler = null }) {
     h('p', { class: 'muted', text: `${r.source === 'on_device' ? 'By Gemini Nano on this computer' : 'By Gemini in the cloud, which saw only these public steps'}. If anything here differs from the steps above, follow the steps above.` }))];
 }
 
-function codeBlock(a, { byRef, library, onOpen, freshDays, freshness, onCheckFresh, simpler, onSimpler, phoneOnly }, { open }) {
+// "What would they see?": the notice the other person would get, written for this entry with its names, by Gemini Nano
+// on this computer (shared/they-see.js). Shown only where the page knows names (the extension, and the website's
+// made-up practice). Code checks the words against the library's; when they fail, the library's own words are shown.
+function theySeeBlock(code, { theySee = {}, onTheySee = null, practice = false }) {
+  if (!onTheySee) return [];
+  const r = theySee[code];
+  if (!r) return [h('button', { type: 'button', class: 'link-button they-see-button', onclick: () => onTheySee(code) }, 'What would they see?')];
+  if (r.pending) return [h('p', { class: 'muted', role: 'status', text: 'Writing it with the names from this page, on this computer.' })];
+  if (r.off) return [h('p', { class: 'muted', role: 'status', text: 'This needs Gemini Nano on this computer: it uses the names on this page, so it is never sent to the cloud.' })];
+  if (!r.text) return [h('p', { class: 'muted', role: 'status', text: 'Spare Key could not write this just now.' })];
+  const by = r.source === 'in_cloud' ? 'By Gemini in the cloud: these names are made up, so the practice check may send them' : 'By Gemini Nano on this computer, with the names on this page. It never left this computer';
+  return [h('div', { class: 'they-see', role: 'status' },
+    h('p', {}, h('strong', { text: 'What they would see: ' }), r.text),
+    h('p', { class: 'muted', text: r.ok ? `${by}, and Spare Key checked it against the company’s own help page.` : 'These are the company help page’s own words: Gemini’s wording did not pass Spare Key’s check.' }))];
+}
+
+function codeBlock(a, { byRef, library, onOpen, freshDays, freshness, onCheckFresh, simpler, onSimpler, theySee, onTheySee, phoneOnly }, { open }) {
   const items = a.refs.map(r => byRef.get(r)).filter(Boolean);
   const f = items[0];
   const code = a.code || f?.code;
@@ -355,6 +371,7 @@ function codeBlock(a, { byRef, library, onOpen, freshDays, freshness, onCheckFre
   const inner = [
     items.length ? h('ul', { class: 'step-list items' }, items.map(x => h('li', { class: 'muted', text: x.label }))) : null,
     h('p', { class: 'caution-line' }, h('span', { text: recordWords(a.action === 'change_now' ? `${see} If now is not a good time, leave it and screenshot it.` : see, phoneOnly) })),
+    ...theySeeBlock(code, { theySee, onTheySee }),
     a.linked ? h('p', { class: 'caution-line linked-line' }, h('span', { text: a.linked })) : null,
     a.cutoff ? h('p', { class: 'caution-line linked-line' }, h('span', { text: a.cutoff })) : null,
     a.why && !STOCK.test(a.why) ? h('p', { text: a.why }) : null,

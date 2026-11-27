@@ -10,6 +10,7 @@ import { classifyEntries, readWholePage, readScreenshot, nanoAnswer } from './cl
 import { cloudPlan } from './cloud/plan.js';
 import { devicePlan } from './device-plan.js';
 import { TOLD_SYSTEM, TOLD_SCHEMA, TOLD_MAX_CHARS, keywordTold, cleanTold, pickTold } from '../../shared/told.js';
+import { THEY_SEE_SYSTEM, THEY_SEE_SCHEMA, theySeeInput, checkTheySee } from '../../shared/they-see.js';
 import { twoVoices } from './cloud/voices.js';
 import { checkFreshness, fetchHelpPage } from './cloud/freshness.js';
 
@@ -182,6 +183,20 @@ const NANO = {
       return steps.length ? { steps, source: r.source, model: r.model } : { error: 'empty' };
     } catch (e) {
       return { error: String(e && e.message || e).slice(0, 200) };
+    }
+  },
+  // "What would they see?": the notice the other person would get, written with this entry's names. Gemini Nano only
+  // (ONLY_ON_DEVICE): the names are the point, so there is no cloud fallback. Code checks the words against the steps
+  // library (shared/they-see.js) and shows the library's own words when they do not pass.
+  'sk:they-see': async ({ entry, label, owner }) => {
+    if ((await deviceStatus(TEXT_ONLY)) !== 'available') return { off: true };
+    const input = theySeeInput(entry, label, owner);
+    try {
+      const t0 = performance.now();
+      const answer = await deviceJson({ system: THEY_SEE_SYSTEM, schema: THEY_SEE_SCHEMA, text: JSON.stringify(input), timeoutMs: 60000 });
+      return { ...checkTheySee(answer, input), ms: Math.round(performance.now() - t0) };
+    } catch (e) {
+      return { error: String(e && e.message || e).slice(0, 160) };
     }
   },
   // An opt-in, anonymous layout report, one per press of the button in the results (panel.js).

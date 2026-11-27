@@ -110,6 +110,11 @@ From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved
   Android, judged by the access an app holds), browser extensions the person did not install (2) and a rooted phone
   (1; Android, tested on made-up phone facts). For the sixth, signs a password was known (14), it checks what a known
   password opens: signed-in devices, recovery details and 2-Step Verification.
+- **What would they see?** On any step of the plan, Gemini Nano writes the notice the other person would get, with
+  the names from the page ("Sam's map stops showing Jordan, and any arrival alerts Sam set stop"). It needs the names,
+  so in the extension it runs only on the device (`ONLY_ON_DEVICE`); code checks each sentence against the company's
+  help page and shows the page's own words when it fails (`shared/they-see.js`, 6 tests). A measured Nano run
+  (`tools/they-see-eval.mjs`) is next: the first try had too little free memory for Nano and is not counted.
 - **In your own words:** a box where the person types what no settings page shows ("he bought this phone", "we're on
   his plan"). On 60 new statements written by an agent that never saw the code, committed before either reader ran on
   them and run once, Gemini Nano on the computer found 93 of 99 ways in, code's keyword reader 75. Nano added 17

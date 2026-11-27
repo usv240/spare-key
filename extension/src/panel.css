@@ -486,3 +486,8 @@ kbd {
 .sticky-go { position: sticky; bottom: 0; z-index: 2; margin: 16px -16px 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: var(--bg); border-top: 1px solid var(--line); }
 .sticky-go[hidden] { display: none; }
 @media print { .sticky-go { display: none; } }
+
+/* "What would they see?": the notice written with this entry's names, set apart from the library's own words. */
+.they-see-button { margin: 2px 0 6px; }
+.they-see { margin: 6px 0 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.they-see p { margin: 4px 0; }

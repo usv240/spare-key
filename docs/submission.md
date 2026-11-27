@@ -43,7 +43,12 @@ Spare Key is a free, read-only Chrome extension, an Android app, and a step-by-s
    plan". Gemini Nano turns the words into finding codes on the device, and only the codes reach the plan. This covers
    what no settings page shows, like a phone the abuser bought and set up or a plan in their name. If the words match
    nothing Spare Key checks, the plan says so and points to an advocate.
-6. **Quick exit** is on every screen, and nothing is kept unless the person asks.
+6. **"What would they see?"** On any step, Gemini Nano writes the notice the other person would get, with the names
+   from the page: "Sam's map stops showing Jordan, and any arrival alerts Sam set stop." It is the one AI step that
+   needs the names, so it runs only on the device. Code checks every sentence against the company's own help page:
+   it may never say they won't find out, never drop "they are told", and never hold an address; a sentence that fails
+   is replaced by the help page's words.
+7. **Quick exit** is on every screen, and nothing is kept unless the person asks.
 
 It looks for 5 of the 6 kinds of problem the Cornell and NYU clinic found: unknown signed-in devices (12 clients;
 Google read, Apple through the guided check, social media next), a shared family or phone plan (4), possible spyware
@@ -61,6 +66,7 @@ other person, so the model that reads them runs on the device. The cloud only ev
 |---|---|---|
 | Read and sort the private pages; read a page a site changed; read a phone screenshot | Gemini Nano | `ONLY_ON_DEVICE`, no cloud fallback |
 | Read what the person types in their own words ("he bought this phone") into finding codes | Gemini Nano, else code's keyword reader | `ONLY_ON_DEVICE`: the words never leave |
+| "What would they see?": the notice the other person would get, written with the real names ("Sam's map stops showing Jordan") | Gemini Nano, checked by code against the company's own help page | `ONLY_ON_DEVICE`: it needs the names, so it can only run here |
 | Order the plan from finding codes | Gemini in the cloud, through a server prompt template | `ONLY_IN_CLOUD` with function calling: `ask_device`, `ask_user`, `get_steps` |
 | Two voices argue ("close the doors" against "stay hidden"), a third settles | Gemini in the cloud, codes only | `ONLY_IN_CLOUD` |
 | Put a public step in simpler words; the website's practice check | Gemini Nano, else the cloud | `PREFER_ON_DEVICE`, only for text that names no one |

@@ -52,6 +52,7 @@ async function quickExit() {
   exiting = true;
   toldText = '';
   clearPlanProgress();
+  for (const k of Object.keys(theySee)) delete theySee[k];
   scanAbort?.abort();
   document.body.replaceChildren();
   document.documentElement.style.background = '#fff';
@@ -429,6 +430,7 @@ async function clearAll() {
   reveal.clear();
   toldText = '';
   clearPlanProgress();
+  for (const k of Object.keys(theySee)) delete theySee[k];
   await chrome.storage.session.remove(['scan', 'sentLog', 'situation', 'plan']);
   announce('Everything from this check was cleared from this computer.');
   show('choose', { focus: 'choose-title' });
@@ -640,6 +642,8 @@ function planHelpers(scan) {
   return {
     simpler,
     onSimpler,
+    theySee,
+    onTheySee: code => onTheySee(code, scan),
     checkLabels: Object.fromEntries(cat.map(c => [c.id, c.label])),
     onOpenCheck: id => {
       const c = cat.find(x => x.id === id);
@@ -656,6 +660,18 @@ async function onSimpler(code) {
   const { cloudOn = true } = await chrome.storage.local.get('cloudOn');
   const r = await offscreen('sk:simpler', { code, library: LIBRARY, personCloudOn: cloudOn }).catch(e => ({ error: String(e) }));
   simpler[code] = r?.steps ? { steps: r.steps, source: r.source } : r?.off ? { off: true } : { error: true };
+  redrawPlan(code);
+}
+// "What would they see?": Gemini Nano on this computer writes the notice with this entry's names (shared/they-see.js).
+// The entry's words and the owner's first name go to the hidden page on this computer only; nothing is sent.
+const theySee = {};
+async function onTheySee(code, scan) {
+  theySee[code] = { pending: true };
+  redrawPlan(code);
+  const f = (scan?.findings || []).find(x => x.code === code && x.ownership !== 'mine');
+  const owner = scan?.account?.name || '';
+  const r = await offscreen('sk:they-see', { entry: LIBRARY[code], label: f?.label || '', owner }).catch(e => ({ error: String(e) }));
+  theySee[code] = r?.text ? { text: r.text, ok: r.ok, source: 'on_device' } : r?.off ? { off: true } : { error: true };
   redrawPlan(code);
 }
 let budgetScanAt = null;

@@ -24,6 +24,7 @@ import { FIXES } from '../practice/drift-fixes.mjs';
 import { cloudPlan } from '../../extension/src/cloud/plan.js';
 import { twoVoices } from '../../extension/src/cloud/voices.js';
 import { toCloud } from '../../shared/cloud-safe.js';
+import { THEY_SEE_SYSTEM, THEY_SEE_SCHEMA, theySeeInput, checkTheySee } from '../../shared/they-see.js';
 import { buildPlan } from '../../shared/plan/engine.js';
 import { applyInvariants, cleanText } from '../../shared/plan/invariants.js';
 import { libraryMap } from '../../shared/steps-schema.js';
@@ -405,6 +406,7 @@ async function runPractice() {
 
 // ---------------------------------------------------------------------------------------------------------------
 const simpler = {};
+const theySee = {};
 const SIMPLER_SYSTEM = `Rewrite these steps for changing one setting in very simple words, at a grade 4 reading level.
 Keep the same order, and the same number of steps or one more. Keep every button and menu name exactly as written.
 Keep every warning. Do not add names, numbers, links or advice that are not in the steps. Never say safe or secure.`;
@@ -440,7 +442,23 @@ async function makePlan() {
     onOpenCheck: id => { const p = cat.find(c => c.id === id)?.pages?.[0]; if (p) window.open(p.practiceUrl, '_blank', 'noopener'); },
   };
   let last = null;
-  const draw = (result, source, extra = {}) => { last = { result, source, extra }; return renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, ...helpers, onSimpler, onOpen: url => window.open(url, '_blank', 'noopener'), ...extra }); };
+  const draw = (result, source, extra = {}) => { last = { result, source, extra }; return renderPlan($('plan'), { plan: result.plan, fired: result.fired, byRef, library: LIBRARY, source, ...helpers, onSimpler, theySee, onTheySee, onOpen: url => window.open(url, '_blank', 'noopener'), ...extra }); };
+  // "What would they see?": the notice written with this practice entry's made-up names. Hybrid here (Gemini Nano when
+  // the browser has it, the cloud when not): the names are made up, and the cloud gate (shared/cloud-safe.js,
+  // practice/they_see) refuses any word that is not on the practice pages. The extension only ever uses Gemini Nano.
+  async function onTheySee(code) {
+    const redraw = () => { draw(last.result, last.source, last.extra); const b = document.querySelector(`#plan [data-code="${code}"]`); if (b?.tagName === 'DETAILS') b.open = true; };
+    theySee[code] = { pending: true };
+    redraw();
+    try {
+      const f = scan.findings.find(x => x.code === code && x.ownership !== 'mine');
+      const input = theySeeInput(LIBRARY[code], f?.label || '', PRACTICE_OWNER.name);
+      const r = await hybridJson({ purpose: 'practice', body: { task: 'they_see', owner: { name: PRACTICE_OWNER.name, email: PRACTICE_OWNER.email }, input }, guard: { library: LIBRARY, practiceCorpus: PRACTICE_CORPUS, practiceOwner: PRACTICE_OWNER }, onSend, system: THEY_SEE_SYSTEM, schema: THEY_SEE_SCHEMA });
+      const c = checkTheySee(r.answer, input);
+      theySee[code] = { text: c.text, ok: c.ok, source: r.source };
+    } catch (e) { console.warn('Spare Key what-they-see:', String(e && e.message || e).slice(0, 200)); theySee[code] = { error: true }; }
+    redraw();
+  }
   // "Say it more simply": hybrid inference on one library entry's public steps (Gemini Nano here if the browser has it).
   async function onSimpler(code) {
     const redraw = () => { draw(last.result, last.source, last.extra); const b = document.querySelector(`#plan [data-code="${code}"]`); if (b?.tagName === 'DETAILS') b.open = true; b?.querySelector('details.later')?.setAttribute('open', ''); };
