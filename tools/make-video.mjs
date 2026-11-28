@@ -43,6 +43,8 @@ const fixSay = B && (() => {
 })();
 const PHONE_CLIP = path.join(OUT, 'android-practice.mp4');
 const REAL_PHONE = args.includes('--real-phone');
+const REAL_CLIP = path.join(OUT, 'android-real.mp4');
+const REAL_RUN = read('docs/evidence/android-real.json').runs.at(-1);
 // The rules judge only the first 3:00. The build stops, before the long encode, when the scenes add up to more.
 const MAX_SECONDS = 175;
 const scenes = [
@@ -68,7 +70,12 @@ const scenes = [
   // The Android app on a made-up practice phone. The clip is the emulator's screen (adb screenrecord) unless
   // --real-phone says it was recorded on a real phone (tools/android-record.mjs): the caption only says "a real phone"
   // when that is what the clip shows.
-  ...(existsSync(PHONE_CLIP) ? [{ key: 'android', clip: PHONE_CLIP, range: [41, 100], slide: 'side', head: 'And the phone itself, on Android.',
+  // When <out>/android-real.mp4 is there (tools/android-real-clip.mjs), the scene is the real check on a real phone,
+  // with the list of apps blurred; its numbers are that phone's latest run in docs/evidence/android-real.json.
+  ...(existsSync(REAL_CLIP) ? [{ key: 'android', clip: REAL_CLIP, range: [0, duration(REAL_CLIP)], slide: 'side', head: 'And the phone itself, on Android.',
+    sub: `A real check on a real phone: ${REAL_RUN.appsWithAccess} apps read, ${REAL_RUN.listed} listed, sorted by Gemini Nano 4 Fast on the phone. The names of the apps are blurred.`,
+    say: `An account check cannot see an app hidden on the phone. So there is an Android app too. On this real phone, Gemini Nano 4 sorts ${REAL_RUN.listed} apps on the phone itself, and only finding types reach the cloud. The app names are blurred here.` }]
+  : existsSync(PHONE_CLIP) ? [{ key: 'android', clip: PHONE_CLIP, range: [41, 100], slide: 'side', head: 'And the phone itself, on Android.',
     sub: `${REAL_PHONE ? 'A real phone, with Gemini Nano on the phone. ' : ''}A made-up practice phone, so no real app is shown.`,
     say: `An account check cannot see an app hidden on the phone. So there is an Android app too${REAL_PHONE ? ', here on a real phone' : ''}. Gemini Nano sorts the apps on the phone itself, and the plan follows the same rules. The cloud never sees an app's name.` }] : []),
   { key: 'hood', panel: [M.hood, M.ledger + 0.5], slide: 'side', head: 'Every request to the cloud, word for word.', sub: 'A test searched every request for the made-up names and addresses: none held one.',

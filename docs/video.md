@@ -11,6 +11,14 @@ README.md "Results". Footage that runs faster than real time is labeled with its
 caption says "a real phone" only when the build is run with `--real-phone` (a clip from `tools/android-record.mjs`).
 The build stops if the scenes add up to more than 2:55, because the rules judge only the first 3:00.
 
+The Android scene can be the real check on a real phone instead. `node tools/android-record-real.mjs` records it
+(ask the phone's owner first; the raw recordings name the phone's apps, so they are written outside the repository
+and never published), and `node tools/android-real-clip.mjs` cuts the public clip `android-real.mp4` from them: only
+the screens with no app name (the check running, the summary, Under the hood with the real request that left the
+phone), the list of apps blurred, and the status bar cropped away. When that file is in the folder, the video uses it
+and its caption gives that phone's numbers from `docs/evidence/android-real.json`. Look at every part of a phone
+recording before using it: a floating video and the notification shade were caught, and cut, in the first take.
+
 To publish: upload to YouTube as **Public**, title "Spare Key: who still has a key to your accounts? (#BuildHybridAI)",
 upload the `.srt` as English captions, paste the description below, then put the link in Devpost and the README.
 
