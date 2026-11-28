@@ -135,7 +135,7 @@ product more useful and more honest about what each part does.
 
 - Review by advocates and survivors: the questions are at https://spare-key-app.web.app/advocates.html.
 - Readers for social media sign-ins, and a test of the rooted-phone check on a real rooted phone.
-- The Chrome Web Store listing, now in Google's review (submitted November 26, unlisted): https://chromewebstore.google.com/detail/pnfdfbkaabiminifnpmgpljlmoocbbge.
+- A Play Store listing for the Android app. The Chrome extension is already in the Chrome Web Store: https://chromewebstore.google.com/detail/pnfdfbkaabiminifnpmgpljlmoocbbge.
 
 ## Built with
 
@@ -149,7 +149,7 @@ Hosting, Chrome Extensions, Kotlin, Jetpack Compose.
    changes its pages. Very private or automated browsers may be refused by App Check, or block Google's servers: the check still runs with code, and "Show results now" is always there (Gemini gets 45 seconds).
 2. **Any phone, 3 minutes:** open https://spare-key-app.web.app/phone-check.html, choose iPhone or Android, answer a
    few questions, and get the plan, made in the page with nothing sent.
-3. **The extension:** from the Chrome Web Store once Google's review clears (https://chromewebstore.google.com/detail/pnfdfbkaabiminifnpmgpljlmoocbbge), or now by hand: download https://spare-key-app.web.app/downloads/spare-key-extension.zip, unzip it, open
+3. **The extension:** from the Chrome Web Store (https://chromewebstore.google.com/detail/pnfdfbkaabiminifnpmgpljlmoocbbge, then Add to Chrome), or by hand for the newest build: download https://spare-key-app.web.app/downloads/spare-key-extension.zip, unzip it, open
    `chrome://extensions`, turn on Developer mode, Load unpacked, choose the `spare-key` folder, then click the puzzle
    piece and the key. Choose **Try a practice check first** to run it on the made-up pages.
 4. **The Android app (optional):** on an Android phone, download the signed app from

@@ -165,6 +165,11 @@ Android app.
 
 ## Install
 
+From the Chrome Web Store: [Spare Key](https://chromewebstore.google.com/detail/pnfdfbkaabiminifnpmgpljlmoocbbge), then
+**Add to Chrome**. The store copy can be a few days behind this repository; the download below is the newest build.
+
+By hand:
+
 1. Download [spare-key-extension.zip](https://spare-key-app.web.app/downloads/spare-key-extension.zip) and unzip it. It
    holds a folder called `spare-key`.
 2. In Chrome, open `chrome://extensions`, turn on Developer mode, select **Load unpacked**, and choose `spare-key`.
