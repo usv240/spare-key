@@ -1,5 +1,5 @@
 {
- "note": "Runs of the real check on the builder's own phone over USB (tools/android-real.mjs). Counts, timings and Spare Key's own sentences only: no app name is in this file.",
+ "note": "Runs of the real check on the builder's own phone over adb (tools/android-real.mjs). Counts, timings and Spare Key's own sentences only: no app name is in this file.",
  "runs": [
   {
    "at": "2026-11-24T18:07:47.181Z",
@@ -460,8 +460,8 @@
    "listedAfterSeconds": 2.3,
    "nanoWorking": true,
    "checkSeconds": 11.9,
-   "appsWithAccess": null,
-   "listed": null,
+   "appsWithAccess": 72,
+   "listed": 13,
    "sortedBy": "Gemini Nano sorted 13 apps on this phone",
    "groups": [
     "Can watch this phone (4)",
@@ -506,7 +506,73 @@
    "kotlinChecks": 8,
    "nanoLogLines": [],
    "quickExitLeft": true,
-   "label": "nano4-checked"
+   "label": "nano4-checked",
+   "countsFrom": "the app's own log line in this run (the tool's pattern missed the results sentence after its wording changed)"
+  },
+  {
+   "at": "2026-11-28T13:39:13.945Z",
+   "device": {
+    "model": "Pixel",
+    "android": "17",
+    "sdk": 37
+   },
+   "dark": true,
+   "fontScale": 1.15,
+   "appsInstalled": 707,
+   "appsAdded": 332,
+   "firstScreenSeconds": 3.3,
+   "nanoLine": "",
+   "hotlineOnFirstScreen": true,
+   "listedAfterSeconds": 2.3,
+   "nanoWorking": true,
+   "checkSeconds": 15.8,
+   "appsWithAccess": 73,
+   "listed": 14,
+   "sortedBy": "Gemini Nano sorted 14 apps on this phone",
+   "groups": [
+    "Can watch this phone (4)",
+    "Can see your location (4)",
+    "Apps with one kind of access (6)"
+   ],
+   "builtInLine": "59 apps that came with this phone also have some of these powers, for their own job.",
+   "nanoNotes": 2,
+   "outsidePlayStore": 0,
+   "usbDebuggingFound": false,
+   "reassuranceWords": 0,
+   "planShownSeconds": 2.3,
+   "planSeconds": 4.6,
+   "planNote": "Ordered by Gemini in the cloud, with instructions kept on Firebase's server (spare-key-plan-v1), from finding types only. Code checked it against the safety rules and made 1 fix.",
+   "planSteps": 7,
+   "planStepKinds": [
+    "Make a record of these first",
+    "Talk to an advocate",
+    "Leave for a better time",
+    "Check it yourself"
+   ],
+   "screenshotCaution": true,
+   "where": {
+    "reading": "Spare Key's rules, on this phone. The same code as the Chrome extension, run in Android's JavaScript sandbox.",
+    "sorting": "Gemini Nano, on this phone: the Gemini Nano 4 Fast (preview) model (Firebase AI Logic, on-device only). The list of apps never leaves.",
+    "simpler": "Gemini Nano on this phone; the cloud only if it cannot (Firebase AI Logic, prefer on device). Public steps only.",
+    "plan": "Gemini in the cloud (Firebase AI Logic, cloud only), from finding types only. Code checks every plan against the safety rules.",
+    "appCheck": "reCAPTCHA Enterprise, through the site"
+   },
+   "leftThisPhone": 2,
+   "did": [
+    "Rules started in the sandbox in 0.3 s. Steps library version 7.",
+    "Gemini Nano on this phone: available, the Gemini Nano 4 Fast (preview) model (nano-v4-fast). Asked for, in order: preview_fast available, answered, preview available, stable available.",
+    "Gemini Nano sorted 14 of 14 apps on this phone in 10.5 s.",
+    "Gemini Nano's reading: monitoring 6, everyday 5, family_locator 3. Cautions kept: 2. Set aside, with nothing to back them up: 7.",
+    "Check finished in 11.2 s: 73 apps with special access read, 14 listed, 59 that came with the phone not listed, 1 thing not readable.",
+    "Plan made by code on this phone: 7 steps.",
+    "Plan ordered by template spare-key-plan-v1 in the cloud in 3.0 s, with 3 functions offered and 0 answered from this phone. Code fixed 1 things."
+   ],
+   "modelErrors": [],
+   "kotlinChecks": 2,
+   "nanoLogLines": [],
+   "quickExitLeft": true,
+   "label": "November 28: the phone now has both Gemini Nano 4 previews",
+   "countsFrom": "the app's own log line in this run (the tool's pattern missed the results sentence after its wording changed)"
   }
  ]
 }

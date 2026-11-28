@@ -123,7 +123,7 @@ if (title.text === 'Show results now') {
 report.checkSeconds = secs(t1);
 const results = await readAll('Make my plan');
 raw.results = results;
-const m = results.join('\n').match(/read (\d+) apps? with special access and listed (\d+) things?/);
+const m = results.join('\n').match(/read (\d+) apps? with special access and listed (\d+)\b/);
 report.appsWithAccess = m ? +m[1] : null;
 report.listed = m ? +m[2] : results.some(t => /did not find an app here/.test(t)) ? 0 : null;
 report.sortedBy = (results.find(t => /Gemini Nano sorted \d+ apps|Sorted by Spare Key's rules/.test(t)) || '').replace(/^.*?·\s*/, '');

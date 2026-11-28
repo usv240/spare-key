@@ -452,6 +452,13 @@ in the `private/` folder, and the evidence file holds counts, timings and Spare 
 | Server prompt template (November 24, evening) | 72 | 13 (4, 3, 6) | 59 | 10.6 s | 13 of 13 apps in 9.7 s; 2 cautions kept | ordered through the template in 5 s |
 | Rules in the WebView backup (forced, to test it) | 72 | 13 (4, 3, 6) | 59 | 10.7 s | 13 of 13 apps in 10.0 s | ordered through the template in 4.6 s |
 | Rules in the JavaScript sandbox, same build | 72 | 13 (4, 3, 6) | 59 | 10.6 s | 13 of 13 apps in 9.9 s | ordered through the template in 8.5 s |
+| November 28: the phone has both Gemini Nano 4 previews | 73 | 14 (4, 4, 6) | 59 | 11.2 s | Gemini Nano 4 Fast (preview): 14 of 14 apps in 10.5 s; 2 cautions kept, 7 set aside | ordered through the template in 3.0 s |
+
+On November 28 the phone reported both preview models as ready, and at first every on-device call failed inside
+Android's AICore within a few milliseconds, for all three models (its log: a null array). Spare Key fell back to its
+rules and showed the practice phone's list in 2.4 s. After AICore was restarted, the first choice answered. Firebase AI Logic gave
+that model's name as nano-v4-fast; AICore's own record lists the 22 finished calls under the base model nano-v4-full
+(feature 646), with a median of 0.7 s. Both names are in `docs/evidence/aicore-record.json` as they were given.
 
 What it showed:
 

@@ -345,5 +345,196 @@
    "ms": 15,
    "status": 19
   }
- ]
+ ],
+ "november28": {
+  "at": "2026-11-28",
+  "note": "The same record after the phone had both Gemini Nano 4 preview models, for the runs of November 28 (the practice phone, then the real check). Firebase AI Logic's own getModelName() gave 'nano-v4-fast' for the model Spare Key asked for (OnDeviceModelOption.PREVIEW_FAST); AICore lists these calls under feature 646 with the base model name below. Both are recorded as they were given.",
+  "sdkModelName": "nano-v4-fast",
+  "calls": 25,
+  "finished": 22,
+  "models": [
+   "nano-v4-full"
+  ],
+  "features": [
+   646
+  ],
+  "finishedMedianMs": 657,
+  "rows": [
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:34:29.072",
+    "ms": 140,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:34:29.241",
+    "ms": 2,
+    "status": 19
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:34:42.511",
+    "ms": 708,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:34:43.286",
+    "ms": 657,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:34:43.980",
+    "ms": 543,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:34:44.552",
+    "ms": 765,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:34:45.385",
+    "ms": 585,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:36:21.978",
+    "ms": 93,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:36:22.115",
+    "ms": 8,
+    "status": 19
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:19.460",
+    "ms": 93,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:19.592",
+    "ms": 9,
+    "status": 19
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:33.520",
+    "ms": 695,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:34.255",
+    "ms": 657,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:34.965",
+    "ms": 731,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:35.771",
+    "ms": 726,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:36.577",
+    "ms": 573,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:37.214",
+    "ms": 696,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:37.974",
+    "ms": 911,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:38.964",
+    "ms": 612,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:39.646",
+    "ms": 727,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:40.415",
+    "ms": 658,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:41.136",
+    "ms": 704,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:41.916",
+    "ms": 631,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:42.594",
+    "ms": 656,
+    "status": 1
+   },
+   {
+    "feature": 646,
+    "model": "nano-v4-full",
+    "start": "11-28 08:39:43.303",
+    "ms": 620,
+    "status": 1
+   }
+  ]
+ }
 }

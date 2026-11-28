@@ -154,9 +154,14 @@ From scripts in `tools/`; details in [docs/accuracy.md](docs/accuracy.md), saved
   ([evidence](docs/evidence/android-e2e.json), [network](docs/evidence/android-net.json)). On the builder's own
   Android 17 phone, Gemini Nano read 13 of 13 listed apps in 7.5 to 10 s ([evidence](docs/evidence/android-real.json)),
   and Android's own AICore record shows those calls ran on Gemini Nano 4 (nano-v4-full): 51 finished calls, a median of
-  0.7 s each ([evidence](docs/evidence/aicore-record.json)). In the latest run the two Nano 4 previews were listed
-  but did not answer (AICore: not on this phone yet), so Spare Key skipped them and Nano 4 Full sorted all 13 apps in
-  9.6 s; both plan templates returned a server error ("high demand") and the direct call ordered the plan.
+  0.7 s each ([evidence](docs/evidence/aicore-record.json)). On November 25 the two Nano 4 previews were listed but
+  did not answer (AICore: not on this phone yet), so Spare Key skipped them and Nano 4 Full sorted all 13 apps in
+  9.6 s; both plan templates returned a server error ("high demand") and the direct call ordered the plan. On
+  November 28 the phone had both previews: the first choice, Gemini Nano 4 Fast (preview), answered and sorted 14 of
+  14 listed apps in 10.5 s, and the plan template ordered the plan in the cloud in 3.0 s from finding types only.
+  Firebase AI Logic named that model nano-v4-fast; AICore's record lists the same 22 finished calls (a median of
+  0.7 s) under the base model nano-v4-full. That day AICore first failed every call until it was restarted; Spare Key
+  fell back to its rules and showed the practice phone's list in 2.4 s.
 - **Phone check:** 40 of 40 browser checks, including the typed-words box read by code and through the on-device path, ticking the plan off as you go, and that the page sends nothing after it loads.
 - **Accessibility and reading level:** 78 axe runs with 0 issues; median reading grade 4.2.
 
