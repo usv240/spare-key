@@ -24,7 +24,8 @@ codes only. Everything shown uses made-up practice pages. Try it: https://spare-
 
 The table is the first hand-written script. The generated video uses the narration in `tools/make-video.mjs`, in this
 order: the problem, the idea (the private pages are read on the device, with no cloud fallback, on purpose), the check,
-the results, a site changing its pages and the Remote Config fix, the plan, the Android app, what left the computer,
+the results, a site changing its pages and the Remote Config fix, the plan, "What would they see?", the Android app, what
+left the computer,
 the chatbot comparison, the numbers, and the close.
 
 For YouTube, public, English. Record at 1920x1080 in Chrome with Gemini Nano available. Use only the practice check and

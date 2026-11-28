@@ -62,6 +62,9 @@ const scenes = [
   ] : []),
   { key: 'plan', panel: [M.questions, M['plan end']], slide: 'side', head: 'Screenshots first. Then an advocate. Then changes, at a time that is right for you.', sub: 'Code checks every plan against eleven safety rules, whoever wrote it.',
     say: 'The plan follows the field\'s advice: screenshots first, then an advocate, and changes they may notice wait. Gemini in the cloud can order it from finding codes, and code checks every plan with eleven safety rules. One of them: if mail is copied to someone else, stop that first, or Google\'s alert emails reach them.' },
+  // "What would they see?": only when the recording has it (tools/record-demo.mjs --nano).
+  ...(M['they see'] && M['they seen'] ? [{ key: 'theysee', panel: [M['they see'] - 1, M['they seen']], slide: 'side', head: 'What would they see?', sub: 'Gemini Nano writes it on this computer, with the other person\'s name. Code checks the words against the company\'s own help page.',
+    say: 'For any step, Gemini Nano writes what the other person would see, with their name. The name is why this runs on the device only. Code checks the words against the company\'s help page.' }] : []),
   // The Android app on a made-up practice phone. The clip is the emulator's screen (adb screenrecord) unless
   // --real-phone says it was recorded on a real phone (tools/android-record.mjs): the caption only says "a real phone"
   // when that is what the clip shows.

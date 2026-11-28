@@ -118,6 +118,31 @@ try {
   mark('plan');
   for (let y = 0; y < 6; y++) { await panel.evaluate(() => window.scrollBy({ top: 420, behavior: 'smooth' })); await sleep(1600); }
   mark('plan end');
+  // "What would they see?": Gemini Nano writes the other person's notice on this computer (only with --nano).
+  if (nano) {
+    const found = await panel.evaluate(() => {
+      const all = [...document.querySelectorAll('#plan .they-see-button')];
+      const items = b => b.parentElement?.querySelector('.items')?.textContent || '';
+      const b = all.find(b => /Sam Porter/.test(items(b)) && /sharing|location/i.test(items(b))) || all.find(b => /Sam/.test(items(b))) || all[0];
+      if (!b) return false;
+      b.dataset.demo = '1';
+      for (let d = b.closest('details'); d; d = d.parentElement?.closest('details')) d.open = true;
+      b.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return true;
+    });
+    if (found) {
+      await sleep(2500);
+      mark('they see');
+      await panel.evaluate(() => document.querySelector('#plan .they-see-button[data-demo]').click());
+      const shown = await panel.waitForSelector('#plan .they-see', { timeout: 120000 }).then(() => true, () => false);
+      if (shown) {
+        await panel.evaluate(() => document.querySelector('#plan .they-see').scrollIntoView({ behavior: 'smooth', block: 'center' }));
+        await sleep(5000);
+        mark('they seen');
+        console.log('   they see:', await panel.evaluate(() => document.querySelector('#plan .they-see').textContent.trim().slice(0, 300)));
+      } else delete marks['they see'];
+    }
+  }
   // Under the hood: where each part runs, and the ledger.
   await panel.evaluate(() => { window.scrollTo({ top: 0 }); document.getElementById('tab-hood').click(); });
   await sleep(300);
